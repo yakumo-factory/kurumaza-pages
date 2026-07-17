@@ -1,0 +1,5330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>議案の内訳 — 松江市議会レポート</title>
+    <style>
+/* 松江市議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Period Navigation */
+.period-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.period-nav a {
+    padding: 4px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #4a5568;
+    font-size: 0.9em;
+}
+
+.period-nav a:hover {
+    background-color: #f1f5f9;
+    text-decoration: none;
+}
+
+.period-nav a.active {
+    background-color: #4a90d9;
+    color: white;
+    border-color: #4a90d9;
+}
+
+.period-nav-disabled {
+    padding: 4px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    color: #cbd5e1;
+    font-size: 0.9em;
+}
+
+
+/* Hero Section — ダッシュボードv3 */
+.hero-section {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8e 100%);
+    color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero-period {
+    font-size: 0.9rem;
+    color: #93c5fd;
+    margin-bottom: 0.5rem;
+}
+
+.hero-top {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.hero-share {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-accent);
+}
+
+.hero-changes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.hero-change-row {
+    font-size: 0.9rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.hero-change-label {
+    color: #93c5fd;
+    min-width: 4em;
+}
+
+.change-up {
+    color: #4ade80;
+}
+
+.change-down {
+    color: #f87171;
+}
+
+
+/* Detail Links v3 — カード型導線 */
+.detail-links-v3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.2rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: box-shadow 0.15s;
+}
+
+.detail-link-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-decoration: none;
+    border-color: #93c5fd;
+}
+
+.detail-link-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e3a5f;
+    margin-bottom: 0.3rem;
+}
+
+.detail-link-desc {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+/* Theme Navigation — テーマジャンプリンク */
+.theme-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.theme-nav a {
+    padding: 6px 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.theme-nav a:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    text-decoration: none;
+}
+
+/* Trend Summary — テーマごとの一行サマリー */
+.trend-summary {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid var(--accent);
+}
+
+/* Period Summary Compact — 転置テーブル */
+.period-summary-compact {
+    font-size: 0.85rem;
+    margin: 0.5rem 0 1rem;
+}
+
+.period-summary-compact th {
+    background: var(--panel);
+    padding: 0.4rem 0.6rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--line);
+}
+
+.period-summary-compact td {
+    padding: 0.4rem 0.6rem;
+    text-align: center;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--line);
+}
+
+.period-summary-compact tr td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: var(--panel);
+}
+
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .hero-section {
+        padding: 1rem;
+    }
+
+    .detail-links-v3 {
+        grid-template-columns: 1fr;
+    }
+
+    .theme-nav a {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* ========================================
+   Member Cards — 議員カードグリッド
+   ======================================== */
+
+.member-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.member-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.member-card[open] {
+    border-color: #94a3b8;
+}
+
+.member-card-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    list-style: none;
+    flex-wrap: wrap;
+}
+
+.member-card-summary::-webkit-details-marker {
+    display: none;
+}
+
+.member-card-summary::before {
+    content: "▸";
+    font-size: 0.8rem;
+    color: #94a3b8;
+    transition: transform 0.15s;
+    flex-shrink: 0;
+}
+
+.member-card[open] > .member-card-summary::before {
+    transform: rotate(90deg);
+}
+
+.member-card-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.8em;
+    height: 1.8em;
+    background: #1e3a5f;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.member-card-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.member-card-faction {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.member-card-role {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #7b1fa2;
+    background: #f3e5f5;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+}
+
+.member-card-status {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+}
+
+/* 退任: 期途中で離任した議員 */
+.member-card-status-departed,
+.member-card-status-added_departed {
+    color: #b45309;
+    background: #fef3c7;
+}
+
+/* 加入: 期途中に増員選挙・補欠選挙で加入した議員 */
+.member-card-status-added {
+    color: #047857;
+    background: #d1fae5;
+}
+
+.member-card-questions {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: #475569;
+    white-space: nowrap;
+}
+
+.member-card-questions strong {
+    color: #1e3a5f;
+    font-size: 0.95rem;
+}
+
+.member-card-detail {
+    padding: 0.5rem 0.8rem 0.8rem;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.member-card-theme-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.member-card-theme-row {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.member-card-theme-label {
+    width: 8.5em;
+    font-size: 0.8rem;
+    color: #334155;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.member-card-bar-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.member-card-bar {
+    height: 0.8rem;
+    border-radius: 2px;
+}
+
+.member-card-theme-count {
+    font-size: 0.75rem;
+    color: #64748b;
+    min-width: 2em;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.member-card-no-data {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+/* 質問の題/要約セクション（Issue #350 / M4）。
+   CSS-only（JS なし）のネスト details/summary。長文要約は position:absolute を
+   採用せずブロック展開で崩れを回避する（design.md D5）。 */
+.member-card-questions-section {
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.member-card-questions-heading {
+    margin: 0 0 0.4rem;
+    font-size: 0.8rem;
+    color: #475569;
+    font-weight: 600;
+}
+
+/* Issue #355: 題・要約の出典注記（議事録由来・公式通告と異なりうる旨）。 */
+.member-card-questions-note {
+    margin: 0 0 0.5rem;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: #64748b;
+}
+
+.member-card-question-meeting {
+    margin-bottom: 0.5rem;
+}
+
+.member-card-question-meeting-name {
+    display: block;
+    font-size: 0.78rem;
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+/* M4 (#350) 会議ごとの折りたたみ（meeting-level collapse・CSS-only、JS ゼロ）。
+   会議 details の summary に「会議名＋質問種別バッジ＋（N件）」を並べ、既定は閉じた
+   状態とする。展開すると当該会議の大論点 details が入れ子で並ぶ（3 階層ネスト）。
+   position:absolute は不採用（点線下線＋クリック展開の素朴な details/summary）。 */
+.member-card-question-meeting-group {
+    margin-bottom: 0.5rem;
+}
+
+.member-card-question-meeting-summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.2rem 0;
+}
+
+.member-card-question-meeting-summary::-webkit-details-marker {
+    display: none;
+}
+
+.member-card-question-meeting-summary .member-card-question-meeting-name {
+    display: inline;
+    margin-bottom: 0;
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+}
+
+.member-card-question-meeting-count {
+    font-size: 0.74rem;
+    color: #64748b;
+}
+
+.member-card-question-meeting-summary::after {
+    content: "＋";
+    margin-left: auto;
+    color: #64748b;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.member-card-question-meeting-group[open] > .member-card-question-meeting-summary::after {
+    content: "－";
+}
+
+.member-card-question {
+    margin: 0.2rem 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.member-card-question-title {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.82rem;
+    color: #0f172a;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.member-card-question-title::-webkit-details-marker {
+    display: none;
+}
+
+.member-card-question-title::after {
+    content: "＋";
+    margin-left: auto;
+    color: #64748b;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.member-card-question[open] > .member-card-question-title::after {
+    content: "－";
+}
+
+.member-card-question-type {
+    display: inline-block;
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    padding: 0.05rem 0.4rem;
+    margin-bottom: 0.25rem;
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+.member-card-question-type-gen {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.member-card-question-type-rep {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.member-card-question-title-text {
+    font-weight: 500;
+}
+
+.member-card-question-body {
+    padding: 0.1rem 0.6rem 0.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.member-card-question-summary {
+    margin: 0.4rem 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: #334155;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.member-card-question-themes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+}
+
+.member-card-question-theme {
+    font-size: 0.7rem;
+}
+
+@media (max-width: 768px) {
+    .member-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .member-card-summary {
+        padding: 0.5rem 0.6rem;
+    }
+
+    .member-card-theme-label {
+        width: 7em;
+        font-size: 0.75rem;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- 年目フィルタの状態表示（#382 段階3・既定は hidden で JS が埋める） --- */
+.year-filter-status {
+    margin: 0 0 12px;
+    padding: 8px 12px;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bars" viewBox="0 0 24 24"><line x1="5" y1="20" x2="20" y2="20"/><rect x="6.5" y="12" width="3" height="6"/><rect x="11" y="7.5" width="3" height="10.5"/><rect x="15.5" y="14.5" width="3" height="3.5"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">松江市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../financial/index.html" class="cross-nav-link">財政レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="timeline.html">
+                            <svg class="ico"><use href="#ic-bars"/></svg><span class="lbl">テーマの経年推移</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="bill_breakdown.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-role">6つの役割</a></li>
+                            
+                            <li><a href="#s-submitter">提出者別</a></li>
+                            
+                            <li><a href="#s-period">期別の推移</a></li>
+                            
+                            <li><a href="#s-conflict">賛否</a></li>
+                            
+                            <li><a href="#s-voice">市民の声</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 市長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">松江市 · 議会レポート / <b>議案の内訳</b></span>
+            </div>
+
+            <main class="content">
+                
+
+<style>
+/* 数値列は右揃え・等幅数字で桁を揃える（Req10.3。既存 .text-right へ additive）。 */
+.content .text-right { font-variant-numeric: tabular-nums; }
+/* 幅広テーブル（否決議案一覧）: はみ出しは要素内で横スクロールさせ、ページ全体を
+   横スクロールさせない（Req5.4/10.4・§5）。 */
+.tblscroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+.tbl-wide { width: 100%; border-collapse: collapse; }
+.tbl-wide th, .tbl-wide td {
+    white-space: nowrap;       /* 既定 1 行（時期・提出者） */
+    text-align: left;          /* 全列左揃え（Req5.4・モック準拠） */
+    vertical-align: top;
+}
+/* 議案名列のみ 2 行までの折り返しを許容（Req5.3）。他列は nowrap を維持。 */
+.tbl-wide td.billname {
+    white-space: normal;
+    max-width: 32rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+/* プルダウン開閉のキーボードフォーカスリング（Req10.1。既存 <details> 挙動を補強）。 */
+.content details > summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+/* ビューポート幅 640px 以下は本文 1 カラム（外殻既定を踏襲）。幅広要素は
+   .tblscroll で要素内横スクロールさせページ全体を横スクロールさせない（Req10.4）。 */
+@media (max-width: 640px) {
+    .tbl-wide td.billname { max-width: 60vw; }
+}
+/* 開示プルダウン .bb-dd は #422 harmonize で共有 styles.css へ昇格した（正準意匠・
+   トークン化）。本ページ inline からは撤去し重複定義を避ける（共有が正）。 */
+</style>
+<h1 class="page-title">議案の内訳</h1>
+
+<p class="page-subtitle">第1期から第6期までの議案の分析・可視化</p>
+
+<div class="section">
+    <div class="guide-text">
+        分類の作り方とデータの源泉は<a href="about.html">このレポートについて</a>をご覧ください。
+    </div>
+</div>
+
+
+<div class="section" id="s-role">
+    <h2>議会の6つの役割</h2>
+    <div class="guide-text">
+        全議案を議会の六つの役割に当てはめるとどうなるかを可視化しています。
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>役割</th>
+                <th class="text-right">件数</th>
+                <th class="text-right">構成比</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+        
+        
+            <tr>
+                <td>お金を決める（予算）</td>
+                <td class="text-right">1,354</td>
+                <td class="text-right">18.1%</td>
+            </tr>
+        
+        
+        
+        
+            <tr>
+                <td>ルールを作る（条例）</td>
+                <td class="text-right">1,442</td>
+                <td class="text-right">19.3%</td>
+            </tr>
+        
+        
+        
+        
+            <tr>
+                <td>執行を承認する</td>
+                <td class="text-right">1,999</td>
+                <td class="text-right">26.8%</td>
+            </tr>
+        
+        
+        
+        
+            <tr>
+                <td>人を承認する</td>
+                <td class="text-right">380</td>
+                <td class="text-right">5.1%</td>
+            </tr>
+        
+        
+        
+        
+            <tr>
+                <td>チェックする</td>
+                <td class="text-right">2,032</td>
+                <td class="text-right">27.2%</td>
+            </tr>
+        
+        
+        
+        
+            <tr>
+                <td>意思を示す・市民の声を受ける</td>
+                <td class="text-right">262</td>
+                <td class="text-right">3.5%</td>
+            </tr>
+        
+        
+        
+        
+        
+        </tbody>
+    </table>
+    
+    <div class="guide-text">
+        議案の多くは、条例の一部改正や補正予算の追認などの定期的な手続きです。
+    </div>
+    
+    
+    <details class="bb-dd">
+        <summary>お金を決める（予算）の内訳</summary>
+        <table>
+            <thead>
+                <tr>
+                    <th>分類</th>
+                    <th class="text-right">件数</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>予算</td>
+                    <td class="text-right">1,354</td>
+                </tr>
+                
+                
+                
+                <tr>
+                    <td class="bb-minor-label">補正予算（特別会計）</td>
+                    <td class="text-right">523</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">補正予算（企業会計）</td>
+                    <td class="text-right">325</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">当初予算（特別会計）</td>
+                    <td class="text-right">249</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">補正予算（一般会計）</td>
+                    <td class="text-right">128</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">当初予算（企業会計）</td>
+                    <td class="text-right">108</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">当初予算（一般会計）</td>
+                    <td class="text-right">21</td>
+                </tr>
+                
+                
+            
+            </tbody>
+        </table>
+    </details>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>ルールを作る（条例）の内訳</summary>
+        <table>
+            <thead>
+                <tr>
+                    <th>分類</th>
+                    <th class="text-right">件数</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>条例</td>
+                    <td class="text-right">1,442</td>
+                </tr>
+                
+                
+                
+                <tr>
+                    <td class="bb-minor-label">一部改正</td>
+                    <td class="text-right">1,108</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">制定</td>
+                    <td class="text-right">249</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">廃止</td>
+                    <td class="text-right">66</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">その他</td>
+                    <td class="text-right">19</td>
+                </tr>
+                
+                
+            
+            </tbody>
+        </table>
+    </details>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>執行を承認するの内訳</summary>
+        <table>
+            <thead>
+                <tr>
+                    <th>分類</th>
+                    <th class="text-right">件数</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>指定管理</td>
+                    <td class="text-right">1,235</td>
+                </tr>
+                
+                
+            
+                <tr>
+                    <td>財産</td>
+                    <td class="text-right">236</td>
+                </tr>
+                
+                
+            
+                <tr>
+                    <td>その他の議決事項</td>
+                    <td class="text-right">232</td>
+                </tr>
+                
+                
+                
+                <tr>
+                    <td class="bb-minor-label">その他の議決</td>
+                    <td class="text-right">69</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">区域・土地</td>
+                    <td class="text-right">68</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">計画</td>
+                    <td class="text-right">31</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">訴え・賠償・和解</td>
+                    <td class="text-right">27</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">組合・広域連合</td>
+                    <td class="text-right">24</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">協定</td>
+                    <td class="text-right">13</td>
+                </tr>
+                
+                
+            
+                <tr>
+                    <td>道路</td>
+                    <td class="text-right">154</td>
+                </tr>
+                
+                
+            
+                <tr>
+                    <td>工事契約</td>
+                    <td class="text-right">142</td>
+                </tr>
+                
+                
+                
+                <tr>
+                    <td class="bb-minor-label">新規契約</td>
+                    <td class="text-right">115</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">変更契約</td>
+                    <td class="text-right">27</td>
+                </tr>
+                
+                
+            
+            </tbody>
+        </table>
+    </details>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>人を承認するの内訳</summary>
+        <table>
+            <thead>
+                <tr>
+                    <th>分類</th>
+                    <th class="text-right">件数</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>人事同意</td>
+                    <td class="text-right">380</td>
+                </tr>
+                
+                
+            
+            </tbody>
+        </table>
+    </details>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>チェックするの内訳</summary>
+        <table>
+            <thead>
+                <tr>
+                    <th>分類</th>
+                    <th class="text-right">件数</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>報告</td>
+                    <td class="text-right">1,061</td>
+                </tr>
+                
+                
+            
+                <tr>
+                    <td>決算</td>
+                    <td class="text-right">572</td>
+                </tr>
+                
+                
+            
+                <tr>
+                    <td>承認（専決処分）</td>
+                    <td class="text-right">399</td>
+                </tr>
+                
+                
+            
+            </tbody>
+        </table>
+    </details>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>意思を示す・市民の声を受けるの内訳</summary>
+        <table>
+            <thead>
+                <tr>
+                    <th>分類</th>
+                    <th class="text-right">件数</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>意見書・決議</td>
+                    <td class="text-right">262</td>
+                </tr>
+                
+                
+                
+                <tr>
+                    <td class="bb-minor-label">意見書</td>
+                    <td class="text-right">254</td>
+                </tr>
+                
+                <tr>
+                    <td class="bb-minor-label">決議</td>
+                    <td class="text-right">8</td>
+                </tr>
+                
+                
+            
+            </tbody>
+        </table>
+    </details>
+    
+    
+    
+    
+    
+</div>
+
+
+<div class="section" id="s-submitter">
+    <h2>誰が議案を出しているか</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>提出者</th>
+                <th class="text-right">件数</th>
+                <th class="text-right">構成比</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr>
+                <td>市長が提出</td>
+                <td class="text-right">7,207</td>
+                <td class="text-right">96.5%</td>
+            </tr>
+        
+            <tr>
+                <td>議会（議員・委員会）が提出</td>
+                <td class="text-right">262</td>
+                <td class="text-right">3.5%</td>
+            </tr>
+        
+        </tbody>
+    </table>
+    
+    
+    
+    <div class="guide-text">
+        市民から議会に届いた声（請願・陳情 283件）は、下の「市民の声（請願・陳情）」をご覧ください。
+    </div>
+    
+</div>
+
+
+<div class="section" id="s-period">
+    <h2>期ごとの移り変わり</h2>
+    <div class="guide-text">
+        役割ごとの議案件数を、議員の期（およそ4年）ごとに並べています。
+    </div>
+    
+    <div class="chart-container">
+        <canvas id="chart-bb-period-role"></canvas>
+    </div>
+    
+    
+    <table>
+        <thead>
+            <tr>
+                <th>期</th>
+                <th class="text-right">議案件数（母数）</th>
+                <th class="text-right">収録年度</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr>
+                <td>第1期</td>
+                <td class="text-right">1,645</td>
+                <td class="text-right">H17〜H20</td>
+            </tr>
+        
+            <tr>
+                <td>第2期</td>
+                <td class="text-right">1,473</td>
+                <td class="text-right">H21〜H24</td>
+            </tr>
+        
+            <tr>
+                <td>第3期</td>
+                <td class="text-right">1,346</td>
+                <td class="text-right">H25〜H28</td>
+            </tr>
+        
+            <tr>
+                <td>第4期</td>
+                <td class="text-right">1,442</td>
+                <td class="text-right">H29〜R02</td>
+            </tr>
+        
+            <tr>
+                <td>第5期</td>
+                <td class="text-right">1,271</td>
+                <td class="text-right">R03〜R06</td>
+            </tr>
+        
+            <tr>
+                <td>第6期</td>
+                <td class="text-right">292</td>
+                <td class="text-right">R07</td>
+            </tr>
+        
+        </tbody>
+    </table>
+    
+</div>
+
+
+<div class="section" id="s-conflict">
+    <h2>通らなかった・持ち越された議案</h2>
+    <div class="guide-text">
+        議決の結果を役割ごとに数えています。継続審査を経た議案は最終の結果で数えています。結果が空欄の議案は「結果不明」とし、可決にも非可決にも数えていません。撤回など、どの区分にもなじまない結果は「その他の結果」として数えています。
+    </div>
+    
+    
+    <div class="table-scroll">
+    <table>
+        <thead>
+            <tr>
+                <th>役割</th>
+                <th class="text-right">議案数（母数）</th>
+                <th class="text-right">可決・承認など</th>
+                <th class="text-right">否決</th>
+                <th class="text-right">報告を受けた</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+        
+            <tr>
+                <td>お金を決める（予算）</td>
+                <td class="text-right">1,354</td>
+                <td class="text-right">1,354</td>
+                <td class="text-right">0</td>
+                <td class="text-right">0</td>
+            </tr>
+        
+        
+        
+            <tr>
+                <td>ルールを作る（条例）</td>
+                <td class="text-right">1,442</td>
+                <td class="text-right">1,440</td>
+                <td class="text-right">2</td>
+                <td class="text-right">0</td>
+            </tr>
+        
+        
+        
+            <tr>
+                <td>執行を承認する</td>
+                <td class="text-right">1,999</td>
+                <td class="text-right">1,997</td>
+                <td class="text-right">0</td>
+                <td class="text-right">0</td>
+            </tr>
+        
+        
+        
+            <tr>
+                <td>人を承認する</td>
+                <td class="text-right">380</td>
+                <td class="text-right">380</td>
+                <td class="text-right">0</td>
+                <td class="text-right">0</td>
+            </tr>
+        
+        
+        
+            <tr>
+                <td>チェックする</td>
+                <td class="text-right">2,032</td>
+                <td class="text-right">970</td>
+                <td class="text-right">0</td>
+                <td class="text-right">1,061</td>
+            </tr>
+        
+        
+        
+            <tr>
+                <td>意思を示す・市民の声を受ける</td>
+                <td class="text-right">262</td>
+                <td class="text-right">238</td>
+                <td class="text-right">24</td>
+                <td class="text-right">0</td>
+            </tr>
+        
+        
+        
+        
+        </tbody>
+    </table>
+    </div>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>否決された議案の一覧</summary>
+        <div class="tblscroll">
+        <table class="tbl-wide">
+            <thead>
+                <tr>
+                    <th>時期</th>
+                    <th>議案名</th>
+                    <th>提出者</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>令和7年度第6回</td>
+                    <td class="billname">小中学校の学校給食無償化を求める意見書</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和7年度第2回</td>
+                    <td class="billname">高額療養費の自己負担引き上げ撤回を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和6年度第2回</td>
+                    <td class="billname">松江市中高層建築物の建築に係る手続に関する条例の一部を改正する条例について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和4年度第2回</td>
+                    <td class="billname">日米地位協定の改定を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和4年度第1回</td>
+                    <td class="billname">島根原子力発電所2号機の再稼働について、市民の意向を問い、市民の意思を的確に反映させる松江市住民投票条例の制定について</td>
+                    <td>市長が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和3年度第5回</td>
+                    <td class="billname">75歳以上の医療費窓口負担2割への引き上げの中止を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和3年度第4回</td>
+                    <td class="billname">核兵器廃絶及び四国関連島等における土地の利用状況の調査及び利用の規制等に関する法律の厳正な運用を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和3年度第3回</td>
+                    <td class="billname">米価下落防止のためコメの政府買い入れを行い、生活困窮者への食糧支援に活用することを政府に求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和3年度第1回</td>
+                    <td class="billname">新型コロナウイルス感染症に対するワクチンを希望する世界中全ての人に接種できるための施策を政府に求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和2年度第6回</td>
+                    <td class="billname">核兵器禁止条約の署名・批准を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和2年度第4回</td>
+                    <td class="billname">松江市新庁舎建設事業に関する住民投票条例の制定について</td>
+                    <td>市長が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和2年度第2回</td>
+                    <td class="billname">黒川弘務東京高検検事長の定年を延長する閣議決定の撤回を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和2年度第1回</td>
+                    <td class="billname">消費税率を5%に引き下げることを求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和1年度第3回</td>
+                    <td class="billname">過去最低となった食料自給率を引き上げる施策を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和1年度第2回</td>
+                    <td class="billname">児童生徒の交通安全対策確保の促進に関する意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>令和1年度第1回</td>
+                    <td class="billname">毎月勤労統計不正調査問題の全容解明を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成30年度第4回</td>
+                    <td class="billname">大規模自然災害における防災・減災対策の充実強化を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成30年度第3回</td>
+                    <td class="billname">小・中学校へのエアコン設置に係る国の補助を災害対応レベルにまで引き上げることを求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成30年度第2回</td>
+                    <td class="billname">核兵器禁止条約の調印・批准を政府に求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成29年度第4回</td>
+                    <td class="billname">北朝鮮問題をめぐる国際的緊張の高まりと平和的解決することを求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成28年度第3回</td>
+                    <td class="billname">介護保険の改悪中止を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成26年度第4回</td>
+                    <td class="billname">米価の安定対策を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成25年度第4回</td>
+                    <td class="billname">「原発事故子ども・被災者支援法」の基本方針案の見直しを求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成25年度第3回</td>
+                    <td class="billname">ＴＰＰ交渉参加撤回を求める意見書について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成19年度第2回</td>
+                    <td class="billname">厚生労働大臣の発言に強く抗議し少子化対策の充実を求める決議について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+                <tr>
+                    <td>平成17年度第1回</td>
+                    <td class="billname">松江市報酬費用弁償支給条例の一部改正について</td>
+                    <td>議会（議員・委員会）が提出</td>
+                </tr>
+            
+            </tbody>
+        </table>
+        </div>
+    </details>
+    
+</div>
+
+
+
+<div class="section" id="s-opinion">
+    
+    <h2>意見書</h2>
+    <div class="guide-text">
+        議員・委員会が提出した議案を、件名に「意見書」を含むかどうかで機械的に区分し、件名そのものを列挙しています。意見書は、市議会が国や県などに「こうしてほしい」と意思を示す文書です。
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>区分</th>
+                <th class="text-right">件数</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr>
+                <td>国や県などへの意見書</td>
+                <td class="text-right">187</td>
+            </tr>
+        
+            <tr>
+                <td>議会運営に関するもの</td>
+                <td class="text-right">67</td>
+            </tr>
+        
+            <tr>
+                <td>決議</td>
+                <td class="text-right">8</td>
+            </tr>
+        
+        </tbody>
+    </table>
+    
+    
+    <details class="bb-dd">
+        <summary>国や県などへの意見書の件名一覧</summary>
+        
+        <div class="subsection">
+            <h3>第6期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>令和7年度第6回</td>
+                        <td>小中学校の学校給食無償化を求める意見書</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和7年度第5回</td>
+                        <td>原子力発電施設等立地地域の振興に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和7年度第4回</td>
+                        <td>介護職員等の処遇改善への措置を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和7年度第4回</td>
+                        <td>地方財政の充実・強化に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和7年度第2回</td>
+                        <td>地方自治法施行令に定める少額随意契約の限度額の見直しを求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和7年度第2回</td>
+                        <td>高額療養費の自己負担引き上げ撤回を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第5期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>令和6年度第6回</td>
+                        <td>地方議会議員の厚生年金への加入を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第6回</td>
+                        <td>地方公共団体情報システムの標準化に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第6回</td>
+                        <td>質の高い公教育の再生及び教育予算の増額実現に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第5回</td>
+                        <td>半島振興法の延長及び充実に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第4回</td>
+                        <td>地方財政の充実・強化に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第4回</td>
+                        <td>緊急防災・減災事業債制度の継続・拡充を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第4回</td>
+                        <td>中国横断新幹線（伯備新幹線）及び山陰新幹線の整備促進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第5回</td>
+                        <td>企業版ふるさと納税制度の延長を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第5回</td>
+                        <td>緊急浚渫推進事業債の延長を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第5回</td>
+                        <td>認知症との共生社会の実現を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第4回</td>
+                        <td>全国一律の子どもの医療費助成制度の創設を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第3回</td>
+                        <td>地方財政の充実・強化に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第1回</td>
+                        <td>新型コロナウイルス感染症の後遺症の方々の日常を守る取り組みの強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第1回</td>
+                        <td>保育士の処遇改善と公定価格の見直しを国に求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第5回</td>
+                        <td>北朝鮮による日本人拉致問題の早期解決を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第5回</td>
+                        <td>太陽光発電施設の設置に関する法整備を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第5回</td>
+                        <td>地方路線バスを維持するための財政措置の拡充を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第4回</td>
+                        <td>公立中学校等における部活動の地域移行を円滑に進めるための意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第4回</td>
+                        <td>教育デジタルトランスフォーメーションを継続的・発展的に進めるための意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第3回</td>
+                        <td>国民の祝日「海の日」の7月20日への固定化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第2回</td>
+                        <td>新型コロナウイルス感染症に対し、迅速かつ速な支援を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第2回</td>
+                        <td>日米地位協定の改定を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第5回</td>
+                        <td>山陰新幹線及び中国横断新幹線（伯備新幹線）の整備促進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第5回</td>
+                        <td>75歳以上の医療費窓口負担2割への引き上げの中止を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第4回</td>
+                        <td>コロナ禍による厳しい財政状況に対し地方税財源の充実を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第4回</td>
+                        <td>水害対策を確実に実施するための支援を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第4回</td>
+                        <td>学校における教育体制の充実を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第4回</td>
+                        <td>核兵器廃絶及び四国関連島等における土地の利用状況の調査及び利用の規制等に関する法律の厳正な運用を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第3回</td>
+                        <td>学校教育におけるデジタルトランスフォーメーションを適切に進めるための意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第3回</td>
+                        <td>米価下落防止のためコメの政府買い入れを行い、生活困窮者への食糧支援に活用することを政府に求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第1回</td>
+                        <td>新型コロナウイルス感染症に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第1回</td>
+                        <td>新型コロナウイルス感染症に対するワクチンを希望する世界中全ての人に接種できるための施策を政府に求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第4期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>令和2年度第6回</td>
+                        <td>核兵器禁止条約の署名・批准を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第4回</td>
+                        <td>「少人数学級編制」の現行制度の拡充によるコロナ下での教育の質及び財源の確保を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第4回</td>
+                        <td>国土強靱化、老朽化対策を含む地方の社会資本整備の促進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第2回</td>
+                        <td>新型コロナウイルス感染症対策に伴う地方財政の充実・強化及び柔軟な運用を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第2回</td>
+                        <td>「ＦＩＴ制度」の抜本的見直しに向け地域の実態に基づく対策を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第2回</td>
+                        <td>黒川弘務東京高検検事長の定年を延長する閣議決定の撤回を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第1回</td>
+                        <td>公立・公的病院の再編・統合計画に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第1回</td>
+                        <td>新型コロナウイルス感染症対策に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和2年度第1回</td>
+                        <td>消費税率を5%に引き下げることを求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第4回</td>
+                        <td>教職員定数の改善及び義務教育国庫負担制度拡充に係る意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第4回</td>
+                        <td>過去最低となった食料自給率を引き上げる施策を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第4回</td>
+                        <td>「少人数学級編制」の現行制度堅持及び「子ども読書活動推進事業」（学校司書配置事業）の教育の質と財源確保を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第3回</td>
+                        <td>地方財政の充実・強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第3回</td>
+                        <td>主要農作物種子法に代わる島根県独自の条例制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第3回</td>
+                        <td>高齢者の安全運転支援と移動手段の確保を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第3回</td>
+                        <td>過去最低となった食料自給率を引き上げる施策を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第2回</td>
+                        <td>新たな過疎対策法の制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第2回</td>
+                        <td>公共施設等適正管理推進事業債（市町村役場機能緊急保全事業）の制度改善を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第2回</td>
+                        <td>地方創生のさらなる推進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第2回</td>
+                        <td>児童生徒の交通安全対策確保の促進に関する意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第2回</td>
+                        <td>視覚障がい有権者への選挙公報の充実を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第1回</td>
+                        <td>主要農作物種子法廃止に伴う万全の国際環境整備の施行を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第1回</td>
+                        <td>毎月勤労統計不正調査問題の全容解明を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和1年度第1回</td>
+                        <td>同一性障害者の性別の取扱いの特例に関する法律の改正及び関連法の整備を行うことを求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第4回</td>
+                        <td>幼児教育・保育の無償化実施に向けた支援措置を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第4回</td>
+                        <td>自動車税の根幹堅持等を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第4回</td>
+                        <td>「地方ローカル線」の維持・存続に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第4回</td>
+                        <td>大規模自然災害における防災・減災対策の充実強化を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第3回</td>
+                        <td>旧優生保護法による不妊手術の被害者救済を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第3回</td>
+                        <td>児童虐待防止対策のさらなる強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第3回</td>
+                        <td>小・中学校へのエアコン設置に係る国の補助を災害対応レベルにまで引き上げることを求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第2回</td>
+                        <td>地方財政の充実・強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第2回</td>
+                        <td>中小河川の河道掘削に要する予算の確保等を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第2回</td>
+                        <td>子どもと電子メディアに関する問題に対し、国に対策強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第2回</td>
+                        <td>核兵器禁止条約の調印・批准を政府に求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第1回</td>
+                        <td>精神障がいのある者の交通運賃割引を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第1回</td>
+                        <td>所有者不明の土地利用を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第1回</td>
+                        <td>森友学園問題の徹底解明を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第5回</td>
+                        <td>小中学校におけるプログラミング教育への支援を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第5回</td>
+                        <td>小中学校へのエアコン設置に係る補助の予算を拡充することを求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第4回</td>
+                        <td>地方財政の充実・強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第4回</td>
+                        <td>地方の社会資本整備促進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第4回</td>
+                        <td>北朝鮮問題をめぐる国際的緊張の高まりと平和的解決することを求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第4回</td>
+                        <td>性同一性障害の性別の取扱いの特例に関する法律の改正を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第3回</td>
+                        <td>働き方改革の推進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第3回</td>
+                        <td>ギャンブル等依存症対策の抜本的強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第3回</td>
+                        <td>すみやかな臨時国会召集を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第3回</td>
+                        <td>森林環境税（仮称）の早期創設の実現を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第1回</td>
+                        <td>高齢運転者の交通事故防止対策の推進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第3期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成28年度第4回</td>
+                        <td>地方議会議員の厚生年金への加入を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第4回</td>
+                        <td>奨学金制度の拡充を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第3回</td>
+                        <td>地方財政の充実・強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第3回</td>
+                        <td>高速道路の暫定２車線区間の安全対策等の推進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第3回</td>
+                        <td>参議院選挙における合区の解消を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第3回</td>
+                        <td>介護保険の改悪中止を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第3回</td>
+                        <td>性的指向および性自認等による差別等の困難の解消および支援のための法律の早期制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第2回</td>
+                        <td>次期介護保険制度改正における福祉用具、住宅改修の見直しに関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第2回</td>
+                        <td>地方法人課税の見直しに関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第2回</td>
+                        <td>政府関係機関の地方移転の実現による地方創生の一層の推進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第1回</td>
+                        <td>地域包括ケアシステムの構築に向けた取り組みの強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第1回</td>
+                        <td>地方公会計の整備促進に係る意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第5回</td>
+                        <td>児童虐待の防止に向けた体制強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第5回</td>
+                        <td>ＴＰＰ協定交渉の大筋合意に対する国内農林水産業への対策強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第4回</td>
+                        <td>地方財政の充実・強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第4回</td>
+                        <td>参議院選挙制度の見直しを求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第4回</td>
+                        <td>子育て支援の充実を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第4回</td>
+                        <td>生活困窮者自立支援法の事業推進と任意事業の財源拡充を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第3回</td>
+                        <td>医療機関に対する消費税制度の改善を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第3回</td>
+                        <td>マイナンバー制度の円滑な導入・運営を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第3回</td>
+                        <td>山陰への高速鉄道の実現を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第3回</td>
+                        <td>地方単独事業に係る国保の減額調整措置の見直しを求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第1回</td>
+                        <td>土砂災害防止対策の推進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第1回</td>
+                        <td>認知症に対する取り組みの強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第4回</td>
+                        <td>危険ドラッグの根絶に向けた総合的な対策の強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第4回</td>
+                        <td>米価の安定対策を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第4回</td>
+                        <td>軽度外傷性脳損傷に係る周知及びその受傷者に対する適切な支援の推進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第3回</td>
+                        <td>人口減少・超高齢社会に対応した施策の展開を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第3回</td>
+                        <td>半島振興法の延長及び充実に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第3回</td>
+                        <td>手話言語法制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第1回</td>
+                        <td>簡易水道と上水道の統合後の地方公営企業繰出金の充実に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第4回</td>
+                        <td>森林吸収源対策及び地球温暖化対策に関する地方の財源確保を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第4回</td>
+                        <td>地方税財源の充実確保を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第4回</td>
+                        <td>「原発事故子ども・被災者支援法」の基本方針案の見直しを求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第3回</td>
+                        <td>ホテル・旅館等建築物の耐震化の促進に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第3回</td>
+                        <td>ＴＰＰ交渉参加撤回を求める意見書について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第3回</td>
+                        <td>過労死防止基本法の制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第1回</td>
+                        <td>北朝鮮の核実験に抗議する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第2期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成24年度第4回</td>
+                        <td>地方の社会資本整備の促進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第4回</td>
+                        <td>安全・安心の医療・介護実現のための看護師等の夜勤改善・増員を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第4回</td>
+                        <td>介護職員処遇改善加算の継続、拡充を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第3回</td>
+                        <td>竹島の領土権確立に向けた対策強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第3回</td>
+                        <td>尖閣諸島上陸に抗議し、対策強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第3回</td>
+                        <td>地球温暖化対策に関する「地方財源を確保・充実する仕組み」の構築を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第2回</td>
+                        <td>基地対策予算の増額等を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第2回</td>
+                        <td>航空自衛隊美保基地周辺における生活環境の整備並びに地域振興策に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第2回</td>
+                        <td>「緊急事態基本法」の早期制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第1回</td>
+                        <td>東日本大震災で発生した災害廃棄物の処理に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成24年度第1回</td>
+                        <td>ＲＳＤ（反射性交感神経性ジストロフィー）の難病指定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第7回</td>
+                        <td>地方の社会資本整備等の促進を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第6回</td>
+                        <td>電力の安定需給対策に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第6回</td>
+                        <td>東日本大震災を踏まえ、松江市における避難道路の指定と早期完成を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第6回</td>
+                        <td>津波対策を早急に求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第6回</td>
+                        <td>高潮対策に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第6回</td>
+                        <td>地方消費者行政に対する国の実効的支援を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第2回</td>
+                        <td>子ども手当の地方負担に反対する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第2回</td>
+                        <td>外国資本による土地売買等に関する法整備を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第2回</td>
+                        <td>竹島の領有権に対して毅然とした対応を望む意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第2回</td>
+                        <td>Ｂ型肝炎訴訟の早期全面解決を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第2回</td>
+                        <td>性同一性障害者にかかる身体的治療に医療保険適用を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第2回</td>
+                        <td>環太平洋戦略的経済連携協定（ＴＰＰ）交渉参加反対に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成22年度第8回</td>
+                        <td>「原子力発電施設等立地地域の振興に関する特別措置法」の期限延長を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成22年度第8回</td>
+                        <td>北朝鮮の武力攻撃と拉致被害者問題に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成22年度第4回</td>
+                        <td>高齢者の肺炎球菌ワクチン接種への公費助成等に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成22年度第1回</td>
+                        <td>中国横断自動車道尾道松江線、山陰自動車道の早期全線開通を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成22年度第1回</td>
+                        <td>政府として直接地方の声を聞く仕組みを保障することを求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成22年度第1回</td>
+                        <td>選択的夫婦別姓のための民法改正に反対する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成22年度第1回</td>
+                        <td>永住外国人への地方参政権付与の法制化に反対する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第8回</td>
+                        <td>改正貸金業法の早期完全施行等を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第4回</td>
+                        <td>脳脊髄液減少症患者の救済を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第4回</td>
+                        <td>肝炎対策のための基本法の制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第4回</td>
+                        <td>基地対策予算の増額を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第4回</td>
+                        <td>核兵器廃絶の国際条約締結をめざし、政府の具体的努力を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第2回</td>
+                        <td>貧困の連鎖を断ち切り、市民の生活を底上げすることを求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第1期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成20年度第6回</td>
+                        <td>「協同労働の協同組合法（仮称）」の速やかな制定を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第6回</td>
+                        <td>ミニマムアクセス米の輸入停止を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第6回</td>
+                        <td>穀物、資材等の高騰対策に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第4回</td>
+                        <td>漁業用燃油高騰に対する緊急支援措置を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第4回</td>
+                        <td>新たな過疎対策法の制定に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第1回</td>
+                        <td>「性同一性障害者の性別の取扱いの特例に関する法律」の改正を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第7回</td>
+                        <td>割賦販売法の抜本的改正に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第7回</td>
+                        <td>森林の整備、林業・林産業の振興に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第7回</td>
+                        <td>地方の道路整備の財源確保に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第6回</td>
+                        <td>肝炎問題の早期全面解決とウイルス性肝炎患者の早期救済を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第6回</td>
+                        <td>地方財政の充実・強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第6回</td>
+                        <td>障害者自立支援法における利用者負担の軽減措置の拡充等に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第4回</td>
+                        <td>療養病床の廃止・削減計画の中止を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第4回</td>
+                        <td>ＷＴＯ及び日豪ＥＰＡ／ＦＴＡ交渉に対する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第4回</td>
+                        <td>全国森林環境税の創設を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第2回</td>
+                        <td>リハビリテーションの日数制限の改善を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成18年度第3回</td>
+                        <td>道路整備の財源確保に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成18年度第3回</td>
+                        <td>地方財政の充実・強化を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成18年度第2回</td>
+                        <td>基地対策予算の増額等を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成18年度第2回</td>
+                        <td>「出資の受入れ、預り金及び金利等の取締りに関する法律」及び「貸金業の規制等に関する法律」の改正を求める意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第6回</td>
+                        <td>「真の地方分権改革の確実な実現」に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第6回</td>
+                        <td>議会制度改革の早期実現に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第3回</td>
+                        <td>道路整備の財源確保に関する意見書について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第2回</td>
+                        <td>地方議会制度の充実強化に関する意見書について</td>
+                        <td>可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第2回</td>
+                        <td>地方六団体改革案の早期実現に関する意見書について</td>
+                        <td>可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第2回</td>
+                        <td>玉造厚生年金病院・玉造厚生年金保養ホームの存続を求める意見書について</td>
+                        <td>可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+    </details>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>議会運営に関するものの件名一覧</summary>
+        
+        <div class="subsection">
+            <h3>第6期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>令和7年度第6回</td>
+                        <td>松江市議会の個人情報の保護に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和7年度第3回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和7年度第2回</td>
+                        <td>松江市議会の個人情報の保護に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第5期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>令和6年度第3回</td>
+                        <td>松江市議会議員定数条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第2回</td>
+                        <td>松江市議会議員の請負の状況の公表に関する条例の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第2回</td>
+                        <td>松江市中高層建築物の建築に係る手続に関する条例の一部を改正する条例について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和6年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第5回</td>
+                        <td>松江市議会の個人情報の保護に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第1回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第1回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第5回</td>
+                        <td>松江市議会の個人情報の保護に関する条例の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第3回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和3年度第1回</td>
+                        <td>専決処分事項の指定についての一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第4期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成30年度第3回</td>
+                        <td>松江市議会議員の議員報酬、費用弁償及び期末手当に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第1回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成30年度第1回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第5回</td>
+                        <td>松江市議会政務活動費の交付に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第5回</td>
+                        <td>松江市議会政務活動費の交付に関する規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第3回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第2回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成29年度第2回</td>
+                        <td>松江市議会会議傍聴規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第3期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成28年度第1回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第1回</td>
+                        <td>松江市議会政務活動費の交付に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成28年度第1回</td>
+                        <td>松江市議会政務活動費の交付に関する規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第3回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第1回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第2回</td>
+                        <td>松江市自転車安全利用条例の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成26年度第1回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第4回</td>
+                        <td>松江市議会政務活動費の交付に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第1回</td>
+                        <td>松江市議会政務調査費の交付に関する条例の全部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第1回</td>
+                        <td>松江市議会基本条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第1回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成25年度第1回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第2期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成24年度第2回</td>
+                        <td>松江市議会議員定数条例の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第7回</td>
+                        <td>まちづくり対策特別委員会の付議事件の変更について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第5回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第5回</td>
+                        <td>松江市議会政務調査費の交付に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成23年度第4回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第3回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第3回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第3回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第2回</td>
+                        <td>松江市議会政務調査費の交付に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成21年度第2回</td>
+                        <td>松江市議会議員の議員報酬、費用弁償及び期末手当に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第1期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成20年度第6回</td>
+                        <td>松江市議会基本条例の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第6回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第6回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第6回</td>
+                        <td>松江市議会議員の議員報酬、費用弁償及び期末手当に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成20年度第4回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第2回</td>
+                        <td>松江市議会事務局設置条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第2回</td>
+                        <td>松江市議会政務調査費の交付に関する条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第2回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成19年度第2回</td>
+                        <td>松江市議会会議規則の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成18年度第3回</td>
+                        <td>地球環境保全と平和都市宣言について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第1回</td>
+                        <td>松江市議会会議規則の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第1回</td>
+                        <td>松江市議会事務局設置条例の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第1回</td>
+                        <td>松江市議会委員会条例の制定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第1回</td>
+                        <td>専決処分事項の指定について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第1回</td>
+                        <td>松江市報酬費用弁償支給条例の一部改正について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第1回</td>
+                        <td>松江市報酬費用弁償支給条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第1回</td>
+                        <td>松江市議会委員会条例の一部改正について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+    </details>
+    
+    
+    
+    <details class="bb-dd">
+        <summary>決議の件名一覧</summary>
+        
+        <div class="subsection">
+            <h3>第5期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>令和6年度第2回</td>
+                        <td>松江市の歴史的・文化的な街並みと景観保全に関する決議について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和5年度第5回</td>
+                        <td>パレスチナ地域における人道支援に関する決議について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>令和4年度第2回</td>
+                        <td>ロシアのウクライナにおける武力侵攻に対する決議について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第3期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成28年度第3回</td>
+                        <td>北朝鮮の核実験に抗議する決議について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成27年度第5回</td>
+                        <td>「議第288号　平成27年度松江市一般会計補正予算（第３号）」に対する附帯決議</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第2期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成24年度第1回</td>
+                        <td>東日本大震災で発生した災害廃棄物の受け入れに関する決議について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subsection">
+            <h3>第1期</h3>
+            
+            <table class="bb-item-table">
+                <thead>
+                    <tr>
+                        <th class="bb-col-session">年度・会議</th>
+                        <th>件名</th>
+                        <th class="bb-col-result">結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>平成19年度第2回</td>
+                        <td>厚生労働大臣の発言に強く抗議し少子化対策の充実を求める決議について</td>
+                        <td>否決</td>
+                    </tr>
+                
+                    <tr>
+                        <td>平成17年度第3回</td>
+                        <td>県立定時制・通信制高校の誘致に関する要望決議について</td>
+                        <td>原案可決</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+        
+    </details>
+    
+    
+</div>
+
+
+
+
+<div class="section" id="s-voice">
+    <h2>市民の声（請願・陳情）</h2>
+    <div class="guide-text">
+        市民が議会に届けた請願・陳情 283件がどう扱われたかです。源泉は請願・陳情審査結果表で、上の議案の集計とは重複させていません。
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>最終の結果</th>
+                <th class="text-right">件数</th>
+                <th class="text-right">構成比</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr>
+                
+                <td><span class="glossary-inline"><details><summary>採択</summary><span class="glossary-inline-text">議会が請願・陳情の内容をもっともだと認め、受け入れること</span></details></span></td>
+                
+                <td class="text-right">84</td>
+                <td class="text-right">29.7%</td>
+            </tr>
+        
+            <tr>
+                
+                <td>不採択</td>
+                
+                <td class="text-right">178</td>
+                <td class="text-right">62.9%</td>
+            </tr>
+        
+            <tr>
+                
+                <td>取下げ</td>
+                
+                <td class="text-right">15</td>
+                <td class="text-right">5.3%</td>
+            </tr>
+        
+            <tr>
+                
+                <td><span class="glossary-inline"><details><summary>審査中</summary><span class="glossary-inline-text">継続審査のまま、まだ結論が出ていないもの</span></details></span></td>
+                
+                <td class="text-right">6</td>
+                <td class="text-right">2.1%</td>
+            </tr>
+        
+        </tbody>
+    </table>
+    
+    
+    
+    <div class="guide-text">
+        同じ請願・陳情が複数の会議で審査された場合は 1 件として数え、最終の結果で示しています。
+    </div>
+    
+    
+    <details class="bb-dd">
+        <summary>審査に複数の会議を要した請願・陳情</summary>
+        
+        <div class="guide-text">
+            同じ件名の請願・陳情が複数の団体・個人から別々に提出された場合は、1行にまとめて件数を示しています（提出者の氏名・団体名は表示していません）。
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>件名</th>
+                    <th class="text-right">件数</th>
+                    <th>期間</th>
+                    <th class="text-right">審査した会議</th>
+                    <th>最終の結果</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>島根原発におけるプルサーマル実施計画に関することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成17年度〜平成21年度</td>
+                    <td class="text-right">16会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>プルサーマル計画に関することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度〜平成21年度</td>
+                    <td class="text-right">11会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>大橋川改修事業について</td>
+                    <td class="text-right">6件（陳情6）</td>
+                    <td>平成19年度〜平成20年度</td>
+                    <td class="text-right">4〜7会議</td>
+                    
+                    <td>取下げ</td>
+                </tr>
+            
+                <tr>
+                    <td>市街化区域と市街化調整区域を定めた松江市の線引き制度を廃止することについて</td>
+                    <td class="text-right">5件（請願3・陳情2）</td>
+                    <td>平成23年度〜平成25年度</td>
+                    <td class="text-right">4〜6会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>第五大橋道路開通に伴う松東地域のまちづくりと線引き制度の見直しについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成23年度〜平成25年度</td>
+                    <td class="text-right">6会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>情報通信環境の早期改善について</td>
+                    <td class="text-right">—</td>
+                    <td>平成17年度〜平成18年度</td>
+                    <td class="text-right">6会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>島根原発をなくし、再生可能エネルギーへの転換を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度〜平成25年度</td>
+                    <td class="text-right">5会議</td>
+                    
+                    <td>審査中</td>
+                </tr>
+            
+                <tr>
+                    <td>市街化調整区域廃止について</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度〜平成25年度</td>
+                    <td class="text-right">5会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>松江市における都市計画法に基づく線引き制度の廃止について</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度〜平成25年度</td>
+                    <td class="text-right">5会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>公的保育制度の堅持・拡充と子育て支援予算の増額を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">5会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>現行保育制度の堅持・拡充と保育・学童保育・子育て支援予算の大幅増額を求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">5会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>若年層に対する自立支援・生活支援を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成20年度〜平成21年度</td>
+                    <td class="text-right">5会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>「肝炎問題の早期全面解決とウイルス性肝炎患者の早期救済を求める意見書」の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度〜平成19年度</td>
+                    <td class="text-right">5会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>気候保護法制定についての国への意見書採択を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">4会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>国の療養病床の廃止・削減計画の中止等の意見書採択等を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度〜平成19年度</td>
+                    <td class="text-right">4会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>消費者行政の充実強化を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成17年度〜平成18年度</td>
+                    <td class="text-right">4会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>携帯電話基地局設置に際し、地元説明が十分行われるよう指導を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度〜平成25年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>取下げ</td>
+                </tr>
+            
+                <tr>
+                    <td>電磁波の健康被害対策を国に求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度〜平成25年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>取下げ</td>
+                </tr>
+            
+                <tr>
+                    <td>出雲玉作資料館・鹿島歴史民俗資料館の常時開館展示と活用について</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>子ども手当の廃止を求める意見書の提出に関することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成22年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>安心・安全な公共事業を推進するため、国土交通省の事務所・出張所の存続を求める意見書の採択について</td>
+                    <td class="text-right">—</td>
+                    <td>平成22年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>後期高齢者医療制度をめぐることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>性同一性障害者の性別の取扱いの特例に関する法律の抜本的な改正を国、関係省庁、および衆参両議院議長へ意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>取下げ</td>
+                </tr>
+            
+                <tr>
+                    <td>日米ＦＴＡ交渉を行わないことを求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>県の福祉医療費助成制度の定率（応益）負担を廃止・撤回し定額負担に戻すことを求める意見書採択について</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>「国の社会保障費削減方針撤回」の意見書採択を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成20年度〜平成21年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>審査中</td>
+                </tr>
+            
+                <tr>
+                    <td>永住外国人への地方参政権付与を日本政府に求める意見書を採択しないよう求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成20年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>農薬空中散布に関することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成19年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>出雲の風力発電計画について</td>
+                    <td class="text-right">—</td>
+                    <td>平成17年度〜平成18年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>平田地区風力発電建設計画検討調査要望について</td>
+                    <td class="text-right">—</td>
+                    <td>平成17年度〜平成18年度</td>
+                    <td class="text-right">3会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>軽度外傷性脳損傷の周知及び労災認定基準の改正などを求める意見書の提出について</td>
+                    <td class="text-right">—</td>
+                    <td>平成26年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>集団的自衛権行使を容認する憲法解釈の変更を行わないことを求める意見書の提出について</td>
+                    <td class="text-right">—</td>
+                    <td>平成26年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>性同一性障害者の性別の取扱いの特例に関する法律を廃し、新たに性同一性障がいに関連する人権の保障に関する法律の制定を国に求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度〜平成25年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>日本軍「慰安婦」問題への誠実な対応を求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成25年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>認知症対応型共同生活介護事業所における低所得者への負担軽減事業の実施に関することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成25年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>介護職員処遇改善加算の継続、拡充を求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>安全・安心の医療・介護実現のための看護師等の夜勤改善・大幅増員を求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>松江市の小中学校の図書室から「はだしのゲン」の撤去を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成24年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>第五大橋道路開通に伴う東川津地区のまちづくり事業推進について</td>
+                    <td class="text-right">—</td>
+                    <td>平成23年度〜平成24年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>地域医療と国立病院の充実を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成22年度〜平成23年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>松江市原子力発電所環境安全対策協議会委員の公募を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成23年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>環太平洋経済連携協定（ＴＰＰ）に反対する意見書提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成22年度〜平成23年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>Ｂ型肝炎訴訟の早期全面解決を求める意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成22年度〜平成23年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>人権擁護法の成立に反対することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成22年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>後期高齢者医療制度を廃止し高齢者が安心できる医療制度創設の意見書採択を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成21年度〜平成22年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>高齢者への肺炎球菌ワクチン接種の推進と接種への公費助成を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成22年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>貧困の連鎖を断ち切り、市民の生活の底上げを求める意見書を政府等に提出することについて</td>
+                    <td class="text-right">2件（請願2）</td>
+                    <td>平成20年度〜平成21年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>「協同労働の協同組合法（仮称）の速やかな制定を求める意見書」採択を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成20年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>「性同一性障害者の性別の取扱いの特例に関する法律」の見直し等を求める意見書の提出等を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成19年度〜平成20年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>ミニマムアクセス米の輸入停止を求める意見書提出について</td>
+                    <td class="text-right">—</td>
+                    <td>平成20年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>健康保険でよい歯科医療の実現を求める意見書採択について</td>
+                    <td class="text-right">—</td>
+                    <td>平成19年度〜平成20年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>政府に対し「燃油、穀物、資材等の高騰から中小業者・国民の営業とくらしを守る対策を早急に講じるように」との意見書採択を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成20年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+                <tr>
+                    <td>自主共済制度を保険業法の適用から除外するよう求める意見書採択について</td>
+                    <td class="text-right">—</td>
+                    <td>平成20年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>内閣および関係省庁に対し、性同一性障害に関する意見書の提出を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度〜平成19年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>性同一性障害を有する者に対する差別禁止条例の制定を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度〜平成19年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>松江市中高層建築物の建築に関する指導要綱並びに取扱いの変更について</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度〜平成19年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>松江管工事事業協同組合員をはじめとする市内業者への優先発注のお願いについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度〜平成19年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>取下げ</td>
+                </tr>
+            
+                <tr>
+                    <td>「医療制度改革関連法案」の廃案を要望する意見書採択を求めることについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>不採択</td>
+                </tr>
+            
+                <tr>
+                    <td>松江市発注の公共工事に関することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成18年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>取下げ</td>
+                </tr>
+            
+                <tr>
+                    <td>松江市における自然エネルギー利用の拡大に関することについて</td>
+                    <td class="text-right">—</td>
+                    <td>平成17年度</td>
+                    <td class="text-right">2会議</td>
+                    
+                    <td>採択</td>
+                </tr>
+            
+            </tbody>
+        </table>
+    </details>
+    
+    
+    <div class="subsection">
+        <h3>請願と陳情の区分</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>区分</th>
+                    <th class="text-right">件数</th>
+                    
+                    <th class="text-right">採択</th>
+                    
+                    <th class="text-right">不採択</th>
+                    
+                    <th class="text-right">取下げ</th>
+                    
+                    <th class="text-right">審査中</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td>請願</td>
+                    <td class="text-right">36</td>
+                    
+                    <td class="text-right">18</td>
+                    
+                    <td class="text-right">17</td>
+                    
+                    <td class="text-right">0</td>
+                    
+                    <td class="text-right">1</td>
+                    
+                </tr>
+            
+                <tr>
+                    <td>陳情</td>
+                    <td class="text-right">247</td>
+                    
+                    <td class="text-right">66</td>
+                    
+                    <td class="text-right">161</td>
+                    
+                    <td class="text-right">15</td>
+                    
+                    <td class="text-right">5</td>
+                    
+                </tr>
+            
+            </tbody>
+        </table>
+    </div>
+    
+    
+    <div class="chart-container">
+        <canvas id="chart-bb-petition-period"></canvas>
+    </div>
+    
+    
+    <table>
+        <thead>
+            <tr>
+                <th>期</th>
+                <th class="text-right">件数</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr>
+                <td>第1期</td>
+                <td class="text-right">69</td>
+            </tr>
+        
+            <tr>
+                <td>第2期</td>
+                <td class="text-right">62</td>
+            </tr>
+        
+            <tr>
+                <td>第3期</td>
+                <td class="text-right">52</td>
+            </tr>
+        
+            <tr>
+                <td>第4期</td>
+                <td class="text-right">33</td>
+            </tr>
+        
+            <tr>
+                <td>第5期</td>
+                <td class="text-right">61</td>
+            </tr>
+        
+            <tr>
+                <td>第6期</td>
+                <td class="text-right">6</td>
+            </tr>
+        
+        </tbody>
+    </table>
+    
+</div>
+
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v6.3.0</p>
+                    
+                    <p class="project-credit">
+                        松江市議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // テーマパステルパレット（積み上げ・ドーナツ用）
+      window.THEME_PASTEL_PALETTE = [
+        '#93c5fd', '#fdba74', '#86efac', '#c4b5fd',
+        '#fca5a5', '#67e8f9', '#fde68a', '#f9a8d4', '#cbd5e1'
+      ];
+
+      // 議会レポート 8テーマ配色定数（積み上げグラフ専用）
+      window.THEME_COLORS = {
+        '暮らしの安全': '#dc2626',
+        '子育て・教育': '#ea580c',
+        '医療・福祉': '#2563eb',
+        '産業・雇用': '#059669',
+        '都市基盤': '#7c3aed',
+        '市政運営': '#0891b2',
+        '原子力・エネルギー': '#d97706',
+        '観光・文化': '#c026d3',
+        'その他': '#94a3b8'
+      };
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+
+<script>
+(function() {
+    if (chartjsFailed) { initChartFallback(); return; }
+
+    var cd = {"period_role_stacked": {"datasets": [{"backgroundColor": "#2c3a70", "data": [336, 312, 226, 205, 220, 55], "label": "\u304a\u91d1\u3092\u6c7a\u3081\u308b\uff08\u4e88\u7b97\uff09"}, {"backgroundColor": "#3a4a8c", "data": [273, 255, 263, 350, 229, 72], "label": "\u30eb\u30fc\u30eb\u3092\u4f5c\u308b\uff08\u6761\u4f8b\uff09"}, {"backgroundColor": "#505fa4", "data": [367, 346, 416, 422, 372, 76], "label": "\u57f7\u884c\u3092\u627f\u8a8d\u3059\u308b"}, {"backgroundColor": "#6b78ba", "data": [47, 70, 66, 103, 83, 11], "label": "\u4eba\u3092\u627f\u8a8d\u3059\u308b"}, {"backgroundColor": "#8e99d2", "data": [577, 443, 320, 303, 320, 69], "label": "\u30c1\u30a7\u30c3\u30af\u3059\u308b"}, {"backgroundColor": "#b4bce6", "data": [45, 47, 55, 59, 47, 9], "label": "\u610f\u601d\u3092\u793a\u3059\u30fb\u5e02\u6c11\u306e\u58f0\u3092\u53d7\u3051\u308b"}, {"backgroundColor": "#cbd5e1", "data": [0, 0, 0, 0, 0, 0], "label": "\u305d\u306e\u4ed6"}], "labels": ["\u7b2c1\u671f", "\u7b2c2\u671f", "\u7b2c3\u671f", "\u7b2c4\u671f", "\u7b2c5\u671f", "\u7b2c6\u671f"]}, "petition_period_stacked": {"datasets": [{"backgroundColor": "#2c3a70", "data": [30, 23, 14, 8, 9, 0], "label": "\u63a1\u629e"}, {"backgroundColor": "#3a4a8c", "data": [30, 35, 32, 24, 51, 6], "label": "\u4e0d\u63a1\u629e"}, {"backgroundColor": "#505fa4", "data": [9, 1, 3, 1, 1, 0], "label": "\u53d6\u4e0b\u3052"}, {"backgroundColor": "#6b78ba", "data": [0, 3, 3, 0, 0, 0], "label": "\u5be9\u67fb\u4e2d"}], "labels": ["\u7b2c1\u671f", "\u7b2c2\u671f", "\u7b2c3\u671f", "\u7b2c4\u671f", "\u7b2c5\u671f", "\u7b2c6\u671f"]}};
+
+    // #395 harmonize: 6 役割・提出者別の独立棒と請願結果ドーナツは撤去し、
+    // 件数・構成比の表＋役割プルダウンで代替（no-JS 既定到達）。維持するのは
+    // 期別×役割・請願期別の積み上げ棒 2 図のみ（藍 1 色相階調）。撤去 3 図の
+    // 円グラフ描画関数・中央テキストプラグイン・独立棒の初期化は削除した。
+
+    function stackedBarChart(elementId, chart) {
+        new Chart(document.getElementById(elementId), {
+            type: 'bar',
+            data: chart,
+            options: {
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.raw + '件';
+                            }
+                        }
+                    },
+                    legend: { display: true, position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    // 期別×役割 積み上げ縦棒
+    if (cd.period_role_stacked) {
+        stackedBarChart('chart-bb-period-role', cd.period_role_stacked);
+    }
+
+
+    // 市民の声: 期別積み上げ縦棒
+    if (cd.petition_period_stacked) {
+        stackedBarChart('chart-bb-petition-period', cd.petition_period_stacked);
+    }
+
+})();
+</script>
+
+
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
