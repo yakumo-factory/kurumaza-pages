@@ -1,0 +1,3651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原発再稼働 — 当たった質問の全件 | 3市くらべ</title>
+<style>
+/* 3市くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share2:#eef1f9;   /* 2市共有 */
+  --share3:#d9e0f4;   /* 3市共有（2市より強い） */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×3市（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh2{background:var(--share2);border-radius:3px;padding:0 4px}
+table.years li.sh3{background:var(--share3);border-radius:3px;padding:0 4px;font-weight:600}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;width:30px;text-align:center;border-radius:3px;margin:0 4px;font-size:.8rem}
+.legend .c2{background:var(--share2)}
+.legend .c3{background:var(--share3);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">3市くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">3市くらべ</a> ／ 原発再稼働</nav>
+
+  <h1 class="page-title">原発再稼働 — 当たった質問</h1>
+  <p class="page-subtitle">
+    話題の束「原発再稼働」に当たった質問の全件です（全563件）。
+    市ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">412件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・林干城</span>
+          <span class="ttl">ビッグプロジェクトと大橋川改修</span>
+          <span class="sum">第五大橋、原発3号機・プルサーマルへの所見、原発交付金の充当先、大橋川改修基本構想の範囲と森山堤防開削の改修事業への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">プルサーマルとテロ対策</span>
+          <span class="sum">プルトニウムを扱うプルサーマル計画では通常の原発より厳しいテロ対策が要求されるのではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">プルサーマルによる危険性増大</span>
+          <span class="sum">国がプルサーマルによる原発運転の危険性増大を認めた中で、安全基準に余裕があるから危険が増してもよいという考え方と、安全性を第一とする市の姿勢との違いをどう考えるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">プルサーマル計画の問題点</span>
+          <span class="sum">同型原発への実績が2体しかないこと、使用済MOX燃料の処理法未確立、エネルギー収支、安全余裕の低下の4点について市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">使用済みMOX燃料の処理</span>
+          <span class="sum">プルサーマルの前提となる使用済みMOX燃料の再処理のめどが立たないまま見切り発車すれば、危険な使用済みMOX燃料が松江市内の原発に大量に残る懸念があるとし、国の確約なしに同意すべきでないと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・勝部加代</span>
+          <span class="ttl">協議会委員の男女共同参画</span>
+          <span class="sum">原子力発電所環境安全対策協議会等で女性委員が極端に少ない現状を踏まえ、既存団体からの選出方式の改善を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・三島進</span>
+          <span class="ttl">原子力防災と市民啓発</span>
+          <span class="sum">原発立地市としての新市地域防災計画の策定方針と、旧3市町村以外の住民を含めた原子力への理解・意識啓発の進め方を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">原発トラブルと防災体制</span>
+          <span class="sum">2号機再循環ポンプの水漏れ頻発の徹底究明、山陰の気象や複合災害を想定した避難計画、学校・保育所への沃素剤配備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">原発勉強会と最終処分・プルサーマル</span>
+          <span class="sum">経産省の専門家を招いた勉強会に賛成・反対の結論を出した自治体の招致を提案し、高レベル放射性廃棄物の最終処分場のめどが立たない中でプルサーマル計画には反対を表明すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">原発安全協定とプルサーマル</span>
+          <span class="sum">安全協定見直しに際し技術連絡会設置や運転停止措置など全国の事例を協定に盛り込むよう求め、安全性に疑問のあるプルサーマルを人口密集地の原発で行うべきでないとし、ヨウ素剤の学校常備や10キロ圏内の施設数・児童生徒数を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">原発安全協定の改正</span>
+          <span class="sum">唯一の原発立地県庁所在地として、関連企業指導・被曝低減・運転停止の明記・住民代表の立入同行・風評被害補償など他県並みの安全協定への改正を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">原発担当部局と自然エネルギー</span>
+          <span class="sum">原子力安全対策室の課への格上げ、専門人材の起用状況、中電からの匿名寄附を受け取らない姿勢、廃止された太陽光発電補助制度の復活を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">原発新安全協定と立入調査</span>
+          <span class="sum">2月2日締結の新安全協定について、立入調査に参加する周辺住民の対象、風評被害の査定・集計方法と行政の関与のシステムを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・三島進</span>
+          <span class="ttl">原発関連の交付金と特措法</span>
+          <span class="sum">来年度中の導入県に限り10年60億円を交付する新交付金制度への所見と、原発特措法の特別措置が一般財源化で失われた影響額を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">国民保護計画と原発</span>
+          <span class="sum">国民保護対策本部条例等の制定スケジュールと市民意見反映の方法を問い、原発設置に武力攻撃リスクが想定されていない点や、プルサーマルが県検討委員会の項目に入っていない点、市民投票やヨウ素剤配備について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・山本勝太郎</span>
+          <span class="ttl">島根原子力発電所と原子力行政</span>
+          <span class="sum">旧鹿島町の共存共栄のまちづくりへの所見、京都議定書を踏まえた原子力行政への所見を問い、プルサーマル住民説明会・県の懇談会の状況、プルサーマル受け入れ交付金制度や玄海町の同意状況への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・三島良信</span>
+          <span class="ttl">島根原発と安全協定・プルサーマル</span>
+          <span class="sum">立地市としての原子力への基本認識、各協定を一本化する安全協定締結の進捗時期、中電から申し入れのあったプルサーマル計画への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・角田正紀</span>
+          <span class="ttl">島根原発の安全協定と沃素剤</span>
+          <span class="sum">20万都市として旧鹿島町とは異なる安全協定を、安全運転を含みわかりやすく年内締結する理由、学校への沃素剤配備の時期を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">市民意見の集約と防災訓練</span>
+          <span class="sum">プルサーマルへの市民意見の集約方法として住民投票も視野に入れるよう求め、直下型地震との複合型事故を想定した原発防災訓練を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・角田正紀</span>
+          <span class="ttl">武力攻撃原子力災害とプルサーマル</span>
+          <span class="sum">原発への武力攻撃で放射性物質放出の可能性を低いとする計画の矛盾を指摘し、テロ回避の観点からプルサーマル計画の断念を主張した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">沃素剤の学校配備</span>
+          <span class="sum">原発10キロ圏内の小中高校への沃素剤配備について、事業主体である県が配備の意義・取扱要綱を表明すべきとし、具体的計画・住民周知の方法、誤飲対策・沃素過敏症の事前把握、胎児・新生児・乳幼児への対応、防災従事者の過敏症チェックと業務配慮を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・田中豊昭</span>
+          <span class="ttl">県道御津東生馬線の改修</span>
+          <span class="sum">原発3号機着工までの完成を約束された県道御津東生馬線の工事の遅れを指摘し、西生馬工区の早期完成を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・安部吉輝</span>
+          <span class="ttl">プルサーマルと原発耐震安全性</span>
+          <span class="sum">島根原発2号機のデフレクタ不具合や本庄町の新活断層発見を踏まえた信頼性、新耐震指針の内容と既設炉への適用、二段階方式の可否判断手順、核燃料サイクル交付金への市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・片寄直行</span>
+          <span class="ttl">中国電力と原発問題</span>
+          <span class="sum">データ改ざん等の不祥事で信頼を失墜した中国電力の活断層調査を公正な第三者に委ねることと、信頼が崩れた中でのプルサーマル了解撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・西村びん</span>
+          <span class="ttl">使用済みMOX燃料の処理</span>
+          <span class="sum">処理先の見通しが立たない使用済みMOX燃料について、島根原発受け入れ当時と同様に速やかな搬出を国に約束させることを可否判断の条件とすべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・森脇勇人</span>
+          <span class="ttl">北朝鮮ミサイルと防衛計画</span>
+          <span class="sum">北朝鮮のミサイル発射実験を受け、原発とレーダーサイトを持つ松江市として迎撃ミサイル配備の県との協議、近隣市や立地地域との共同での国への要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・石倉幹</span>
+          <span class="ttl">原発とプルサーマルの安全性</span>
+          <span class="sum">プルサーマル説明会の参加状況と市民理解の変化、新耐震指針を踏まえた島根原発1〜3号機の耐震安全性判断、本庄町のトレンチ調査結果への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・片寄直行</span>
+          <span class="ttl">原発とプルサーマル計画</span>
+          <span class="sum">新耐震指針による2号機の見極めをまず行うべきこと、プルサーマルアンケートで反対が上回った市民理解、世界に例のない高含有率の実験を営業炉で行う問題、耐震安全性を設置変更許可申請の了承前に議論すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・角田正紀</span>
+          <span class="ttl">原発の活断層と耐震設計</span>
+          <span class="sum">本庄町で新たに発見された活断層と新耐震指針が島根原発1〜3号機に及ぼす影響、中国電力に科学的根拠に基づく耐震設計の見直しを申し入れるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・西村びん</span>
+          <span class="ttl">原発の防災訓練と耐震問題</span>
+          <span class="sum">原発災害は民間企業による人災として中電に訓練の応分負担を求め、活断層と原発事故の複合災害を想定した訓練や教師研修・科学的な原子力防災学習、大量放射能拡散を想定した訓練、活断層20キロ超・高経年化・建屋強度を考慮した耐震評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・片寄直行</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">地域防災計画原子力災害編で放射性物質の漏えいを想定していない前提と被曝を想定した記述の矛盾を指摘し、住民にわかる記述への改定と、学校配布ヨウ素剤の服用要綱が未整備な原因・対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・渡部美津子</span>
+          <span class="ttl">実質公債費比率と債務負担行為・塩漬け土地</span>
+          <span class="sum">一般会計及び企業団地・簡易水道・集落排水・下水道の各特別会計決算を対象に、実質公債費比率で財政全体をコントロールできるかの読み解き方、債務負担行為現在高135億円の内容開示、特別会計の中期見通し策定、土地開発公社の朝日ヒルズ等塩漬け土地の含み損と繰り上げ充用の経理手法、原発交付金の今後の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・西村びん</span>
+          <span class="ttl">島根原発の活断層と3号炉</span>
+          <span class="sum">専門学者が21キロにわたる活断層を実証しつつある島根原発周辺について、中電にトレンチ調査まで含めた徹底調査を要求し、県に3号炉計画の再検討を促すこと、データ改ざんが解明されるまでの運転停止を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・林干城</span>
+          <span class="ttl">川部の活断層と原発の不安</span>
+          <span class="sum">川部で発見された活断層について地元の不安払拭に向け、国・県と連携し中国電力に科学的根拠の説明を促すよう気にとめてほしいと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中豊昭</span>
+          <span class="ttl">産業振興と定住対策</span>
+          <span class="sum">松江藩御立派の改革を例に地域外から資金を稼ぐ製造業の振興、東出雲の人口増と新市まちづくり計画への認識、原発3号機関連の人口動態、使用済み核燃料税の課税による産業振興を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">プルサーマル計画の1次審査</span>
+          <span class="sum">耐震指針改定による活断層調査が途上であるのに島根原発2号機プルサーマル計画の国の1次審査が通ったことへの疑問を示し、市の質問への回答なしに進めることの是非と1次審査終了への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">中国電力の姿勢とプルサーマル凍結</span>
+          <span class="sum">島根原発29件の保安規程違反等を指摘し、中国電力の姿勢への市長の評価、責任放棄発言への感想、一連の不正解決までのプルサーマル凍結、交付金算定ミス分の遡及交付を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・斎藤菊市</span>
+          <span class="ttl">企業立地と電気料金半額制度</span>
+          <span class="sum">原子力発電等周辺地域の企業立地支援給付金（電気料金半額制度）の活用実績（件数・金額・市内外企業別）を問い、東出雲町や出雲市と比べ土地が高いことをネックとして企業立地の優位性の判断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・斎藤菊市</span>
+          <span class="ttl">原子力発電の安全審査とプルサーマル</span>
+          <span class="sum">国の1次審査終了と2次審査の見通し、中国電力の活断層調査状況、これらの評価を踏まえたプルサーマル全体のスケジュールの見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・片寄直行</span>
+          <span class="ttl">原発と地域防災計画の見直し</span>
+          <span class="sum">複合災害の避難ルート策定の成果を問い、20キロ超とされる宍道断層によるマグニチュード7以上の地震想定、県との地域防災計画見直し検討委員会の立ち上げ、除外された海域を含む国責任の海底活断層調査促進を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・片寄直行</span>
+          <span class="ttl">原発の不祥事と交付金算定誤り</span>
+          <span class="sum">中国電力の一連の不祥事への原発立地市長としての所見とプルサーマル中止の主張、電源立地交付金の算定誤りの経過と原因、旧鹿島町との個別給付の格差是正を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・片寄直行</span>
+          <span class="ttl">原発の危機管理と活断層調査</span>
+          <span class="sum">柏崎刈羽原発被災の教訓を松江市の危機管理に生かす基本姿勢を問い、宍道断層・鳥取沖東部西部断層が同一線上にある点を挙げ、能登半島地震の評価誤りも踏まえた陸海両面の厳格な活断層調査と30キロ圏外の国責任での調査を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・川井弘光</span>
+          <span class="ttl">原発の安全運転と審査体制</span>
+          <span class="sum">柏崎刈羽原発の被災を受け、電力事業者の活断層調査への第三者評価の必要性、火災発生時の消火体制改善の評価、原子力部門の松江市移転要請の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石倉茂美</span>
+          <span class="ttl">原発の耐震安全性と地元受注</span>
+          <span class="sum">新潟県中越沖地震を踏まえた耐震指針・審査見直しの必要性、島根1〜3号機の設計値と補強工事の要否、および3号機工事での地元業者への受注拡大支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">原発の耐震性とトレンチ調査</span>
+          <span class="sum">下宇部尾でのトレンチ調査が1カ所追加された理由と調査状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・西村びん</span>
+          <span class="ttl">原発へのテロ攻撃想定訓練</span>
+          <span class="sum">11月に計画する原発へのテロ攻撃想定の実動訓練について、多重防護を前提とした甘い想定では大量の放射性核種放出時の対処が実効性を持たないと指摘し、基本的な考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・津森良治</span>
+          <span class="ttl">原発活断層遺跡の保存</span>
+          <span class="sum">宍道断層の活動が880年の出雲地震と確定されたことを受け、川部活断層遺跡（柿の内遺跡）を社会教育・自然科学の学習の場として保存・活用し、原発の耐震性重視につなげるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・森脇勇人</span>
+          <span class="ttl">原発特別措置法の時限立法</span>
+          <span class="sum">平成23年に期限を迎える原発立地特別措置法について、大きな事業を抱える本市としての考え方と、延長に向けた行動を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・西村びん</span>
+          <span class="ttl">原発補償金の還流疑惑</span>
+          <span class="sum">島根原発2号機の漁業補償金・協力金合計7億5千万円を鹿島町へ寄附し恵曇漁協へ還流させた課税逃れ疑惑について、合併協議での対処、法律上の問題、詳細調査、元町長の公職のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・森脇勇人</span>
+          <span class="ttl">原発関連事業と予算規模</span>
+          <span class="sum">電源立地特別交付金等により類似団体より大きい松江市の予算規模について、本年度の原発関係事業の歳入歳出、これらの事業がなくなった場合の予算規模と影響、今後の充当事業の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・西村びん</span>
+          <span class="ttl">宍道断層調査と防災計画</span>
+          <span class="sum">上本庄町の活断層調査で宍道断層が出雲地震の震源と特定されたことを受け、原発を含む松江市防災計画の根本的再検討、中国電力への活断層トレンチ調査の早急な実施を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・津森良治</span>
+          <span class="ttl">島根原発と原子力政策・防災</span>
+          <span class="sum">中電のトレンチ調査への中田教授の意見反映度合いを問い、原発設置自治体の市長としての原子力政策への考えと市民への信頼メッセージ、地震と原子力の複合災害訓練の検討、国民保護計画に基づく訓練の評価と見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・加本市郎</span>
+          <span class="ttl">島根原発の安全性と教訓</span>
+          <span class="sum">柏崎刈羽原発被害の教訓を島根原発に生かすため、自衛消防体制・事故報告体制・耐震安全性の確認について中国電力の対応内容と時期、原子力部門の松江市設置要望の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・西村びん</span>
+          <span class="ttl">島根原発の活断層評価と運転中止</span>
+          <span class="sum">柏崎刈羽原発の活断層を過小評価した委員が島根原発も評価している点を挙げ、国の責任の担保、島根1・2号機の耐震設計の現状、安全審査やり直しまでの運転中止、複合災害を想定した防災計画・避難訓練を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">島根原発の耐震・定期検査・防災</span>
+          <span class="sum">柏崎刈羽原発視察を踏まえ、中田教授を招いた新知見の学習と新耐震設計審査指針改定の国への働きかけ、複合災害の危機管理や立地自治体権限付与の原災法改正、定期検査間隔延長への見解、原発推進と規制を担う保安院の分離を県が働きかけるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">島根原発への国の対応と耐震補強</span>
+          <span class="sum">経済産業省への耐震安全性申し入れに対する国の回答と原発立地市町村での強力な働きかけを求め、浜岡原発の1000ガル耐震工事を挙げて島根原発への耐震補強着手を中国電力に申し入れるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・森脇勇人</span>
+          <span class="ttl">施設の建設と維持管理</span>
+          <span class="sum">原発交付金による箱物建設に伴う維持管理費や、入場料収入の見込み違いなどのリスクを踏まえ、効果・効率・必要性を検討したうえでの今後の施設建設と維持管理の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">旧鹿島町の原発寄附金の使途</span>
+          <span class="sum">旧鹿島町臨時議会で前町長親族の会社の中古船を恵曇漁協に買わせた漁船リース事業費を挙げ、中古船購入の必要性・価格の適正性・水産振興への役立ちの調査を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・三島良信</span>
+          <span class="ttl">歴史資料館の建設費と工期</span>
+          <span class="sum">原発交付金充当と起債発生の有無、総事業費39億円の内訳とこれまでの費用、開館が平成21年秋から22年秋へ1年ずれたことの問題の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・渡部美津子</span>
+          <span class="ttl">決算と原発交付金・財政指標</span>
+          <span class="sum">平成18年度決算について原発交付金周辺枠の推移と経常的事業への充当、自販機等の使用料見直し、実質公債費比率を1%下げる費用、連結決算に向けた財産台帳整備・人員体制・監査のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・福田安信</span>
+          <span class="ttl">県道御津東生馬線の進捗</span>
+          <span class="sum">県道御津東生馬線の改修について、原発工事開始までの完成予定が遅れている状況を踏まえ、本年中の完成の見通しなど工事進捗状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・加藤滋夫</span>
+          <span class="ttl">プルサーマル計画の判断時期</span>
+          <span class="sum">島根原発2号機のプルサーマル実施について、国の許可・耐震の妥当評価が出そろい判断条件が整ったとして、核燃料サイクルの実現性など市民の疑問を整理した上での市長の判断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・森脇勇人</span>
+          <span class="ttl">北朝鮮ミサイルへの危機管理</span>
+          <span class="sum">北朝鮮のミサイル発射実験が想定される中、松江市国民保護計画に基づく想定危機管理ができているか、原発やレーダーサイトを抱える市の体制について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・角田正紀</span>
+          <span class="ttl">原発の耐震性と活断層</span>
+          <span class="sum">原子力安全委員会の審議結果を見きわめる必要性、宍道断層22キロの根拠が不明として中国電力に再調査を求めるべきこと、志賀原発控訴審判決を判断材料とすべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・渡部美津子</span>
+          <span class="ttl">原発交付金と決算</span>
+          <span class="sum">平成19年度決算について、普通建設事業費への原発交付金充当額やソフト事業・経常経費充当分、今後5年間の交付金推移を問い、開府400年祭の費用対効果の総括を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・津森良治</span>
+          <span class="ttl">原発交付金に依存しない財政運営</span>
+          <span class="sum">柏崎市の視察を踏まえ、平成22年度から激減が予測される原発交付金の位置づけと使い方、交付金に過度に依存しない財政運営への認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・比良幸男</span>
+          <span class="ttl">原発立地地域振興特措法の延長</span>
+          <span class="sum">平成22年度末に失効する原子力発電施設等立地地域振興特別措置法について、期間延長の要望・要請活動の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・角田正紀</span>
+          <span class="ttl">原発長期運転と2億円交付金</span>
+          <span class="sum">新検査制度による検査期間延長に対し立地自治体へ2億円の交付金を出すやり方について、安全と引きかえの措置はおかしいとして市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・片寄直行</span>
+          <span class="ttl">原発防災対策とヨウ素剤</span>
+          <span class="sum">10キロメートルとなっている原発防災対策範囲の見直しを国に要請する必要性、安定ヨウ素剤の配備状況と取扱要綱の策定、EPZ外への配備の必要性を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・角田正紀</span>
+          <span class="ttl">原発防災訓練の地震想定</span>
+          <span class="sum">原発の防災訓練における地震を想定した避難訓練について、マグニチュード8.0を想定した訓練にしていく必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・角田正紀</span>
+          <span class="ttl">島根原発の活断層評価と耐震安全性</span>
+          <span class="sum">中国電力が宍道断層の長さを10キロから22キロに修正した中間報告について、変動地形学的調査の指摘を無視してきた姿勢を批判し、活断層調査のやり直しと、基準地震動600ガル・マグニチュード7.1の過小評価を踏まえた耐震安全性評価のやり直しを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・斎藤菊市</span>
+          <span class="ttl">立地地域振興と市立女子高</span>
+          <span class="sum">県に重点要望している原発立地地域振興の見通しと取り組み姿勢、市立女子高の進路状況とあり方の検討状況、秋田県を例にした地域連携による教育改革の実践を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・中村晴洋</span>
+          <span class="ttl">防災危機管理体制と消防力の強化</span>
+          <span class="sum">地震・風水害・原発など多様な災害を挙げ、縦割りを廃した市長直結の独立した防災危機管理体制の必要性を問い、あわせて署所再編計画に沿った消防の人員体制の早期実施を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・片寄直行</span>
+          <span class="ttl">プルサーマルと活断層追加調査</span>
+          <span class="sum">島根原発プルサーマル計画の5年延期を機に宍道断層の追加調査を中国電力や国に要請すべきと求め、活断層上にあるつるべ湾埋立地への消防署等建設の是非を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・南波巖</span>
+          <span class="ttl">ポスト過疎法と原発特措法</span>
+          <span class="sum">過疎債のソフト化・拡充を含むポスト過疎法の現状把握と取り組み、平成22年度末で終了する原発特措法の延長要望と失効時の影響額、電源立地地域交付金への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中豊昭</span>
+          <span class="ttl">原子力発電所立地の交付金制度</span>
+          <span class="sum">電源三法交付金の仕組みを踏まえ、移出県枠と長期発展交付金を鹿島町の将来のため地元理解を得て事業化すること、電源立地地域振興促進事業費補助金(A・CD・F)の利用状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・松蔭嘉夫</span>
+          <span class="ttl">原子力発電所立地の財政支援措置</span>
+          <span class="sum">特措法による道路・漁港・学校整備等の進捗と平成22年度期限の延長要望、プルサーマル受け入れに伴う核燃料サイクル交付金・共生交付金の制度概要と県との協議状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・松蔭嘉夫</span>
+          <span class="ttl">原発特措法の延長</span>
+          <span class="sum">平成23年3月末で期限を迎える特措法の延長に向けた具体的な取り組み状況と、延長された場合に取り組む新たな事業への期待を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・吉金隆</span>
+          <span class="ttl">国政課題への市長の見解</span>
+          <span class="sum">国家公務員法改正（内閣人事局新設）、殺人事件の時効廃止と死刑、もんじゅの運転再開について、原発立地県庁所在市の市長の見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中豊昭</span>
+          <span class="ttl">島根原子力発電所プルサーマルと交付金</span>
+          <span class="sum">2010年度装荷に固執し延期説明をしなかった理由、契約可能な期間と製造工場の能力、プルサーマル交付金60億円の使途と先進地の計画状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中弘光</span>
+          <span class="ttl">市立体育館・古浦西長江線・LRT</span>
+          <span class="sum">市立体育館の規模・時期・場所、原発特措法で登載する古浦西長江線の政権交代による手続きへの影響と計画概要、次世代型路面電車LRTの慎重な検討の必要を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・篠原栄</span>
+          <span class="ttl">政権交代と地方への影響</span>
+          <span class="sum">衆院選結果と今後の政治動向の認識、後期高齢者医療制度廃止・ガソリン暫定税率廃止・高速道路無料化・原発政策・補正予算凍結が地方や市民生活に及ぼす影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田中弘光</span>
+          <span class="ttl">中期財政見通し</span>
+          <span class="sum">社会保障費増と一般財源減の二律背反への対処、東出雲町合併を除外した中期財政見通しのローリング、原発3号機の運転開始遅れによる固定資産税収の先送りへの対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・吉金隆</span>
+          <span class="ttl">全国の点検状況の公表請求</span>
+          <span class="sum">全国の原発でも点検漏れがないのか、保守管理の仕組みではなく実際の点検状況の公表を早急に請求するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・貴谷麻以</span>
+          <span class="ttl">北朝鮮砲撃と危機管理</span>
+          <span class="sum">原発立地市として市民の不安を挙げ、北朝鮮の砲撃事件に対する松江市の考えと対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・貴谷麻以</span>
+          <span class="ttl">原子力と国の危機管理</span>
+          <span class="sum">原発現場は安全に見えるがゆえに気が緩む点を挙げ、人間の心理を含めた国の危機管理の根本的な変更の必要性を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・吉金隆</span>
+          <span class="ttl">原子力発電の将来と国の関与</span>
+          <span class="sum">原子力発電の利点と課題を挙げつつ発電の将来展望、保安院やJNESの監督責任、国が責任を持ち日常的に検査すべきとの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田中弘光</span>
+          <span class="ttl">原発とまちづくり</span>
+          <span class="sum">3号機の営業運転延期への遺憾と37年間の運転評価、原発が存在する現実を直視し、原子力・環境産業の研究機関や電力関連企業を誘致するまちづくりを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・津森良治</span>
+          <span class="ttl">原発と核燃料サイクル</span>
+          <span class="sum">1号機の運転再開判断に至る見通しと高経年化への不安、3号機の運転開始3カ月延期による固定資産税収への影響、核燃料サイクルが順調に進んでいるとの認識か、高レベル放射性廃棄物の最終処分地選定への原発立地市長としての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・三島良信</span>
+          <span class="ttl">原発の交付金と税</span>
+          <span class="sum">松江市が受け取る原発関連交付金の種類と交付額、県が受ける交付金と核燃料税交付金の額・15％の比率、比率引き上げの働きかけ、使用済み核燃料への課税の検討状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・片寄直行</span>
+          <span class="ttl">原発問題と地域防災計画</span>
+          <span class="sum">停止中の県内電力需給、点検漏れ問題を受けた運転再開条件と外部監査の必要性、宍道断層を震源とした地域防災計画見直し、つるべ湾埋立地の活断層対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・津森良治</span>
+          <span class="ttl">原発運転再開とプルサーマル</span>
+          <span class="sum">点検不備の最終報告を踏まえ何をもって1・2号機の運転再開を認めるか、2号機のプルサーマル実施の再検証について見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・吉金隆</span>
+          <span class="ttl">島根原子力発電所</span>
+          <span class="sum">点検漏れ問題を踏まえ、他社にも点検漏れがないか疑問を呈しつつ、この地域で原発を運転できるのは中電だけとする市長の思い、運転再開スケジュールと市の予定表報道への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・三島良信</span>
+          <span class="ttl">島根原発の保守管理不備</span>
+          <span class="sum">中国電力の再発防止対策の取り組み状況と市の評価、何をもって運転再開を認めるか、今後の取り組み・定着状況の確認方法を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・吉金隆</span>
+          <span class="ttl">島根原発点検不備の最終報告</span>
+          <span class="sum">中国電力の点検不備の調査報告書最終への市長の受けとめ、放射線量計未着用など事業者の体質を挙げ、事業者としての資格を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・森脇勇人</span>
+          <span class="ttl">島根原発点検漏れ</span>
+          <span class="sum">1・2号機の点検漏れ最終報告と再発防止策への市長見解、国と県への連絡遅れ、保安院の監視指導体制強化、定期検査の自粛について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">1号機再稼働の判断ポイント</span>
+          <span class="sum">点検漏れ後停止中の島根1号機の再稼働の判断ポイント、福島1号機と同じマークⅠ型で稼働37年の高経年化に伴う安全性の不安への市長の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">40年経過原発の廃炉</span>
+          <span class="sum">老朽化は真っ当な考えとするなら、40年を経過した原発の再稼働は市民の安心・安全から認められないとして、廃炉に向けた計画を国や電力会社に求めるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">エネルギー供給と自然エネルギー調査</span>
+          <span class="sum">原発ゼロ下の中国地区のエネルギー供給状況を数値で問い、出雲市の例を挙げ自然エネルギー活用の基礎調査を全面的に実施すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">事故調査中間報告と高経年化</span>
+          <span class="sum">政府事故調査・検証委員会の中間報告の受けとめ、島根原発1号機の高経年化技術評価の意見聴取会の最終報告の内容と受けとめ、高経年化の何が問題で長年稼働させた原発のどこが危険と考えたかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・吉金隆</span>
+          <span class="ttl">住民投票による民意の把握</span>
+          <span class="sum">東海村村長の見解等を引き、原発について住民の意思を把握する手法として、自治基本条例とは別に住民投票条例を制定し市民の意見を問うことへの市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">使用済み核燃料と1号機の高経年化</span>
+          <span class="sum">使用済み核燃料プールへの防護策、稼働37年を経過した島根原発1号機についての考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・畑尾幸生</span>
+          <span class="ttl">使用済み燃料と原発交付金・財政</span>
+          <span class="sum">使用済み燃料保管のリスクを負担する自治体として原発交付金の存続を国に働きかけ、使途を原子力防災対策に重点化する財政規律、停止原発への核燃料税課税について問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">再稼働の判断基準と住民説明</span>
+          <span class="sum">保安院が再稼働を差し支えないとした説明の中、地震の揺れや外部電源喪失の懸念を踏まえた再稼働判断の基準・根拠と時期、同意条件、住民公開ヒアリングや住民説明会の開催を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・野津直嗣</span>
+          <span class="ttl">原子力エネルギーのあり方と説明責任</span>
+          <span class="sum">全国の原発が全停止した場合のエネルギー確保・経済・税収・社会保障への影響を挙げ、原子力共存のメリット・デメリットを市民に広く説明し覚悟を持って政治決断すべきと市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・貴谷麻以</span>
+          <span class="ttl">原子力事故時の市の体制と防災</span>
+          <span class="sum">福島第一級の事故を想定した市長以下市職員の配置計画と原子力防災への覚悟、市役所機能確保に必要な電力、貯蔵プールの燃料冷却を含む島根原発の過酷事故時の人員配置体制、避難経路としての水上交通の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・吉金隆</span>
+          <span class="ttl">原子力発電と再稼働・国の政策</span>
+          <span class="sum">原発の制御困難性や国策で進められてきた歴史を踏まえ、経済効果を生む島根原発の再稼働や国の原子力政策への現在の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">原発とエネルギー政策の転換</span>
+          <span class="sum">野田内閣の原発再稼働方針への所見、福島同型で老朽化した島根原発1号機の廃炉、3号機を稼働させない決意、やらせメール問題や引き波対策5.7メートルの妥当性、原子力安全・保安院の解体と独立規制機関の確立を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">原発に対する国民意識の変化</span>
+          <span class="sum">福島第一原発事故を受け、3月11日以降に原発に対する国民の意識・認識が変わったと受けとめているか、どのように変わったと考えるかを市長に問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">原発の未完成技術と原発ゼロ</span>
+          <span class="sum">原発は死の灰を閉じ込める技術や使用済み燃料の処分技術が確立されていない未完成技術との認識を問い、安全の保障が完全にないなら原発ゼロを目指し再生エネルギーへ切りかえる本格的検討に入るべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・斎藤菊市</span>
+          <span class="ttl">原発の老朽化という表現</span>
+          <span class="sum">施政方針で用いた原発の老朽化という表現が不安を増幅しないか懸念し、一般構築物の老朽化と同じか、福島第一の検証を待ち高経年化など国の適正な用語を用いるべきではないかと、あえて違う表現を用いた真意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">原発への認識と避難計画</span>
+          <span class="sum">女川原発・東北電力視察の感想と福島事故後の原発認識の変化を問い、拡散予測を考慮した避難計画・訓練の実施、市民向け安全のしおり配布を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">原発ゼロと自然エネルギー</span>
+          <span class="sum">原発依存政策からの撤退と原発ゼロを目指す決断を求め、太陽光・風力等の導入ポテンシャルを示し、立地自治体での自然エネルギー開発と雇用創出を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・畑尾幸生</span>
+          <span class="ttl">原発再運転の判断のあり方</span>
+          <span class="sum">多重防護が働かなかった福島の事故経過を踏まえ、1号機再運転・3号機営業運転の判断に際し保安院へ意思を伝え、専門家と市民の疑問に答える確信を得て判断すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・南波巖</span>
+          <span class="ttl">原発問題と代替エネルギー</span>
+          <span class="sum">島根原発1・2号機の運転再開と3号機運転開始への考え、県が示した約40万人の避難計画案への県庁所在地としての見解、推進か脱・卒原発かの市長の基本的立場、代替エネルギーの本格的な取り組みを政策化する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・貴谷麻以</span>
+          <span class="ttl">原発定期点検炉の再稼働方針</span>
+          <span class="sum">他の立地自治体が方針を示す中、島根原発の定期点検炉の再稼働について松江市・島根県の現在の方針を市民に周知するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">原発環境安全対策協議会と専門教育機関</span>
+          <span class="sum">松江市原子力発電所環境安全対策協議会委員の公募制陳情の採択を受けた執行部の具体化、および県民の不安に応える原子力工学・放射線防護の専門教育機関を島根大学に要請する必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・野津直嗣</span>
+          <span class="ttl">原発立地交付金の使途の情報共有</span>
+          <span class="sum">原発立地の交付金や税収が何に使われているのか多くの市民が知らないとし、対価として何を得ているのかを積極的に広報し市民と情報を共有すべきと問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">合併特例債と原発交付金</span>
+          <span class="sum">発行率50.4％の合併特例債発行への考えと、行政刷新会議の提言型政策仕分けを受けた電源立地地域対策交付金への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中豊昭</span>
+          <span class="ttl">国の原子力政策への所信</span>
+          <span class="sum">福島第一原発事故で安全神話が崩れた状況を踏まえ、国策として取り組んできた国の原子力政策に対する市長の所信を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">地域防災計画(原子力災害対策編)の見直し</span>
+          <span class="sum">フェーズ3までを想定する現行の地域防災計画(原子力災害対策編)について、フェーズ7に至った福島を踏まえた見直しのスケジュール、および1号機再稼働の条件を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉徳章</span>
+          <span class="ttl">地方と都会の関係</span>
+          <span class="sum">都会に電力を供給する原発立地地方と大都会の関係の難しさを踏まえ、国や地元市民に対し市長として訴えたいことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">地震の耐震安全基準の再検討</span>
+          <span class="sum">日本列島が地震活動期に入る中、13断層の再調査を踏まえ、島根原発が耐え得る設定ガル(水平・鉛直方向)の妥当性の再検討と、国の耐震設計審査指針の根本的改定の必要性を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">地震・津波想定と送電線</span>
+          <span class="sum">県の新たなマグニチュード8.01想定で津波引き波時の原発冷却用取水の問題が深刻化しないか、宍道断層の横ずれで送電線が分断される危惧について中国電力に検討を求めるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇幸好</span>
+          <span class="ttl">太陽光発電導入促進</span>
+          <span class="sum">原発事故を契機とした自然エネルギー利用として、太陽光発電導入促進事業の今後の取り組みの考え方、公共施設への設置、および補助を実施しない県への要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">学校の防災教育と放射線教育</span>
+          <span class="sum">釜石市の事例を踏まえた学校現場の実践的訓練と学校防災連絡会の設置、原発を抱える松江市での小中学校の放射線に関する教育の現況と今後の取り組み方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・貴谷麻以</span>
+          <span class="ttl">安全協定の見直し</span>
+          <span class="sum">事故を想定していない現行安全協定に再稼働の事前協議項目がないため周辺自治体の要求が断られた点を挙げ、安全協定見直しの検討の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇幸好</span>
+          <span class="ttl">安心・安全なまちづくり</span>
+          <span class="sum">地域防災指導員活動事業と要援護者支援推進事業の進捗と問題点、平成24年度以降の防災事業、島根原発30キロ圏外への広域一時避難の避難先割り当て案と全体計画の時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・三島進</span>
+          <span class="ttl">安心・安全なまちづくりと組織体制</span>
+          <span class="sum">浜岡原発停止の影響、原発への市民意識調査結果への所感、高齢者県であり原発を持つ松江市の防災安全部新設を踏まえた全市的な組織づくりについて考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・山本勝太郎</span>
+          <span class="ttl">島根原子力発電所の現状</span>
+          <span class="sum">原子力災害の広域避難への取り組み状況と、島根原発1・2号機のストレステスト実施状況や定期検査後の見通しについての見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">島根原発1・2・3号機の課題</span>
+          <span class="sum">1号機再稼働の考えと民意把握の手法、老朽化した1号機の廃炉見通し、2号機プルサーマル計画の凍結、3号機運転開始の前提条件について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・篠原栄</span>
+          <span class="ttl">島根原発の再稼働と老朽化</span>
+          <span class="sum">ストレステストが再稼働条件になり得るか、県知事の稼働判断条件への見解、運転期間原則40年と20年延長への受けとめ、活断層連動の再検討要求に関する中国電力からの報告の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">島根原発の地震・津波・電源対策</span>
+          <span class="sum">想定を見直した島根原発の地震・津波対策、外部電源喪失時に計画中の代替電源で同程度の電力を確保できるか、あらゆる災害を想定した外部電力確保対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">島根原発の地震対策と再稼働条件</span>
+          <span class="sum">格納容器損傷をめぐる研究所と東電の見解の相違への情報を問い、津波対策のみの島根原発の地震対策と、住民避難を条件とする知事発言への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・畑尾幸生</span>
+          <span class="ttl">島根原発の安全審査と断層再評価</span>
+          <span class="sum">福島事故での基準変更や津波想定の妥当性を踏まえた国の安全審査への所見、宍道断層の第三者機関による再評価、13断層の再調査結果を1号機・3号機の判断材料とすることを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・飯塚悌子</span>
+          <span class="ttl">島根原発の廃炉と再稼働中止</span>
+          <span class="sum">島根原発1・2号機の廃炉決断と再稼働させないこと、3号機の新規稼働をやめること、プルサーマル計画の中止の3点について市長の見解を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">島根原発の廃炉・停止・中止</span>
+          <span class="sum">老朽化した1号機の廃炉、プルサーマル了解の撤回と2号機停止・総点検、3号機建設中止を求め、宍道断層の再調査要望や引き波対策の科学的根拠を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">島根原発の防災対策・避難計画</span>
+          <span class="sum">防災重点地域の30キロ拡大への見解と、住民広報・集結所・避難経路・輸送能力・要援護者対応の5項目の進捗、玄海原発避難訓練視察の感想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・篠原栄</span>
+          <span class="ttl">平成23年度3施策の総括と伺います条例</span>
+          <span class="sum">平成23年度施政方針で示した大橋川改修・特例市移行・原発特措法充実の3施策の1年の総括と、今議会に提案予定とされた（仮称）伺います条例が提示されなかった経緯を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・飯塚悌子</span>
+          <span class="ttl">放射能汚染から子供を守る対策</span>
+          <span class="sum">福島原発事故を受け、東出雲町の小中学校と全ての幼稚園・保育所への安定ヨウ素剤配備、および高濃度汚染食品を出回らせない食品検査・監視体制の抜本的強化を国に要請するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・三島進</span>
+          <span class="ttl">政府の初動体制と情報提供</span>
+          <span class="sum">東日本大震災と福島第一原発事故における政府の初動体制の不備、二転三転する広報や情報提供のあり方、被災地への職員派遣体制について市長の所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">政府の危機管理対応と原子力政策</span>
+          <span class="sum">福島第一原発事故への政府の危機管理対応と情報隠しへの感想、原発を導入する立地市の市長として原発・原子力政策に対する基本的な考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・桂善夫</span>
+          <span class="ttl">新政権への市長の感想</span>
+          <span class="sum">民主党の野田新首相選出について、震災復旧復興・原発事故収束・財源確保・産業空洞化など課題山積の中で機動的対応が求められるとして、新政権に対する市長の感想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・三島進</span>
+          <span class="ttl">核燃料税交付金と財政見通し</span>
+          <span class="sum">3号機の運転時期が不透明な中、核燃料税交付金や3号機固定資産税など原発関連の財政上の今後の見通しについて考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">津波対策と地域防災計画の見直し</span>
+          <span class="sum">日本海沿岸を持つ本市の津波避難方法の市民啓発の進め方、今回の津波・原発事故の教訓を受けた松江市地域防災計画の見直しの視点と基本方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">福島事故の教訓と島根原発の安全性</span>
+          <span class="sum">唯一県庁所在地に原発を抱える松江市として、福島第一原発事故から得られた教訓と課題、島根原発の安全性向上や放射性物質事故対策計画の見直しの考えを市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・三島進</span>
+          <span class="ttl">福島原発事故と島根原発の安全対策</span>
+          <span class="sum">福島原発事故の人為的要因、津波・地震想定や電源喪失時のバックアップ、防波堤工事の安全確認など、島根原発の津波対策・安全対策への市長の見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">福島原発事故の教訓と原発技術</span>
+          <span class="sum">重大事故時に放射性物質を閉じ込める手段を持たない原発技術の社会的許容性を質し、地震・津波国への集中立地の危険性と安全神話への認識を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">節電と電力の安定供給</span>
+          <span class="sum">島根原発が再稼働できず全停止となった場合の市民生活・医療への電力安定供給対策、大口需要施設の使用抑制や業界別の節電協力体制の事前構築、松江市の節電対策への決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">美保基地C-2配備と協議機関</span>
+          <span class="sum">C-2輸送機配備をめぐり、八束町の地元意向を受けて市・県が基地側と直接協議する機関の必要性を問い、原発立地・平和都市として慎重な対応を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">老朽原発廃炉と原発ゼロ</span>
+          <span class="sum">マークⅠ型の島根1号機の廃炉、2号機プルサーマル中止、3号機建設中止を求め、原発ゼロと自然エネルギーへの転換を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">自治基本条例と原発の住民投票</span>
+          <span class="sum">伺います条例見送りを踏まえた自治基本条例の任期内制定の決意を問い、原発問題を住民投票になじまないとした答弁を、住民を主人公とする立場や研究段階の発言として不適切として撤回・訂正するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・畑尾幸生</span>
+          <span class="ttl">過去の原発防災調査の活用</span>
+          <span class="sum">平成6年度県調査(避難措置に関する調査)など過去の基礎的な原発事故対策調査の取り扱いを問い、これらを防災対策・防災訓練に生かすよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・野々内誠</span>
+          <span class="ttl">都市計画道路揖屋馬潟線</span>
+          <span class="sum">中海圏域の周回道路となり原発避難路にも活用できる揖屋馬潟線について、県道部分と足並みをそろえた市道部分の早期着工など整備計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中明子</span>
+          <span class="ttl">防災安全部設置と防災機能</span>
+          <span class="sum">震災・原発事故を踏まえ新設された防災安全部について、これまでと何がどう変わるのか、防災機能の向上の具体を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">防災訓練の課題と複合災害</span>
+          <span class="sum">2月16日実施の原子力防災訓練で見えてきた課題、今後の訓練で想定する災害と内容の拡大、地震・津波と原発事故が重なる複合災害を検討課題に加えること、再稼働判断時に避難計画等を整えるべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉徳章</span>
+          <span class="ttl">隣々接自治体住民への啓発</span>
+          <span class="sum">10キロ以上離れ関心が薄い旧町村部の住民を中心に、原発の賛否とは別に研修や啓発事業を行うことを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉徳章</span>
+          <span class="ttl">震災の本市への財政影響と施策変更</span>
+          <span class="sum">第1次から第3次補正など巨額の復興費用が全国に波及する中、本市の財政上の影響と現に起きている影響、今後の松江市の重要政策の変更や追加施策、原発関連企業誘致等の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・畑尾幸生</span>
+          <span class="ttl">高経年化原子炉の安全性と1号機廃止</span>
+          <span class="sum">古い安全審査基準や中性子照射による圧力容器の脆化を踏まえ、運転開始から長期経過した島根原発1号機の廃止も視野に入れるべきと市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・出川修治</span>
+          <span class="ttl">20年後の島根原発のあり方</span>
+          <span class="sum">政府の原発稼働ゼロ方針と40年運転制限を踏まえ、20年後の島根原子力発電所のあるべき姿と、立地市長として今後必要な行動・訴えかけを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・野々内誠</span>
+          <span class="ttl">ものづくりアクションプランとF補助金</span>
+          <span class="sum">今年度策定予定の松江市ものづくりアクションプランの全体像と具体的目標、産業支援センターの人的体制を問い、東出雲地域が対象外となっている原子力発電施設等周辺地域企業立地支援給付金（F補助金）の対象拡大の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森脇勇人</span>
+          <span class="ttl">中期財政計画と情報の取り扱い</span>
+          <span class="sum">原発稼働見込みや東出雲町合併・事業変更にもかかわらず平成23年度の中期財政計画が示されない状況を問い、議会軽視と言われる情報の取り扱いへの懸念を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・加本市郎</span>
+          <span class="ttl">原子力安全行政と原発再稼働</span>
+          <span class="sum">国会事故調査委員会の中間報告や原子力規制委員会・規制庁の設置案への見解、大飯原発再稼働の政治決断、島根原発1号機を含む40年経過原発の運転、中国電力の夏場の電力需給と節電の必要性について市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・津森良治</span>
+          <span class="ttl">原子力損害賠償制度と原発輸出</span>
+          <span class="sum">原子力損害賠償法や中間指針による賠償の複雑さ・おくれ、制度の不備、海外への原発輸出、風評被害への対応について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中豊昭</span>
+          <span class="ttl">原子力発電所安全協定と電力供給</span>
+          <span class="sum">出雲・安来・雲南3市の立地並み安全協定要求について、リスクの異なる自治体が同等の協定を結ぶことへの国・県・市の対応と松江市の協定見直しの要否、電力会社が再生可能エネルギー開発に取り組むことへの見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・山本勝太郎</span>
+          <span class="ttl">原子力発電関連交付金と歳入</span>
+          <span class="sum">原子力発電関連交付金の関係法令・種類・金額と充当事業、発電所停止状態での交付状況、3号機関連交付金や固定資産税など今後の歳入見通しを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・立脇通也</span>
+          <span class="ttl">原子力行政の国営化と情報発信</span>
+          <span class="sum">大飯原発再稼働をめぐる立地市の立場から、原子力発電所をすべて国営とし他の発電所は民間に任せる提案を松江市から行う考えを問い、原発立地市の状況や交付金の充当先を対外・対内に発信することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・斎藤菊市</span>
+          <span class="ttl">原子力規制と電力システム改革</span>
+          <span class="sum">日本の原子力発電所が停止する現状と原子力規制委員会の論議経過への所感、基本方針が示された電力システム改革について中央の論議を踏まえた市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・津森良治</span>
+          <span class="ttl">原子力防災の距離表示</span>
+          <span class="sum">県広域避難計画の公表を受け、平時から意識するため電柱等に原発からの距離を表示することを提起し、防災上の観点からの検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・津森良治</span>
+          <span class="ttl">原発の事故原因究明と再稼働</span>
+          <span class="sum">島根原発の事故原因究明の到達状況、間もなく40年を迎える1号機の40年運転制限制の厳格適用、2号機プルサーマル計画の再審査、3号機建設継続容認の妥当性、および再稼働の住民投票による判断を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">原発の活断層と安全協定</span>
+          <span class="sum">島根原発前面海域のF-III・F-IV・Fk-2の3つの活断層の連動性と断層間距離、30キロ圏拡大に伴う周辺自治体との安全協定・広域連携のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・津森良治</span>
+          <span class="ttl">原発ゼロ社会と原発比率</span>
+          <span class="sum">国が示す2030年時点の原発比率や、40年運転制限などを前提に2030年代の原発稼働ゼロを目指す政府方針について、将来の原発ゼロ社会への考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・加本市郎</span>
+          <span class="ttl">原発事故を想定した広域避難計画</span>
+          <span class="sum">県広域避難計画を受けた松江市避難計画の策定時期、避難経路の橋梁耐震化と道路改良、ＪＲ・船による避難、避難所の決定時期、入院患者・福祉施設入所者の受け入れ、自主防災組織の充実、オフサイトセンターの機能、被災者支援システム導入の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・山本勝太郎</span>
+          <span class="ttl">原発事故報告と規制委員会・安全協定</span>
+          <span class="sum">国会事故調報告への所見、原子力規制委員会の役割、発電所従事者数と地元経済への影響、周辺自治体との安全協定をめぐる市長会での経緯と県の役割を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉茂美</span>
+          <span class="ttl">原発事故時の現場判断重視の初動体制</span>
+          <span class="sum">女川原子力発電所の視察を踏まえ、敷地の高さを確保した判断や事故の際に現場の所長に判断を任せることの重要性を挙げ、今後中国電力・県・市が初動体制で現場の判断を重視するよう見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・篠原栄</span>
+          <span class="ttl">原発事故調査報告書への受けとめ</span>
+          <span class="sum">国会事故調が福島原発事故を人災と断定したことへの市長の受けとめや、耐震バックチェック・津波対策の先送りといった経緯を踏まえた所見を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・桂善夫</span>
+          <span class="ttl">原発事故防止とエネルギー政策</span>
+          <span class="sum">国会事故調が人災と断定した報告への見解と、原子力規制を監視する常設委員会の必要性、政府の原発ゼロ・再生可能エネルギー拡大戦略の素案への所見を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・斎藤菊市</span>
+          <span class="ttl">原発停止の地域への影響</span>
+          <span class="sum">原発停止による鹿島町の有権者減少など地域への影響の分析、再稼働・廃炉や使用済み燃料の課題を踏まえ、立地市として原子力文化を育み世論形成を進める必要性について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉徳章</span>
+          <span class="ttl">原発再稼働と省エネ・節電啓発</span>
+          <span class="sum">大飯原発運転再開や高経年化原発の40年運転特例延長への見解を問い、2月議会からの考えを一歩踏み出すのか、また市民への節電・省エネの啓発活動を推進する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・畑尾幸生</span>
+          <span class="ttl">原発再稼働と規制のあり方</span>
+          <span class="sum">大飯原発の暫定的稼働や立地・周辺自治体の認識のずれ、UPZ30キロ圏内自治体の参加の法的位置づけ、40年廃炉方針や発送電分離、美浜2号機の運転延長審査、望ましい規制機関の組織について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">原発問題と地域防災計画</span>
+          <span class="sum">福島の事故原因が明らかにならない中での大飯原発再稼働に抗議し、原発に依存しない決意を政府に求めるよう問い、公民館・集会所への自然エネルギー配備、宍道断層と鳥取沖断層の連動可能性を踏まえた活断層の再調査、水道局経営戦略プランの放射能漏れ原因の記述是正を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">原発問題と地域防災計画</span>
+          <span class="sum">原発停止下の現状認識と代替エネルギー供給構成、新安全基準案の妥当性と世界最高水準の尺度、日本海の海底活断層連動や津波・ヨウ素剤対策を含む地域防災計画の見直し、島根原発敷地内の破砕帯や宍道断層の再調査を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・津森良治</span>
+          <span class="ttl">原発直下の活断層問題</span>
+          <span class="sum">志賀原発直下の活断層報道を踏まえ、活断層の真上に原発は存在しないとの認識、原子力規制委員会による活断層調査の必要性と規制委員会への申し入れの考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">国のエネルギー政策と原発ゼロ</span>
+          <span class="sum">政府の革新的エネルギー・環境戦略が示す原発ゼロの期限が遅過ぎることと、原発ゼロを掲げつつ再処理を続ける矛盾を指摘し、国のエネルギー政策への所見を質した。節電と再生可能エネルギーで原発ゼロを実現する主張について、市と議会が共同で学習会を計画する考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・出川修治</span>
+          <span class="ttl">安心・安全なまちづくり</span>
+          <span class="sum">新安全基準を踏まえた島根原発への市長の今後のスタンス、大橋川改修事業と白潟地区の計画道路見直し、歩道整備やサイクルシティー構想など安心して歩ける道路づくりについて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・三島進</span>
+          <span class="ttl">島根原発の安全防災対策</span>
+          <span class="sum">立地市として島根原子力発電所の安全防災対策における松江市の果たす役割を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・山本勝太郎</span>
+          <span class="ttl">島根原発の従事者数と地域経済への影響</span>
+          <span class="sum">市内有数の雇用場所である島根原子力発電所の停止が雇用・地域経済へ及ぼす影響を懸念し、発電所内の従事者数と地元従事者数、経済波及効果の試算資料の提示を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉徳章</span>
+          <span class="ttl">市長の次期市長選出馬</span>
+          <span class="sum">子育て・教育、行財政改革、東出雲町合併などの実績を評価し、島根原発立地や大橋川改修の課題を踏まえ、次期市長選への出馬の考えと所見を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・貴谷麻以</span>
+          <span class="ttl">未来世代へのまちづくり</span>
+          <span class="sum">原発や核燃料サイクルをめぐる国の迷走を踏まえ、次世代の子供たちに道筋をつけた松江市を渡すために市長が何を考えているかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・貴谷麻以</span>
+          <span class="ttl">松江独自のエネルギー・産業政策</span>
+          <span class="sum">再生可能エネルギー源が地方にあるとして、国の政策を待たず松江からエネルギー・文化観光・産業ものづくりのマスタープランを作成し、地域循環型経済や卒原発の道を開く独自政策を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">消費税増税と原発政策</span>
+          <span class="sum">消費税増税の経済への影響と大企業・富裕層への応分負担、革新的エネルギー・環境戦略への所見、市長を推薦した自民党との原発政策協定の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・貴谷麻以</span>
+          <span class="ttl">発想の転換とまちづくり</span>
+          <span class="sum">原発関連で働く市民の葛藤や北朝鮮ミサイルへの不安を踏まえ、安全・文化・産業を軸とした防災インフラ整備と、3・11以降の根本的な発想の転換により県都としてリードすることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・貴谷麻以</span>
+          <span class="ttl">3号機稼働と使用済み燃料</span>
+          <span class="sum">3号機稼働で松江が最後まで原発を動かす地域になる懸念を示し、各号機のプールを満たす使用済み燃料の実態を挙げ、その処理について皆で考えるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">エネルギー自立地域と原発ゼロ</span>
+          <span class="sum">原発を基幹電源と位置づける表現を問題とし、将来的に原発ゼロを目指さない考えかをはっきり答えるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">住民投票と地域経済への影響試算</span>
+          <span class="sum">原発の可否を住民投票で決めるのはなじまないとする市長の姿勢を住民主人公でないと批判し、原発がある場合と再生可能エネルギー転換の場合の地域経済への影響を試算する意思を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・畑尾幸生</span>
+          <span class="ttl">再稼働の判断手順と住民投票</span>
+          <span class="sum">使用済み核燃料の処分問題を避けられない課題とし、福島県での首長選挙結果への感想、再稼働の是非を判断する際の専門家意見や市民意見の集約、住民投票導入の是非を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・貴谷麻以</span>
+          <span class="ttl">原子力発電所の再稼働</span>
+          <span class="sum">一旦原子力災害が起これば財産も文化資源も失われるとし、卒原発の道筋を示すことが大前提であるのに福島解決なしに再稼働申請を受け付けたことを挙げ、なぜ日本は違う道への一歩を踏み出せないのか所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・吉儀敬子</span>
+          <span class="ttl">原発にかわる自然エネルギーの推進</span>
+          <span class="sum">使用済み核燃料がたまり続ける原発をトイレなきマンションとし、プールの状況を問い、水力発電など市のエネルギーの可能性を調査しビジョンを示すよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・吉金隆</span>
+          <span class="ttl">原発に関する住民投票</span>
+          <span class="sum">二元代表制を補完する有力な方法とする市長の従来答弁を踏まえ、重大な問題での住民の意思を直接把握する手段として住民投票への考えを改めて問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">原発の再稼働と新規制基準</span>
+          <span class="sum">福島事故の検証を踏まえない新規制基準への評価、規制委員会からの説明の有無と今後の対処、世界最高水準の安全基準という論理の破綻を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・南波巖</span>
+          <span class="ttl">原発の再稼働判断</span>
+          <span class="sum">市長が再稼働を容認するとの報道を受け、新規制基準クリアの検証など課題が山積する中での再稼働に対する市長の考えを改めて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中明子</span>
+          <span class="ttl">原発の再稼働判断</span>
+          <span class="sum">新基準の正式決定を受け、原発再稼働に対する市長の基本的な考えと条件、および40年を超えた原発の取り扱いについて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">原発・エネルギー問題と防災計画</span>
+          <span class="sum">福島事故の教訓の総括、島根原発2号機適合性審査と宍道断層調査への感想、最終処分場候補地とされた場合の対応を質した。避難対象区域にある市役所の防災拠点としての立地や複合災害の想定、原発立地の地域経済効果の産業連関表による検証を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・貴谷麻以</span>
+          <span class="ttl">原発新規制基準の意味</span>
+          <span class="sum">規制委員会には保障責任がなく企業に説明・実行責任があるとした規制庁の説明を踏まえ、市長が世界最高水準のルールをつくったと納得したという理解でよいか確認を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・津森良治</span>
+          <span class="ttl">原発新規制基準への理解と市民周知</span>
+          <span class="sum">規制庁の説明を受け新規制基準を世界最高水準と納得したのか、福島事故の地震影響がどう反映されたか、市民への広報・説明会の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・川島光雅</span>
+          <span class="ttl">原発新規制基準への評価</span>
+          <span class="sum">規制庁の説明を受け新規制基準を世界最高水準と述べた点について、懸念していた点と水準の向上度、福島第一原発事故原因の解明度をどう捉えるかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・森脇幸好</span>
+          <span class="ttl">原発立地市としての市長の考え</span>
+          <span class="sum">国が運転年数を最長40年・特例で20年延長と定めたことを踏まえ、規制基準をクリアした原発を動かし老朽原発を廃炉にする考えかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩本雅之</span>
+          <span class="ttl">原発重大事故の広域避難計画</span>
+          <span class="sum">福祉避難場所の所在と選定理由、職員出勤前のマンパワー不足で要介護者の有効な避難計画が立てられないとの現場の意見への感想、松江地域の細部の策定状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">宍道断層の調査</span>
+          <span class="sum">敦賀原発の調査事例を挙げ、原子力安全・保安院の判断の確認にとどまらず、外部専門家を伴った規制庁による宍道断層の調査を市として要請するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・林干城</span>
+          <span class="ttl">島根原発2号機の事前了解</span>
+          <span class="sum">中国電力による2号機の新規制基準適合性申請に対する事前了解について、安全対策への感想、了承に必要な条件と手順、国への確認事項、周辺自治体との安全協定や連携のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・橘祥朗</span>
+          <span class="ttl">島根原発2号機の安全審査申請</span>
+          <span class="sum">新規制基準を最低限とする専門家見解や地下水対策の欠如、フィルタつきベントによる放射能汚染の懸念を挙げ、安全が担保されない段階での事前了解・再稼働申請の是非を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">島根原発の安全性と新規制基準</span>
+          <span class="sum">世界最高水準の安全性が事故を起こさない保障になるのかを問い、福島事故の教訓を反映できない点や基準地震動超過の実例から新規制基準クリアで安全といえるか質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">島根原発再稼働と安全対策</span>
+          <span class="sum">免震重要棟やフィルタつきベントが未完で地下水・汚染水対策も検討中の段階、宍道断層の評価不十分などを挙げ、安全が担保されない状態での規制基準適合性確認申請の是非を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">島根原発適合性審査と再稼働</span>
+          <span class="sum">事前了解時に説明のなかったフィルタつきベント有機ヨウ素除去機能追加等について、市及び市民への説明を審査のたびに中国電力へ求めるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・松蔭嘉夫</span>
+          <span class="ttl">平成24年度決算と財政見通し</span>
+          <span class="sum">平成24年度主要施策の成果評価、決算の総括や４つの健全化判断比率・経常収支比率の状況、地方交付税や原発関連補助金減少を見込む今後の財政見通しと財政健全化への決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">新規制基準と汚染水・地震影響</span>
+          <span class="sum">汚染水・地下水対策や格納容器の閉じ込め機能を求めない新基準への見解、福島事故の配管損傷を指摘した国会事故調への規制庁説明に納得したか、被曝を前提とした基準でよいのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">新規制基準と海底活断層</span>
+          <span class="sum">過酷事故を前提とし活断層の地表非露出でも設置を認める新規制基準への所見、宍道断層と鳥取沖断層の連動可能性を踏まえた規制庁への活断層詳細調査の要請を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・桂善夫</span>
+          <span class="ttl">新規制基準への所見</span>
+          <span class="sum">規制庁の説明を受け世界最高水準と理解を示した新規制基準について、市長の所見と今後の進め方をあわせて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・畑尾幸生</span>
+          <span class="ttl">核燃料廃棄物処分場問題と核燃料サイクル</span>
+          <span class="sum">小泉元首相の原発ゼロ発言や中間貯蔵・最終処分場の確保困難を踏まえ、核燃料サイクル政策の将来展望や核燃料廃棄物の移設・最終処分について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">福島原発被災地の視察</span>
+          <span class="sum">防災安全部長の福島視察の感想、および同行した富岡町長の「再稼働は国民の同意が得られない」との発言の受けとめを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">福島第一原発事故の現状認識</span>
+          <span class="sum">北側井戸でストロンチウム90が検出されるなど収束どころか一層深刻化している福島第一原発事故の現状について認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・桂善夫</span>
+          <span class="ttl">福島第一原発汚染水漏れ</span>
+          <span class="sum">地上タンクからの300トンの汚染水漏れがレベル３と評価された事態について、国として対策を講じるとした安倍首相の表明への市長の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">立地自治体の権限と原発容認</span>
+          <span class="sum">周辺自治体が立地自治体並みの権限を求める中、立地自治体ならではの特別な権限を持とうとする目的が交付金か政治的影響力かを問い、原発に当面役割があるとする市長の姿勢を市民が喜ぶか質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・畑尾幸生</span>
+          <span class="ttl">自然再生エネルギーとバイオマス発電</span>
+          <span class="sum">バイオマス発電への取り組みを将来の原発ゼロへの第一歩と位置づけ、事業主体ナカバヤシの熱意評価、チップの安定供給、家庭・温泉施設でのチップボイラー導入支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・橘祥朗</span>
+          <span class="ttl">避難計画の実効性と原発ゼロ</span>
+          <span class="sum">30キロ圏内46万9,000人の避難計画やバス台数不足の問題を挙げ、避難計画が整わない段階での申請・再稼働を認めるのか、使用済み核燃料の処分困難を踏まえ原発ゼロの決断を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">公共施設管理問題</span>
+          <span class="sum">適正化シンポジウムの参加者アンケートの所感や意見を質し、公共施設老朽化の責任は国の財政制度にあると指摘、駅前地下駐車場再稼働やLRT構想と適正化5原則との整合性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・吉儀敬子</span>
+          <span class="ttl">再生可能エネルギー100％導入</span>
+          <span class="sum">福島調査を踏まえ島根原発を一基たりとも動かさない決断を求め、松江市が必要とするエネルギーを100％自然再生エネルギーで賄う目標を地球温暖化対策実行計画に盛り込むべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・桂善夫</span>
+          <span class="ttl">原子力発電の再稼働と避難</span>
+          <span class="sum">田中規制委員長の「適合性は見ているが安全とは申し上げない」との発言への所見、避難計画づくりへの国職員派遣、避難バスの不足試算の信憑性、島根原発2号機の宍道断層調査やフィルタ付ベントの現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・貴谷麻以</span>
+          <span class="ttl">原子力防災と避難</span>
+          <span class="sum">スクリーニング機器不足の中での市内各地域や複数避難地域への説明方針、観光地の宿泊客の避難方針を問い、原発立地市への代替地・財産の保障、原子力防災専門家の育成、福島事故調査の課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・橘祥朗</span>
+          <span class="ttl">原発と福島の現状</span>
+          <span class="sum">福島調査を踏まえ汚染水対策等改善されない福島原発の現状認識、複合災害に避難訓練は役立たないとの生の声への所見、使用済み核燃料の最終処分場確保の可否や事故は起きないと考えるか市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・芦原康江</span>
+          <span class="ttl">原発の再稼働判断と規制基準</span>
+          <span class="sum">田中規制委員長の「新規制基準を満たしたから安全とは言えない」との発言を踏まえ、規制委員会とは別にゼロリスクレベルの安全性を判断する専門的な意見を聞く必要があるとの立場で市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・貴谷麻以</span>
+          <span class="ttl">原発への不安と首長の責任</span>
+          <span class="sum">岡山への避難ルートの困難さを挙げ避難の実現可能性や避難費用の負担元を質し、既にある核燃料の危険性や地元同意・首長の責任のあり方を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・貴谷麻以</span>
+          <span class="ttl">原発事故のリスクと福島の教訓</span>
+          <span class="sum">エネルギー庁が原発リスクを福島事故後も見直していない点を指摘し、松江市が考える原発のリスクとは何か、福島から何を学ぶべきか、避難不要といううわさへの認識、防災部の組織強化について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・芦原康江</span>
+          <span class="ttl">原発事故避難計画の実効性</span>
+          <span class="sum">大口径配管破断で5分で燃料破損とされる最悪の事態を想定し、PAZ・UPZ住民の被曝を避けられない広域避難計画や複合災害時の退避、病院・福祉施設の非常用電源や若い職員の安全、拡散シミュレーションの必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・吉儀敬子</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">大飯原発差しとめ判決の４つの指摘が島根原発にも当てはまるとして市長の見解を問い、汚染水対策と実効ある避難計画を再稼働の審査項目に入れるよう規制庁に働きかけるべきと求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">川内原発の地元同意への所見、防災訓練の教訓、SPEEDI情報の公開、活断層調査結果の発表時期を質し、原発依存の核燃料税の廃止を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">原発問題と福島の教訓</span>
+          <span class="sum">大飯原発運転差止め判決が全国全原発に当てはまるとして再稼働断念を求め、福島視察の所見、汚染水や実効ある避難計画の規制基準化、観光客の避難対策、住民投票、宍道断層と鳥取沖断層の連動調査の徹底を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・芦原康江</span>
+          <span class="ttl">島根原発1号機の廃炉</span>
+          <span class="sum">運転開始40年を超える老朽原発である島根原発1号機について、中国電力に対し廃炉の決断を求める考えはないか質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・宅野賢治</span>
+          <span class="ttl">島根原発2号機再稼働と避難計画</span>
+          <span class="sum">2号機再稼働の地元同意範囲や国の責任関与、スケジュール見通しと住民合意形成、防災訓練の課題、避難計画を再稼働の前提条件とするか、バス移動手段の確保、避難行動要支援者名簿の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・川島光雅</span>
+          <span class="ttl">島根原発２号機の再稼働判断</span>
+          <span class="sum">審査計画の見通しを問い、大飯原発の運転差しとめを命じた福井地裁判決と再稼働に不安を抱く市民感情をどう捉えるか、これまでの方向性や手順が変わる可能性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">放射線防護装置と施設避難</span>
+          <span class="sum">屋内退避用放射線防護装置の設置対象施設数と実施状況・今後の計画を問い、施設入所者・入院患者の中長期的受け入れが困難な現状を踏まえ、実効ある避難計画を再稼働の条件とすべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・貴谷麻以</span>
+          <span class="ttl">福島第一原発の現状と社会的費用</span>
+          <span class="sum">福島第一原発の放射性物質拡散状況や関東・中部・東北の農水産品への影響・外国の輸入禁止状況、事故の被曝リスクを含む原発の社会的費用を常に換算し直す方法と根拠を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">第2次安倍内閣への評価</span>
+          <span class="sum">日本会議議員が中枢を占める内閣を「暴走・危険内閣」と評し、辺野古新基地、消費税再増税、原発再稼働、道州制、TPP、コンパクトシティー、年金運用見直し、集団的自衛権など各閣僚の発言を挙げ市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">駅前地下駐車場問題</span>
+          <span class="sum">総額39億円・1台2千万円の駅前地下駐車場について事業の総括と改善の基本方向、経営収支が黒字化する利用水準、再稼働時の問題点、経営破綻を繰り返さない決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">駅前地下駐車場問題</span>
+          <span class="sum">休止中の地下駐車場を民間業者が再稼働させる計画の概要を質し、市の債務負担や財政出動、一般会計繰り入れ、建物管理義務、10年経過後の将来計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">原子力立地地域の基盤整備・構造転換事業</span>
+          <span class="sum">原子力発電施設立地地域基盤整備事業の松江市での活用状況やみなし交付金への所見、廃炉に伴うエネルギー構造転換理解促進事業への来年度事業の検討状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・片寄直行</span>
+          <span class="ttl">原発・活断層問題</span>
+          <span class="sum">宍道断層の東方延長や海域断層との連動性について詳細調査を規制委・中国電力に求めること、原子力災害時の市役所機能の代替施設、平成28年度原発交付金の対前年比較、地層処分意見交換会開催の経緯を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・橘祥朗</span>
+          <span class="ttl">原発再稼働と核燃料サイクル</span>
+          <span class="sum">川内・伊方原発の再稼働や避難計画の不十分さへの見解、高速増殖炉もんじゅ破綻を踏まえた核燃料サイクルの見解、中電への監視・チェック体制の強化や再生可能エネルギー拡大への専門的な体制配置を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・貴谷麻以</span>
+          <span class="ttl">原発再稼働・新規稼働</span>
+          <span class="sum">首相からじきじきに頼まれた場合に市長が原発の再稼働や新規稼働を認める考えかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・片寄直行</span>
+          <span class="ttl">原発周辺の活断層評価と基準地震動</span>
+          <span class="sum">中国電力が示したF55・F56・F57断層の新知見について、原発の耐震安全性・基準地震動に関わる問題としての市の受けとめ、宍道断層とF55断層の連動性を含む陸域・海域の連動の徹底調査・検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・津森良治</span>
+          <span class="ttl">原発問題と再稼働の責任</span>
+          <span class="sum">川内原発再稼働を受け、島根2号機適合性審査の状況と市民説明、再稼働と事故時の責任の所在、使用済み核燃料や高レベル放射性廃棄物の処分、電源立地地域対策交付金の稼働率見直しの影響、再稼働の是非を住民投票で判断することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・片寄直行</span>
+          <span class="ttl">原発問題と防災</span>
+          <span class="sum">安定ヨウ素剤の事前配布計画の議会・住民への説明や副作用対策、中国電力の活断層追加調査報告書の規制委員会での取り扱い、司法判断も踏まえた2号機再稼働をやめ原発ゼロを決断すべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">原発避難道路の整備状況</span>
+          <span class="sum">島根原発事故時の出雲・米子・雲南方面等への避難道路について、規格の高い道路が求められる中での現時点の整備状況と今後の整備期間、特に橋北から出雲方面・南方面の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・貴谷麻以</span>
+          <span class="ttl">地域の安全と原発</span>
+          <span class="sum">中国機へのスクランブル発進増加や国会審議への市長の見解と働きかけ、原発を抱える島根半島の少子化対策と地域振興、観光・文化発信による地域平和の担保について自治体の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">島根原子力発電所</span>
+          <span class="sum">宍道断層延長に伴う基準地震動引き上げへの受け止めと2号機審査の見通し、中国電力の再発防止対策の評価、1号機廃止措置の進め方や低レベル放射性廃棄物、避難先自治体視察の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">島根原子力発電所の現状と交付金</span>
+          <span class="sum">1号機廃炉決定や2号機適合審査中などの状況に加え、点検記録改ざん等の不祥事について市の把握と対応、交付金の交付状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・芦原康江</span>
+          <span class="ttl">島根原発のデータ不正</span>
+          <span class="sum">中国電力の流量計データ不正について、原因分析と改善策の実効性を確認するまで規制委員会に適合審査中断を、中国電力には再稼働を認めないことを表明するよう求め、繰り返される不正から安全管理能力の欠如を指摘した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・芦原康江</span>
+          <span class="ttl">島根原発の使用済み核燃料と再稼働</span>
+          <span class="sum">廃炉となる1号機の使用済み核燃料722体の搬出先が不透明である中、六ヶ所村再処理工場の稼働延期や核燃料サイクル・地層処分の課題を挙げ、国が市長の思いに応え確実に実行するとの見込みや、搬出できない実態を踏まえた2号機再稼働の考え、非公開で行われた最終処分説明会の内容公開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・片寄直行</span>
+          <span class="ttl">島根原発の点検記録偽造</span>
+          <span class="sum">中国電力の流量計点検記録偽造問題への市長の所感、監視という軽い処分を踏まえた原子力規制庁への処罰強化や中国電力社員への適正処分の要請、審査基準に安全運転の構えを加える要請を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川島光雅</span>
+          <span class="ttl">島根原発の虚偽記録</span>
+          <span class="sum">中国電力島根原発の点検記録偽造問題について、市長がどの程度なら許容できるか、原発稼働の必要性、地域経済効果や市財政への収入、休止中の電源立地地域交付金の国の方針と事業への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・津森良治</span>
+          <span class="ttl">島根原発問題</span>
+          <span class="sum">1号機廃止措置計画認可申請への事前了解の判断手法、地域振興を盛り込んだ廃止措置協定の締結、2号機適合性審査の見通しと所要時間、2号機審査対応と1号機廃止措置の優先順位を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・芦原康江</span>
+          <span class="ttl">福島原発事故避難者の生活実態と支援</span>
+          <span class="sum">福島原発事故で松江市に避難してきた自主避難者等の避難生活や悩みの実態把握、3法の充実を国に要請するなどの支援、島根原発再稼働で同様の事態が市民に及ぶ可能性への市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">総合戦略と住民自治</span>
+          <span class="sum">海士町や邑南町など中山間地域の人口増の実践に学ぶこと、公民館単位で住民が5カ年計画をつくる住民自治、中小企業振興条例の制定、農業・食料・エネルギーの位置づけ、原発を動かさない前提の戦略づくりを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・貴谷麻以</span>
+          <span class="ttl">観光計画の課題と対策</span>
+          <span class="sum">歴史・文化資源が豊富な松江市の観光における課題と今後の対策、次のステップへの動きや組織変革の可能性、原子力発電所立地市としての観光避難計画の課題と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・芦原康江</span>
+          <span class="ttl">使用済み核燃料の乾式保管</span>
+          <span class="sum">使用済み燃料は乾式容器での保管が安全だとする原子力規制委員会田中委員長の発言を紹介し、廃炉を前提に相対的な安全性を第一とすべきとして市長の感想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・畑尾幸生</span>
+          <span class="ttl">原発とエネルギー政策</span>
+          <span class="sum">電力自由化下の原発コスト、40年廃炉原則と2030年原発比率20〜22%の整合性、使用済み核燃料の搬出見通しや廃炉に伴う地域振興、最終地層処分の困難性について長期的視点での議論を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・片寄直行</span>
+          <span class="ttl">原発とプルトニウム余剰</span>
+          <span class="sum">六ヶ所再処理工場のプルトニウム回収量と利用計画、プルサーマル計画の実施状況を問い、年々累増するプルトニウム余剰が核不拡散条約に抵触する懸念を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・片寄直行</span>
+          <span class="ttl">原発の安全審査と徹底調査</span>
+          <span class="sum">2号機ダクト腐食にあらわれた中国電力の体質への所見と適合性審査の現状を問い、宍道断層63キロ評価と鳥取沖断層との連動可能性を踏まえた地震性隆起等の徹底調査を規制委員会と中国電力に求めるべきと質し、取水口改良工事の進捗も確認して原発ゼロの決断を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・片寄直行</span>
+          <span class="ttl">原発・エネルギー問題</span>
+          <span class="sum">地震性隆起と海岸化石調査の結果を示し、中国電力・規制委員会への当該調査の要請を求めた。宍道断層を25キロメートルとしつつ基準地震動策定で63キロメートルモデル・800ガルとした点を問題視し、美保湾東方沖の再調査や鳥取沖西部断層との連動性検討の県との連携要請、原子力防災訓練の教訓、避難車両・道路橋梁の耐震対策、しんじ湖温泉第2泉源の地熱利活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・片寄直行</span>
+          <span class="ttl">原発・防災問題</span>
+          <span class="sum">宍道断層でM7.0以上の地震確率が示された大規模地震対策、海域と内陸の活断層連動やひずみ集中帯の新知見を尊重した防災対策と国・中電への働きかけ、島根半島の地震性隆起調査を踏まえた基準地震動の厳正審査の要望、広域避難計画の協定・輸送手段の確保、乳幼児用シロップ状ヨウ素剤の配備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・芦原康江</span>
+          <span class="ttl">原発再稼働の判断基準の明確化</span>
+          <span class="sum">総合的判断では市民に理解しづらいとして、原発の安全性・使用済み核燃料管理・事故時の安全確保・原発の必要性など判断要素項目を明確化し、到達レベルを数値化・見える化することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・吉儀敬子</span>
+          <span class="ttl">参院選の政治課題と市長の政治姿勢</span>
+          <span class="sum">自民党憲法改正草案による不戦平和や基本的人権の削除、国防軍保持を批判し地方自治の観点から反対を求めた。消費税の廃止とタックスヘイブン・大企業優遇税制への課税、TPPのISDS条項、核燃料サイクル前提の島根原発1号機廃止措置計画への同意について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・橘祥朗</span>
+          <span class="ttl">島根原発の再稼働</span>
+          <span class="sum">脱原発を掲げた三反園鹿児島県知事の対応への評価を問い、破綻した核燃料サイクルや連続地震の想定外を踏まえ、立地自治体の長として再稼働中止を国に求めるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・芦原康江</span>
+          <span class="ttl">島根原発の安全性</span>
+          <span class="sum">2号機の設備の耐震重要度をBクラスからCクラスに引き下げる中国電力の方針をコスト優先で安全軽視と批判し、方針の撤回や適合性審査申請の白紙撤回を求めるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・片寄直行</span>
+          <span class="ttl">島根原発の耐震と安定ヨウ素剤</span>
+          <span class="sum">2号機の機器配管の耐震重要度引き下げ問題への所見を問い、UPZ圏内の安定ヨウ素剤配布対象とヨウ素過敏症の事前把握策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉徳章</span>
+          <span class="ttl">次期市長選への立候補</span>
+          <span class="sum">原発・人口減少・市役所建てかえ等の重要課題を控える中、松浦市長の次期市長選への出馬意欲を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・芦原康江</span>
+          <span class="ttl">熊本地震と原子力防災</span>
+          <span class="sum">繰り返す地震動が原発の耐震安全性評価で考慮されていないことや宍道断層と鳥取沖断層の連動評価を踏まえ、耐震安全性評価の見直しの規制委員会への要請、複合災害時の避難計画の有効性の再検証を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・貴谷麻以</span>
+          <span class="ttl">防災対策の強化</span>
+          <span class="sum">熊本地震を踏まえ、防災避難計画・耐震化の状況、原子力災害対策編指定地域との交流、島根原発1号機廃炉の懸念、観光客の避難計画や被災地からの避難受け入れ体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・柳原治</span>
+          <span class="ttl">PAZ圏内の避難道路整備</span>
+          <span class="sum">島根原発5キロ圏内の通学通勤路や生活道路について、定期巡回による点検・修繕を計画的に実施し安全確保を図るよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・橘祥朗</span>
+          <span class="ttl">伊方原発差しとめ判決と原発</span>
+          <span class="sum">阿蘇山の噴火リスクを理由に伊方原発の運転を禁じた広島高裁判決について市長の見解を問い、火山国日本での原発の危険性を踏まえ、再処理工場のめどが立つまで原発に関する議論・判断を中断すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・貴谷麻以</span>
+          <span class="ttl">原発とエネルギー・産業展望</span>
+          <span class="sum">原子力発電所の危険性と経緯を述べ、国に原子力からの卒業を促すべきと問い、3号機を稼働させず視察施設とする案や、廃炉作業に依存しない松江市全体の産業復興の展望を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田中肇</span>
+          <span class="ttl">原発と核燃料サイクル</span>
+          <span class="sum">日本原燃再処理工場の審査中断に至った原因と見通し、プルサーマル計画了解時に懸念した核燃料サイクルが現実になったとする認識、福島事故等を踏まえ了解を不動の前提とすべきでないとする市長の見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・貴谷麻以</span>
+          <span class="ttl">原発と美保基地の安全</span>
+          <span class="sum">2号機再稼働を認めるかを問い、1号機廃炉と2・3号機稼働の関連、美保基地の重要性と攻撃リスク、原発災害時の安全確保の方向を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・篠原栄</span>
+          <span class="ttl">原発の廃棄物処理と最終処分場</span>
+          <span class="sum">六ヶ所村視察を踏まえ、島根1号機廃止措置の第2段階で発生する低レベル廃棄物の受け入れ施設を国が確実に対応することへの所見、科学的特性マップの公表方法と感想を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島進</span>
+          <span class="ttl">山陰整備新幹線と伯備線新幹線化</span>
+          <span class="sum">舞鶴ルートが外れ京都からのルートが振り出しに戻った状況を踏まえ、伯備線新幹線化の経済効果や原発避難への有効性を挙げ、関係県・市町村の協議や国会・経済界を巻き込んだ有効な活動を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島良信</span>
+          <span class="ttl">島根原発1号機の廃炉措置</span>
+          <span class="sum">1号機廃止措置の基本方針と重視事項、補正書の内容、規制庁審査結果や住民説明会の意見の受けとめ、使用済み核燃料の日本原燃への譲り渡しの懸念と六ヶ所村視察の成果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・細木明美</span>
+          <span class="ttl">島根原発1号機廃止措置</span>
+          <span class="sum">日本原燃再処理工場視察での所感やガラス固化体・竜巻への評価を問い、再処理工場の遅れが生じた場合の対応、地元振興への貢献、最終了解の手続と工事内容の地元説明、2号機再稼働判断への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田中肇</span>
+          <span class="ttl">島根原発1号機廃止措置計画</span>
+          <span class="sum">再処理施設稼働による使用済み燃料の再利用が市民の願いに反する点を問い、冷却プールの燃料棒が正常に立つ想定は非科学的だとして、最も過酷な想定での温度計算のやり直しと計画不了解を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島良信</span>
+          <span class="ttl">島根原発2号機の適合性審査</span>
+          <span class="sum">80回を超える審査会合が行われながら進んでいない2号機の新規制基準適合性審査について、遅延の理由と今後の見通しを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田中肇</span>
+          <span class="ttl">島根原発2号機プルサーマル計画了解</span>
+          <span class="sum">2009年のプルサーマル計画了解について、福島原発事故を受けた了解の再検討や市民の意思の再確認を行った経緯を問い、改めて市民の意思を問う必要があると質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島良信</span>
+          <span class="ttl">島根原発3号機の審査容認姿勢</span>
+          <span class="sum">松浦市長が3号機の適合性審査を容認とする姿勢を示したとの報道について、その真意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・細木明美</span>
+          <span class="ttl">島根原発の再稼働と3号機審査申請</span>
+          <span class="sum">宍道断層39キロ延長や820ガルの審査を踏まえ、4年以上の審査に合格したものは受け入れるべきとして2号機再稼働への考え、3号機の早期審査申請の了解、ダクト腐食トラブルを踏まえた中国電力の信頼回復、原発の必要性と松江市の役割を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・橘祥朗</span>
+          <span class="ttl">島根原発の再稼働と核燃料</span>
+          <span class="sum">原発が稼働せずとも電力は足りているとし、「当面必要」とする根拠や「将来なくす」時期、放射能の無害化や核のごみ処分、再処理施設、避難計画の実効性について市民の疑問を紹介し見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田中肇</span>
+          <span class="ttl">島根原発の基準地震動と避難計画</span>
+          <span class="sum">820ガルへの了承を踏まえ基準地震動の定義や過去の最大加速度、全施設の改修の有無、宍道断層39キロ延長や土地の隆起への検証、福島事故の原因認識、大橋川の橋の耐震や自家発電SS確保など避難計画、原発の今後を判断する前提3条件を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・柳原治</span>
+          <span class="ttl">島根原発の廃止措置と防災体制</span>
+          <span class="sum">1号機の30年に及ぶ廃止措置計画や2・3号機の稼働を見据え、廃止措置計画の点検や地域防災体制の見直し・強化、職員体制や財政の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・吉儀敬子</span>
+          <span class="ttl">島根原発の活断層見直し</span>
+          <span class="sum">宍道断層が39キロに延長され鳥取沖断層との連動が懸念される点を挙げ、中国電力に提出した連続性調査など5点の申し入れへの認識と対峙姿勢を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・吉儀敬子</span>
+          <span class="ttl">日本原燃六ヶ所施設</span>
+          <span class="sum">六ヶ所施設視察を踏まえ、保安規定違反を繰り返す原燃・中電に原子力を扱う資格があるか、低レベル放射性廃棄物L1の処分を実験と称し法改正で進める姿勢を問い、原発を動かさない決断を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津照雄</span>
+          <span class="ttl">防災避難訓練とJ-ALERT</span>
+          <span class="sum">ミサイル飛来を想定した住民避難訓練の実地対応内容、J-ALERTや防災メールで発生した不具合の原因究明と対策、原発事故避難先の状況、全地区統一の訓練指導を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・橘祥朗</span>
+          <span class="ttl">再生可能エネルギーへの転換</span>
+          <span class="sum">九州電力の出力制御や北海道全域停電を踏まえ、原発優先からの転換、大規模集中型から地域分散型・地産地消の再生可能エネルギーへの展開、脱原発を掲げる姉妹都市宝塚市の取り組みへの見解を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・貴谷麻以</span>
+          <span class="ttl">原子力発電所の避難訓練</span>
+          <span class="sum">原発防災避難訓練後の地域との意見交換会が必要と提起し、避難訓練後の成果・進展と今後の計画について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・田中肇</span>
+          <span class="ttl">原発の必要性と許容性</span>
+          <span class="sum">原発の温暖化対策や排熱の海水温への影響、再生可能エネルギーの実力、大規模電源としての評価を問い、熊本地震の教訓から震源を特定しない地震動が原発直下のずれを想定しているか、活断層直近の原発立地の適格性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・津森良治</span>
+          <span class="ttl">原発をめぐる諸課題</span>
+          <span class="sum">全国原子力発電所立地議会サミット宣言を踏まえ、いわゆるトイレなきマンションの解消なき原発稼働への姿勢、原子力防災訓練の課題と国の関与強化、安定ヨウ素剤配布の見直し、島根原発3号機の申請不備をめぐる中国電力の説明責任を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・津森良治</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">第5次エネルギー基本計画骨子案への見解、原発の必要性の当分の間という期間、市民の不安が解消されているか、核燃料サイクル未確立下での稼働、乾式貯蔵の受け入れ、1号機廃炉交付金の使途、周辺自治体との安全協定について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・田中肇</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">島根３号機審査を受け、市長の原発の必要性議論不要との報道への見解、必要性議論の継続、原発と人類の共存可能性を問う許容性の観点から廃止への決断を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・田中肇</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">原発温排水の熱量と海水温上昇の関係、熊本地震の枝分かれ断層の知見を宍道断層に適用した検証と規制委への申し入れ、市独自の学習会、再稼働前の市民意思確認を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・吉儀敬子</span>
+          <span class="ttl">原発問題と市民意見の反映</span>
+          <span class="sum">島根３号機了承への福島県人の思いの受け止めや、説明会・安対協で反対意見が多い中でなぜ市民の意見を市長判断に反映しなかったのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・橘祥朗</span>
+          <span class="ttl">原発問題の個別課題</span>
+          <span class="sum">核燃料サイクルの岐路、エネルギー基本計画と世界の脱炭素の流れとの遅れ、低レベル放射性廃棄物の中間処理、複合災害を想定した避難計画の実効性、３号機の門前払いへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・田中肇</span>
+          <span class="ttl">島根原子力発電所</span>
+          <span class="sum">福島事故後の原発に関する世論調査の実施や認識、3号機への核燃料装荷に際した世論確認の方法、市長選での原発ゼロ票を踏まえた自由委任の補完、原発ゼロによる温暖化・原発災害双方の回避、原発ゼロの松江の未来、熊本地震を教訓とした宍道断層の枝分かれ想定と820ガルの認識、市消防本部周辺の橋梁の耐震性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島良信</span>
+          <span class="ttl">島根原子力発電所の事前了解</span>
+          <span class="sum">中国電力から3号機の適合性審査に係る事前了解の申し入れがあったことについて、市の受けとめと今後の手順、市民や議会の意見集約と判断の方法を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・吉儀敬子</span>
+          <span class="ttl">島根原発3号機適合性審査申請</span>
+          <span class="sum">新規制基準を世界一厳しいと言えるか、宍道断層39キロ・基準地震動820ガルの妥当性、周辺自治体並みの安全協定への働きかけ、第5次エネルギー基本計画への評価と、適合性審査申請に同意すべきでないこと、再生可能エネルギー地産地消の推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・貴谷麻以</span>
+          <span class="ttl">島根原発３号機の新規稼働問題</span>
+          <span class="sum">３号機を新規稼働と位置づけ、動かすメリットや廃炉のための資金確保、原発をとめて研究・視察施設とするなど異なる使い道を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・吉儀敬子</span>
+          <span class="ttl">活断層防災と原発問題</span>
+          <span class="sum">宍道断層帯を活断層防災特別推進地域に指定して被害を食いとめる施策を持つべきと提起し、原発は動かさず北道路建設費を災害対策に充てること、電気の地産地消を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・細木明美</span>
+          <span class="ttl">立地自治体としての考えと交付金</span>
+          <span class="sum">原発立地自治体が悪者とされる風潮や周辺地域の意見調整を島根県が行うべき点、国の明確な態度と責任、原発立地のPR不足、3号機稼働時の交付金・核燃料税の税収見込みと使途、地元雇用の拡大、原子力専門家を育てる教育的取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・橘祥朗</span>
+          <span class="ttl">複合災害対策</span>
+          <span class="sum">地震を中心とした自然災害の複合災害対策の検討状況、原発事故との複合災害や事故時に3,000名の中電社員が駆けつけられるかへの憂慮、被災者生活再建支援制度の市独自の積み増し、防災広報の内容の踏み込み不足を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・橘祥朗</span>
+          <span class="ttl">避難計画の受け入れ先</span>
+          <span class="sum">府中町議会の質疑を踏まえ、松江市民の避難先での受け入れ計画や避難所環境、仮設住宅建設や生活再建の想定の欠如を指摘し、原発ゼロに踏み出すべきと求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・吉儀敬子</span>
+          <span class="ttl">ガス料金と公営存続</span>
+          <span class="sum">公営ガス料金がLPガス料金の値上げの歯どめとなっている点や議会関与の意義を踏まえ、原発に代わる自然エネルギーの視点も含め、公営での存続を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中肇</span>
+          <span class="ttl">原子力発電</span>
+          <span class="sum">最大被害想定地震と１号機災害対策重点区域の変更経緯、フレキシビリティーによる原発必要性の有無、新規制基準への疑問を踏まえた２号機再稼働の是非を市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中肇</span>
+          <span class="ttl">原子力発電</span>
+          <span class="sum">伊方原発３号機の運転差し止め決定を重く受けとめる必要性、原発も地球温暖化もない未来に向けた脱原発・再生エネルギー振興の政治決断、相次ぐ不祥事のある中国電力の資格、規制委員会の新検査制度の体制について見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・細木明美</span>
+          <span class="ttl">原子力発電</span>
+          <span class="sum">島根２号機の適合性審査が完了し次段階へ進んだ際に再稼働の結論を出す鍵、国の審査に合格した原発を司法が運転差し止めする事態への市長の考え、原子力発電の必要性、電力会社との共生のまちづくりへの取り組みについて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中肇</span>
+          <span class="ttl">原子力発電と審査</span>
+          <span class="sum">熊本地震で確認された未知の断層や地形変形を教訓とした島根原発審査への反映と規制庁の説明との矛盾、福島第一原発の炉心溶融が地震動によるものか津波によるものかの認識と2号機審査の中断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中肇</span>
+          <span class="ttl">原子力防災訓練の実効性</span>
+          <span class="sum">今回の訓練が想定した原発の事態内容を問い、５キロ圏外で避難する地域と屋内退避を続ける地域の判断基準・データ・市民周知の仕組みを質し、市民の信頼を醸成する避難計画の改善を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・橘祥朗</span>
+          <span class="ttl">原発の稼働と現状</span>
+          <span class="sum">福島第一原発の廃炉工程が白紙状態である現状、使用済み核燃料の処分をめぐる現状と稼働反対の世論調査、原発稼働の条件、ポスト原発への市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島進</span>
+          <span class="ttl">原発事故避難訓練の評価</span>
+          <span class="sum">地域ごとの避難組織の統一性・継続性への行政指導、バス・自家用車の割合やマニュアル整備、及び風向きによる段階的避難の判断を市民にどう周知するかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・橘祥朗</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">福島第一原発のトリチウム含む汚染水の海上放出について市の考え、伊方原発で相次いだ制御棒つり上げや電源喪失などのトラブルについての市の考えと情報収集の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・吉儀敬子</span>
+          <span class="ttl">原発避難訓練の意義</span>
+          <span class="sum">11月の原発避難訓練の計画策定時と実施時の課題・教訓を問い、原発は動かさないと決断した上で実効ある避難訓練を実施する立場に立つべきと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・貴谷麻以</span>
+          <span class="ttl">原発避難訓練の意義と課題</span>
+          <span class="sum">国主催の原発避難訓練の意義と、必要とされながら不足していたものは何かを問い、災害時の携帯電話に頼らない情報伝達や自家用車避難の具体化を国・県と考えることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・比良幸男</span>
+          <span class="ttl">境港出雲道路と松江北道路</span>
+          <span class="sum">中海・宍道湖圏域８の字構想の一環である松江北道路の進捗状況と、半島振興法や原発特措法を活用した有利な起債・補助獲得へ向けた国との交渉を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島進</span>
+          <span class="ttl">松江北道路と原発避難</span>
+          <span class="sum">松江北道路の調査・進捗状況と今後の取り組みを問い、思い切ったルート変更と早急な着工を求め、原発災害時に北道路が果たす役割の割合を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・柳原治</span>
+          <span class="ttl">松江北道路の事業推進</span>
+          <span class="sum">地元交渉の進捗と県・市の対応状況を問い、原発特措法や後進地域特例法の適用で全体事業を200億円とした場合の県負担額、特措法延長要望を含む早期事業化の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・貴谷麻以</span>
+          <span class="ttl">伝染病下の原発保守と農業</span>
+          <span class="sum">原発社員に感染者が出たことを踏まえた伝染性疾患・検疫の対策、県産地交付金を市単独予算で計上したことを評価しつつ災害時のビニールハウス補助など踏み込んだ農業施策の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・田中肇</span>
+          <span class="ttl">原子力発電</span>
+          <span class="sum">震源を特定せず策定する地震動の規則解釈改訂の島根原発への影響、航空機飛行確認連絡票で4件確認された近接飛行への認識と対応、原子力災害時に給油可能な自家発電設備を持つガソリンスタンドの数と今後の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・田中肇</span>
+          <span class="ttl">原発の巡視未実施と規制</span>
+          <span class="sum">サイトバンカ建物の10分以下立入を未実施に算入しない報告書の問題、中国電力自身の原子炉建屋・タービン建屋巡視の証拠がない安全軽視、規制庁の甘い姿勢や大飯原発設置許可取消判決を踏まえ再稼働を認めない立場、3密施設である原発の感染症対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・橘祥朗</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">中国電力サイトバンカ巡視虚偽報告に対する会社資格と規制委員長発言への抗議、六ヶ所再処理工場の合格と核燃料サイクルの破綻を踏まえた原発ゼロの決断を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・橘祥朗</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">東日本大震災から10年、核燃料サイクルの行き詰まりや最終処分地未定など課題が解決されない中で、島根原発2号機再稼働・3号機稼働を認めれば市民が100年不安と向き合うとして、原発からの撤退を決断すべきと総括的に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・津森良治</span>
+          <span class="ttl">島根原発</span>
+          <span class="sum">3号機建設問題に関わってきた市長に福島事故を機に原発への考え方が変わったか、福島第一原発の廃炉作業がコントロールできているとの認識か、コロナが廃炉作業や適合性審査に及ぼす影響、避難計画の策定・検証・承認を再稼働の要件とすべきか、周辺市町村との連携強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・田中肇</span>
+          <span class="ttl">島根原発の安全性</span>
+          <span class="sum">適合性審査で表明された防波壁設計方針の見直しに対する規制庁の厳しい指摘への認識と対処、サイトバンカ虚偽報告など不祥事を重ねる中国電力に原発運営を任せられるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・新井昌禎</span>
+          <span class="ttl">脱炭素社会と再生可能エネルギー</span>
+          <span class="sum">ゼロカーボンシティ宣言を踏まえた環境基本計画での具体的取組と市民への伝達、市所有車と新庁舎の電動化、市周辺の陸上・洋上風力の適地、上下水道局のインフラを活用した再エネ導入、ゼロカーボンシティを宣言した市長の原子力発電への所見、ガス局・交通局・堀川遊覧船のカーボンニュートラルの取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・森脇勇人</span>
+          <span class="ttl">過疎法・原発特措法の延長</span>
+          <span class="sum">みなし過疎廃止など過疎法改正の国の方向性と、大手前道路や松江北道路に適用される原発特措法の延長をめぐる現状と今後の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・太田哲</span>
+          <span class="ttl">エネルギー政策と島根原発２号機</span>
+          <span class="sum">再生可能エネルギー（太陽光・蓄電池・ブルーカーボン・地熱）の進捗を問い、住民説明会での声、福島原発視察の認識、２号機再稼働時の稼働期間を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・たちばなふみ</span>
+          <span class="ttl">原子力災害の避難</span>
+          <span class="sum">審査に合格した島根原発２号機について、実効ある避難計画とは何か、複合災害時に子どもの受渡しや段階的避難が現実的かの疑問、放射能被害の特殊性や福島の未復興を挙げ、住み続けられる松江と再稼働同意の両立を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・舟木健治</span>
+          <span class="ttl">原子力災害避難計画</span>
+          <span class="sum">再稼働判断が迫る中、避難計画の実効性を検証する第三者機関が存在しない日本において、実際に避難する地域住民自身が計画を検証し実行可能性を判断することが求められるとして市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中肇</span>
+          <span class="ttl">原子力発電</span>
+          <span class="sum">大規模発電所に頼る体制の脆弱性、市長の言う「当面」の期間の長さ、プルサーマル決定時のような丁寧な市民意思確認の方法、圏域リーダーとして周辺自治体の安全協定を支援すべきかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中肇</span>
+          <span class="ttl">原子力発電と規制委員会への不信</span>
+          <span class="sum">福島視察で得たもの、想定外の事象が起こる以上「安心・安全の前提」はないのではないか、機密書類紛失など不祥事を起こした規制委員会の設置変更許可を信頼できるのかについて見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中肇</span>
+          <span class="ttl">原子力発電と２号機再稼働</span>
+          <span class="sum">原発ゼロの政治決断、市長による福島原発事故現場の視察、耐震基準等から規制委審査は安全を保障しないとして再稼働反対・住民投票・避難計画の根本見直し・中国電力への不信・周辺自治体との安全協定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中肇</span>
+          <span class="ttl">原子力発電の活断層評価と避難計画</span>
+          <span class="sum">活断層を12万から13万年前以降に限定する規制基準の保守性、2号炉直下シームの活動性・被害評価、避難先自治体との協議状況と相互協力体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・三島良信</span>
+          <span class="ttl">原子力発電所と２号機再稼働</span>
+          <span class="sum">原発に対する市長の基本姿勢、初視察の感想、審査終盤の２号機再稼働の手続と市民・議会への意見集約、相次ぐトラブルを起こした中国電力の資質、避難路の周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・柳原治</span>
+          <span class="ttl">原発と発電コスト試算</span>
+          <span class="sum">経済産業省の2030年発電コスト試算で太陽光が最安とされたことについて、試算に含まれない部分や安定供給の観点から市長の受け止めを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・舟木健治</span>
+          <span class="ttl">原発の広域避難計画</span>
+          <span class="sum">3万人を超える避難行動要支援者について社会福祉施設・病院が抱える課題を問い、個別具体的な避難計画のないままの原発再稼働はあってはならないとして市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">原発地域振興特別措置法</span>
+          <span class="sum">10年延長された同法の改正内容、県市振興計画の全47事業のうち未完了10事業の見通し、EPZ圏内特に古江の避難道路整備と新たな地域振興事業の国への働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川島光雅</span>
+          <span class="ttl">原発２号機再稼働と脱炭素</span>
+          <span class="sum">審査合格見通しへの受け止めと対処、原子力避難訓練の再計画、脱炭素社会に向けた再生可能エネルギー移行と原発交付金の使途を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中明子</span>
+          <span class="ttl">女川町視察から学んだこと</span>
+          <span class="sum">女川原発視察を踏まえ、島根原発2号機再稼働同意の判断がなぜあのタイミングだったのか、島根原発への決意、女川町の公民連携による復興まちづくりへの見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・錦織伸行</span>
+          <span class="ttl">島根原発1号機・2号機の基本的な状況</span>
+          <span class="sum">廃炉作業中の1号機の解体終了予定と核燃料の保管状況・除染、2号機の核燃料の状態と使用済み核燃料・低レベル放射性廃棄物の搬出見込み、2号機の残存寿命と残存期間終了までの核燃料搬出のめどを、市民に分かりやすく質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・たちばなふみ</span>
+          <span class="ttl">島根原発2号機再稼働</span>
+          <span class="sum">再稼働同意を急いだ理由と安心・安全の確保、核のごみ最終処分と核燃料サイクルの行き詰まりへの認識、感染爆発下の複合災害で計画どおりの避難が可能か、感染症対策に追われる広島・岡山の受入体制を問い、再稼働同意の撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・柳原治</span>
+          <span class="ttl">島根原発避難計画</span>
+          <span class="sum">島根地域原子力防災協議会で島根原発事故に備えた緊急時対応が具体的・合理的と評価されたことについて、市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・南波巖</span>
+          <span class="ttl">島根原発２号機</span>
+          <span class="sum">審査書案が了承された島根原発２号機について、賛否のグレーゾーンにいる人たちの内心をどう聴取するか、および今後のスケジュールと見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・河内大輔</span>
+          <span class="ttl">島根原発２号機と情報提供</span>
+          <span class="sum">福島第一原発視察の感想、県と共同開催した住民説明会の状況、市として住民への情報提供や意見聴取が十分にできたかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・細木明美</span>
+          <span class="ttl">島根原発２号機の再稼働</span>
+          <span class="sum">福島第一原発視察で感じたことと再稼働の事前了解判断への影響を問い、安定的な電力供給の役割やベースロード電源としての必要性を踏まえ、早期運転再開に向けた手続を進めるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・細木明美</span>
+          <span class="ttl">島根原発２号機再稼働</span>
+          <span class="sum">市長の原発視察の感想、審査に事実上合格した２号機のこの後の流れと市の予想時期、原子力の必要性・再稼働への考えと中国電力に望むことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・たちばなふみ</span>
+          <span class="ttl">島根原発２号機再稼働と再生可能エネルギー</span>
+          <span class="sum">工事計画・保安規定認可前に理解要請するのは疑問でないか、第６次エネルギー計画は福島事故の反省に基づくといえるか、住民説明会後も多くの市民から意見を伺う姿勢に間違いないかを問い、市の再生可能エネルギー体制と専門職員育成・部局拡充を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・錦織伸行</span>
+          <span class="ttl">新庁舎の防災拠点機能</span>
+          <span class="sum">現在地が最大水位3メートル、原発10キロ圏内である点を挙げ、周囲が水没する中で約1週間の災害初動指揮拠点たり得るかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・細木明美</span>
+          <span class="ttl">脱炭素の取組・エネルギー政策</span>
+          <span class="sum">島根原発2号機再稼働同意を踏まえ、2050年カーボンニュートラルに向けた持続可能なエネルギー政策の具体的取組・課題・市民生活への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">過疎地域の指定と地域振興</span>
+          <span class="sum">過疎法・原発地域振興特別措置法・半島振興法の不均一課税改正点、集落再編整備等の事業募集、新たに過疎認定された島根町・鹿島町の過疎計画策定と定住対策、担当部局強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・たちばなふみ</span>
+          <span class="ttl">原子力発電の危険性</span>
+          <span class="sum">身分証明書偽造の見落としが原発のテロ・安全対策の不十分さを露呈したとの見解、庄原市議会の再稼働反対決議への受け止め、厳正な保安審査の継続と事前了解の撤回を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・森脇勇人</span>
+          <span class="ttl">原子力発電所周辺地域の防災対策</span>
+          <span class="sum">原子力災害対策事業費の背景・内容や国の当初・補正予算の状況を問い、10キロ圏内施設の放射線防護対策の実績や、UPZ圏内の避難困難地区への対策、県事業と市の関わりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・長谷川修二</span>
+          <span class="ttl">原子力発電政策</span>
+          <span class="sum">原発所在都市への交付金・補助金拡充や新幹線・航空路線のメリット拡充を政府に求めるべきとし、運転期間延長・次世代原発・最終処分地の方針について見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・細木明美</span>
+          <span class="ttl">原子力防災訓練と島根原発2号機</span>
+          <span class="sum">11月の原子力防災訓練の内容とポイント・参加者の意識・計画の実効性の課題を質すとともに、国の原発推進への政策転換と島根原発2号機再稼働への市長の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・たちばなふみ</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">60年超運転を可能にする制度見直しをめぐる原子力規制委員会の独立性・透明性や、不祥事が相次ぐ中国電力に原発運転を任せられるかを問い、大雪時の避難計画の実効性を踏まえ事前了解の撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・野津直嗣</span>
+          <span class="ttl">原発立地地域振興特別措置法</span>
+          <span class="sum">原子力発電施設等立地地域の振興に関する特別措置法の概要と適用範囲、第7条のかさ上げ措置・第8条の有利な起債・別表対象5事業を確認し、市内で分割された適用範囲の是正と第7条・8条の積極活用を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・森脇勇人</span>
+          <span class="ttl">原発立地地域振興特措法</span>
+          <span class="sum">島根県原子力発電施設等立地地域振興計画の県事業・市事業の進捗と最終変更年、計画変更の手続、自治会からの計画変更・事業計画化の要望状況、原発へのミサイル攻撃等に対する自衛隊配備要望への市の対応を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・川島光雅</span>
+          <span class="ttl">原発運転延長と核燃料処理</span>
+          <span class="sum">40年プラス20年を前提に再稼働を容認した経緯を踏まえ、運転期間60年超への政策転換による議論の前提の変化や公聴会・議会への再諮問、最終処分場協議への対応を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・南波巖</span>
+          <span class="ttl">安全保障環境への認識</span>
+          <span class="sum">ロシアのウクライナ侵攻、北朝鮮のICBM発射、台湾有事という原発を抱える松江市に関わる３点について、市長の認識を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・錦織伸行</span>
+          <span class="ttl">島根原子力発電所の不正入構</span>
+          <span class="sum">有効期限を書き換えた身分証明書による不正入構事案について、当事者・企業・中国電力への捉え方と処置、企業への責任追及の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・細木明美</span>
+          <span class="ttl">島根原発の再稼働</span>
+          <span class="sum">島根原発2号機の再稼働への理解を市民に深めてもらう機会とする考えや、不祥事が続く中国電力への信頼回復の徹底要求、再稼働で増える原発交付金の使い道について市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・たちばなふみ</span>
+          <span class="ttl">島根原発の再稼働と避難計画</span>
+          <span class="sum">第7波と同様の感染症流行下で原発災害が起きた場合の行政の機能不全や計画どおりの避難の可否、避難計画の破綻を指摘し、島根原発2号機再稼働同意の撤回や国への厳格な審査を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・たちばなふみ</span>
+          <span class="ttl">島根原発の運転延長と避難計画</span>
+          <span class="sum">原則40年の運転期間規定撤廃の動きへの見解を問い、住民参加の広域避難訓練で見た被曝しながらの待機・バス台数・職員のマンパワー不足等の課題を指摘し、2号機再稼働の事前了解撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・河内大輔</span>
+          <span class="ttl">島根原発の避難訓練</span>
+          <span class="sum">令和4年度原子力防災訓練の計画遂行状況と問題点、県・市・中国電力および家庭・地域の連携、県外避難先自治体との連携体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・たちばなふみ</span>
+          <span class="ttl">憲法９条と平和都市</span>
+          <span class="sum">軍事費増強や核共有が島根原発・美保基地を抱える松江市民を危険にさらすとして９条堅持と軍拡反対の表明、国連憲章を守る国際世論喚起、核兵器禁止条約への参加を国に求めるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・田中明子</span>
+          <span class="ttl">松江市における安全保障</span>
+          <span class="sum">厳しさを増す安全保障環境の中、原子力発電所を有する松江市が市民を守るため国に何を求めるかを問い、あわせてJアラートの速報性・正確性の一層の精度向上を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島良信</span>
+          <span class="ttl">除雪体制</span>
+          <span class="sum">2月1日からの降雪への除雪対応で市民意見や影響が出たか、避難道路や緊急輸送道路等の計画的除雪、除雪機設置状況、原発交付金や研修会活用による除雪体制強化を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川島光雅</span>
+          <span class="ttl">中国電力カルテル問題</span>
+          <span class="sum">中国電力の課徴金命令と指名停止を踏まえ、原発立地自治体としての信頼性と市民感情への認識、電気料金値上げへの物価高騰対策上の考慮について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・原田守</span>
+          <span class="ttl">処理水放出と水産物禁輸の影響</span>
+          <span class="sum">福島原発処理水放出を受けた中国の日本産水産物禁輸について、市内事業者への影響や国の緊急支援を踏まえた市の支援策、今後予想される対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・たちばなふみ</span>
+          <span class="ttl">原子力発電と島根原発再稼働</span>
+          <span class="sum">ALPS処理水海洋放出の停止要請と事業者への影響調査・支援、避難計画への市民の不安への認識、島根原発2号機再稼働同意の撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・たちばなふみ</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">志賀原発のトラブルや断層の過小評価を踏まえ、複合災害時の避難計画の実効性の再検証、断層の連動性の追加調査を求め、島根原発２号機再稼働同意の撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・たちばなふみ</span>
+          <span class="ttl">原発推進５法と方針転換</span>
+          <span class="sum">運転期間延長を可能とする原発推進等５法の成立を立地自治体としてどう捉えるかを問い、原発回帰への国の方針転換の認識と撤回を求める考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・森脇勇人</span>
+          <span class="ttl">原発特措法と立地地域振興</span>
+          <span class="sum">原発特措法の立地地域を新松江市全体へ拡大する要望の状況と拡大されない理由、避難道路等への過去5年間の利用実績と制度拡充の検討状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・舟木健治</span>
+          <span class="ttl">島根原発1号機廃止措置と核燃料サイクル</span>
+          <span class="sum">六ヶ所村再処理工場の竣工見通しや上関町中間貯蔵施設、使用済み核燃料の処分方法を質し、核燃料サイクル政策との決別と２号機再稼働・プルサーマル同意の撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三島良信</span>
+          <span class="ttl">島根原発と中間貯蔵施設</span>
+          <span class="sum">１号機廃炉工程延長の現状、２号機再稼働時期、および上関町の中間貯蔵施設計画に対する立地市長としての考えと国主導での対応の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・細木明美</span>
+          <span class="ttl">島根原発と使用済み燃料</span>
+          <span class="sum">上関町中間貯蔵施設をめぐる「島根のごみ」との報道への所感を質し、１号機廃止措置計画変更や説明会での意見も含め原子力に関する市長の見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・森脇勇人</span>
+          <span class="ttl">過去質問の進捗確認</span>
+          <span class="sum">新たな土地利用制度の検討状況、伯備・山陰新幹線整備への県の対応、1次産業振興と鹿島町半循環システムの実績、原発への武力攻撃対策の国の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・舟木健治</span>
+          <span class="ttl">避難行動要支援者の避難</span>
+          <span class="sum">福祉避難所の早期開設対策や一般施設の環境整備、個別避難計画の進捗、原発PAZの孤立地域想定と要支援者避難、避難計画実効性の再検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森脇勇人</span>
+          <span class="ttl">原子力発電関係の補助金・交付金</span>
+          <span class="sum">原発30キロ圏を対象とする経産省・内閣府の交付金について内容と種類を問い、県に準じた活用が立地市の自由度を妨げていないか、緊急時避難円滑化事業の狭隘道路への活用や社会資本整備総合交付金への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・たちばなふみ</span>
+          <span class="ttl">原発は動かさない</span>
+          <span class="sum">島根原発2号機の保安規定認可や度重なる火災・死亡事故、中国電力の不祥事を挙げ、危険な原発の運転を任せられるかの見解、能登半島地震の教訓、半島部の避難計画の実効性と2号機再稼働同意の撤回、住民への聞き取り調査を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森脇勇人</span>
+          <span class="ttl">原発再稼働と企業局の人件費対応</span>
+          <span class="sum">島根原発2号機再稼働による交付金の増加見込み、および交付税措置されない企業局の人件費高騰に対し、水道・ガス・交通・病院各局がどのような企業努力で対応するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・たちばなふみ</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">12月とされる島根原発２号機再稼働に反対の立場から、敦賀原発の不適合判断、南海トラフ臨時情報への原発の措置、宍道断層と鳥取沖断層の連動性の再評価、複合災害時の避難計画の実効性、六ヶ所村再処理工場の27回目の延期を挙げ、再稼働同意の撤回を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森脇勇人</span>
+          <span class="ttl">原発立地地域振興特措法の拡充</span>
+          <span class="sum">重点区域が30キロ圏に拡大された点を踏まえ、合併したまちを含む松江市全域を原子力発電施設等立地地域に指定し地域振興計画を拡充すること、屋内退避施設の放射線防護対策の対象拡大を国・県に働きかけるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・たちばなふみ</span>
+          <span class="ttl">原発避難計画の実効性</span>
+          <span class="sum">屋内退避の目安を3日とする国の検討状況の受け止め、島根原発2号機再稼働への市民への説明、避難経路や個別避難計画（対象8,644名中作成247名）の不十分さを踏まえ運転停止の働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森脇勇人</span>
+          <span class="ttl">安定ヨウ素剤の事前配布と原発案件の所管</span>
+          <span class="sum">安定ヨウ素剤の事前配布に係る県から市への交付名目を問い、原発関連案件を防災部が個別に抱える体制を改め政策部が一元的に取りまとめ国から直接交付を働きかけるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・野々内誠</span>
+          <span class="ttl">島根原発関連人件費の中国電力負担</span>
+          <span class="sum">中国電力が県・周辺市の人件費を年５億円負担する報道を踏まえ、立地市松江市としての対応や県・中国電力との交渉・要望の有無を問い、立地市への特段の配慮を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・たちばなふみ</span>
+          <span class="ttl">島根原発２号機の再稼働</span>
+          <span class="sum">再稼働数日前に、宍道断層と鳥取沖合断層の連動性の再調査や避難計画の実効性の再検証を求め、プルサーマル運転や核のごみ、措置要求権、港湾法違反等を踏まえた市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・細木明美</span>
+          <span class="ttl">島根原発２号機再稼働と市長の姿勢</span>
+          <span class="sum">13年ぶりの島根原発２号機再稼働を前に、原子力発電と島根原発に対する上定市長の考えと現在の心境、防災訓練の詳細・課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・細木明美</span>
+          <span class="ttl">立地自治体の地域振興と企業誘致</span>
+          <span class="sum">鹿島町・島根町が過疎地域である現状を踏まえ、原発特措法等がうたう地域振興の実現と国・県・中国電力への働きかけを問い、電気料金補助やデータセンター誘致を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・樋野伸一</span>
+          <span class="ttl">原発と職員の安全確保</span>
+          <span class="sum">福島県浪江町等の視察を踏まえ、原発事故時の職員の安全確保・命と健康への行政の責任、島根原発の再稼働ではなく原発ゼロと再生可能エネルギーへの転換を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐野みどり</span>
+          <span class="ttl">原発再稼働</span>
+          <span class="sum">医療・介護現場の人手不足や複合災害への懸念、松江赤十字病院のBCP策定状況を踏まえ、市民や現場の不安軽減への対応と原発稼働の中止を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・たちばなふみ</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">稼働37年目で点検を待たず稼働する島根原発2号機の老朽化、核のごみ最終処分場の見通しがないまま原発を稼働させる矛盾、医療・介護現場の人手不足と非現実的な広域避難計画を挙げ原発停止を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・たちばなふみ</span>
+          <span class="ttl">原発問題と福島事故の教訓</span>
+          <span class="sum">改良型沸騰水型原子炉の欠陥指摘を踏まえた3号機稼働、除染土再利用の松江市での可能性への対応、原発依存度低減を国に求めるべきかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・柳原治</span>
+          <span class="ttl">島根原子力発電所の運転</span>
+          <span class="sum">再稼働から1年が経過した島根原発2号機の度重なるミスへの見解、立地自治体として中国電力に何を期待し求めるのかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・樋野伸一</span>
+          <span class="ttl">島根原発</span>
+          <span class="sum">福島の復興が終わらない現状や市民アンケートで49％が稼働に反対することを踏まえ原発のない松江を求め、火災を繰り返す中国電力に対し安全協定第12条の適切措置要求権を発動し原子炉停止を決断すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・樋野伸一</span>
+          <span class="ttl">島根原発</span>
+          <span class="sum">原発30キロメートル圏内の放射線防護施設に陽圧装置の設置を求めるとともに、人類と共存できない島根原発を廃炉にすべきとの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・たちばなふみ</span>
+          <span class="ttl">島根原発の新燃料検査事故</span>
+          <span class="sum">島根原発2号機の新燃料検査で手順書に従わず作業員が負傷し燃料が変形した事故を受け、度重なる不適切事案を踏まえて安全協定に基づく運転停止を求める見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉茂美</span>
+          <span class="ttl">新庁舎の気圧室</span>
+          <span class="sum">新庁舎4階の気圧室について、原発事故時に指令を出す重要な部屋でありながら説明が簡単だったことを踏まえ、市民に分かるよう詳しい説明を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐野みどり</span>
+          <span class="ttl">看護師不足とケア労働者の処遇改善</span>
+          <span class="sum">長時間夜勤や月8日を超える夜勤が続く看護現場の実態を挙げ、市立病院・民間病院の看護師不足の把握と現場の声を聞く機会、夜勤協定・インターバル協定の締結援助、原発事故時の患者避難の実効性を問い原発停止を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉茂美</span>
+          <span class="ttl">駅前再開発と地下駐車場</span>
+          <span class="sum">難航した駅前地下駐車場について、原発立地を踏まえ地下駐車場をシェルターとして活用することの検討を提起した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">63件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H22・中村健二</span>
+          <span class="ttl">島根原発点検不備への対応</span>
+          <span class="sum">点検漏れが123件から506件に拡大した島根原発の不祥事への市の受けとめと中国電力の安来市への説明・謝罪の内容を確認し、原発特措法の延長と電源立地交付金の安来市への配分を中海市長会などで働きかけるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">1号機再稼働とプルサーマルへの立場</span>
+          <span class="sum">昨年は原発稼働ゼロでも電力が賄えた事実を確認した上で、島根原発1号機の再稼働に対する市長自身の言葉での見解を重ねて求め、毒性の強いMOX燃料を使うプルサーマル計画に反対を表明するよう迫ったが、慎重との答弁にとどまった。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">メガソーラー誘致と防災教育</span>
+          <span class="sum">中海ふれあい公園や休耕田を生かしたメガソーラーの誘致のその後と脱原発への市長の所見を尋ね、学校の危機管理マニュアルの見直し状況と、マニュアルだけでなく自分で考え判断する力を重視する防災教育への教育長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉刻夷</span>
+          <span class="ttl">原発に対する市の基本的考え</span>
+          <span class="sum">福島原発事故で30キロ圏の避難が現実となり旧奥田原小学校もすっぽり圏内に入ることを示して島根原発への市長の考えを尋ね、2県8市町による原子力防災連絡会議の事務局体制と市民への説明の場の想定を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部幸治</span>
+          <span class="ttl">原発事故対応と安全協定の進め方</span>
+          <span class="sum">福島の事故対応に人為的ミスが見え隠れするとの認識を市長にただし、立地自治体と周辺自治体の条件の違いや周辺の温度差を踏まえた安全協定への慎重かつ誤解を招かない対応を求めて、津波も含め安来市独自でできる防災対策の具体を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・佐伯直行</span>
+          <span class="ttl">原発事故後のエネルギー政策</span>
+          <span class="sum">福島の事故を踏まえた市のエネルギー政策の基本的考えと現在の取り組みを尋ね、メガソーラー建設への対応と干拓地・ふれあい公園用地の転用の可能性、市の建築物への太陽光導入、伸びる住宅用太陽光補助の増枠と継続を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・佐伯直行</span>
+          <span class="ttl">原発事故時の対応と安全協定</span>
+          <span class="sum">事故後の避難ルート・避難計画の考えと自主避難という勧告のあり方をただし、水源や食べ物の汚染をどう測定するのか、市の放射線測定器の保有状況を確認して、風評被害の損害賠償の観点からも安全協定に加わるべきだと求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">原発副読本の回収</span>
+          <span class="sum">原発の安全性を強調する小・中学生用副読本「わくわく原子力ランド」等の市内での使用状況を確認し、雲南市が自主回収した例を挙げて、誤った内容の本が学校に存在すること自体が問題だとして回収を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">原発安全神話と老朽化への認識</span>
+          <span class="sum">県地域防災計画の前提が安全神話に浸っていると指摘して原発は危険なものとの認識から出発すべきだと市長の所感を求め、運転37年の島根原発の寿命や税法上16年の減価償却、老朽化で生じる金属疲労・脆化の問題、511カ所の点検漏れなどトラブルの実態を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">原発防災の広域連携と安全協定</span>
+          <span class="sum">女川原発と福島原発の明暗を分けた津波想定を挙げて島根原発の津波対策と市の地域防災計画見直しを尋ね、単独対応の限界を踏まえた近隣自治体との協力体制、中国電力との安全協定やプルサーマルへの所見、モニタリングポスト設置の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">周辺自治体連絡会議と原発情報</span>
+          <span class="sum">安来市の提唱で発足した島根原子力発電所周辺自治体連絡会議の経緯と協議内容・目指す形を尋ね、中国電力への申し入れに消極的ではないかとの市民の声をぶつけて、情報提供の求め方と事故時の住民避難対策の協議状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">島根原発と安来市の位置関係</span>
+          <span class="sum">福島の事故で30キロ圏外まで避難が及んだことを踏まえ、島根原発と安来市の位置関係と30キロ圏内の居住者数を尋ね、福島と同じ沸騰水型である1・2号機の稼働状況と3号機増設への市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">島根原発の再稼働と脱原発</span>
+          <span class="sum">福島と同型で38年経過し2.4キロ先に宍道断層が走る島根原発の危険性と、原発なしでも中国電力の電力需給に余裕がある実績を示して、脱原発を掲げた福島県知事や東海村長のように市長みずから原発撤退の声を上げるよう求め、県が示した3万7,000人の広域避難割り当てが入院患者・施設入所者約3,500人の受け入れ先を確保した現実的な計画なのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">島根原発の地震・津波リスク</span>
+          <span class="sum">地震予測地図で確率が低かった福島で大震災が起きた事実を挙げ、県庁や病院が10キロ圏内にある全国唯一の県庁所在地立地の危険性、8キロから22キロへ後出しで認められた活断層、改善されない引き波時の海水取水問題を示して島根原発の危険性を市長にただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・佐伯直行</span>
+          <span class="ttl">幼保一体・原発・少子高齢化と公約の自己採点</span>
+          <span class="sum">県内初の公立幼保一体化となる荒島のケースの評価と今後の計画、給食センターの建設計画と食育、ケーブルテレビの利活用、UPZ30キロ化への基本方針、出雲市が加わる中海市長会への基本的考え、少子・高齢化と中心市街地活性化のビジョンを尋ね、任期最後の当初予算に当たり公約達成の自己採点を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部幸治</span>
+          <span class="ttl">新市長会と島根原発への姿勢</span>
+          <span class="sum">出雲市を加えた新市長会について鳥取県西部町村との連携や両空港の連携の実現性を尋ね、環境保全を掲げながら斐伊川源流の奥出雲町・雲南市が加わっていない理由を質した上で、フルスペックの安全協定を目指すなら夏の電力不足と原発再稼働への市長自身の考えが必要だと迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">老朽原発と自然エネルギーへの転換</span>
+          <span class="sum">浜岡原発の停止要請を踏まえ老朽化した島根原発1号機の運転再開への市長の所見を尋ね、ソフトバンクが提唱するメガソーラーについて休耕田やふれあい公園を持つ安来市での自然エネルギー推進の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">自然エネルギーへの転換姿勢</span>
+          <span class="sum">原発からの撤退を重ねて訴え、公共施設への再生可能エネルギー導入への市長の姿勢を尋ねて、全小・中学校に太陽光発電を設置する雲南市の気概や平成14年の旧安来市新エネルギービジョンを示し、耐震化にあわせたエコスクール化への国庫補助の確認を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・嶋田豊昭</span>
+          <span class="ttl">防災計画の抜本的見直し</span>
+          <span class="sum">想定を超える事態があり得ることを前提に、想定震度や大雨・大雪の前提数値、主要河川の安全対策、災害応援協定の拡大、原発災害の初動態勢など地域防災計画の抜本見直しと、自主防災組織の結成促進や災害対策本部機能への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部幸治</span>
+          <span class="ttl">電力供給とエネルギー政策の国策責任</span>
+          <span class="sum">原発全停止が産業に与える影響への認識を尋ね、自然エネルギーはベース電力になり得ない現実を数字で示して、原子力開発は超党派の国策だったとして、国が新しいエネルギー政策と安全基準を早く示すよう市長会を通じて訴えることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・丸山征司</span>
+          <span class="ttl">震災後の節電とLED導入</span>
+          <span class="sum">福島原発事故後のエネルギー意識の変化を問い、省エネルギー推進委員会のもとでの公共施設の具体的な節電内容と震災前後の消費電力・金額の差を確認して、島根大学発の低コストLED開発も踏まえた庁舎や学校へのLED導入の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・佐伯直行</span>
+          <span class="ttl">切川開発42億円と道路網の要望</span>
+          <span class="sum">切川地区開発の総事業費42億円が財政を悪化させ広瀬図書館や長谷津・招団地の建てかえなど他の必要事業に影響しないかをただし、切川バイパス進展後も県道整備の要望を続けるよう求めて、原発避難経路としても重要な山陰道側道の県境部分と安来伯太日南線六呂坂の改良・国道昇格の早期実現を訴えた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田淵秀喜</span>
+          <span class="ttl">危機管理と避難を支える基盤整備</span>
+          <span class="sum">台風災害で情報が伝わらなかった反省を踏まえた情報収集・分析・指示の強化の進展を確認し、形だけの自主防災組織を機能させる研修、原発有事の避難計画に実情を反映した避難道路のハード整備計画、高齢者集落の把握状況、携帯電話不感地域の解消の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">原発の安全対策と広域避難</span>
+          <span class="sum">大飯原発再稼働への疑問の声を踏まえ原発の安全対策への市長の所見を尋ね、周辺自治体の意見が立地自治体と同程度に尊重される制度の国への要望と松江市長の難色との関係をただして、岡山方面への広域避難計画の進捗と電源立地地域対策交付金の周辺自治体への配分を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・勝部幸治</span>
+          <span class="ttl">原発再稼働への市長自身の考え</span>
+          <span class="sum">検証が不十分なまま再稼働ありきで進んだ大飯原発への認識を尋ね、再稼働の最終判断の責任は国と立地自治体のどちらにあると考えるかを質して、フルスペックの安全協定を求めるだけでは国や県に追随すると聞こえるとして、秋の選挙も見据え再稼働への市長自身の明確な考えを示すよう迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">原発避難先への日南町の追加</span>
+          <span class="sum">広瀬地域の原子力災害避難先が瀬戸内海側の備前市・瀬戸内市と遠く高齢者や乳幼児連れに負担が大きいとして、広瀬から一山越えて車で30分ほどの日南町が避難所の空白地帯である点に着目し、緊急時の一時避難先として受け入れの話し合いを持つよう提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田淵秀喜</span>
+          <span class="ttl">緊急情報の視覚化と情報インフラ活用</span>
+          <span class="sum">災害や原発事故の緊急時に音声の告知端末では聴覚障がい者や耳の遠い高齢者に情報が届かないとして目で見てわかる伝達手段の検討状況と対象者数を確認し、避難所となる公民館へのどじょっこテレビ設置や普及率向上、買い物弱者対策と連動した情報インフラ活用の結論を出す時期を明確にするよう迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・河津清</span>
+          <span class="ttl">脱原発と再生可能エネルギー</span>
+          <span class="sum">パブリックコメントの9割が原発ゼロを望む世論調査への所感を尋ね、2030年の原発依存度に市長ならどこへ投票するかを問うて、78人が参加する脱原発をめざす首長会議への参加を促し、固定価格買取制度で回収期間が縮んだ太陽光発電への補助の継続と、小水力発電の可能性や停止中の発電所の扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・佐伯直行</span>
+          <span class="ttl">道路再評価と緊急時の道路整備</span>
+          <span class="sum">道路整備の基本的な考え方と、計画から時間がたった路線の再評価制度や住民ニーズによるルート変更の可否を尋ね、広瀬街道へのETC専用ランプの国への要望を求めるとともに、踏切通過が救急・消防活動のネックになっている実情への消防長の考えと原発避難を見据えた東西線強化を訴えた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・作野幸憲</span>
+          <span class="ttl">インフラ点検と原子力協議会</span>
+          <span class="sum">道路舗装・照明と554橋の点検結果と今後の対策、新設する安来市原子力発電所環境安全対策協議会の概要と協議会を開く基準、中海ふれあい公園の国・県との協議の進捗を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・原田貴与子</span>
+          <span class="ttl">原発への姿勢と避難計画の実効性</span>
+          <span class="sum">島根原発の再稼働・3号機稼働とエネルギー政策の転換への市長の考えを問い、透析患者など要援護者から非現実的との声がある避難計画の住民への周知徹底と病院・施設の避難計画書の策定状況を確認して、市民アンケートの原発ゼロを求める声を紹介し自然エネルギー推進の目標値を尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・原田貴与子</span>
+          <span class="ttl">原発への政治姿勢と協議会</span>
+          <span class="sum">福島の事故処理が収束していない中で島根原発2号機の適合性確認申請への事前了解は慎重に判断すべきだったとして市長の政治姿勢と新規制基準の課題認識を質し、新設する原子力発電所環境安全対策協議会に賛成・反対双方の幅広い意見を反映する配慮と再稼働の局面で果たす役割を確認して、県条例制定運動に集まった市民の声を受けとめ再稼働反対を表明するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">工業団地と道路網の整備</span>
+          <span class="sum">新たな工業団地の適地調査について想定する場所と規模を尋ねて南部町とも連携できる伯太の東母里も候補になり得ると提案し、9号線県境付近と錦町交差点の渋滞緩和策として中海架橋や山陰道側道・右折レーンの整備を質して、原発避難でも重要となる安来伯太日南線の道路改良の進捗と国道昇格への展望を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・原田貴与子</span>
+          <span class="ttl">消費税増税と島根原発</span>
+          <span class="sum">消費税8%への増税が市の一般会計・市立病院・水道事業と公共料金に与える影響を確かめて国に中止を求めるよう迫り、島根原発2号機の新規制基準適合性審査申請の事前了解には反対の声を県へ上げるよう副市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・中村健二</span>
+          <span class="ttl">防犯カメラと市民の安心・安全</span>
+          <span class="sum">自治体設置は県内で安来市と浜田市のみという街頭防犯カメラの設置状況と今年度計画6台の進捗を確認して警察や地域と連携した通学路への設置計画を求め、原発広域避難訓練で見えた交通手段や避難路の課題への対応策と交付金の扱い、高齢者の交通事故・県内被害1億3,700万円余の振り込め詐欺・生活苦を背景とした高齢者の万引きへの対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">防犯・交通安全と原発避難</span>
+          <span class="sum">宝塚市役所の放火事件を挙げて公共施設の防犯対策や訓練の考えを尋ね、自治会任せでは進まない防犯灯の増設、夜光反射材の着用を促す交通安全条例の制定、県の犯罪のない安全で安心なまちづくり条例との連携を質して、原発事故時に30キロ圏外の伯太・比田地区がそのまま地元にとどまり続ける選択の可否も確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・原田貴与子</span>
+          <span class="ttl">消費税・原発・集団的自衛権への姿勢</span>
+          <span class="sum">実質賃金の低下で市民生活に悪影響が出ているとして消費税10%への増税の中止を国に求めるべきだと市長の考えを質し、福島の事故処理が終わらない中で島根原発の再稼働は認めるべきでないとの所見と、県が周辺3市へ配分する核燃料税は原発ゼロを求める立場から受け取るべきでないとの見解、美保基地を近くに抱える市として集団的自衛権行使容認への反対を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・原田貴与子</span>
+          <span class="ttl">福井地裁判決と活断層調査</span>
+          <span class="sum">大飯原発の運転再開を認めなかった福井地裁判決を受けて原子力発電の危険性への市長の所見を質し、調査のたびに延びてきた宍道断層と大田沖断層など他の断層との連動性の調査が不十分だとして徹底した活断層調査を求め、市内の電力使用量を把握し再生可能エネルギーで賄う目標を持つよう促した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・原田貴与子</span>
+          <span class="ttl">原発の安全協定と断層調査</span>
+          <span class="sum">検査報告書偽造など不正を重ねる中国電力に対し、立入調査権や原子炉停止要求権を含む安全協定の締結へ平成25年12月から市がどんな努力をしてきたのか市長にただし、宍道断層が25キロに延びた評価でも東方への詳細調査がないとする地質学者の指摘を紹介して、鳥取沖の断層との連動性の徹底調査を中国電力と原子力規制委員会に求めるよう県への要望を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">原子力安全協定の協議継続</span>
+          <span class="sum">出雲・雲南・安来3市が中国電力と結んだ安全確保等に関する協定を踏まえ、再稼働の事前了解を含む立地自治体並みの協定を求める今後の協議継続の考えと、協定による交付金等の見直しの動向を尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・澤田秀夫</span>
+          <span class="ttl">原子力発電事業への考え方</span>
+          <span class="sum">3市と中国電力の安全確保等に関する協定締結を現段階で最善と評価した上で、島根原発2号機の再稼働に伴う意見照会も見据え、市長の原子力発電事業に対する考え方をただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">命・生活・産業の道路網整備</span>
+          <span class="sum">公約に掲げた命・生活・地域産業の道路整備について、切川バイパス・安来港飯島線・国道432号の進捗と市民への報告、平成17年着工の安来インター線の現状、原発防災道路としても重要な安来伯太日南線六呂坂の改良を順に確認し、道づくりこそまちづくりの根幹だとして優先順位をつけた計画的な整備の考え方と市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・原田貴与子</span>
+          <span class="ttl">苛酷事故への備えと再稼働反対</span>
+          <span class="sum">3市の安全協定締結を市長の尽力と評価した上で、苛酷事故時に市役所が対策本部の機能を果たせるのか放射線量の予測をただし、風向きで変わる放射性物質の流れや第2次避難先、40キロ圏に及ぶ影響の全市民への周知を求めて、立入調査を支える専門家の3市連携での配置を確認し、再稼働は認めるべきでないと訴えて自然エネルギー産業への計画的支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">事象別の危機管理と孤立対策</span>
+          <span class="sum">風水害・地震・ミサイル・原発・感染症など事象ごとの危機管理体制が整理されているかを確認し、公民館や公会堂など古い建物が多い避難所の安全性の確認状況をただして、一本道で行きどまりになる中山間地域の集落の孤立への対応を尋ね、多発する災害に現有の防災人員で対応できるのか人員補強も含めた強化を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・岩崎勉</span>
+          <span class="ttl">原子力災害と岡山への広域避難</span>
+          <span class="sum">市域の80%が原発30キロ圏内にあるとして市長の原子力発電事業への基本的な考え方をただし、五感で感じられない放射線災害に備えた平時の広報・教育、通信機器の習熟、防災業務関係者の人材育成を確認して、岡山県14市町村への広域避難計画について訓練の状況と課題、数万人を長期に受け入れられる施設が実際どの程度あるのか、6月の岡山での協議内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・上廻芳和</span>
+          <span class="ttl">身につく原子力避難訓練を</span>
+          <span class="sum">原発特別委員会の視察を踏まえ、北朝鮮のミサイルなど想定外の事態も何が起こるかわからないとして、島根原発30キロ圏内の市としてこれまでの避難訓練の検証と今後の計画をただし、中国5県のバス・タクシーが本当に何台来て自家用車で避難できない人や福祉施設の人を運べるのか綿密に考え、いざというとき行動できるまで訓練を重ねるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・原田貴与子</span>
+          <span class="ttl">3号機の審査申請を認めるな</span>
+          <span class="sum">福島原発事故から7年たっても5万人が避難する現実と市内避難者への支援策を確認し、事故の検証も原因究明も終わらず2号機の審査も済んでいない中で、島根原発3号機の適合性確認審査申請の事前了解願そのものを受け付けるべきでないと市長に迫り、3号機を視察した市長の目的と所見をただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岩崎勉</span>
+          <span class="ttl">サルボウ貝とスペシャリスト人事</span>
+          <span class="sum">中海のかご釣りアカガイ復活に取り組む漁業者を紹介して養殖調査委託事業と養殖施設整備事業の進捗を確認し、冬場の付着物除去など課題解決への関係機関の連携を求めて、畜産担当9年の玖珠町や原発防災17年の水戸市の視察を踏まえ、スペシャリストを育て働きに報いる人事配置と処遇を市に要望した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・原田貴与子</span>
+          <span class="ttl">安全協定と原発ゼロの決断</span>
+          <span class="sum">東海第二原発の周辺5市が実質的な同意権を持つ安全協定を結んだ例を挙げて立地自治体並みの協定への市長の所見と県への働きかけをただし、六ヶ所再処理工場の完成延期で破綻していると核燃料サイクルへの見解を迫って、中国電力の不正トラブルへの対処、137万キロワットの3号機は過剰な電力だとの指摘、市の再生可能エネルギー目標を確認し、原発ゼロの政治決断を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・向田聡</span>
+          <span class="ttl">安全協定と岡山への避難</span>
+          <span class="sum">島根原発3号機の適合性審査申請が不備で停止した経過への中国電力の説明責任をただし、事前了解と措置要求権を持つ立地自治体並み安全協定について2号機の審査が終わるまでに結論を出すべきと迫って、岡山県内14市町村への広域避難計画の受け入れ体制や仮設住宅設置の責任の所在を確認し、30キロ想定の見直しと原発ゼロへの転換を訴えた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・原田貴与子</span>
+          <span class="ttl">宍道断層とひずみ集中帯</span>
+          <span class="sum">調査のたびに8キロから39キロへ延びてきた宍道断層の評価は妥当なのか、5キロしか離れていない98キロの鳥取沖西部断層との連動が不安視されていることをどう考えるのかをただし、島根県西部地震を引き起こしたひずみ集中帯が県内にもあり未知の活断層の存在が警告されているとして、情報の収集・把握と原発災害に対応できる専門担当者の増員を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原田貴与子</span>
+          <span class="ttl">原発稼働に住民の声を</span>
+          <span class="sum">島根原発2・3号機の稼働反対が賛成を大きく上回った市民アンケートと議会の趣旨採択を示して、中国電力との安全協定締結に向けた要望活動の進捗を確認し、再質問では30キロ圏内全自治体の同意がなければ動かせない同意権の働きかけと住民投票など住民の声を反映する体制づくりを市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・向田聡</span>
+          <span class="ttl">中電の虚偽報告を問う</span>
+          <span class="sum">島根原発のサイトバンカ建物で2002年以降32回の巡視未実施と虚偽報告が発覚した問題で、3市が行った申し入れの内容と、たび重なる法令違反への市長の認識をただし、住民説明会や原発安全対策協議会への丁寧な説明を中国電力に求めるべきだと迫って、2年間回答のない立地自治体並み安全協定の締結を適合性審査終了までに強く要望する決意と、コロナ禍を踏まえた広域避難計画の実効性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・遠藤孝</span>
+          <span class="ttl">原発事故時の動きを問う</span>
+          <span class="sum">島根原発2号機の審査終了が見通される中、福島では10年たっても2万2,000人余りが帰還できていない現実を挙げて、審査終了後の中国電力と市の対応手順、立地自治体並みの安全協定でなければ同意すべきでないとの持論への見解、事故時の指示の発動と住民が取るべき行動、学校や施設での対応の理解、避難先の岡山での市職員の役割分担を順にただし、巡視怠りなどヒューマンエラーへの申し入れを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・金山満輝</span>
+          <span class="ttl">原発政策を新市長に問う</span>
+          <span class="sum">エネルギー自給率9.6%の日本でベースロード電源としての原子力発電をどう考えるかを田中新市長に問い、サイトバンカ建物の巡視虚偽報告など中国電力の相次ぐ不祥事を挙げて安全対策の確立へ中電・県・国に何を求めるのか、立地自治体並みの安全協定など議会が求めた5項目への考えをただし、規制委員会の認可が出れば再稼働可能と判断するのかを重ねて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・澤田秀夫</span>
+          <span class="ttl">爆破予告と避難所・原発</span>
+          <span class="sum">市役所に届いた爆破予告メールへの具体的な対応と、夜は暗くて怖いと言われるパブリックトイレ周辺の防犯灯・防犯カメラの設置を確認し、避難場所自体が土砂災害や浸水の危険区域と重なる箇所がある市民防災マップを踏まえた避難場所の在り方をただして、再稼働の議論が近づく島根原発など原子力発電事業への田中市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・向田聡</span>
+          <span class="ttl">事前了解なき原発回答</span>
+          <span class="sum">立地自治体並みの安全協定の申し入れに中国電力が3年余りも回答しなかった不誠実さへの市の評価を問い、回答の3点に事前了解権が含まれなかったことを最大の問題だとして、締結までは再稼働への意見を述べない態度で臨むよう市長に迫り、耐震基準を満たさない橋梁や土砂崩れ危険箇所など複合災害時の避難路の実態をただして、再生可能エネルギーへの転換とPCR検査の全額国負担の要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・向田聡</span>
+          <span class="ttl">原発了解と冠水する新興地</span>
+          <span class="sum">島根原発2号機について工事計画と保安規定の審査が残る段階で再稼働の事前了解に進むべきでないと市の考えをただし、市独自の説明会や原子力災害避難マップの全戸配布、岡山県の受入れ14自治体の計画策定状況を確認して、2度3度と冠水した東飯島町の新興住宅地の要因と宅建業者の説明責任・抜本対策を問い、こども議会の意見の実現と主権者教育の意義も質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・石倉刻夷</span>
+          <span class="ttl">米応援金と暮らしの安全</span>
+          <span class="sum">中山間地域等直接支払の交付面積が245ヘクタール減った状況と多面的機能支払の実績を確認し、飯南町の水稲栽培応援金を例に米生産者の意欲向上対策を求めて、カーブミラーや消えた区画線、原発30キロ圏トンネル内のラジオ電波、除雪状況の告知、通学路の照明という市民の声5点をただし、非農地判断766筆への登記の助言となかうみマラソンの民間主導への考えも質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・向田聡</span>
+          <span class="ttl">5歳児健診と原発への問い</span>
+          <span class="sum">国が公費化へ動く5歳児健診の意義と市の実施の考え、先行して行う1か月児健診への国庫支援の働きかけをただし、増加する児童虐待の相談件数の推移とこども家庭センターの新設、里親を活用するショートステイの周知を確認して、能登半島地震の教訓からジェンダー平等と災害弱者の視点の避難所整備や道路の危険箇所対策、原子力広域避難計画の見直しを国・県へ求め、島根原発2号機再稼働同意の撤回を市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・向田聡</span>
+          <span class="ttl">マイナ保険証と原発を問う</span>
+          <span class="sum">マイナンバーカードの市内のトラブルと返納の実態、総点検の対象かどうかを確かめ、子供の医療費助成は紙の医療証でしか対応できない現状を明らかにして健康保険証の存続と運用の一旦停止を市長に迫り、再エネ地産地消ビジョンでは公共施設29施設への導入計画とマイクロ水力や地域新電力の検討を確認して、島根原発1号機廃止措置計画の延長内容と2号機再稼働撤回への市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・向田聡</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">中国電力が2000年以降8回の火災事故を起こしていることを確認して再発防止の働きかけと報告の有無を質し、災害時の個別避難計画の作成が対象名簿1,333名に対し6件にとどまる現状を指摘した上で、核のごみ最終処分場の受け入れへの考えと島根原発2号機再稼働の同意撤回を市長に問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・向田聡</span>
+          <span class="ttl">島根原発2号機再稼働</span>
+          <span class="sum">原子力防災訓練参加者の感想と要支援者個別避難計画の進捗（2地区21件）を確かめ、プルサーマル計画について中国電力に市民への説明責任を果たすよう要請することを求め、能登半島地震での活断層連動の見直しを挙げて再稼働の中止と、安全性に疑念が生じた際の適正措置要求権のちゅうちょない発動を市長に迫った。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">88件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・珍部全吾</span>
+          <span class="ttl">風力発電と原発の安全説明</span>
+          <span class="sum">地元十六島の熱意に反して頭から反対する動きが出ている新出雲風力発電について反対運動の皆さんと今後どのように話し合っていくのかを尋ね、地合地区から１０キロ余りにある鹿島の原発について中国電力や松江市から安全についての説明が定期的にあっているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・大国陽介</span>
+          <span class="ttl">プルサーマル計画</span>
+          <span class="sum">中国電力が島根原発二号機で計画するプルサーマル計画について、ＭＯＸ燃料の危険性と使用済燃料の再処理の見通しが立たない問題を挙げて島根県と中国電力に中止を求めるべきだとし、隣接地として安全協定に加わる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・石川寿樹</span>
+          <span class="ttl">風力発電とプルサーマル</span>
+          <span class="sum">風車が四十四基から二十六基へ減った経過と県環境審議会の審議状況、松江市長が県知事に提出した計画変更を求める意見書の骨子、風力発電とプルサーマルのどちらが優れたエネルギー施策かの見解、プルサーマル計画の事前説明の有無、活断層やミサイル攻撃で原発事故が起きた場合の本市への影響と災害対策の備えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・荒木孝</span>
+          <span class="ttl">防災と原発の安全協定</span>
+          <span class="sum">一昨年の豪雨で3名の犠牲者を出した教訓を生かし緊急時の情報伝達をどうするかとして出雲市全体の緊急通報システムの構築を求め、島根原発から10キロ圏内にある本市が事業者と県との3者で安全協定を結ぶ必要を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・木佐宏</span>
+          <span class="ttl">国道４３１号のルート</span>
+          <span class="sum">旧平田市議会と地域協議会が求めた国道４３１号の平たん地ルートが進まない一方、地元の民意を集約せずに期成同盟会の名で四十軒の立ち退きを伴う五メートル拡幅へ多額の予算がついた経緯をただし、四十年放置された湯谷川沿いの立ち退きとの優先順位、原発事故時の避難道路として西部の幹線ルートをどう構想するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・西村亮</span>
+          <span class="ttl">原発の安全協定の締結</span>
+          <span class="sum">島根原子力発電所で123機器に加え506件の点検時期超過が確認され2号機の原子炉格納容器上ふたの気密性も不十分と判明したとして安全協定を締結する考えはないとした中国電力の回答は不誠実で企業風土の改革が要ると指摘し県の仲介も得た原子力安全協定締結に向けた取り組み全般を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・木佐宏</span>
+          <span class="ttl">原発事故の避難道路</span>
+          <span class="sum">内閣総理大臣の発令による原子力災害の避難訓練が重ねられる一方で避難道路の事業推進の姿勢が見えないとして、国道四三一号と美野本線を結ぶバイパスルートや伊野川を渡り松江市へ延ばすルートの早期実現を求め、原子力発電所の災害防災管理についての認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・西村亮</span>
+          <span class="ttl">島根原発の点検不備</span>
+          <span class="sum">島根原子力発電所における維持管理体制と中国電力の安全意識の欠如を尋ね、地合町を含む防災対策とＥＰＺのあり方を問い、四月二日付の申し入れにいまだ回答がないことへの市長の考えと、隣接自治体である出雲市への振興策や避難道の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・大国陽介</span>
+          <span class="ttl">島根原発の点検漏れ</span>
+          <span class="sum">島根原発一号機二号機の点検交換漏れと中国電力の対応についての市長の所見を尋ね、安全協定の締結など四月二日付で行った申し入れ項目の実現に向けた今後の対応を問い、二号機のプルサーマル計画の中止を求めるべきだとして所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・米山広志</span>
+          <span class="ttl">新出雲風力発電所</span>
+          <span class="sum">出雲市と新出雲ウインドファームが取り交わした覚書と要望書の内容、全基が停止している風力発電の再稼働の時期、作業用道路が市に移管される時期を尋ね、立地奨励金の扱いと市道認定基準に合わない路線について地元への説明の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・木佐宏</span>
+          <span class="ttl">防災危機管理の認識</span>
+          <span class="sum">内閣総理大臣が原子力緊急事態宣言を発出する原発災害避難訓練に対する見識を問い、平成20年度に約束された湯谷川の中流拡幅改良事業が停滞していることを防災危機管理の点からどう認識しているのかと、国富郵便局前一帯の恒常的な冠水や糸川屋橋のかけ替えの遅れを踏まえたゲリラ豪雨への予防防災対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">エネルギー政策の基本認識</span>
+          <span class="sum">原子力発電と高レベル放射性廃棄物の処理方法の未確立という問題、総括原価方式や発送電一体、原発監視機関と推進機関の一体化、温暖化防止策としての原発推進など日本のこれまでの原子力政策に対する市長の認識を尋ね、原発依存から抜け出し原発ゼロを目指すことと、太陽光や風力や水力やバイオマスなど自然エネルギーの普及拡大に力を注ぐことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・木佐宏</span>
+          <span class="ttl">副市長の防災への認識</span>
+          <span class="sum">美野本線を１０か年計画で整備すると述べた６月議会の答弁を挙げて福島原発の事故を踏まえた防災担当副市長としての認識をただし、５月１２日の豪雨で土のう５０袋を求めた高齢の夫婦にコミセンまで取りに来るよう答えたことや、電車不通時の学生への情報提供、遠方から消防団員を呼び戻した土のうづくりなど平田支所の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・木佐宏</span>
+          <span class="ttl">原子力災害の避難道整備</span>
+          <span class="sum">県の指針を待つのではなく首長自らの政治理念により避難道路と避難場所の確保に取り組むべきだとして、松江市から東部への避難道路の整備状況を把握しているかを尋ね、脱原発と三号機への燃料棒挿入の中止を国や県へ申し入れるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">原子力防災と避難計画</span>
+          <span class="sum">原発の危険から市民の健康と安全を守る決意と原子力安全協定の締結に向けた進捗、３０キロ圏内に居住する人数と入院者や施設入所者や在宅で介護を受ける要援護者の人数、４６万人の避難は非現実的との市民の不安をどう把握しているかを尋ね、原発からの撤退を決断してこそ将来にわたる安心と安全が確保できるとして市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・井原優</span>
+          <span class="ttl">原発からの撤退の要求</span>
+          <span class="sum">共産党島根県議団らと福島原発の被災地を視察し南相馬市や飯館村や福島市の仮設住宅で放射能汚染が住民を追い出している現状を目にしたとして、原発は一旦事故を起こすと人間の力では制御できず甚大な被害をもたらすことから、原発を撤退してこそ市民の安全と安心が守れるとして撤退を強く求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・珍部全吾</span>
+          <span class="ttl">原発と地域経済への影響</span>
+          <span class="sum">代替エネルギーを模索しながら原子力発電を徐々に縮小するという考えへの所感と、ソーラーで同じ出力を得るには膨大な土地が要ることや廃炉に伴う廃棄物の行き先が未定であることを挙げたうえで、原発事故が日本経済と当市経済に与える影響への対応、原発に対する市民の不安に対して行政が行うべき啓発、中国地方を全国への電力供給基地とする機会のとらえ方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">原発と自然エネルギー</span>
+          <span class="sum">老朽化する１号機の廃炉や２号機のプルサーマル計画に市長が言及しない理由と市民の代表としての政治的メッセージの必要性、住民説明会で社員や関連会社に参加を要請した中国電力への抗議、島根原発で適正な運転が行われ安全管理体制が適切と言えるかを尋ね、国と中国電力に原発からの撤退の決断を要求することと、小規模な太陽光や風力や小水力による自然エネルギーの普及を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">原発の停止と撤退の要請</span>
+          <span class="sum">中国電力がすべての原発を停止させながら関西電力へ融通するほどの余力があるという事実を認めるかを尋ね、老朽化した１号機の即時廃炉と２号機のプルサーマル計画の中止と３号機を稼働させないことを意味する撤退を中国電力に要請すること、島根原発の稼働やプルサーマル計画に県民と市民の声を反映させることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・井上惠夫</span>
+          <span class="ttl">原発の安全協定と１号機</span>
+          <span class="sum">島根原子力発電所にかかわる出雲市民の安全確保等に関する協定が結ばれたが最終目標である立地市と完全に同等の権限が付与される原子力安全協定に向けた今後の対応と発電所の存続か廃止かを含む見解を尋ね、高経年化した１号機についてストレステストに合格して安全基準が保たれたとすれば容認するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・西村亮</span>
+          <span class="ttl">原発の安全対策と協定</span>
+          <span class="sum">中国電力が示した１５メートルの津波に対応する防波壁の強化や高台４０メートルへの緊急用発電機の設置などの安全対策をどう評価し、重大事故を想定した避難道の整備や避難路・避難施設の確保に出雲市がどう取り組むのかを尋ね、鳥取県と米子市・境港市が年内の締結を目指すなか県の仲介に頼らず中国電力と直接交渉して立地自治体並みの原子力安全協定を結ぶよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・木佐宏</span>
+          <span class="ttl">原発事故に備える避難道路</span>
+          <span class="sum">総務大臣発令の防災機関としての立場から、島根原発の事故に備える伊野地区の美野バイパスの避難道路としての整備について、地元主導に委ねる回答では話が進まないとして、松江市や県の動きも踏まえ行政トップレベルで決断すべきだと述べ、福島原発の実態を踏まえた新たな認識に立つ見識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・小村吉一</span>
+          <span class="ttl">原発事故に備える防護体制</span>
+          <span class="sum">中国電力のいう２２キロより長いとする専門家の声がある宍道断層の再調査と再評価、想定される引き波の水位より取水口が上にあることへの考え、気象や地形で広がり方が変わる中での自治体を主にした同心円的な被害対策、気象観測施設とモニタリングポストと放射線測定器の早急な設置、海岸部や旧平田地区の小中学校へのヨウ素剤の配布を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・川上幸博</span>
+          <span class="ttl">原発被害時の避難先</span>
+          <span class="sum">原発から３０キロ圏内に住む１２万人の出雲市民には広島へ地域ごとに避難する先が島根県から示されている一方、３０キロ以外に住む出雲市民への避難先の指示がないとして、出雲市としてどのように対応するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・木佐宏</span>
+          <span class="ttl">原発防災の認識のずれ</span>
+          <span class="sum">３０キロ圏外を安全と唱えること、差し止め訴訟の判決を引き合いに安全を唱えること、１号機の四十年寿命、未稼働の３号機の構造、３・１１を安全神話の崩壊日とすること、県主導の避難訓練、いまだ着手されない防災避難道路、原子力発電への恐れの希薄さという八項目を挙げ、代表質問の質疑応答が市民意識と乖離しているとして次元のずれを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・小村吉一</span>
+          <span class="ttl">学校での原発学習</span>
+          <span class="sum">これまで学校で原子力発電などの学習がどのようになされてきたか、学習指導要領の改訂後の中学校教科書における原子力や原発の記述、原発３０キロ圏内の自治体として今後の学校での原子力や原発学習をどうするのかを尋ね、津波でも機能が損なわれないと記す副読本の回収と、小学校での基礎的な危機管理の指導、中学校での科学の到達を踏まえた指導と教員への資料提供や研修を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・遠藤力一</span>
+          <span class="ttl">島根原発と住民の安全</span>
+          <span class="sum">島根原子力発電所に対する市長の考え、ＥＰＺの範囲に認められることによる住民の利益、災害対応を任される防災交通課の今後の体制、島根原発が福島第一原発のような事態に陥った際に市民がとるべき行動を尋ね、ＥＰＺ認定の見通しと避難計画が組み立てられる時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・小村吉一</span>
+          <span class="ttl">島根原発の今後のあり方</span>
+          <span class="sum">福島原発３号機と同じくＭＯＸ燃料を燃やす島根原発２号機のプルサーマル計画を事故の後も予定どおり推進すると表明した中国電力への考えとＭＯＸ燃料の危険性の認識を尋ね、３号機は建設運転を中止すべきだとして見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・西村亮</span>
+          <span class="ttl">島根原発の安全対策</span>
+          <span class="sum">点検漏れが見つかり３７年以上が経過した島根原発１・２号機の点検状況と再稼働についての所見、地震と津波とテロへの安全対策についての市の考え方、ＥＰＺ内にある地域の避難道の整備、住民が納得できるコミセン単位での地区説明会の開催、ＥＰＺの拡大と原子力の安全協定の締結に向けた施策を尋ね、松江市と県を除く周辺市町の連絡協議会での統一行動の進め方や有事に備えたトンネル整備の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">島根原発の安全管理体制</span>
+          <span class="sum">建設から３７年が経過した島根原発１号機の再稼働を認めない立場と２号機のプルサーマル計画の中止を求めること、１０キロから４０キロ圏内の人口や年齢構成や生活形態など屋内退避や避難に備えた状況把握、震災と原子力災害に備えた防災計画の抜本的な見直し、島根県と中国電力との安全協定の締結の追及を尋ね、１号機の廃炉の検討を要求すべきだと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・原隆利</span>
+          <span class="ttl">島根原発の廃炉の主張</span>
+          <span class="sum">原発発祥の地である東海村の村長が脱原発を訴えていることを挙げ、危険はその原因を取り除くことに尽きるとして、県庁所在地にあり１０キロ圏内に県庁がある特殊性、運転開始から３７年を経て欠陥が指摘された１号炉、２号炉のプルサーマル計画、３号炉の稼働と使用済み燃料２，２７８体の保管、点検漏れ５１１件に表れた中国電力の管理能力、宍道断層が８キロから２２キロへ訂正された認識の甘さを挙げ、廃炉に向けて発言し行動する考えがないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・直良昌幸</span>
+          <span class="ttl">島根原発の運転再開</span>
+          <span class="sum">全炉が運転停止中の島根原子力発電所についてストレステストを経て国から運転再開の要請が強く示されると見込まれ、四月を目途にエネルギーミックスの複数の選択肢がまとまり夏には国民的議論を通して方針が決定される状況を踏まえ、３０キロ圏域にある隣接自治体の長としての所見を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・小村吉一</span>
+          <span class="ttl">日本の原子力政策の見解</span>
+          <span class="sum">現在の知識と技術では原発事故は今後も起き一度起きれば甚大な被害が長期に及ぶという視点と、高レベル放射性廃棄物の貯蔵方法も場所も決まらず１万３，０００トンを超える使用済み燃料が各地の原発に保管されているという視点から、今後の日本の原子力政策に対する市長の見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・坂根守</span>
+          <span class="ttl">津波対策とスピーディー</span>
+          <span class="sum">日本海側でも奥尻島や秋田沖で津波の被害があったとして過去の日本海沿岸での津波の高さと新年度に完成する「津波ハザードマップ」の配布時期およびそれに基づく避難訓練の計画を尋ね、島根原発で事故が発生したときに緊急時迅速放射能影響予測ネットワークシステムの情報が十分に生かされ汚染地域や汚染状況を的確に住民に知らせられるのか、中国電力との話し合いでこの話があったか、市民全員参加の避難訓練の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・木佐宏</span>
+          <span class="ttl">防災危機管理組織の改革</span>
+          <span class="sum">島根原発の有事に対する防災危機管理を生活バスや防犯灯も担う総務部防災交通課が兼ねる現行体制では市民の負託に応えられないとして、松江市が防災安全部長を置き島根県が危機管理監へ昇格させた例を挙げ、原発対策室を独立させ部長級の専任専従者を置く機構改革と、警察官や自衛隊幹部の経験者を長に配置することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部順子</span>
+          <span class="ttl">震災を教訓とした防災対策</span>
+          <span class="sum">釜石の奇跡に学ぶ自分の命は自分で守る防災教育の出雲市の教育現場での状況と今後の考え、備蓄など避難生活に必要な諸機能を備えた学校施設の整備、地震災害時に不適用と判定された１１６施設を含む避難所の見直しと安全性の確保、原発災害も想定した避難のあり方を尋ね、家具転倒防止器具の支給事業と救急医療情報キットの導入を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・井原優</span>
+          <span class="ttl">原発の新安全基準と再稼働</span>
+          <span class="sum">原子力規制委員会の新安全基準の骨子案は軽水炉の欠陥や活断層の定義を従来のまま踏襲しており再稼働容認ではないかとして所見を尋ね、核燃料サイクルが破綻する中での市の再生エネルギーの取り組み、避難先が未定で民間任せとなっている広域避難計画の所見と、１、２号機の再稼働中止と廃炉こそ最善の防災措置ではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・井原優</span>
+          <span class="ttl">原発ゼロへの市長の姿勢</span>
+          <span class="sum">関西電力大飯原発３号機、４号機の再稼働について国に再稼働中止を求める意見を提出すべきとの考えと、島根原発についても再稼働すべきでないとの意見を県にあげるべきとの認識を尋ね、「脱原発を目指す首長会議」に参加して自然エネルギーへの転換の道を進むよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・井原優</span>
+          <span class="ttl">原発ゼロへの政治姿勢</span>
+          <span class="sum">原発の再稼働なしでも今年の夏の電力は足りていたとして、再稼働ではなく原発ゼロへの政治決断に対する認識、脱原発や再生可能エネルギーによる持続可能な社会を目指す討論会やシンポジウムを開く考え、島根原発２号機の再稼働の中止を求めることへの認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・遠藤力一</span>
+          <span class="ttl">原発再稼働への市長見解</span>
+          <span class="sum">野田総理が決めた大飯原発の再稼働並びに運転を停止している島根原発１号機、２号機の再稼働について市長の見解を尋ね、出雲市民の生命財産を守り持続可能な地域とするための今後の島根原発に対する対応を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・木佐宏</span>
+          <span class="ttl">原発避難道路と道路発注</span>
+          <span class="sum">喫緊の課題である島根原発の避難道路計画が全く示されない一方、財政難のもとで計画に挙げなくてよい高額な道路改良事業が特定業者に連続発注されているとして、情報公開して解析した結果を挙げ、伊野の玄関口や国富の踏切の拡張を含め避難道路のルートをいつまでにどのような方針で定めるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・大国陽介</span>
+          <span class="ttl">市長の政治姿勢</span>
+          <span class="sum">市民の暮らしを守る首長として消費税の増税に反対することを求め、島根原発から３０キロ圏内に多くの地域が含まれる市として新エネルギーの普及拡大とともに原発ゼロに向けた決意、ＴＰＰ参加への明確な反対の意思表明、オスプレイ配備の中止の声をあげることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・多々納弘</span>
+          <span class="ttl">脱原発の代替エネルギー</span>
+          <span class="sum">脱原発を求めるなら国や県だけにゆだねず市町村自らが相応の代替エネルギー施策を検討すべきとの考え、火力や風力、太陽光、水力など具体的な代替発電施策で実施中のものと今後検討する事項、市自体の節電対策と一般家庭への節電要請、市民が自ら再生エネルギーを調査研究する電源開発研究の組織づくりの推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・原隆利</span>
+          <span class="ttl">脱原発への市長の見解</span>
+          <span class="sum">原発に頼らず今年の夏を乗り越えられたことや国民の７割が脱原発を支持する現状を挙げ、原発依存度を徐々に低下させるのが現実的とした３月議会の答弁から心境に変わりはないのかを問い、３０キロ圏の市長として脱原発に向けた見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大国陽介</span>
+          <span class="ttl">原子力発電への姿勢</span>
+          <span class="sum">過酷事故を起こし得る原子力発電と市民生活との共存はあり得ないとして原発のない社会を目指すべきではないかと問い、島根原発１・２号機は再稼働せず廃炉にし３号機も稼働させないこと、原子炉の停止等の措置命令が可能となる安全協定の締結の早期実現を求めるべきではないかとして所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・井原優</span>
+          <span class="ttl">原子力発電所の再稼働</span>
+          <span class="sum">福島原発事故の教訓をどう総括し市政に生かす決意か、技術的に未完成な原発の再稼働は論外ではないか、フィルター付きベントでも被曝は避けられず汚染水対策や避難計画も盛り込まれていない新規制基準は不十分ではないか、再稼働をさせないことが最も市民の安全・安心の確保になるのではないか、立地自治体並みの安全協定の締結に向けた決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大国陽介</span>
+          <span class="ttl">原発の再稼働への認識</span>
+          <span class="sum">福島事故から学んだことは原発に絶対の安全はあり得ず過酷事故が起こり得るということではないか、新規制基準をクリアすれば住民の生命と財産と暮らしを守れると考えるか、放射能の影響を受ける全ての住民が安全に避難できる計画は策定できたのか、再稼働は論外ではないか、市民の暮らしに責任を負う自治体のトップとして市民の立場で発言し行動すべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・遠藤力一</span>
+          <span class="ttl">原発の安全協定と再稼働</span>
+          <span class="sum">島根原子力発電所の再稼働をめぐる現状と今後のロードマップ、島根県と交わした覚書に基づき出雲市がどのような考えを伝えるのか、中国電力が立地自治体と同等の安全協定を結ぼうとしない理由と法的根拠を尋ね、再稼働の事前了解の際に市民の意見をくみ取り反映する方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大国陽介</span>
+          <span class="ttl">島根原発の再稼働方針</span>
+          <span class="sum">福島原発事故の原因も明らかでない中での新規制基準への所見、現在の避難計画が十分なものと考えるか、中国電力と原子力安全協定が締結されていない現状への所見を尋ね、原発即時ゼロの決断と再稼働方針への抗議・撤回、県知事への再稼働は認められない旨の意見提出を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・伊藤繁満</span>
+          <span class="ttl">循環型社会への取り組み</span>
+          <span class="sum">高齢化で河川の草刈りや清掃活動に出られないという声を最近よく耳にするとして高齢化社会における地域共同活動のあり方の方向付けを尋ね、道路・河川の刈り草を堆肥化する取り組みの現状と運搬費を地域通貨券とする助成制度を提案し、稼働していない枝葉リサイクルセンターのその後の状況と再稼働について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・小村吉一</span>
+          <span class="ttl">特定秘密保護法案の見解</span>
+          <span class="sum">参議院で審議されている特定秘密保護法案について市長としての見解を尋ね、島根原発３０キロ圏内である本市にかかわる原発情報やＴＰＰ交渉の内容が特定秘密に指定されるおそれをどう考えるか、住民の暮らしを守る立場から一定の行動をとる用意があるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大国陽介</span>
+          <span class="ttl">原発再稼働と広域避難</span>
+          <span class="sum">福島県の被災地を視察し１２万人を超える県民が避難生活を余儀なくされている実情を挙げ、安全対策だけでなく稼働することそのものに意見を言う必要性と、立地自治体と同様な安全協定の締結に向けた決意、新設する出雲市原子力安全顧問会議の役割と目的、広域避難計画が実効性あるものとなり得るのかという所見、原発即時ゼロに向けた決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大国陽介</span>
+          <span class="ttl">原発再稼働と活断層調査</span>
+          <span class="sum">大飯原発３・４号機の運転再開を認めない５月２１日の福井地裁判決をどう受けとめているのか所見を尋ね、島根原発２号機の新規制基準適合性に係る審査の中止と、宍道断層と他の活断層との連動を含む徹底した活断層調査を原子力規制委員会と中国電力へ要請することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・井原優</span>
+          <span class="ttl">原発再稼働と避難計画</span>
+          <span class="sum">中国電力が島根原発２号機の再稼働に向けた適合性確認審査を申請し活断層の見落としの訂正を繰り返してきたとして、避難ルートに宍道断層がある中での再稼働は論外だとする所見と、３０キロ圏内約３９万６，０００人の避難手段や経路、要援護者の避難など課題が山積する中で原発撤退こそが市民の安全だとする所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・飯塚俊之</span>
+          <span class="ttl">宍道湖北部の道路整備</span>
+          <span class="sum">全線約７０キロメートルのうち整備率が２１．４％にとどまる地域高規格道路「境港出雲道路」の早期ルート決定と事業化に向けた取り組み、事業化を推進する出雲・美保関間幹線道路整備促進期成同盟の役割と活動状況を尋ね、島根原発の事故を想定した平田東部の伊野・東・佐香地区の避難道路が災害時に十分な役割を果たすといえるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・小村吉一</span>
+          <span class="ttl">島根原発の廃止と避難計画</span>
+          <span class="sum">原発立地並みの安全協定の見通しと障害、市でも説明会を行うよう中電へ要請すべきこと、使用済み核燃料７２２本を六ヶ所村へ譲り渡す計画、複合災害を踏まえた避難計画と屋内退避、島根半島にある原発の安全性、市内の再生可能エネルギーの発電量を尋ね、原発を廃止し再生可能エネルギーへ転換する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・後藤由美</span>
+          <span class="ttl">憲法と原発への姿勢</span>
+          <span class="sum">憲法９条に自衛隊を明記すると会見した安倍首相の発言への所見と憲法を守る市長の決意、プルサーマル運転とセットになった島根原発１号機の廃止措置計画を踏まえた原発ゼロの決断、住民の暮らしと福祉を最優先する地方自治体の役割について所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・後藤由美</span>
+          <span class="ttl">原発をめぐるエネルギー政策</span>
+          <span class="sum">原発の再稼働反対が国民多数の世論となっている現状への所見、原発を重要なベースロード電源と位置づけ２０３０年度までに発電の２０％から２２％を目指す第５次エネルギー基本計画案は改めるべきではないか、六ヶ所再処理工場の完成が再度３年延長され核燃料サイクルが破綻している今、即時原発ゼロの政治決断と再生可能エネルギーの大幅導入が必要ではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・後藤由美</span>
+          <span class="ttl">島根原発３号機の新規稼働</span>
+          <span class="sum">住民の避難計画を自治体任せにしている新規制基準への認識、中国電力管内の電力の安定供給に３号機の新規稼働は不要ではないか、点検漏れや虚偽の点検記録が続く中国電力の企業体質への認識、３９キロに及ぶ宍道断層があり３０キロ圏内に市民の７０％にあたる１２万２，５００人が暮らす中での避難計画の実効性、立地自治体並みの安全協定の締結、原発に関する市民アンケートの実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・神門至</span>
+          <span class="ttl">新体育館の建設候補地</span>
+          <span class="sum">新体育館の建設候補地について、事業費などのコスト及び収支、立地条件、地盤の状況、洪水による避難場所、原子力発電所からの３０キロ圏外という防災上の条件、既存の体育施設との連携、経済効果、観光振興、交通アクセスの問題が指摘されたとして、住民目線による比較検討と市民への丁寧な説明責任、見直す考えはないとした定例記者会見の中身について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・原正雄</span>
+          <span class="ttl">新体育館の建設用地の評価</span>
+          <span class="sum">５か所の建設候補地から県立大学出雲キャンパス周辺を最適地とした評価点について、人口重心からの距離だけが配点２倍の１０点と特化し神西地区が２点にとどまることや、山陰道インターや国道４３１号との接続と原発３０キロ圏外という神西地区の条件を挙げ、平成３５年度末開館という事業スケジュールの実現性を問い、専門家を含む横断的なワークショップで合意形成を図る手法を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・湯淺啓史</span>
+          <span class="ttl">ゼロカーボンへの合意形成</span>
+          <span class="sum">脱炭素社会・カーボンニュートラル・ゼロカーボンシティという言葉の受け止めと定義、ゼロカーボンシティへの挑戦が指す具体的な取組、脱炭素のまち出雲が実現したと言える状態とその計測の方法、鍵を水素に置く真意とカーボンニュートラルに対するコストの認識、地域新電力事業が脱炭素に資する取組と言えるか、原発の再稼働に態度を決めないまま宣言する順序への疑問、挑戦に向けた合意形成の道筋を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・大場利信</span>
+          <span class="ttl">住みやすさの重点施策</span>
+          <span class="sum">警戒レベル３での避難を踏まえた災害時の要支援者の個別避難計画の策定状況、島根原子力発電所２号機の再稼働に向けた市の対応とスケジュール、消防団員の検討組織の体制とスケジュール、虐待や発達支援を要する児童と複雑化した課題を抱える世帯の総合相談体制、いずもＧＩＧＡスクールプランの教育上の課題、社会教育計画の見直しの内容、国が令和３年４月に始めた地域共生の取組への所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・大場利信</span>
+          <span class="ttl">原発事故時の本部の退避</span>
+          <span class="sum">県が県庁業務を浜山公園の体育館で行うための環境整備費として１８億８，２００万円の予算を提出したとして県の情報を尋ね、市の対策本部が消防本部や佐田、多伎、湖陵、大社の各行政センターへ退避するにあたっての基本的な考えと市民や職員への広報対策、令和４年度から年額８，０００万円となる原子力防災安全等対策交付金の現時点での具体的な使途を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福田実</span>
+          <span class="ttl">原発再稼働と広域避難計画</span>
+          <span class="sum">島根原発２号機が再稼働され万が一の大災害があったときに現在の広域避難計画で本当に大丈夫なのかを尋ね、地区の実情に合った地区単位のハザードマップを配布する予定と、福島第一原発と女川原発を視察した市長の受け止めを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・今岡久人</span>
+          <span class="ttl">国土強靱化と国道９号</span>
+          <span class="sum">山陰道の出雲・湖陵道路と湖陵・多伎道路が令和４年に開通予定であることを踏まえて山陰道全線の早期開通と国道９号出雲バイパスの４車線化、神戸橋神西沖線の拡幅及び４車線化の早期実現を求めるとともに、国道９号が原発防災の目線からも事故時の避難行動に欠かせない道路であるとの認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・高橋扶治夫</span>
+          <span class="ttl">境港出雲道路の整備</span>
+          <span class="sum">全長７０キロのうち２８年間で東林木バイパスの４．２キロしか工事されていない境港出雲道路について、観光や物流、原発事故時の避難道路や自衛隊駐屯地の連携の面から市の考え方と、これまでの県や国への働きかけの進捗状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・後藤由美</span>
+          <span class="ttl">島根原発の再稼働問題</span>
+          <span class="sum">原子力災害時の住民避難計画の実効性を高めることの難しさへの所見、立地自治体と異なり事前了解の規定がない周辺自治体の安全協定の締結に向けた決意、再稼働に反対する世論調査やアンケートの結果を示して島根原発２号機の再稼働に反対を表明することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・吉井安見</span>
+          <span class="ttl">島根原発２号機の再稼働</span>
+          <span class="sum">原発事故の被災地の現状の捉え方とふるさとを守るための決意、原因が特定されないままつくられた新規制基準が安全を担保するものかの認識、豪雨や地震などの複合災害を想定したときの避難計画の実効性を尋ね、市長自身による福島の現地視察の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・後藤由美</span>
+          <span class="ttl">島根原発２号機の再稼働</span>
+          <span class="sum">福島原発事故の原因究明がないまま決められた新規制基準への所見、破綻した核燃料サイクルを止めるためにも再稼働はあり得ないとの所見、広域避難計画の内容を市民に周知徹底する具体策、再稼働の判断基準は市民の合意と市民の命と安全が完全に守れるかにあるとの所見を市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・吉井安見</span>
+          <span class="ttl">島根原発２号機の再稼働</span>
+          <span class="sum">適合性審査への合格は事故が起きないことを保証するものではないとして原発の危険性への認識と、核燃料サイクルや放射性廃棄物の最終処分の行き詰まりが将来世代に負担を負わせるとの認識、現在の避難計画の実効性とその実効性を判断する基準、立地自治体と同等となっていない安全協定の受け止めを尋ね、住民投票の実施を求める９，２８８筆の署名が提出される中で今議会で判断を下すのはあまりに拙速だとして所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・木佐宏</span>
+          <span class="ttl">平田地域の総合防災対策</span>
+          <span class="sum">国道４３１号バイパス事業、伊野地域の災害避難道路、一畑電車旅伏駅の踏切拡幅と周辺市道の改良、西代町と国富下地域住民の避難場所の確保という長年提言してきた課題について、島根原発の避難道路も絡めて部長ではなく市長自身の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・木佐宏</span>
+          <span class="ttl">消防団員の公務災害補償</span>
+          <span class="sum">震災や原発事故に応援に出向いた消防団員の死亡に至る程度の公務災害への損害補償は最高限度額３００万円と情報を得ているとして、日本の消防団員の公務災害補償規程の詳細と金銭的補償以外の規定、市民の生命財産を守る立場からの市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・今岡久人</span>
+          <span class="ttl">災害の教訓と避難計画</span>
+          <span class="sum">昨年７月、８月の大雨や台風の被害から市としてどのようなことが教訓として残ったのかを尋ね、規範行動意識を高めるべきとしたうえで、市役所や社会福祉協議会、民児協など関係機関と連携した要支援者名簿の作成と、島根原子力発電所の再稼働をめぐる市民への避難行動計画の周知や災害訓練の今後の取組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・児玉俊雄</span>
+          <span class="ttl">一畑電車の将来構想</span>
+          <span class="sum">上下分離方式に変わってから１５年が経過した一畑電車について、延命措置のような発想ではなく観光面へのかじ切りや原発の避難路としての位置づけ、出雲空港への乗入れなど夢のある振興策を考え沿線地域対策協議会へも積極的に提案するよう提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・今岡久人</span>
+          <span class="ttl">原子力災害の避難行動</span>
+          <span class="sum">島根原子力発電所２号機の再稼働が動き出す中、平成２４年（2012）に策定した避難行動計画を市民がどれだけ理解していると考えるか、広島県内１２市町や市内西部への避難と受入れの方法を関係者へ的確に伝え周知しているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・吉井安見</span>
+          <span class="ttl">原発運転延長と駐屯地</span>
+          <span class="sum">ＧＸ実現に向けた基本方針の閣議決定で原則４０年・最大６０年を超える原発の運転が可能とされたことによる重大事故の危険性への認識と再稼働や新増設の中止を求める所見、出雲駐屯地の増員計画は市が要望していたとおりのものか、駐屯地の拡大・強化が続くことによる危険性への認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・今岡久人</span>
+          <span class="ttl">８の字ルートの整備</span>
+          <span class="sum">約６０万人の人口集積地である中海・宍道湖・大山圏域において、出雲大社を中心とした観光や斐川地区・長浜の工業団地の物流、島根原子力発電所の再稼働容認に伴う非常時の避難経路としての役割を挙げ、８の字ルートの早期の開通に向けて熱意を持った繰り返しの要望活動が必要ではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・吉井安見</span>
+          <span class="ttl">使用済み核燃料の保管</span>
+          <span class="sum">島根原発内に保管されている使用済み核燃料の量と保管容量の残容量、青森県六ヶ所村の再処理工場で保管されている量と残容量を尋ね、再処理技術が確立されておらず核燃料サイクルは破綻しているとの認識と、搬出ができない現状から２号機再稼働の条件はないとの認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・吉井安見</span>
+          <span class="ttl">原子力災害の避難計画</span>
+          <span class="sum">志賀原発における被害の全容を出雲市がどのように把握しているのか、島根原発の避難計画の再検証が必要との認識、能登半島地震の教訓や知見がまとまり避難計画に反映されるまでの流れ、今年８月に予定される島根原発２号機の再稼働は一旦立ち止まるべきとの認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・後藤由美</span>
+          <span class="ttl">原発再稼働と防災計画</span>
+          <span class="sum">能登半島地震で志賀原発に様々な深刻なトラブルが発生したことを踏まえて島根原発２号機の再稼働同意撤回を県に求めるべきとの認識、被害想定を最大規模とする「地域防災計画」の見直し・強化の計画の有無、孤立集落が生まれた教訓を踏まえた防災備蓄物資計画の再検証の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・木佐宏</span>
+          <span class="ttl">美野本線と避難道路</span>
+          <span class="sum">合併前に実施詳細設計まで行いながら１人の地権者の反対で進んでいない美野本線について、原発の避難道路としての必要性も踏まえ、市長自らが地元を歩いてでもまとめるなど主体性を持って取り組むよう提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・吉井安見</span>
+          <span class="ttl">再生可能エネルギーと核燃料</span>
+          <span class="sum">出雲市内の再生可能エネルギーの発電施設数と発電量の推移及び今後の普及の方針、休耕地などへの設置に伴う周辺環境への影響と住民への周知や説明の機会の確保、市内の出力制御の状況と事業者への補償、島根原発２号機の再稼働による出力制御への認識を尋ね、高レベル放射性廃棄物の最終処分場の市内への受入れについての市長の立場を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・吉井安見</span>
+          <span class="ttl">原発避難体制と核のごみ</span>
+          <span class="sum">能登半島地震で避難ルートの大半が通行止めとなり孤立集落が相次いだことを踏まえた空路等による避難体制の整備状況、原子力災害時の広域避難計画の改定状況と正月やゴールデンウィークなど人口が増加する時期を想定条件に追加することへの所見、核のごみの受入れの動きには断固反対とした知事の発言についての市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・木佐宏</span>
+          <span class="ttl">旧平田地域の防災課題</span>
+          <span class="sum">島根原発の避難道路とすべき伊野地区の市道美野本線バイパス事業、大雨増水時に道路が冠水する国富地区の湯谷川の河川改修、数十年進展しない市道口宇賀・西代本線旅伏駅踏切の拡幅事業を挙げ、旧平田地域の総合防災意識の欠如と無責任な執務を糾弾して所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・吉井安見</span>
+          <span class="ttl">原子力防災の在り方</span>
+          <span class="sum">中国電力が原子力関係の仕事に携わる職員の人件費として５自治体に毎年約５億円を負担する中で出雲市がこの負担金を受け取る根拠と、原子力防災の体制を自治体任せにし核燃料サイクルにしがみつく国の原発推進の姿勢への所見を尋ね、負担金などへの依存が高まることで住民の安全・安心が後景に追いやられないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長島和孝</span>
+          <span class="ttl">原子力防災訓練の実効性</span>
+          <span class="sum">１１月の原子力防災訓練に参加した市民の人数と本番ではその何倍の規模になるのか、避難者を受け入れる自治体との地域間交流があるかを尋ね、島根原発で福島原発事故並みの事故が起こったと仮定したときの風評被害も含めた年間の経済的損失額を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・吉井安見</span>
+          <span class="ttl">原発と核のごみの是非</span>
+          <span class="sum">島根原発２号機で２０２９年度に計画されるプルサーマル発電について周辺３市で住民への説明や意見を聞く場が持たれていないとして住民の理解と合意なしに議論が進められることへの所見を尋ね、核のごみの最終処分場の誘致などは住民の安全・安心と両立し得ないとして所見を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 3市くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
