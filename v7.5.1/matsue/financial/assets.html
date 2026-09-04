@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市が持っているもの・背負っているもの — 松江市 財政レポート</title>
+    <style>
+/* 財政レポート — スタイルシート（M8 #445 で M6 統一デザインへ全面刷新）
+   議会レポート M6 / 総合計画 #446 と同一の折りたたみサイドバー外殻を採用。
+   外殻 CSS は templates/plan/styles.css（同型 shell マークアップ）から移植し、
+   統一列・帯/棒/ゲージ/カードはモック docs/mocks/m8/02-05 のインライン CSS から
+   移植する。財政固有の系列色・資産藍/負債茶・ゲージ色は :root へ切り出す。 */
+
+:root {
+    /* 意味色（増減・強調・中立） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・design-convention 準拠・藍アクセント基調） */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+
+    /* 財政固有トークン ------------------------------------------------ */
+    /* 系列ラダー（1色相の階調・多系列の積み上げ/凡例で意味を担う） */
+    --s1: #3a4a8c;   /* = --accent */
+    --s2: #6b76b0;
+    --s3: #a7adcf;
+    --s4: #c9cde3;
+    --s-out: #8a8fb5;   /* 歳出（総額推移で歳入と対を成す薄い系列） */
+    /* 資産＝藍 / 負債＝茶（資産負債ページの2部色分け） */
+    --asset: #3a4a8c;
+    --liab: #8a5a3c;
+    /* 実質公債費比率ゲージのしきい値帯（緑→黄→橙→赤・法令上の意味色） */
+    --gauge-ok: #dbe4d4;
+    --gauge-warn: #f0e6cf;
+    --gauge-alert: #f3ddd6;
+    --gauge-bad: #e9cfcf;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+    font-feature-settings: "palt";
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   Cross Navigation（レポート切替メニューの中身）
+   ============================================================ */
+.cross-nav {
+    font-size: 0.8rem;
+    line-height: 1;
+}
+.cross-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.cross-nav-portal { color: var(--accent); text-decoration: none; font-weight: bold; }
+.cross-nav-link { color: var(--ink); text-decoration: none; }
+.cross-nav-sep { color: var(--line); }
+
+/* ============================================================
+   外殻 shell（議会レポート M6 と同型・折りたたみサイドバー）
+   ============================================================ */
+svg.ico, svg.rico, svg.shico, svg.dico, svg.card-ic,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- ページ列木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+.subtoc a.sub { padding-left: 20px; font-size: 11.5px; }
+.collapsed .subtoc { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); font-weight: 400; }
+.mobile-toggle { display: none; }
+
+.mainwrap .content { flex: 1; width: 100%; }
+.main-inner { max-width: 880px; margin: 0 auto; padding: 22px 28px 60px; width: 100%; }
+
+/* ============================================================
+   ページ見出し
+   ============================================================ */
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+.page-sub { color: var(--ink-soft); font-size: .9rem; margin-bottom: 22px; }
+
+/* ============================================================
+   セクション白箱（880px 内・面/線・濃色影）
+   ============================================================ */
+.section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+.section h2 {
+    font-size: 1.12rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.section h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin-top: 30px;
+    margin-bottom: 4px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+/* サブセクションの最初の h3 は区切り線を出さない（部見出し直後のため） */
+.section > h3:first-of-type { margin-top: 4px; padding-top: 0; border-top: none; }
+.section h2 .unit, .section h3 .unit { font-size: .74rem; color: var(--ink-faint); font-weight: 400; }
+.section .lead { font-size: .84rem; color: var(--ink-soft); margin-bottom: 14px; max-width: 64ch; }
+
+/* 2部構成の大見出し（資産↔負債・藍/茶で色分け） */
+.part-head { display: flex; align-items: center; gap: 10px; margin: 26px 0 12px; flex-wrap: wrap; }
+.part-head .pn { font-size: 1.28rem; font-weight: 700; }
+.part-head .pd { font-size: .8rem; color: var(--ink-faint); }
+.part-a .pn { color: var(--asset); }
+.part-b .pn { color: var(--liab); }
+
+/* 節見出し（着地の区切り） */
+.h-sec { font-size: 1.05rem; font-weight: 700; margin: 26px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--accent-soft); }
+.intro { color: var(--ink-soft); max-width: 66ch; margin-bottom: 26px; }
+
+/* 表内の小見出し（会計区分など） */
+.subh { font-size: .8rem; color: var(--ink-soft); font-weight: 700; margin: 12px 0 6px; }
+.subh.mt { margin-top: 16px; }
+
+.note { font-size: .76rem; color: var(--ink-faint); margin-top: 8px; }
+.no-data { color: var(--ink-faint); font-style: italic; padding: 1rem 0; }
+
+/* ============================================================
+   要点カード（数値の結論先出し）
+   ============================================================ */
+.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 6px; }
+@media(max-width:640px){ .cards3 { grid-template-columns: 1fr; } }
+.cards4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 6px; }
+@media(max-width:640px){ .cards4 { grid-template-columns: repeat(2, 1fr); } }
+.summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.mcard {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+}
+.mcard .l { font-size: .78rem; color: var(--ink-soft); }
+.mcard .v { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.mcard .v small { font-size: .9rem; font-weight: 400; color: var(--ink-soft); }
+.mcard .u { font-size: .7rem; color: var(--ink-faint); }
+.cards4 .mcard .v { font-size: 1.35rem; }
+
+/* 統計カード（物理量・付属指標） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 6px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+.stat .v { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat .u { font-size: .72rem; color: var(--ink-faint); margin-left: 2px; }
+.stat .l { font-size: .76rem; color: var(--ink-soft); margin-top: 2px; }
+
+/* ============================================================
+   積み上げ横帯（歳入3分類の構成比）
+   ============================================================ */
+.stack { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin: 4px 0 10px; }
+.stack span { display: flex; align-items: center; justify-content: center; color: #fff; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+.legend { display: flex; gap: 14px; font-size: .76rem; color: var(--ink-soft); flex-wrap: wrap; margin: 2px 0 10px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+/* 歳入3分類色（凡例で意味を担う） */
+.f-own { background: var(--s1); }
+.f-dep { background: var(--s2); }
+.f-debt { background: var(--s3); }
+
+/* ============================================================
+   統一列テーブル（名称・棒〔規模〕・数字・付属）
+   ============================================================ */
+table { width: 100%; border-collapse: collapse; font-size: .83rem; margin-top: 4px; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+th { color: var(--ink-faint); font-weight: 700; font-size: .76rem; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+td.c, th.c { text-align: center; }
+tr.total td { border-top: 2px solid var(--line); font-weight: 700; }
+.up { color: var(--color-up); }
+.down { color: var(--color-down); }
+
+/* 表内「規模」棒（単系列＝単色 --accent） */
+.tbar { display: block; width: 100%; height: 10px; background: var(--line-soft); border-radius: 4px; vertical-align: middle; overflow: hidden; }
+.tbar > i { display: block; height: 100%; background: var(--accent); }
+
+/* 列揃え: 名称/棒/数字/付属 を全表で同一列幅に固定し、並び立つ表で列を縦に揃える。
+   名称・棒は狭く固定して余計な空白を作らない（table幅=列幅合計で左詰め） */
+.ptbl { table-layout: fixed; width: auto; max-width: 100%; }
+.ptbl col.c-name { width: 270px; }
+.ptbl col.c-bar { width: 150px; }
+.ptbl col.c-num { width: 70px; }
+.ptbl col.c-sub { width: 78px; }
+
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ============================================================
+   積み上げ棒／単系列棒（内訳・残高の経年推移）
+   ============================================================ */
+.chart { display: flex; gap: 10px; align-items: flex-end; height: 150px; margin-top: 6px; padding-top: 10px; }
+.col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.stk { width: 64%; display: flex; flex-direction: column-reverse; border-radius: 3px 3px 0 0; overflow: hidden; }
+.stk span { display: block; }
+.lab { font-size: .68rem; color: var(--ink-faint); }
+/* 系列色（凡例で意味を担う・1色相の階調） */
+.c1 { background: var(--s1); }
+.c2 { background: var(--s2); }
+.c3 { background: var(--s3); }
+.c4 { background: var(--s4); }
+.c-out { background: var(--s-out); }
+.bar1 { background: var(--accent); }
+
+/* 推移ミニ棒（付属の小さな棒列） */
+.spark { display: flex; align-items: flex-end; gap: 8px; height: 96px; margin-top: 8px; }
+.spark .col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.spark .cb { width: 60%; background: var(--accent); border-radius: 3px 3px 0 0; }
+.spark .cy { font-size: .68rem; color: var(--ink-faint); }
+.spark .cv { font-size: .68rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   実質公債費比率ゲージ（しきい値帯＋マーカー）
+   ============================================================ */
+.gauge { margin-top: 10px; }
+.gauge-track {
+    position: relative;
+    height: 18px;
+    border-radius: 9px;
+    background: linear-gradient(90deg,
+        var(--gauge-ok) 0%, var(--gauge-ok) 45%,
+        var(--gauge-warn) 45%, var(--gauge-warn) 63%,
+        var(--gauge-alert) 63%, var(--gauge-alert) 88%,
+        var(--gauge-bad) 88%);
+    overflow: visible;
+}
+.gauge-mark { position: absolute; top: -4px; width: 3px; height: 26px; background: var(--ink); border-radius: 2px; }
+.gauge-mark .ml { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); font-size: .72rem; font-weight: 700; white-space: nowrap; }
+.gauge-th { position: absolute; top: 20px; font-size: .66rem; color: var(--ink-faint); transform: translateX(-50%); }
+.gauge-legend { margin-top: 34px; font-size: .74rem; color: var(--ink-soft); }
+
+/* ============================================================
+   開示（details）
+   ============================================================ */
+details.dd { border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; background: var(--panel); }
+details.dd > summary { padding: 9px 12px; cursor: pointer; font-size: .83rem; font-weight: 700; color: var(--accent-ink); list-style: none; display: flex; align-items: center; gap: 7px; }
+details.dd > summary::-webkit-details-marker { display: none; }
+details.dd > summary::before { content: "\25B8"; color: var(--accent); font-size: .8rem; }
+details.dd[open] > summary::before { content: "\25BE"; }
+details.dd .ddc { padding: 4px 12px 12px; font-size: .83rem; color: var(--ink-soft); }
+details.dd .ddc p { margin-bottom: 6px; }
+/* R1（M8 7.3）: 開いた details の中身を白背景・通常文字色にし、内表を他の表と同地色・同左端へ揃える */
+details.dd[open] { background: #fff; }
+details.dd[open] .ddc { color: var(--ink); }
+details.dd .ddc .table-scroll { margin-left: -12px; margin-right: -12px; }
+
+/* R2（M8 7.3）: 歳入款テーブルの分類グループ見出し行（自主/依存/借入） */
+.ptbl tr.grp td {
+    background: var(--panel);
+    border-top: 2px solid var(--line);
+    font-weight: 700;
+    color: var(--accent-ink);
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+.ptbl tr.grp .grp-badge {
+    display: inline-block;
+    padding: 1px 9px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: .72rem;
+    margin-right: 8px;
+    vertical-align: 1px;
+}
+.ptbl tr.grp .grp-badge.f-own { background: var(--s1); }
+.ptbl tr.grp .grp-badge.f-dep { background: var(--s2); }
+.ptbl tr.grp .grp-badge.f-debt { background: var(--s3); }
+.ptbl td.ind { padding-left: 14px; }
+
+/* T3（M8 7.3）: 推移グラフに併置する年度別の数表（棒/折れ線と対応） */
+.numtbl { table-layout: auto; width: 100%; font-size: .78rem; margin-top: 6px; border-collapse: collapse; }
+.numtbl th, .numtbl td { padding: 4px 8px; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
+.numtbl th.r, .numtbl td.r { text-align: right; }
+.numtbl thead th { color: var(--ink-soft); font-weight: 700; border-bottom: 1px solid var(--line); }
+.numtbl tbody tr.total td { font-weight: 700; border-top: 1px solid var(--line); }
+.numtbl th.corner { text-align: left; vertical-align: bottom; color: var(--ink-soft); }
+.numtbl th.yr-span { text-align: center; color: var(--ink-soft); font-weight: 700; }
+
+/* T1（M8 7.3）: 折れ線凡例の色見本は実線と同色の短い線分に */
+.legend i.line-key { width: 16px; height: 3px; border-radius: 2px; }
+
+p.fine { font-size: .74rem; color: var(--ink-soft); margin-top: 6px; }
+
+/* ============================================================
+   着地（このレポートについて）— 確認できること3カード＋出典/作り方/中立性
+   ============================================================ */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media(max-width:760px){ .cards { grid-template-columns: 1fr; } }
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    transition: border-color .15s, transform .15s;
+    text-decoration: none;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+.card-ic { width: 26px; height: 26px; color: var(--accent); }
+.card-title { font-size: 1rem; font-weight: 700; color: var(--ink); }
+.card-desc { font-size: .82rem; color: var(--ink-soft); }
+.info { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.info h3 { font-size: .98rem; font-weight: 700; margin-bottom: 6px; }
+.info p { font-size: .85rem; color: var(--ink-soft); margin-bottom: 6px; }
+.info ul { margin: 2px 0 0 1.2em; font-size: .85rem; color: var(--ink-soft); }
+.info a { font-weight: 600; }
+
+/* ============================================================
+   用語解説 inline-glossary（点線下線＋クリックで意味を開く・JS 不使用）
+   ============================================================ */
+.glossary-inline { display: inline; }
+.glossary-inline details { display: inline; margin: 0; border: none; }
+.glossary-inline details[open] summary { border-bottom: 1px dotted var(--ink-faint); border-radius: 0; }
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    padding: 0;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    font-size: inherit;
+    font-weight: bold;
+    color: inherit;
+    user-select: auto;
+}
+.glossary-inline summary::-webkit-details-marker { display: none; }
+.glossary-inline summary::after { content: ' \2139'; font-size: 0.7em; color: var(--ink-faint); }
+.glossary-inline details[open] { position: relative; z-index: 10; }
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* ============================================================
+   フッター（濃色地・メイン末尾）
+   ============================================================ */
+.mainwrap .site-footer { flex: none; }
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    font-size: 0.85rem;
+}
+.footer-inner { max-width: 880px; margin: 0 auto; padding: 0 28px; }
+.project-credit { margin-top: 0.5rem; color: var(--footer-ink); }
+.project-credit a { color: #a9b4e0; }
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+.footer-notice a { color: #a9b4e0; text-decoration: underline; }
+
+/* ============================================================
+   レスポンシブ（モバイル：サイドバー オーバーレイ）
+   ============================================================ */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .main-inner { padding: 18px 16px 40px; }
+    .cards3, .cards { grid-template-columns: 1fr; }
+}
+
+    </style>
+</head>
+<body>
+    
+    <svg style="display:none" aria-hidden="true"><defs>
+      <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+      <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+      <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+      <symbol id="ic-balance" viewBox="0 0 24 24"><path d="M12 3v18M4 7h16M7 7l-3 6a3 3 0 0 0 6 0zM17 7l-3 6a3 3 0 0 0 6 0z"/></symbol>
+      <symbol id="ic-scale" viewBox="0 0 24 24"><path d="M3 21h18M5 21V10M10 21V6M15 21v-9M20 21V8"/></symbol>
+      <symbol id="ic-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></symbol>
+    </defs></svg>
+
+    
+    
+
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">松江市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-money"/></svg><span class="rlbl">財政レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../council/index.html" class="cross-nav-link">議会レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                <div class="group">
+                    <div class="items">
+                        
+                        <a class="item" href="revenue.html">
+                            <svg class="ico"><use href="#ic-balance"/></svg><span class="lbl">収支</span>
+                        </a>
+                        
+                        
+                        <a class="item cur" href="assets.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-scale"/></svg><span class="lbl">市が持っているもの・背負っているもの</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#assets">市が持っているもの</a></li>
+                            
+                            <li><a href="#liabilities">市が背負っているもの</a></li>
+                            
+                            <li><a href="#fixed">毎年出ていくお金</a></li>
+                            
+                        </ul>
+                        
+                        
+                        <a class="item" href="trends.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">経年推移</span>
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">松江市 · 財政レポート / <b>市が持っているもの・背負っているもの</b></span>
+            </div>
+
+            <main class="content">
+                <div class="main-inner">
+                    
+<h2 class="page-title">市が持っているもの・背負っているもの</h2>
+<p class="page-subtitle">令和6年度 時点。金額は億円単位。</p>
+
+<div class="guide-text">
+    <p>このページは、松江市が「持っているもの（資産）」と「背負っているもの（負債）」を対比して示します。
+    資産は基金・公共施設、負債は市債・返済フロー・債務負担行為です。最後に、毎年必ず出ていくお金（固定支出）をまとめます。</p>
+</div>
+
+
+<div class="part-head part-a">
+    <span class="pn">市が持っているもの</span>
+    <span class="pd">資産 ― 基金・公共施設</span>
+</div>
+
+<section class="section" id="assets">
+    
+    <h3>基金 <span class="unit">（億円）</span></h3>
+    <p class="lead">特定の目的のために積み立てた資金です（自由には使えません）。</p>
+    
+    
+    
+    <div class="table-scroll">
+        <table class="ptbl">
+            <colgroup><col class="c-name"><col class="c-bar"><col class="c-num"></colgroup>
+            <thead><tr><th>基金名</th><th>規模</th><th class="r">残高</th></tr></thead>
+            <tbody>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>財政調整基金</summary><span class="glossary-inline-text">年度間の収支バランスを調整するための貯蓄です。不測の事態や収入の落ち込みに備えます。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:45.4%"></i></span></td>
+                    <td class="r">43.04</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>減債基金</summary><span class="glossary-inline-text">市債（市の借入金）の返済に充てるための貯蓄です。計画的な返済を支えます。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:13.2%"></i></span></td>
+                    <td class="r">12.51</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>その他特定目的基金</summary><span class="glossary-inline-text">特定の目的（教育振興、地域振興など）のために積み立てているお金です。目的外には使えません。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:100.0%"></i></span></td>
+                    <td class="r">94.80</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>ふるさと松江だんだん基金</summary><span class="glossary-inline-text">ふるさと納税の寄附金を活用し、地域振興に充てるための基金です。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:36.4%"></i></span></td>
+                    <td class="r">34.52</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>松江市庁舎建設基金</summary><span class="glossary-inline-text">市庁舎の建設・改修のために積み立てている資金です。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:27.5%"></i></span></td>
+                    <td class="r">26.08</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>鹿島地域振興基金</summary><span class="glossary-inline-text">旧鹿島町エリアの地域振興のために積み立てている基金です。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:11.0%"></i></span></td>
+                    <td class="r">10.42</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>松江市職員退職積立基金</summary><span class="glossary-inline-text">市職員の退職手当の支払いに備えて積み立てている基金です。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:6.7%"></i></span></td>
+                    <td class="r">6.31</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>
+                        
+                        <span class="glossary-inline"><details><summary>松江市ふれあい福祉基金</summary><span class="glossary-inline-text">市民の福祉向上のために積み立てている基金です。在宅福祉や地域福祉の推進に活用します。</span></details></span>
+                    </td>
+                    <td><span class="tbar"><i style="width:3.4%"></i></span></td>
+                    <td class="r">3.20</td>
+                </tr>
+                
+                <tr class="total">
+                    <td>合計</td>
+                    <td></td>
+                    <td class="r">230.88</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+
+    
+    
+    <h3>公共施設 <span class="unit">（億円）</span></h3>
+    <p class="lead">市が保有する施設の維持費と規模です。維持費の大小は棒で示します。</p>
+    
+    
+    <div class="table-scroll">
+        <table class="ptbl">
+            <colgroup><col class="c-name"><col class="c-bar"><col class="c-num"><col class="c-sub"><col class="c-sub"></colgroup>
+            <thead><tr><th>カテゴリ</th><th>維持費</th><th class="r">億円</th><th class="r">施設数</th><th class="r">延床(m<sup>2</sup>)</th></tr></thead>
+            <tbody>
+                
+                
+                <tr>
+                    <td>文化施設</td>
+                    <td><span class="tbar"><i style="width:77.8%"></i></span></td>
+                    <td class="r">7.81</td>
+                    <td class="r">14</td>
+                    <td class="r">23,139.5</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>スポーツ施設</td>
+                    <td><span class="tbar"><i style="width:93.7%"></i></span></td>
+                    <td class="r">9.40</td>
+                    <td class="r">35</td>
+                    <td class="r">74,633.1</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>観光施設</td>
+                    <td><span class="tbar"><i style="width:100.0%"></i></span></td>
+                    <td class="r">10.03</td>
+                    <td class="r">16</td>
+                    <td class="r">37,053.7</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>公民館</td>
+                    <td><span class="tbar"><i style="width:73.8%"></i></span></td>
+                    <td class="r">7.41</td>
+                    <td class="r">28</td>
+                    <td class="r">34,021.5</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>福祉</td>
+                    <td><span class="tbar"><i style="width:14.2%"></i></span></td>
+                    <td class="r">1.42</td>
+                    <td class="r">7</td>
+                    <td class="r">15,724.9</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>交流</td>
+                    <td><span class="tbar"><i style="width:17.4%"></i></span></td>
+                    <td class="r">1.75</td>
+                    <td class="r">7</td>
+                    <td class="r">14,228.5</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>産業</td>
+                    <td><span class="tbar"><i style="width:31.2%"></i></span></td>
+                    <td class="r">3.13</td>
+                    <td class="r">13</td>
+                    <td class="r">19,308.9</td>
+                </tr>
+                
+                <tr class="total">
+                    <td>合計</td>
+                    <td></td>
+                    <td class="r">40.94</td>
+                    <td class="r">120</td>
+                    <td class="r"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</section>
+
+
+<div class="part-head part-b">
+    <span class="pn">市が背負っているもの</span>
+    <span class="pd">負債 ― 市債・返済・債務負担</span>
+</div>
+
+<section class="section" id="liabilities">
+    
+    <h3>市債残高 <span class="unit">（億円）</span></h3>
+    <p class="lead">道路や学校など大きな事業のために借り入れたお金です。</p>
+    
+    
+    
+    
+
+    
+    <div class="subh">■ 一般会計</div>
+    <div class="table-scroll">
+        <table class="ptbl">
+            <colgroup><col class="c-name"><col class="c-bar"><col class="c-num"></colgroup>
+            <thead><tr><th>用途</th><th>規模</th><th class="r">残高</th></tr></thead>
+            <tbody>
+                
+                
+                <tr>
+                    <td>地方債残高</td>
+                    <td><span class="tbar"><i style="width:100.0%"></i></span></td>
+                    <td class="r">983.36</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+    
+
+    
+    <div class="subh mt">■ 公営企業会計</div>
+    <div class="table-scroll">
+        <table class="ptbl">
+            <colgroup><col class="c-name"><col class="c-bar"><col class="c-num"></colgroup>
+            <thead><tr><th>事業名</th><th>規模</th><th class="r">残高</th></tr></thead>
+            <tbody>
+                
+                
+                <tr>
+                    <td>水道事業</td>
+                    <td><span class="tbar"><i style="width:14.3%"></i></span></td>
+                    <td class="r">140.79</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>下水道事業</td>
+                    <td><span class="tbar"><i style="width:31.4%"></i></span></td>
+                    <td class="r">308.30</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>ガス事業</td>
+                    <td><span class="tbar"><i style="width:1.8%"></i></span></td>
+                    <td class="r">17.90</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>交通事業</td>
+                    <td><span class="tbar"><i style="width:0.0%"></i></span></td>
+                    <td class="r">0.01</td>
+                </tr>
+                
+                
+                <tr>
+                    <td>病院事業</td>
+                    <td><span class="tbar"><i style="width:12.4%"></i></span></td>
+                    <td class="r">121.48</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+    
+
+    <div class="table-scroll">
+        <table class="ptbl">
+            <colgroup><col class="c-name"><col class="c-bar"><col class="c-num"></colgroup>
+            <tbody><tr class="total"><td>市債 合計</td><td></td><td class="r">1,571.84</td></tr></tbody>
+        </table>
+    </div>
+    <p class="lead" style="margin-top:10px">残高の推移は <a href="trends.html">経年推移ページ</a> をご覧ください。</p>
+    
+
+    
+    
+    <h3>返済フロー <span class="unit">（億円）</span></h3>
+    <p class="lead">1年間に新しく借りた額と、返した額の対比です。</p>
+    <div class="cards3">
+        <div class="mcard">
+            <div class="l">新規借入</div>
+            <div class="v">85.00</div>
+        </div>
+        <div class="mcard">
+            <div class="l">返済額</div>
+            <div class="v">106.79</div>
+        </div>
+        <div class="mcard">
+            <div class="l">差引（残高変化）</div>
+            <div class="v">
+                
+                    
+                    <span class="down">-21.79</span>
+                
+            </div>
+        </div>
+    </div>
+    
+    <p class="lead" style="margin-top:10px">返済額が新規借入を上回っており、市債残高は減少しています。</p>
+    
+    
+
+    
+    
+    <h3>債務負担行為 <span class="unit">（億円）</span></h3>
+    <p class="lead">市が将来にわたって支払うことを約束した契約上の金額です（借入とは別）。</p>
+    <div class="cards3">
+        <div class="mcard">
+            <div class="l">債務負担行為</div>
+            <div class="v">294.48</div>
+        </div>
+    </div>
+    <details class="dd"><summary>債務負担行為とは（くわしく）</summary>
+        <div class="ddc">
+            <p>市債（借りたお金）に対し、債務負担行為は「将来支払う契約上の義務」です。複数年にまたがる契約や、施設の長期委託などで設定されます。</p>
+            <p>代表例が PFI（民間資金を活用した公共事業）で、民間が施設を建設・運営し市が長期間サービス料を支払う仕組みです。その支払い総額が計上されます。</p>
+        </div>
+    </details>
+    
+
+    
+    
+    <h3>実質公債費比率</h3>
+    <p class="lead">借入金の返済が市の収入に占める割合を示す、総務省の公式指標です。過去3か年の平均値で算出されます。</p>
+    
+    
+    
+    
+    <div class="gauge">
+        <div class="gauge-track">
+            <div class="gauge-mark" style="left:22.2%"><span class="ml">8.9%</span></div>
+            <div class="gauge-th" style="left:45.0%">18%</div>
+            <div class="gauge-th" style="left:62.5%">25%</div>
+            <div class="gauge-th" style="left:87.5%">35%</div>
+        </div>
+        <div class="gauge-legend">松江市は <b>8.9%</b>。18%未満のため、新規の借入に国・県の許可は不要な水準です。</div>
+    </div>
+    <details class="dd"><summary>しきい値の意味（18% / 25% / 35%）</summary>
+        <div class="ddc">
+            <p>18%を超えると新たな借入に国・県の許可が必要。25%を超えると国へ計画を出して立て直しを進める段階。35%を超えると国の管理のもとで財政再建の段階に入ります。</p>
+        </div>
+    </details>
+    
+</section>
+
+
+
+<div class="part-head">
+    <span class="pn" style="font-size:1.15rem">結び ― 毎年必ず出ていくお金</span>
+</div>
+<section class="section" id="fixed">
+    <h2>毎年出ていくお金 <span class="unit">（億円）</span></h2>
+    <p class="lead">維持管理費と返済額を合わせた、毎年必ず支払うお金（固定支出）です。この金額が大きいほど、新しい事業や住民サービスに使えるお金が限られます。</p>
+    <div class="cards3">
+        <div class="mcard">
+            <div class="l">固定支出 合計</div>
+            <div class="v">147.73</div>
+        </div>
+        <div class="mcard">
+            <div class="l">維持管理費</div>
+            <div class="v">40.94</div>
+        </div>
+        <div class="mcard">
+            <div class="l">返済額</div>
+            <div class="v">106.79</div>
+        </div>
+    </div>
+    <p class="lead" style="margin-top:10px">歳入に占める固定支出の割合（歳入比率）は <b>12.8%</b>。この比率が高いほど、裁量で使えるお金の余地が小さくなる傾向があります。</p>
+</section>
+
+
+
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v7.5.1</p>
+                    
+                    <p class="project-credit">
+                        松江市 財政レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは財政データの集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+</body>
+</html>
