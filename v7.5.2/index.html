@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>車座プロジェクト — レポート一覧</title>
+    <style>
+/* 車座プロジェクト ポータル（レポート一覧の入口）専用スタイル。
+   M8 #447: design-convention.md 準拠。共有 styles.css とは独立に注入するため、
+   同名クラス（.card / .content / .site-header 等）があってもレポート本体と衝突しない。
+   ライトのみ・no-JS・SVGライン単色・絵文字不使用。 */
+:root{
+  --bg:#f4f3ef; --surface:#ffffff; --panel:#f6f5f1;
+  --ink:#1c1e26; --ink-soft:#55596b; --ink-faint:#8b8fa3;
+  --line:#e3e1d9; --line-soft:#eeece5;
+  --accent:#3a4a8c; --accent-soft:#e8ebf7; --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155; --footer-ink:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:&#34;Hiragino Kaku Gothic ProN&#34;,&#34;Noto Sans JP&#34;,&#34;Meiryo&#34;,sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-feature-settings:&#34;palt&#34;; -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:960px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;gap:12px}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.15rem;font-weight:700;letter-spacing:.02em}
+
+/* 本体 */
+.content{max-width:960px;margin:0 auto;padding:32px 24px 56px}
+.lede{margin-bottom:28px}
+.lede h1{font-size:1.5rem;font-weight:700;margin-bottom:8px}
+
+/* 市ブロック */
+.city{margin-top:34px}
+.city-head{display:flex;align-items:baseline;gap:10px;padding-bottom:10px;margin-bottom:16px;border-bottom:2px solid var(--accent-soft)}
+.city-name{font-size:1.2rem;font-weight:700}
+
+/* カードグリッド */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
+.card{
+  display:flex;flex-direction:column;gap:10px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;box-shadow:var(--shadow);
+  transition:border-color .15s, transform .15s;
+}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card-top{display:flex;align-items:center;gap:10px}
+.card-ic{width:26px;height:26px;color:var(--accent);flex:none}
+.card-title{font-size:1.02rem;font-weight:700}
+.card-desc{font-size:.82rem;color:var(--ink-soft);margin-top:-4px}
+.card-list{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.card-list li{
+  font-size:.72rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 8px;border-radius:100px;
+}
+.card-go{margin-top:auto;display:flex;align-items:center;gap:5px;font-size:.8rem;font-weight:700;color:var(--accent)}
+.card-go svg{width:15px;height:15px}
+
+/* 横断ページの導線（#675）: 節の見出しと、カードグリッドを1枚で埋める幅広カード */
+.cross{margin-top:6px}
+.cross-head{display:flex;align-items:baseline;gap:10px;padding-bottom:10px;margin-bottom:16px;border-bottom:2px solid var(--accent)}
+.cross-name{font-size:1.2rem;font-weight:700;color:var(--accent-ink)}
+.card.wide{
+  grid-column:1 / -1;
+  flex-direction:row;align-items:center;gap:18px;
+  border-color:var(--accent-soft);
+  background:linear-gradient(90deg, var(--accent-soft), var(--surface) 45%);
+}
+.card.wide .card-ic{width:34px;height:34px}
+.card.wide .card-body{display:flex;flex-direction:column;gap:6px;flex:1}
+.card.wide .card-go{margin-top:0}
+@media(max-width:760px){.card.wide{flex-direction:column;align-items:flex-start}}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:960px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* レポートなし時 */
+.no-data{color:var(--ink-faint);font-size:.9rem}
+
+    </style>
+</head>
+<body>
+
+<!-- SVG sprite（単色ライン・stroke:currentColor / fill:none・絵文字不使用） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-kurumaza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+    <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+  </symbol>
+  <symbol id="ic-council" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10 12 4l8 6"/><path d="M5 10v8M19 10v8M9 10v8M15 10v8"/><path d="M3 20h18"/>
+  </symbol>
+  <symbol id="ic-financial" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 20V10M10 20V5M16 20v-7M22 20H2"/>
+  </symbol>
+  <symbol id="ic-plan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/>
+  </symbol>
+  <symbol id="ic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14M13 6l6 6-6 6"/>
+  </symbol>
+  <symbol id="ic-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="8" cy="9" r="5"/><circle cx="16" cy="9" r="5"/><circle cx="12" cy="15.5" r="5"/>
+  </symbol>
+</svg>
+
+<header class="site-header">
+    <div class="header-inner">
+        <svg class="brand-mark"><use href="#ic-kurumaza"/></svg>
+        <div class="site-title">車座プロジェクト</div>
+    </div>
+</header>
+
+<main class="content">
+    <div class="lede">
+        <h1>レポート一覧</h1>
+    </div>
+
+    <section class="cross">
+        <div class="cross-head">
+            <span class="cross-name">市をこえて</span>
+        </div>
+        <div class="cards">
+            <a class="card wide" href="cross/index.html">
+                <svg class="card-ic"><use href="#ic-cross"/></svg>
+                <div class="card-body">
+                    <span class="card-title">3市くらべ — 議会の横断比較</span>
+                    <span class="card-desc">松江・安来・出雲の議会で語られてきたことを、同じ物差しで並べて比べる</span>
+                    <ul class="card-list"><li>各年に多く語られた話題</li><li>同じ課題のちがう中身</li><li>同じものの呼び名のちがい</li></ul>
+                </div>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+        </div>
+    </section>
+
+    
+    
+    <section class="city">
+        <div class="city-head">
+            <span class="city-name">出雲市</span>
+        </div>
+        <div class="cards">
+            
+            <a class="card" href="izumo/council/index.html">
+                <div class="card-top"><svg class="card-ic"><use href="#ic-council"/></svg><span class="card-title">議会レポート</span></div>
+                <span class="card-desc">議会活動の可視化</span>
+                <ul class="card-list"><li>質問の内容</li><li>議員の活動</li><li>議案の内訳</li></ul>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+            
+            
+            
+        </div>
+    </section>
+    
+    <section class="city">
+        <div class="city-head">
+            <span class="city-name">松江市</span>
+        </div>
+        <div class="cards">
+            
+            <a class="card" href="matsue/council/index.html">
+                <div class="card-top"><svg class="card-ic"><use href="#ic-council"/></svg><span class="card-title">議会レポート</span></div>
+                <span class="card-desc">議会活動の可視化</span>
+                <ul class="card-list"><li>質問の内容</li><li>議員の活動</li><li>議案の内訳</li></ul>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+            
+            
+            <a class="card" href="matsue/financial/index.html">
+                <div class="card-top"><svg class="card-ic"><use href="#ic-financial"/></svg><span class="card-title">財政レポート</span></div>
+                <span class="card-desc">お金の流れの可視化</span>
+                <ul class="card-list"><li>歳入と歳出</li><li>資産と負債</li><li>経年推移</li></ul>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+            
+            
+            <a class="card" href="matsue/plan/index.html">
+                <div class="card-top"><svg class="card-ic"><use href="#ic-plan"/></svg><span class="card-title">総合計画レポート</span></div>
+                <span class="card-desc">総合計画の可視化</span>
+                <ul class="card-list"><li>審議会の構成</li><li>議会との対比</li><li>計画と予算</li></ul>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+            
+        </div>
+    </section>
+    
+    <section class="city">
+        <div class="city-head">
+            <span class="city-name">安来市</span>
+        </div>
+        <div class="cards">
+            
+            <a class="card" href="yasugi/council/index.html">
+                <div class="card-top"><svg class="card-ic"><use href="#ic-council"/></svg><span class="card-title">議会レポート</span></div>
+                <span class="card-desc">議会活動の可視化</span>
+                <ul class="card-list"><li>質問の内容</li><li>議員の活動</li><li>議案の内訳</li></ul>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+            
+            
+            <a class="card" href="yasugi/financial/index.html">
+                <div class="card-top"><svg class="card-ic"><use href="#ic-financial"/></svg><span class="card-title">財政レポート</span></div>
+                <span class="card-desc">お金の流れの可視化</span>
+                <ul class="card-list"><li>歳入と歳出</li><li>資産と負債</li><li>経年推移</li></ul>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+            
+            
+            <a class="card" href="yasugi/plan/index.html">
+                <div class="card-top"><svg class="card-ic"><use href="#ic-plan"/></svg><span class="card-title">総合計画レポート</span></div>
+                <span class="card-desc">総合計画の可視化</span>
+                <ul class="card-list"><li>審議会の構成</li><li>議会との対比</li><li>計画と予算</li></ul>
+                <span class="card-go">ひらく<svg><use href="#ic-arrow"/></svg></span>
+            </a>
+            
+        </div>
+    </section>
+    
+    
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <p class="credit">車座プロジェクト</p>
+        <p>各レポートは公式の会議録・財政資料・総合計画をもとに、内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+        <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+    </div>
+</footer>
+
+</body>
+</html>

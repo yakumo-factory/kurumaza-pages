@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原子力安全協定と立地同意 — 当たった質問の全件 | 3市くらべ</title>
+<style>
+/* 3市くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share2:#eef1f9;   /* 2市共有 */
+  --share3:#d9e0f4;   /* 3市共有（2市より強い） */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×3市（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh2{background:var(--share2);border-radius:3px;padding:0 4px}
+table.years li.sh3{background:var(--share3);border-radius:3px;padding:0 4px;font-weight:600}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;width:30px;text-align:center;border-radius:3px;margin:0 4px;font-size:.8rem}
+.legend .c2{background:var(--share2)}
+.legend .c3{background:var(--share3);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">3市くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">3市くらべ</a> ／ 原子力安全協定と立地同意</nav>
+
+  <h1 class="page-title">原子力安全協定と立地同意 — 当たった質問</h1>
+  <p class="page-subtitle">
+    話題の束「原子力安全協定と立地同意」に当たった質問の全件です（全76件）。
+    市ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">34件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">原発安全協定とプルサーマル</span>
+          <span class="sum">安全協定見直しに際し技術連絡会設置や運転停止措置など全国の事例を協定に盛り込むよう求め、安全性に疑問のあるプルサーマルを人口密集地の原発で行うべきでないとし、ヨウ素剤の学校常備や10キロ圏内の施設数・児童生徒数を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">原発安全協定の改正</span>
+          <span class="sum">唯一の原発立地県庁所在地として、関連企業指導・被曝低減・運転停止の明記・住民代表の立入同行・風評被害補償など他県並みの安全協定への改正を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">原発新安全協定と立入調査</span>
+          <span class="sum">2月2日締結の新安全協定について、立入調査に参加する周辺住民の対象、風評被害の査定・集計方法と行政の関与のシステムを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・三島進</span>
+          <span class="ttl">安全協定と安対協</span>
+          <span class="sum">立地自治体となったことに伴う安全協定改定の状況と変更点、安対協でのプルサーマルの取り扱いや委員意見の反映方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・三島良信</span>
+          <span class="ttl">島根原発と安全協定・プルサーマル</span>
+          <span class="sum">立地市としての原子力への基本認識、各協定を一本化する安全協定締結の進捗時期、中電から申し入れのあったプルサーマル計画への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・角田正紀</span>
+          <span class="ttl">島根原発の安全協定と沃素剤</span>
+          <span class="sum">20万都市として旧鹿島町とは異なる安全協定を、安全運転を含みわかりやすく年内締結する理由、学校への沃素剤配備の時期を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">島根原発の耐震・定期検査・防災</span>
+          <span class="sum">柏崎刈羽原発視察を踏まえ、中田教授を招いた新知見の学習と新耐震設計審査指針改定の国への働きかけ、複合災害の危機管理や立地自治体権限付与の原災法改正、定期検査間隔延長への見解、原発推進と規制を担う保安院の分離を県が働きかけるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・角田正紀</span>
+          <span class="ttl">原発長期運転と2億円交付金</span>
+          <span class="sum">新検査制度による検査期間延長に対し立地自治体へ2億円の交付金を出すやり方について、安全と引きかえの措置はおかしいとして市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・片寄直行</span>
+          <span class="ttl">耐震安全性と活断層調査</span>
+          <span class="sum">原子力安全委員会のダブルチェック機能の位置づけ、宍道断層調査が不十分との専門家指摘の受けとめ、安全協定に基づき県とともに中国電力へ活断層再調査を求めるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">原発ゼロと自然エネルギー</span>
+          <span class="sum">原発依存政策からの撤退と原発ゼロを目指す決断を求め、太陽光・風力等の導入ポテンシャルを示し、立地自治体での自然エネルギー開発と雇用創出を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・貴谷麻以</span>
+          <span class="ttl">原発定期点検炉の再稼働方針</span>
+          <span class="sum">他の立地自治体が方針を示す中、島根原発の定期点検炉の再稼働について松江市・島根県の現在の方針を市民に周知するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・貴谷麻以</span>
+          <span class="ttl">安全協定の見直し</span>
+          <span class="sum">事故を想定していない現行安全協定に再稼働の事前協議項目がないため周辺自治体の要求が断られた点を挙げ、安全協定見直しの検討の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中豊昭</span>
+          <span class="ttl">原子力発電所安全協定と電力供給</span>
+          <span class="sum">出雲・安来・雲南3市の立地並み安全協定要求について、リスクの異なる自治体が同等の協定を結ぶことへの国・県・市の対応と松江市の協定見直しの要否、電力会社が再生可能エネルギー開発に取り組むことへの見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">原発の活断層と安全協定</span>
+          <span class="sum">島根原発前面海域のF-III・F-IV・Fk-2の3つの活断層の連動性と断層間距離、30キロ圏拡大に伴う周辺自治体との安全協定・広域連携のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・山本勝太郎</span>
+          <span class="ttl">原発事故報告と規制委員会・安全協定</span>
+          <span class="sum">国会事故調報告への所見、原子力規制委員会の役割、発電所従事者数と地元経済への影響、周辺自治体との安全協定をめぐる市長会での経緯と県の役割を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">フィルタつきベント工事の事前了解</span>
+          <span class="sum">中国電力のフィルタつきベント工事が安全協定第6条の事前了解に該当するとして、工事着手を止め事前了解の申し入れを求めるよう問い、工事ごとの事前了解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">周辺3市の安全協定と寄附金</span>
+          <span class="sum">雲南・出雲・安来が松江市同等の安全協定を求める中、立地自治体の安全性が担保されないとする市長の懸念の理由を問い、中国電力から受け取るアワビ生産資金3,000万円の寄附を断るよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・林干城</span>
+          <span class="ttl">島根原発2号機の事前了解</span>
+          <span class="sum">中国電力による2号機の新規制基準適合性申請に対する事前了解について、安全対策への感想、了承に必要な条件と手順、国への確認事項、周辺自治体との安全協定や連携のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">立地自治体の権限と原発容認</span>
+          <span class="sum">周辺自治体が立地自治体並みの権限を求める中、立地自治体ならではの特別な権限を持とうとする目的が交付金か政治的影響力かを問い、原発に当面役割があるとする市長の姿勢を市民が喜ぶか質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉徳章</span>
+          <span class="ttl">避難計画と安全協定</span>
+          <span class="sum">鹿児島県伊藤知事の「10-30キロ圏の要援護者の避難計画策定は無理」との発言への所見と国職員派遣の確認、30キロ圏周辺自治体と中国電力の安全協定について立地市長としてのリーダーシップを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・橘祥朗</span>
+          <span class="ttl">島根原発の再稼働</span>
+          <span class="sum">脱原発を掲げた三反園鹿児島県知事の対応への評価を問い、破綻した核燃料サイクルや連続地震の想定外を踏まえ、立地自治体の長として再稼働中止を国に求めるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・津森良治</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">第5次エネルギー基本計画骨子案への見解、原発の必要性の当分の間という期間、市民の不安が解消されているか、核燃料サイクル未確立下での稼働、乾式貯蔵の受け入れ、1号機廃炉交付金の使途、周辺自治体との安全協定について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・吉儀敬子</span>
+          <span class="ttl">島根原発3号機適合性審査申請</span>
+          <span class="sum">新規制基準を世界一厳しいと言えるか、宍道断層39キロ・基準地震動820ガルの妥当性、周辺自治体並みの安全協定への働きかけ、第5次エネルギー基本計画への評価と、適合性審査申請に同意すべきでないこと、再生可能エネルギー地産地消の推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・細木明美</span>
+          <span class="ttl">立地自治体としての考えと交付金</span>
+          <span class="sum">原発立地自治体が悪者とされる風潮や周辺地域の意見調整を島根県が行うべき点、国の明確な態度と責任、原発立地のPR不足、3号機稼働時の交付金・核燃料税の税収見込みと使途、地元雇用の拡大、原子力専門家を育てる教育的取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中肇</span>
+          <span class="ttl">原子力発電</span>
+          <span class="sum">大規模発電所に頼る体制の脆弱性、市長の言う「当面」の期間の長さ、プルサーマル決定時のような丁寧な市民意思確認の方法、圏域リーダーとして周辺自治体の安全協定を支援すべきかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中肇</span>
+          <span class="ttl">原子力発電と２号機再稼働</span>
+          <span class="sum">原発ゼロの政治決断、市長による福島原発事故現場の視察、耐震基準等から規制委審査は安全を保障しないとして再稼働反対・住民投票・避難計画の根本見直し・中国電力への不信・周辺自治体との安全協定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川島光雅</span>
+          <span class="ttl">中国電力カルテル問題</span>
+          <span class="sum">中国電力の課徴金命令と指名停止を踏まえ、原発立地自治体としての信頼性と市民感情への認識、電気料金値上げへの物価高騰対策上の考慮について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・たちばなふみ</span>
+          <span class="ttl">原発推進５法と方針転換</span>
+          <span class="sum">運転期間延長を可能とする原発推進等５法の成立を立地自治体としてどう捉えるかを問い、原発回帰への国の方針転換の認識と撤回を求める考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・野々内誠</span>
+          <span class="ttl">美保基地の利用</span>
+          <span class="sum">米軍F16戦闘機の美保基地着陸を受け、飛行場利用が認められる条件や立地自治体並みの対応を質し、航空祭の周知不徹底による混乱の再発防止を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・細木明美</span>
+          <span class="ttl">立地自治体としての中国電力との関係</span>
+          <span class="sum">人件費相当分が県を経由して配分される仕組みを示し、立地自治体である松江市が県とは別に独自で中国電力へ協力・貢献を求めるべきとし、市長のスタンスを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・細木明美</span>
+          <span class="ttl">立地自治体の地域振興と企業誘致</span>
+          <span class="sum">鹿島町・島根町が過疎地域である現状を踏まえ、原発特措法等がうたう地域振興の実現と国・県・中国電力への働きかけを問い、電気料金補助やデータセンター誘致を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・柳原治</span>
+          <span class="ttl">島根原子力発電所の運転</span>
+          <span class="sum">再稼働から1年が経過した島根原発2号機の度重なるミスへの見解、立地自治体として中国電力に何を期待し求めるのかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・樋野伸一</span>
+          <span class="ttl">島根原発</span>
+          <span class="sum">福島の復興が終わらない現状や市民アンケートで49％が稼働に反対することを踏まえ原発のない松江を求め、火災を繰り返す中国電力に対し安全協定第12条の適切措置要求権を発動し原子炉停止を決断すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・たちばなふみ</span>
+          <span class="ttl">島根原発の新燃料検査事故</span>
+          <span class="sum">島根原発2号機の新燃料検査で手順書に従わず作業員が負傷し燃料が変形した事故を受け、度重なる不適切事案を踏まえて安全協定に基づく運転停止を求める見解を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">19件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">中国電力との安全協定締結</span>
+          <span class="sum">米子・境港・出雲・雲南が安全協定締結を求める中で安来市だけが求めていないのはなぜかと市民の疑問をぶつけ、立入調査や運転停止要求を含む協定の実効性を条文で示して、県・松江市と中電の三者協定に安来市も名を連ねる締結を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中明美</span>
+          <span class="ttl">原子力防災連絡会議と安全協定</span>
+          <span class="sum">安来市の提唱で発足した2県11団体の原子力防災連絡会議が今後どのような内容・方向で進むのかを確認し、安全協定の締結を積極的に求めない市の考えを再度ただして、モニタリングポスト設置の中海市長会への要請のその後の進展を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部幸治</span>
+          <span class="ttl">原発事故対応と安全協定の進め方</span>
+          <span class="sum">福島の事故対応に人為的ミスが見え隠れするとの認識を市長にただし、立地自治体と周辺自治体の条件の違いや周辺の温度差を踏まえた安全協定への慎重かつ誤解を招かない対応を求めて、津波も含め安来市独自でできる防災対策の具体を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・佐伯直行</span>
+          <span class="ttl">原発事故時の対応と安全協定</span>
+          <span class="sum">事故後の避難ルート・避難計画の考えと自主避難という勧告のあり方をただし、水源や食べ物の汚染をどう測定するのか、市の放射線測定器の保有状況を確認して、風評被害の損害賠償の観点からも安全協定に加わるべきだと求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">原発防災の広域連携と安全協定</span>
+          <span class="sum">女川原発と福島原発の明暗を分けた津波想定を挙げて島根原発の津波対策と市の地域防災計画見直しを尋ね、単独対応の限界を踏まえた近隣自治体との協力体制、中国電力との安全協定やプルサーマルへの所見、モニタリングポスト設置の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・岡田麻里</span>
+          <span class="ttl">安全協定と正確な情報公開</span>
+          <span class="sum">安全協定を結ぶ考えを市長に再確認し、原子力に詳しい職員がいないから実効性がないとした新聞コメントの真意をただして、メルトダウン隠しの例を挙げ事故時の災害対応要綱の整備と速やかで正確な情報公開の仕組みを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部幸治</span>
+          <span class="ttl">新市長会と島根原発への姿勢</span>
+          <span class="sum">出雲市を加えた新市長会について鳥取県西部町村との連携や両空港の連携の実現性を尋ね、環境保全を掲げながら斐伊川源流の奥出雲町・雲南市が加わっていない理由を質した上で、フルスペックの安全協定を目指すなら夏の電力不足と原発再稼働への市長自身の考えが必要だと迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">原発の安全対策と広域避難</span>
+          <span class="sum">大飯原発再稼働への疑問の声を踏まえ原発の安全対策への市長の所見を尋ね、周辺自治体の意見が立地自治体と同程度に尊重される制度の国への要望と松江市長の難色との関係をただして、岡山方面への広域避難計画の進捗と電源立地地域対策交付金の周辺自治体への配分を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・勝部幸治</span>
+          <span class="ttl">原発再稼働への市長自身の考え</span>
+          <span class="sum">検証が不十分なまま再稼働ありきで進んだ大飯原発への認識を尋ね、再稼働の最終判断の責任は国と立地自治体のどちらにあると考えるかを質して、フルスペックの安全協定を求めるだけでは国や県に追随すると聞こえるとして、秋の選挙も見据え再稼働への市長自身の明確な考えを示すよう迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・原田貴与子</span>
+          <span class="ttl">原発の安全協定と断層調査</span>
+          <span class="sum">検査報告書偽造など不正を重ねる中国電力に対し、立入調査権や原子炉停止要求権を含む安全協定の締結へ平成25年12月から市がどんな努力をしてきたのか市長にただし、宍道断層が25キロに延びた評価でも東方への詳細調査がないとする地質学者の指摘を紹介して、鳥取沖の断層との連動性の徹底調査を中国電力と原子力規制委員会に求めるよう県への要望を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">原子力安全協定の協議継続</span>
+          <span class="sum">出雲・雲南・安来3市が中国電力と結んだ安全確保等に関する協定を踏まえ、再稼働の事前了解を含む立地自治体並みの協定を求める今後の協議継続の考えと、協定による交付金等の見直しの動向を尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・原田貴与子</span>
+          <span class="ttl">苛酷事故への備えと再稼働反対</span>
+          <span class="sum">3市の安全協定締結を市長の尽力と評価した上で、苛酷事故時に市役所が対策本部の機能を果たせるのか放射線量の予測をただし、風向きで変わる放射性物質の流れや第2次避難先、40キロ圏に及ぶ影響の全市民への周知を求めて、立入調査を支える専門家の3市連携での配置を確認し、再稼働は認めるべきでないと訴えて自然エネルギー産業への計画的支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・原田貴与子</span>
+          <span class="ttl">安全協定と原発ゼロの決断</span>
+          <span class="sum">東海第二原発の周辺5市が実質的な同意権を持つ安全協定を結んだ例を挙げて立地自治体並みの協定への市長の所見と県への働きかけをただし、六ヶ所再処理工場の完成延期で破綻していると核燃料サイクルへの見解を迫って、中国電力の不正トラブルへの対処、137万キロワットの3号機は過剰な電力だとの指摘、市の再生可能エネルギー目標を確認し、原発ゼロの政治決断を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・向田聡</span>
+          <span class="ttl">安全協定と岡山への避難</span>
+          <span class="sum">島根原発3号機の適合性審査申請が不備で停止した経過への中国電力の説明責任をただし、事前了解と措置要求権を持つ立地自治体並み安全協定について2号機の審査が終わるまでに結論を出すべきと迫って、岡山県内14市町村への広域避難計画の受け入れ体制や仮設住宅設置の責任の所在を確認し、30キロ想定の見直しと原発ゼロへの転換を訴えた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原田貴与子</span>
+          <span class="ttl">原発稼働に住民の声を</span>
+          <span class="sum">島根原発2・3号機の稼働反対が賛成を大きく上回った市民アンケートと議会の趣旨採択を示して、中国電力との安全協定締結に向けた要望活動の進捗を確認し、再質問では30キロ圏内全自治体の同意がなければ動かせない同意権の働きかけと住民投票など住民の声を反映する体制づくりを市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・向田聡</span>
+          <span class="ttl">中電の虚偽報告を問う</span>
+          <span class="sum">島根原発のサイトバンカ建物で2002年以降32回の巡視未実施と虚偽報告が発覚した問題で、3市が行った申し入れの内容と、たび重なる法令違反への市長の認識をただし、住民説明会や原発安全対策協議会への丁寧な説明を中国電力に求めるべきだと迫って、2年間回答のない立地自治体並み安全協定の締結を適合性審査終了までに強く要望する決意と、コロナ禍を踏まえた広域避難計画の実効性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・遠藤孝</span>
+          <span class="ttl">原発事故時の動きを問う</span>
+          <span class="sum">島根原発2号機の審査終了が見通される中、福島では10年たっても2万2,000人余りが帰還できていない現実を挙げて、審査終了後の中国電力と市の対応手順、立地自治体並みの安全協定でなければ同意すべきでないとの持論への見解、事故時の指示の発動と住民が取るべき行動、学校や施設での対応の理解、避難先の岡山での市職員の役割分担を順にただし、巡視怠りなどヒューマンエラーへの申し入れを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・金山満輝</span>
+          <span class="ttl">原発政策を新市長に問う</span>
+          <span class="sum">エネルギー自給率9.6%の日本でベースロード電源としての原子力発電をどう考えるかを田中新市長に問い、サイトバンカ建物の巡視虚偽報告など中国電力の相次ぐ不祥事を挙げて安全対策の確立へ中電・県・国に何を求めるのか、立地自治体並みの安全協定など議会が求めた5項目への考えをただし、規制委員会の認可が出れば再稼働可能と判断するのかを重ねて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・向田聡</span>
+          <span class="ttl">事前了解なき原発回答</span>
+          <span class="sum">立地自治体並みの安全協定の申し入れに中国電力が3年余りも回答しなかった不誠実さへの市の評価を問い、回答の3点に事前了解権が含まれなかったことを最大の問題だとして、締結までは再稼働への意見を述べない態度で臨むよう市長に迫り、耐震基準を満たさない橋梁や土砂崩れ危険箇所など複合災害時の避難路の実態をただして、再生可能エネルギーへの転換とPCR検査の全額国負担の要望を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">23件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H18・大国陽介</span>
+          <span class="ttl">プルサーマル計画</span>
+          <span class="sum">中国電力が島根原発二号機で計画するプルサーマル計画について、ＭＯＸ燃料の危険性と使用済燃料の再処理の見通しが立たない問題を挙げて島根県と中国電力に中止を求めるべきだとし、隣接地として安全協定に加わる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・荒木孝</span>
+          <span class="ttl">防災と原発の安全協定</span>
+          <span class="sum">一昨年の豪雨で3名の犠牲者を出した教訓を生かし緊急時の情報伝達をどうするかとして出雲市全体の緊急通報システムの構築を求め、島根原発から10キロ圏内にある本市が事業者と県との3者で安全協定を結ぶ必要を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・西村亮</span>
+          <span class="ttl">原発の安全協定の締結</span>
+          <span class="sum">島根原子力発電所で123機器に加え506件の点検時期超過が確認され2号機の原子炉格納容器上ふたの気密性も不十分と判明したとして安全協定を締結する考えはないとした中国電力の回答は不誠実で企業風土の改革が要ると指摘し県の仲介も得た原子力安全協定締結に向けた取り組み全般を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・大国陽介</span>
+          <span class="ttl">島根原発の点検漏れ</span>
+          <span class="sum">島根原発一号機二号機の点検交換漏れと中国電力の対応についての市長の所見を尋ね、安全協定の締結など四月二日付で行った申し入れ項目の実現に向けた今後の対応を問い、二号機のプルサーマル計画の中止を求めるべきだとして所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・狩野正文</span>
+          <span class="ttl">原子力安全協定と避難路</span>
+          <span class="sum">防災安全管理監を置き防災安全課を新設して体制を強化するなかでの原子力安全協定の締結の見通しを尋ね、行政区域が違うというだけで同じエリアの住民に防災対策がとられないのは理不尽だとして、主な避難路となる主要地方道斐川一畑大社線でがけからの転落を防ぎ夜間の車両を誘導する誘導灯や街灯の整備を中国電力や関係機関へ強く要望する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">原子力防災と避難計画</span>
+          <span class="sum">原発の危険から市民の健康と安全を守る決意と原子力安全協定の締結に向けた進捗、３０キロ圏内に居住する人数と入院者や施設入所者や在宅で介護を受ける要援護者の人数、４６万人の避難は非現実的との市民の不安をどう把握しているかを尋ね、原発からの撤退を決断してこそ将来にわたる安心と安全が確保できるとして市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・井上惠夫</span>
+          <span class="ttl">原発の安全協定と１号機</span>
+          <span class="sum">島根原子力発電所にかかわる出雲市民の安全確保等に関する協定が結ばれたが最終目標である立地市と完全に同等の権限が付与される原子力安全協定に向けた今後の対応と発電所の存続か廃止かを含む見解を尋ね、高経年化した１号機についてストレステストに合格して安全基準が保たれたとすれば容認するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・西村亮</span>
+          <span class="ttl">原発の安全対策と協定</span>
+          <span class="sum">中国電力が示した１５メートルの津波に対応する防波壁の強化や高台４０メートルへの緊急用発電機の設置などの安全対策をどう評価し、重大事故を想定した避難道の整備や避難路・避難施設の確保に出雲市がどう取り組むのかを尋ね、鳥取県と米子市・境港市が年内の締結を目指すなか県の仲介に頼らず中国電力と直接交渉して立地自治体並みの原子力安全協定を結ぶよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・井原優</span>
+          <span class="ttl">安全協定と避難計画の課題</span>
+          <span class="sum">中国電力との間で安全確保協定が締結されたが立地自治体並みのより強い権限を持つ原子力安全協定の締結にこだわるべきだとして市長の決意を尋ね、３０キロ圏内に住む約１２万人の避難にあたり要援護者の避難方法や避難先、市民への的確な情報提供、子どもを守るヨウ素剤の服用手順と管理体制の点検や検証や訓練など、計画策定にあたっての課題の認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・西村亮</span>
+          <span class="ttl">島根原発の安全対策</span>
+          <span class="sum">点検漏れが見つかり３７年以上が経過した島根原発１・２号機の点検状況と再稼働についての所見、地震と津波とテロへの安全対策についての市の考え方、ＥＰＺ内にある地域の避難道の整備、住民が納得できるコミセン単位での地区説明会の開催、ＥＰＺの拡大と原子力の安全協定の締結に向けた施策を尋ね、松江市と県を除く周辺市町の連絡協議会での統一行動の進め方や有事に備えたトンネル整備の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">島根原発の安全管理体制</span>
+          <span class="sum">建設から３７年が経過した島根原発１号機の再稼働を認めない立場と２号機のプルサーマル計画の中止を求めること、１０キロから４０キロ圏内の人口や年齢構成や生活形態など屋内退避や避難に備えた状況把握、震災と原子力災害に備えた防災計画の抜本的な見直し、島根県と中国電力との安全協定の締結の追及を尋ね、１号機の廃炉の検討を要求すべきだと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・米山広志</span>
+          <span class="ttl">原子力安全協定の締結</span>
+          <span class="sum">立地自治体と同様の安全協定の締結を要請した後に中国電力へ協議を求めた回数と内容、周辺自治体と共に意見を反映させる仕組みを国に求めるとした報道の事実関係とその後の働きかけ、緊急防護措置区域が３０キロとなったことに伴う圏内の学校施設数と児童生徒数を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大国陽介</span>
+          <span class="ttl">原子力発電への姿勢</span>
+          <span class="sum">過酷事故を起こし得る原子力発電と市民生活との共存はあり得ないとして原発のない社会を目指すべきではないかと問い、島根原発１・２号機は再稼働せず廃炉にし３号機も稼働させないこと、原子炉の停止等の措置命令が可能となる安全協定の締結の早期実現を求めるべきではないかとして所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・井原優</span>
+          <span class="ttl">原子力発電所の再稼働</span>
+          <span class="sum">福島原発事故の教訓をどう総括し市政に生かす決意か、技術的に未完成な原発の再稼働は論外ではないか、フィルター付きベントでも被曝は避けられず汚染水対策や避難計画も盛り込まれていない新規制基準は不十分ではないか、再稼働をさせないことが最も市民の安全・安心の確保になるのではないか、立地自治体並みの安全協定の締結に向けた決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・遠藤力一</span>
+          <span class="ttl">原発の安全協定と再稼働</span>
+          <span class="sum">島根原子力発電所の再稼働をめぐる現状と今後のロードマップ、島根県と交わした覚書に基づき出雲市がどのような考えを伝えるのか、中国電力が立地自治体と同等の安全協定を結ぼうとしない理由と法的根拠を尋ね、再稼働の事前了解の際に市民の意見をくみ取り反映する方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大国陽介</span>
+          <span class="ttl">島根原発の再稼働方針</span>
+          <span class="sum">福島原発事故の原因も明らかでない中での新規制基準への所見、現在の避難計画が十分なものと考えるか、中国電力と原子力安全協定が締結されていない現状への所見を尋ね、原発即時ゼロの決断と再稼働方針への抗議・撤回、県知事への再稼働は認められない旨の意見提出を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大国陽介</span>
+          <span class="ttl">原発再稼働と広域避難</span>
+          <span class="sum">福島県の被災地を視察し１２万人を超える県民が避難生活を余儀なくされている実情を挙げ、安全対策だけでなく稼働することそのものに意見を言う必要性と、立地自治体と同様な安全協定の締結に向けた決意、新設する出雲市原子力安全顧問会議の役割と目的、広域避難計画が実効性あるものとなり得るのかという所見、原発即時ゼロに向けた決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・小村吉一</span>
+          <span class="ttl">島根原発の廃止と避難計画</span>
+          <span class="sum">原発立地並みの安全協定の見通しと障害、市でも説明会を行うよう中電へ要請すべきこと、使用済み核燃料７２２本を六ヶ所村へ譲り渡す計画、複合災害を踏まえた避難計画と屋内退避、島根半島にある原発の安全性、市内の再生可能エネルギーの発電量を尋ね、原発を廃止し再生可能エネルギーへ転換する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・大谷良治</span>
+          <span class="ttl">出雲縁結び空港の強化</span>
+          <span class="sum">１００万人利用が現実となりつつある出雲縁結び空港について、新規就航路線についての考え方と、慢性的な駐車場不足に対し駐車場対策や拡大だけでなく新たな公共交通の仕組みづくりも見据えた立地自治体としての利用促進や整備の基本的な考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・後藤由美</span>
+          <span class="ttl">島根原発３号機の新規稼働</span>
+          <span class="sum">住民の避難計画を自治体任せにしている新規制基準への認識、中国電力管内の電力の安定供給に３号機の新規稼働は不要ではないか、点検漏れや虚偽の点検記録が続く中国電力の企業体質への認識、３９キロに及ぶ宍道断層があり３０キロ圏内に市民の７０％にあたる１２万２，５００人が暮らす中での避難計画の実効性、立地自治体並みの安全協定の締結、原発に関する市民アンケートの実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・西村亮</span>
+          <span class="ttl">原子力防災の安全協定</span>
+          <span class="sum">周辺自治体と連携して中国電力に立地自治体同様の安全協定の締結を求めることに対する中国電力の反応を尋ね、鍵を握るのは島根県だとして県への相談と議会も一緒になった働きかけの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・後藤由美</span>
+          <span class="ttl">島根原発の再稼働問題</span>
+          <span class="sum">原子力災害時の住民避難計画の実効性を高めることの難しさへの所見、立地自治体と異なり事前了解の規定がない周辺自治体の安全協定の締結に向けた決意、再稼働に反対する世論調査やアンケートの結果を示して島根原発２号機の再稼働に反対を表明することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・吉井安見</span>
+          <span class="ttl">島根原発２号機の再稼働</span>
+          <span class="sum">適合性審査への合格は事故が起きないことを保証するものではないとして原発の危険性への認識と、核燃料サイクルや放射性廃棄物の最終処分の行き詰まりが将来世代に負担を負わせるとの認識、現在の避難計画の実効性とその実効性を判断する基準、立地自治体と同等となっていない安全協定の受け止めを尋ね、住民投票の実施を求める９，２８８筆の署名が提出される中で今議会で判断を下すのはあまりに拙速だとして所見を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 3市くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

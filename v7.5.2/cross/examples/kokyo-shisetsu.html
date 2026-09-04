@@ -1,0 +1,3459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公共施設マネジメント — 当たった質問の全件 | 3市くらべ</title>
+<style>
+/* 3市くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share2:#eef1f9;   /* 2市共有 */
+  --share3:#d9e0f4;   /* 3市共有（2市より強い） */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×3市（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh2{background:var(--share2);border-radius:3px;padding:0 4px}
+table.years li.sh3{background:var(--share3);border-radius:3px;padding:0 4px;font-weight:600}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;width:30px;text-align:center;border-radius:3px;margin:0 4px;font-size:.8rem}
+.legend .c2{background:var(--share2)}
+.legend .c3{background:var(--share3);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">3市くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">3市くらべ</a> ／ 公共施設マネジメント</nav>
+
+  <h1 class="page-title">公共施設マネジメント — 当たった質問</h1>
+  <p class="page-subtitle">
+    話題の束「公共施設マネジメント」に当たった質問の全件です（全531件）。
+    市ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">182件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">アスベストとダイオキシン対策</span>
+          <span class="sum">公共施設のアスベスト使用実態の公表と解体時の飛散防止、馬潟工業団地周辺のダイオキシン除去と樋ノ口川改修の生態系配慮を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・田村昌平</span>
+          <span class="ttl">アスベスト対策</span>
+          <span class="sum">公共施設510カ所の調査経過と実態、危険な施設の改修と安全確保、調査・改修に要する経費の負担のあり方を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・桂善夫</span>
+          <span class="ttl">アスベスト対策</span>
+          <span class="sum">アスベスト健康被害を受け、実態調査の進捗と学校等公共施設での除去・暴露防止対策の現状・取り組み状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・石倉茂美</span>
+          <span class="ttl">公共施設跡地の利用</span>
+          <span class="sum">旧市立病院跡地の都市型ホテル、ガス局跡地のウォーターフロント開発、県立プール跡地の活用について検討状況と考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・林干城</span>
+          <span class="ttl">森林林業施策と校区見直し</span>
+          <span class="sum">旧役場・外湯等公共施設の活用方針、美保関統合小学校に伴う校区見直し、合併後拡大した森林の保全と林業振興予算について問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・森脇勇人</span>
+          <span class="ttl">電磁波対策</span>
+          <span class="sum">電磁調理器等の電磁波による健康影響の懸念を挙げ、公共施設での該当器具の設置状況と予防を含めた対策の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・森脇勇人</span>
+          <span class="ttl">自治会の法人化</span>
+          <span class="sum">公共施設の指定管理者となる自治会について、財産管理等の問題を避けるための地縁団体化(法人化)が進んでいるかを問い、市として指導することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・西村びん</span>
+          <span class="ttl">公共施設の民間委託と管理</span>
+          <span class="sum">総合体育館の車いす不備を例に指定管理者のバリアフリー認識欠如の防止策、西学校給食センター配管事故を踏まえたセンター方式の多極分散やバックアップ体制の再検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・吉金隆</span>
+          <span class="ttl">公民館施設の老朽化と事務連絡会</span>
+          <span class="sum">美保関・八雲・玉湯・宍道町など老朽化や雨漏り・宿直警備が残る公民館施設の今後をバリアフリーの観点も含めて問い、遠距離を要する毎月の事務連絡会で配布物伝達のみで解散せず現場の声を聞く機会を増やすことを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・加藤富章</span>
+          <span class="ttl">教育問題と武道場整備</span>
+          <span class="sum">学習指導要領改訂案によるゆとり教育見直しと武道・道徳導入への市長の受けとめ、老朽化した松江四中武道場など施設の総点検と整備計画、改訂に伴う予算的影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・津森良治</span>
+          <span class="ttl">森林・林業とペレット・まきストーブ</span>
+          <span class="sum">地球温暖化対策における森林・林業の役割を踏まえ、木材活用の場を提供するため公共施設・市関連施設へのペレットストーブやまきストーブの活用を検討することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石倉茂美</span>
+          <span class="ttl">港湾・漁港の計画的改修</span>
+          <span class="sum">合併後37港に及ぶ港湾・漁港の老朽化に対し、計画的な改修・保全計画の策定と、対応所管を水産振興課から総務部・建設部へ移す是非を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・加本市郎</span>
+          <span class="ttl">環境基本計画と地球環境の保全</span>
+          <span class="sum">省エネ促進のチーム・マイナス6%の達成状況、太陽光など新エネルギーの家庭・公共施設への導入状況、ノーマイカーデーの推進、再生紙偽装問題の影響、カーボンオフセット事業への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・田中明子</span>
+          <span class="ttl">緑のカーテンとドライミスト</span>
+          <span class="sum">ヒートアイランド対策として学校・家庭・公共施設での緑のカーテン栽培の取り組み、および観光地等への人工の霧「ドライミスト」導入の検討を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・加本市郎</span>
+          <span class="ttl">避難所公共施設の耐震化</span>
+          <span class="sum">中越沖地震で学校等の避難所が使用禁止となった事例を踏まえ、避難所となる公共施設の耐震診断の現状と今後の見通しを問い、残る68施設の耐震化推進を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・福間俊夫</span>
+          <span class="ttl">AEDの設置とマップ作成</span>
+          <span class="sum">公共施設へのAED設置状況を質し、各公民館・全小中学校への早急な設置と、設置場所が一目でわかるAEDマップを各公民館単位で作成し各家庭に配布することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・桂善夫</span>
+          <span class="ttl">AEDの設置とレンタル貸出</span>
+          <span class="sum">公共施設へのAED設置の今後の計画を問い、イベントや大会向けにレンタル可能なAEDを市民団体へ貸し出す制度の導入を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・三島良信</span>
+          <span class="ttl">CATV加入・接続の状況</span>
+          <span class="sum">全市整備されたケーブルテレビについて、各地域の家庭・教育施設・公共施設の加入接続状況と今後の見通し、集合住宅・マンションへの接続促進策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・畑尾幸生</span>
+          <span class="ttl">アセットマネジメント</span>
+          <span class="sum">橋梁長寿命化計画策定を評価しつつ、道路・橋梁等インフラの維持管理時代を見据えたアセットマネジメントの取り組みや期間・方針、庁舎の計画的な補修の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・三島良信</span>
+          <span class="ttl">住民告知システムの整備</span>
+          <span class="sum">老朽化した各町の音声告知放送を踏まえ、CATV網を活用した市内一斉告知放送の現状把握・課題・整備開始年度・受信機加入率向上策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・三島良信</span>
+          <span class="ttl">原油高騰による各分野への影響</span>
+          <span class="sum">農林水産業・公共施設・指定管理施設への原油高騰の影響と対策を問い、温泉施設等の負担増を踏まえた指定管理料の見直しと請負契約の単価変更の扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・加本市郎</span>
+          <span class="ttl">地上デジタル放送への移行対策</span>
+          <span class="sum">2011年の地上デジタル放送完全移行に向け、公立幼稚園・保育所・小中学校・公共施設等の受信対応、生活保護世帯など経済弱者への対応、高齢者世帯等への事前対応と受信相談への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・角田正紀</span>
+          <span class="ttl">災害時避難所の耐震性</span>
+          <span class="sum">四川大地震などマグニチュード8.0級の地震が現実に起こることを踏まえ、松江市の避難所となる公共施設がマグニチュード8.0の地震で耐震性があるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・立脇通也</span>
+          <span class="ttl">公共施設・学校の地球温暖化対策</span>
+          <span class="sum">太陽光発電補助の交付状況、スクール・ニューディールを踏まえた学校・公共施設への太陽光発電導入を啓もう・教育に生かす今後の推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・桂善夫</span>
+          <span class="ttl">公共施設跡地の有効利用</span>
+          <span class="sum">ガス局跡地の売却の動き、市立病院跡地の暫定利用として早期に芝生広場を整備することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・畑尾幸生</span>
+          <span class="ttl">子育て環境の整備</span>
+          <span class="sum">公共施設・大型店の授乳・おむつがえ場所の数とマップによる周知、赤ちゃんの駅の考え、チャイルドシートを譲り合い・有効活用する経済的な子育て支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中豊昭</span>
+          <span class="ttl">市政顧問・地域協議会委員の選挙活動</span>
+          <span class="sum">地域協議会会長・市政顧問が特定候補の選挙運動を行ったことが公職選挙法第136条の2に抵触するか、職務権限の有無と任命権者の解任権、地域協議会のあり方と自治会連合会への移管、鹿島公共施設建設基金の使途を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・宅野賢治</span>
+          <span class="ttl">自販機の入札制度導入による増収</span>
+          <span class="sum">公共施設の清涼飲料自販機の設置台数と収入、電気料・価格の公平性、業者選定基準、指定管理施設の収益の扱い、貸付契約・一般競争入札導入による増収策を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中豊昭</span>
+          <span class="ttl">鹿島公共施設建設基金の使途</span>
+          <span class="sum">鹿島公共施設建設基金の条例上の趣旨と使途に相違があり、本来一般財源で行うべき修繕などが基金の取り崩しで行われていると指摘し、趣旨の異なる支出に至った決定までの経過を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・宅野賢治</span>
+          <span class="ttl">お役所言葉の改善</span>
+          <span class="sum">子ども手当認定請求書や公共施設使用申込書のわかりにくい用語、不要な年金番号記入など、市民本位のわかりやすい様式への改善を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・宅野賢治</span>
+          <span class="ttl">公共施設マネジメント白書</span>
+          <span class="sum">固定資産台帳整備を踏まえ、市民参加で行革・施設見直しを進めるため松江市公共施設マネジメント白書の作成を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・宅野賢治</span>
+          <span class="ttl">公共施設更新と人口減社会</span>
+          <span class="sum">今後10年間の公共施設の改修費試算、少子高齢化・人口減社会を踏まえた公共施設のあり方の基本的考えと見直しの現状・課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">10キロ圏内重要施設と災害時通信</span>
+          <span class="sum">県庁・市役所・オフサイトセンターが使用不能となった場合の対応、衛星電話の配備計画、避難所となる公共施設の耐震強化の現状と計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">40年経過原発の廃炉</span>
+          <span class="sum">老朽化は真っ当な考えとするなら、40年を経過した原発の再稼働は市民の安心・安全から認められないとして、廃炉に向けた計画を国や電力会社に求めるべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇幸好</span>
+          <span class="ttl">AEDの設置状況</span>
+          <span class="sum">幼稚園・小中学校や公民館・体育館などの公共施設、離れた場所にある児童クラブへのAED設置状況を問い、設置を要望するとともに管理・点検の実施状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中豊昭</span>
+          <span class="ttl">公共施設・事務事業の見直し</span>
+          <span class="sum">文化財行政に関わる施設の見直しについて、閉館を考える前に開館継続のための施策を考慮すべきと問い、常設展示休止案へのパブリックコメントの状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇幸好</span>
+          <span class="ttl">公共施設・事務事業見直しの手順</span>
+          <span class="sum">地元説明のないまま新聞で報じられ混乱を招いた施設休止の進め方を問い、検討委員会でまとめる前に地域から存続・活用の意見を聞く順序とすべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇勇人</span>
+          <span class="ttl">公共施設・住宅の耐震化</span>
+          <span class="sum">庁舎・学校・支所・公民館など避難所となる公共施設の耐震化の進捗、長期避難の可否、本市の住宅耐震化率とその啓発について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">原発とエネルギー政策の転換</span>
+          <span class="sum">野田内閣の原発再稼働方針への所見、福島同型で老朽化した島根原発1号機の廃炉、3号機を稼働させない決意、やらせメール問題や引き波対策5.7メートルの妥当性、原子力安全・保安院の解体と独立規制機関の確立を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・斎藤菊市</span>
+          <span class="ttl">原発の老朽化という表現</span>
+          <span class="sum">施政方針で用いた原発の老朽化という表現が不安を増幅しないか懸念し、一般構築物の老朽化と同じか、福島第一の検証を待ち高経年化など国の適正な用語を用いるべきではないかと、あえて違う表現を用いた真意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・宅野賢治</span>
+          <span class="ttl">命名権導入による自主財源確保</span>
+          <span class="sum">市有財産・公共施設への命名権(ネーミングライツ)を導入する仕組みづくりを、総合体育館の基本構想策定を機に検討するよう提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇幸好</span>
+          <span class="ttl">太陽光発電導入促進</span>
+          <span class="sum">原発事故を契機とした自然エネルギー利用として、太陽光発電導入促進事業の今後の取り組みの考え方、公共施設への設置、および補助を実施しない県への要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・津森良治</span>
+          <span class="ttl">島根原発1・2・3号機の課題</span>
+          <span class="sum">1号機再稼働の考えと民意把握の手法、老朽化した1号機の廃炉見通し、2号機プルサーマル計画の凍結、3号機運転開始の前提条件について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・篠原栄</span>
+          <span class="ttl">島根原発の再稼働と老朽化</span>
+          <span class="sum">ストレステストが再稼働条件になり得るか、県知事の稼働判断条件への見解、運転期間原則40年と20年延長への受けとめ、活断層連動の再検討要求に関する中国電力からの報告の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">島根原発の廃炉・停止・中止</span>
+          <span class="sum">老朽化した1号機の廃炉、プルサーマル了解の撤回と2号機停止・総点検、3号機建設中止を求め、宍道断層の再調査要望や引き波対策の科学的根拠を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉徳章</span>
+          <span class="ttl">旧町村部の温泉施設の利用料</span>
+          <span class="sum">老朽化が進む旧町村部の公衆浴場的な温泉施設について、合併時の統一料金が適切か、指定管理者の裁量権、民間活力発揮のための運営者の裁量権拡大の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・立脇通也</span>
+          <span class="ttl">総合体育館と運動公園施設整備</span>
+          <span class="sum">老朽化した総合体育館の避難所機能を兼ねた新体育館の具体的計画と避難所設備・収容人数、運動公園内の陸上競技場・野球場の改修や第1種A級競技場の新設、県立プール跡地の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・川島光雅</span>
+          <span class="ttl">総合体育館の建てかえ</span>
+          <span class="sum">老朽化した総合体育館の建てかえについて、国の補助要件を問い、県立プール跡地等と一体でゾーニングし地域活性化につなげる検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中明子</span>
+          <span class="ttl">防犯カメラと公助の防犯</span>
+          <span class="sum">学校等公共施設への防犯カメラの設置状況と今後の見通し、公衆トイレの管理を含め警察や各部署が連携した公助による犯罪防止のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・篠原栄</span>
+          <span class="ttl">国・松江市の補正予算</span>
+          <span class="sum">24年度補正予算の経済効果の試算、市営住宅の老朽化度と対応、通学路危険箇所の総点検結果と公表状況・今後の対応、保育士等処遇改善臨時特例事業による改善月額と事業全体について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森脇幸好</span>
+          <span class="ttl">市営陸上競技場の再整備</span>
+          <span class="sum">築31年で老朽化し、第１種Ｂ公認が平成29年以降失効する市営陸上競技場について、運動公園内または隣接地への新競技場建設の検討と、日本陸上競技連盟との協議ができる専門職員配置による組織強化を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・立脇通也</span>
+          <span class="ttl">市庁舎の耐震改修</span>
+          <span class="sum">昭和37年築で老朽化・耐震性に欠ける本庁舎について、埋立地の地盤への懸念も踏まえた現在地での改修内容、別館・別棟の統合新築か耐震改修か、暗い北棟の全面改修の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・桂善夫</span>
+          <span class="ttl">民間賃貸住宅の借り上げ</span>
+          <span class="sum">老朽化した市営住宅の新規建てかえを当面行わず民間賃貸住宅の借り上げに移行する方針のコスト抑制効果、老朽化した公営住宅の解体と住みかえ計画について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森脇勇人</span>
+          <span class="ttl">過疎地域の地域医療</span>
+          <span class="sum">美保関町など過疎地域で自治会が補助金を出し合い設置した診療所の老朽化を踏まえ、診療所の改修や設置に対する行政支援ができないか、空き公共施設の活用とあわせて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・林干城</span>
+          <span class="ttl">公共施設のマネジメント</span>
+          <span class="sum">941施設・今後40年で3,270億円の更新費用が見込まれる公共施設について、複合化や長寿命化、住民合意形成の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩本雅之</span>
+          <span class="ttl">公共施設の現状と多機能化</span>
+          <span class="sum">公共施設適正化アンケートの結果概要と感想、および存続・新築する施設の柔軟で多機能型の運営についての考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・野津照雄</span>
+          <span class="ttl">公共施設の管理と修繕</span>
+          <span class="sum">公共施設白書に対する市民理解の取り組みと適正化委員会の意見を問い、指定管理施設の10万円以上の修繕を速やかに行うため修繕基金を設ける提案をした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・石倉茂美</span>
+          <span class="ttl">公共施設の管理計画</span>
+          <span class="sum">総務省の統廃合要請を受け、公共施設白書と管理計画の関係、国からの要請の有無、今後の計画策定手続と時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・石倉徳章</span>
+          <span class="ttl">公共施設の老朽化対応</span>
+          <span class="sum">公共施設白書に基づく適正化計画策定に時間を要する中、老朽化が激しく安全・安心や集客が求められる施設への迅速かつ適切な対応を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中明子</span>
+          <span class="ttl">公共施設の適正化とインフラ</span>
+          <span class="sum">公共施設白書作成後の具体的な進め方とスケジュール、市民・利用者への理解を求める行動を問い、橋梁・道路・水道管などインフラの安全対策への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・桂善夫</span>
+          <span class="ttl">公共施設の適正化と市庁舎</span>
+          <span class="sum">築51年で劣化が進む市庁舎の現地建てかえ方針が答申に盛り込まれる報道を踏まえ、市庁舎建てかえと公共施設適正化への考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・川島光雅</span>
+          <span class="ttl">公共施設白書と老朽化対策の財源</span>
+          <span class="sum">公共施設白書に基づく施設再編・再配置の方針を踏まえ、全国市長会副会長として老朽インフラ更新費用の財源確保に向けた対応と覚悟を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・津森良治</span>
+          <span class="ttl">公共施設白書の周知用漫画</span>
+          <span class="sum">日光市の白書周知用漫画の事例を挙げ、松江市立女子高の生徒に協力を得た漫画作成、および公共施設適正化への若い世代の意見反映の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">公共施設適正化と市庁舎建てかえ</span>
+          <span class="sum">厳しい財政見通しの中で市庁舎建てかえを行えば将来の見通しがさらに厳しくなるとし、具体的な財政見通しの提示を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・川島光雅</span>
+          <span class="ttl">公営住宅の維持管理</span>
+          <span class="sum">約６割が30年以上経過し老朽化する市営住宅について、島根県住宅供給公社への委託下でのバリアフリー化やリニューアルの計画のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・森脇幸好</span>
+          <span class="ttl">地方交付税の減少見込み</span>
+          <span class="sum">合併算定がえの終了に伴い平成26年度以降どの程度の交付税減少と影響が見込まれるか、また公共施設の再利用・取り壊しへの予算対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩本雅之</span>
+          <span class="ttl">市庁舎の現地建てかえ</span>
+          <span class="sum">老朽化した本庁舎について現地建てかえを強く推進すべきとし、長岡市の例を挙げ市民が集い情報発信できる松江らしい付加価値のある庁舎の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中明子</span>
+          <span class="ttl">平成26年度予算と景気動向</span>
+          <span class="sum">松江市の景気動向や住宅取得・自動車購入の状況を問い、合併算定がえ終了を控えた地方交付税の推計、個人・法人市民税の見込み、社会保障費と公共施設維持管理費への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・石倉徳章</span>
+          <span class="ttl">拠点連携型都市構想</span>
+          <span class="sum">拠点連携型都市構想の事業計画の開始時期と方針、周辺拠点に想定される公共施設や拠点間を結ぶ交通機関について、実現可能性のある構想を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・宅野賢治</span>
+          <span class="ttl">松江駅周辺の再整備</span>
+          <span class="sum">北口地下駐車場の活用方針、南口の車両ふくそう、バスターミナル構造の危険性や老朽化などを挙げ、松江駅周辺全体の再整備基本構想の取りまとめを提言した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・吉金隆</span>
+          <span class="ttl">橋梁のメンテナンス</span>
+          <span class="sum">橋梁長寿命化修繕計画に基づく本年度の修繕対象橋数と予算、計画全体の修繕対象橋数・事業費総額・達成年次を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩本雅之</span>
+          <span class="ttl">福祉用具の常設展示場</span>
+          <span class="sum">市内に市民が身近に触れられる福祉用具の常設展示場がない現状を踏まえ、公共施設の空きスペースを活用した常設展示場の設置を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・比良幸男</span>
+          <span class="ttl">総合運動公園のあり方</span>
+          <span class="sum">老朽化した総合運動公園について、体育施設検討委員会の提言に触れつつ、検討委員会設置の経緯と提言への市長見解、国補助を活用した整備の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・南波巖</span>
+          <span class="ttl">公共施設更新問題</span>
+          <span class="sum">秦野市視察を踏まえ、公共施設適正化基本方針の概要と進捗、総合管理計画の策定スケジュール、30年後4割削減へ向けた職員の意識改革への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・片寄直行</span>
+          <span class="ttl">公共施設管理問題</span>
+          <span class="sum">適正化シンポジウムの参加者アンケートの所感や意見を質し、公共施設老朽化の責任は国の財政制度にあると指摘、駅前地下駐車場再稼働やLRT構想と適正化5原則との整合性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・野津照雄</span>
+          <span class="ttl">公共施設適正化とモデル事業</span>
+          <span class="sum">秦野市視察を踏まえた適正化の方針・方向性、島根・朝酌地区で実施したモデル事業の成果、調整区域の制約下での拠点づくりへの民間力活用、結果を今後の適正化にどう生かすかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・芦原康江</span>
+          <span class="ttl">化学物質過敏症対策</span>
+          <span class="sum">シックハウス症候群対策を事業者に求めるだけでは不十分として、市が購入する什器の調達基準や公共施設のホルムアルデヒド等室内濃度測定、対策を示すガイドライン・マニュアル策定を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・南波巖</span>
+          <span class="ttl">合併算定がえ廃止への対応</span>
+          <span class="sum">平成27年度からの普通交付税約5億円減額、平成34年度に約55億円減を見込む中、10月ローリングの中期財政見通しのポイントと健全化策、行政診断・行財政改革大綱・公共施設適正化基本方針とのリンクを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・林干城</span>
+          <span class="ttl">国の予算と市の予算の関係</span>
+          <span class="sum">地方創生に係る国の予算が市長の願いにどの程度応えたか、交付税や公共施設老朽化対策、介護報酬改定・地域支援事業拡充が松江市の予算・事業に及ぼす影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・桂善夫</span>
+          <span class="ttl">市庁舎耐震問題と公共施設適正化</span>
+          <span class="sum">建てかえのほうがよいとの庁舎総合評価報告書への市長の考えを問うとともに、平成27年度に策定する第1期公共施設適正化計画の基本的考え方とタイムスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・宅野賢治</span>
+          <span class="ttl">新たな行政運営の取り組み</span>
+          <span class="sum">公共施設適正化基本方針を市民との対話で進める必要性を問い、指定管理者制度のあり方や民間譲渡の検討、提案型公共サービスやコンセッション方式PFIなど公民連携の仕組み導入を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・芦原康江</span>
+          <span class="ttl">旧一般ごみ処理施設の解体撤去</span>
+          <span class="sum">平成23年に閉鎖され放置されたままの南北のごみ処理施設について、ダイオキシン除染と解体撤去の方針、国への財政支援要求、撤去までの安全管理の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・長谷川修二</span>
+          <span class="ttl">財政と公共施設の再配置</span>
+          <span class="sum">合併算定がえの逓減を市民に分かりやすく説明するよう求め、秦野市の例を挙げ公共施設の評価・再配置の取り組み状況や、道路・橋梁等インフラ更新の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川島光雅</span>
+          <span class="ttl">体育館の老朽化対策</span>
+          <span class="sum">総合体育館より古い森山地区体育館・宍道体育センターなど周辺体育施設の計画的な耐震補強・改修と、宍道公民館移転後に宍道体育センターで健康教室を継続できる対応を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・篠原栄</span>
+          <span class="ttl">公共施設等総合管理計画</span>
+          <span class="sum">適正化計画策定委員会の最終報告での案からの修正の有無、身近な施設やスポーツ・文化施設の存廃について市民にわかりやすく丁寧に説明する今後の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・森脇勇人</span>
+          <span class="ttl">公共施設適正化</span>
+          <span class="sum">施設廃止時の跡地利活用計画や地域の雇用を含む振興計画の提示、放置された施設数と交付税算定への影響、解体費用や学校プール廃止後の授業対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">公共施設適正化</span>
+          <span class="sum">第1期計画で示された73施設の廃止・譲渡・統合について関係自治会や利用団体への周知時期と対応、空き家となった施設の活用・取り壊しの方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">公共施設適正化</span>
+          <span class="sum">対象施設の判断基準に地域活性化・雇用確保・市民の健康推進の視点や運営努力による集客増を考慮しているか、適正化をピンチからチャンスに転じる考え方や官民連携の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野々内誠</span>
+          <span class="ttl">公民館と地方創生</span>
+          <span class="sum">公民館を地方創生の人づくりの中核と位置づける文科省の動きを踏まえ、公共施設適正化計画で統合対象とされた東出雲町の4公民館について、拠点機能の考え方と小学校区への機能存置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">地域経済・地域活性化・人口減少対策</span>
+          <span class="sum">アベノミクス新3本の矢への所見、合併後10年の人口分析と今後の推計、中海・宍道湖・大山圏域の広域連携、官民連携（PPP・PFI・DBO）による公共施設整備の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・南波巖</span>
+          <span class="ttl">地方創生への取り組み姿勢</span>
+          <span class="sum">地方創生の政治的効能と自治体への副作用を論じ、拙速対応や財源分捕り合戦への懸念を示した上で、慎重な議論を求める所見と今後の取り組み姿勢を質した。また、コンパクトシティ・公共施設適正化との3点セットや関連予算措置の国全体分・松江市分を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">市町村合併10年の検証と旧町村部</span>
+          <span class="sum">平成の大合併から10年を経て、新市建設計画に沿った新松江市建設への率直な思い、合併により疲弊・衰退する周辺部の活性化や公共施設適正化を含む旧町村部への政策の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・長谷川修二</span>
+          <span class="ttl">新エネルギーの普及と課題</span>
+          <span class="sum">エネファームに対する国・県・市の補助金の推移と今後の見通し、公共施設統廃合で生まれた土地を活用した新エネルギー導入のスマートタウン造成など、松江市での新エネルギー活用の政策的研究を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野津照雄</span>
+          <span class="ttl">空き家の解体撤去支援</span>
+          <span class="sum">税制上の問題から進みにくい空き家の解体撤去について、鳥取県の事例のように解体後も一定期間現状のままの評価で固定資産税を課すなどの助成策の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・橘祥朗</span>
+          <span class="ttl">空家対策特別措置法の施行</span>
+          <span class="sum">全面施行された空家対策特別措置法と市の空き家管理条例との関係、これまでの調査結果と特定空家指定を含む今後の進め方、解体撤去費用補助や更地化で6倍となる固定資産税の緩和など当事者への援助、罰則緩和を国に求めることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・津森良治</span>
+          <span class="ttl">空家対策特別措置法への対応</span>
+          <span class="sum">一戸建て空き家の実態調査結果と課題、特定空家の認定・勧告後の税制上の措置や行政代執行、解体撤去への補助や固定資産税の軽減措置、不動産業界や福祉・金融機関と連携した組織の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野々内誠</span>
+          <span class="ttl">農業用施設（井堰）の整備</span>
+          <span class="sum">市内の井堰数と老朽化して修繕・改築が必要な箇所数を問い、農家負担を抑えた井堰整備やポンプ・掘り抜き井戸による用水確保の制度創設・改正に県と連携して取り組む考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">関係者に納得のいく公共施設適正化</span>
+          <span class="sum">メテオプラザやホットランドやくものプール廃止を教育委員会が事前に把握していたか、自校プールの有無による格差や着衣水泳指導の実施、老人福祉センターや東出雲町4公民館統合を関係住民の納得を得た上で進めるべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・新井昌禎</span>
+          <span class="ttl">公共施設の適正化</span>
+          <span class="sum">第1期計画76施設の実施優先順位やシンボル的事業の設定、廃止・統合時の機能確保と民間譲渡先との協議、保守点検の一括委託による経費削減、総合体育館の稼働状況と利便性向上、スーパーコンピューター導入の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・川島光雅</span>
+          <span class="ttl">公共施設の適正化</span>
+          <span class="sum">地域活性化の核となる施設への最低限の維持支援や市の責任、料金を上げにくい入浴施設等の廃止・転換への支援、人口減少下の水道事業の広域連携による安定供給と適正料金維持の方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・長谷川修二</span>
+          <span class="ttl">公共施設適正化と市役所建てかえ</span>
+          <span class="sum">市長と語るまちづくり意見交換会の意見反映状況、公共施設適正化での住民合意形成、市役所建てかえの場所・利便性・安心安全の担保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・吉金隆</span>
+          <span class="ttl">千本ダム・橋梁の老朽対策</span>
+          <span class="sum">築100年を迎える千本ダム耐震補強の進捗を問い、橋梁長寿命化修繕計画の進捗とメンテナンス方式の選択、1橋当たりの修繕工費を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・吉金隆</span>
+          <span class="ttl">平成の合併の総括と財政</span>
+          <span class="sum">合併12年を経て総務省総括の効果・課題に照らした市の評価を問い、合併15年となる平成31年度以降の交付税減少への財政想定と公共施設統廃合の進捗・手法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・柳原治</span>
+          <span class="ttl">松江市土地改良区の支援</span>
+          <span class="sum">米価低迷や施設老朽化の中、土地改良区の現状と市民が理解し得る役割を問い、持続可能な運営体制の維持に向けた具体的支援や、改良区区域外地域への考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉徳章</span>
+          <span class="ttl">財政運営の考え方</span>
+          <span class="sum">合併算定がえの削減幅縮小の状況を問い、大型公共事業が一段落した今、老朽化対応や社会資本整備、住民負担軽減に柔軟に対応する弾力的な財政運営を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・野々内誠</span>
+          <span class="ttl">鳥取県中部地震を教訓とした市庁舎の備え</span>
+          <span class="sum">倉吉市役所がガラス飛散で災害対策本部を設置できなかった例を踏まえ、老朽化した市庁舎の業務継続計画（BCP）の早急な策定と代替庁舎の想定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・吉儀敬子</span>
+          <span class="ttl">スポーツ行政の市長部局移管と施設</span>
+          <span class="sum">スポーツ行政を市長部局が担う意図と推進計画の責任部局を問い、大会誘致優先で生涯スポーツが軽んじられる懸念を示し、老朽化するスポーツ施設の更新計画を推進計画に盛り込むよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津照雄</span>
+          <span class="ttl">中核市指定と使用料改定</span>
+          <span class="sum">中核市指定と公共施設使用料改定を踏まえ、値上げだけと市民をがっかりさせない、山陰・日本海側を代表する本当の中核市を目指す意気込みを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島良信</span>
+          <span class="ttl">個人農業への支援策</span>
+          <span class="sum">後継者不足や施設老朽化など課題を抱える個人農業に対し、老朽化施設への新メニューや補助のかさ上げを求めるとともに、オーナー制など農家以外の農業参入を可能とする方策を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・篠原栄</span>
+          <span class="ttl">公共施設と市有地の活用</span>
+          <span class="sum">長寿命化事業への財政支援拡充を踏まえた公共施設適正化計画の見直しと進捗、県立プール跡地とホテル宍道湖跡地の活用の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野々内誠</span>
+          <span class="ttl">公共施設の木造化の達成状況</span>
+          <span class="sum">松江市木材利用行動計画の市産・県産木材利用量の達成率が低い現状を問い、まがたま学園での木材調達の進捗・建設費縮減・今後の教育施設等の木造化の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・河内大輔</span>
+          <span class="ttl">公共施設の適正化と情報共有</span>
+          <span class="sum">統廃合が計画される公共施設について市民との情報共有が十分かを問い、若い世代への情報提供の工夫や「ハコモノ計画」漫画の活用を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・石倉徳章</span>
+          <span class="ttl">公共施設適正化の推進</span>
+          <span class="sum">第1期計画の進捗と第2期の対象施設絞り込みの見通し、42%削減達成への意気込み、大型施設の売却・統合や官民連携（PPP・PFI）の活用を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津直嗣</span>
+          <span class="ttl">地域拠点支援と中心市街地活性化</span>
+          <span class="sum">旧公共施設等の活用に即時対応できる部署横断の情報共有・検討会議の設置、IT企業やまちづくり企業の中心市街地への誘致による昼間人口・関係人口増の施策誘導を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野々内誠</span>
+          <span class="ttl">地産地消推進行動計画と生産者育成</span>
+          <span class="sum">5年間で農水産物供給額を4億円増額する行動計画の実行可能な取り組みを問い、契約栽培農家の組織化・育成や有害鳥獣対策、老朽化した水利施設の改善支援を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田中肇</span>
+          <span class="ttl">市民の生活実態と公共施設料金値上げ</span>
+          <span class="sum">生活困窮世帯の実態把握、料金改定による1世帯当たりの負担増、受益者負担・近隣整合・旧町村一律化の3要素を一度に改定する性急さ、リフォーム助成など経済波及効果の高い方策との比較検討を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島良信</span>
+          <span class="ttl">新庁舎建設の計画</span>
+          <span class="sum">築50年以上で老朽化した庁舎の末次町建設について、他の場所を検討・比較したかを問い、市民交流機能や市民開放の場の確保を求め、今後の建設スケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・太田哲</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">把握している空き家数と特定空家数を問い、岡山市・鳥取市・安来市の解体撤去費助成を例に、松江市でも特定空家の解体に補助金を支給する予定があるかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・出川桃子</span>
+          <span class="ttl">これからの公共施設整備のあり方</span>
+          <span class="sum">適正化計画で新規整備を行わないとしながら整備された施設の検討経緯や事前調整・事業採算性の検討を問い、一元的な専門部署や第三者委員会による検証可能な仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・森本秀歳</span>
+          <span class="ttl">ため池・堤の管理状況</span>
+          <span class="sum">ため池や堤の状況把握や定期的な調査、多面的支払交付金事業による長寿命化の取り組み団体数と、事業でカバーできないため池への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・橘祥朗</span>
+          <span class="ttl">八束町の公共施設適正化</span>
+          <span class="sum">第1期計画になかったグリーンステラ・中国牡丹園の急な閉鎖の是非と地元理解、旧公民館の集会場所の別途建設、江島保育所跡地など各施設の活用・売却方針、劣化度指数の意味と必要な対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・津森良治</span>
+          <span class="ttl">公共施設の適正化と新庁舎</span>
+          <span class="sum">中核市市長会総会参加の感想を問うとともに、合意が得がたい施設の適正化に取り組む決意と、大規模な資金調達を要する新市庁舎建設についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉徳章</span>
+          <span class="ttl">公共施設適正化</span>
+          <span class="sum">第1次計画で49施設の廃止・譲渡が決定した削減目標床面積に占める割合と解体方針、数億円規模の施設の処理、長寿命化を計算に入れた財源計算、面積削減から縮小充実への発想転換を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島良信</span>
+          <span class="ttl">公共施設適正化と旧田野医院</span>
+          <span class="sum">公共施設適正化の取り組み状況と、金がない・売却だけの説明への懸念を提起するとともに、5カ年借地で年370万円を要する旧田野医院の今後の活用計画と土地取得の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・太田哲</span>
+          <span class="ttl">公共施設適正化の効果と公開</span>
+          <span class="sum">公共施設適正化による平成29年度の効果額を問い、浜松市の事例を踏まえ施設ごとのPDCA計画をカルテ化しホームページで公開することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・米田ときこ</span>
+          <span class="ttl">公共施設適正化の第1期計画</span>
+          <span class="sum">第1期計画の進捗状況や廃止・無償譲渡・売却の内訳、無駄な施設という判断根拠、公共サービス向上の実態を問い、譲渡・廃止地域での地域創生対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・太田哲</span>
+          <span class="ttl">公園の遊具・施設の修理</span>
+          <span class="sum">老朽化した公園の遊具やトイレの修理が順番待ちとなっている現状を挙げ、限られた予算の中で優先順位をどう決め計画的に進めているかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島良信</span>
+          <span class="ttl">国への予算要望と交付税・交付金</span>
+          <span class="sum">来年度に向けた国・県への予算要望の取り組みと、公共施設等適正管理推進事業債の交付税対象事業の有無、小中学校594教室へのエアコン設置が交付金対象となるか、資金の手当てを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・比良幸男</span>
+          <span class="ttl">新年度予算編成と中期財政見通し</span>
+          <span class="sum">少子高齢化や合併による地方交付税算定がえ縮減など厳しい財政下での新年度予算編成方針と、公共施設適正化や会計年度任用職員制度導入の影響を含む向こう5年間の中期財政見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉徳章</span>
+          <span class="ttl">消費税10%対応と行財政改革</span>
+          <span class="sum">消費税10%引き上げへの地方行政としての対策、行財政改革や公共施設適正化で生じた財源の地域還元、定年延長を見据えた人材配置や議会の身を切る改革について問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉徳章</span>
+          <span class="ttl">公共施設適正化</span>
+          <span class="sum">30年間で延べ床面積40％削減という目標について、10年ごとに削減率を計画し見直す出雲市等の例を挙げ、目標値を固定化しない段階的な見直しの検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・宅野賢治</span>
+          <span class="ttl">公共施設適正化計画の進捗</span>
+          <span class="sum">公共施設等の老朽化の現状と更新経費試算の変化・将来展望、適正配置・保有総量縮小・集約複合化の取り組み状況、及び長寿命化と更新費用平準化の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・川島光雅</span>
+          <span class="ttl">国体に向けた体育館改修</span>
+          <span class="sum">2029年島根国体に向けて、老朽化が進む市内14の体育館施設について、耐用年数や災害時避難所の観点から計画的な整備が必要と質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉徳章</span>
+          <span class="ttl">松江駅周辺整備と公共施設適正化</span>
+          <span class="sum">ＪＲ松江駅周辺整備計画とランドマーク的施設への期待、公共施設適正化とコンパクトシティー政策の周辺地域活性化との整合、中海スポーツ公園サッカー場整備の状況、及びＩＴ企業の周辺地域受け入れ施策を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・長谷川修二</span>
+          <span class="ttl">水俣条約への対応</span>
+          <span class="sum">高圧水銀灯の製造・輸出入が令和２年末に禁止されることを踏まえ、規制内容、市内公共施設の規制対象水銀灯の使用状況・数、ＬＥＤ化の必要経費、速やかで計画的なＬＥＤ化推進への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・南波巖</span>
+          <span class="ttl">道路インフラの老朽化対策</span>
+          <span class="sum">橋梁・トンネルの５年に１度の点検が１巡した結果を踏まえ、点検結果と課題、今後の対応について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・長谷川修二</span>
+          <span class="ttl">防災井戸の整備</span>
+          <span class="sum">災害時の断水でトイレ用水などが確保できない問題を踏まえ、民地内井戸との協力提携、民間防災井戸整備への補助制度創設、公共施設への防災井戸整備を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・宅野賢治</span>
+          <span class="ttl">難病患者の利用料減免</span>
+          <span class="sum">障害者総合支援法の対象が難病患者に拡大されたことを踏まえ、公共施設の利用料・入場料減免対象を難病患者へも拡大する検討を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・南波巖</span>
+          <span class="ttl">音楽のまち松江</span>
+          <span class="sum">駅や公共施設に誰でも自由に使える楽器を置き、市民や旅行客が音楽を楽しめる場を提供する取り組みについて見解を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・森本秀歳</span>
+          <span class="ttl">北公園のミニ遊具</span>
+          <span class="sum">設置から約20年経過し老朽化した北公園ミニ遊園地のペダルボートやバッテリーカーについて、年間約4万人の利用がある中で更新の考えがないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・太田哲</span>
+          <span class="ttl">松江城国宝5周年周辺整備</span>
+          <span class="sum">興雲閣裏の防空ごう跡地・石垣修理と遊歩道の通行止め終了時期、北惣門橋や新橋の老朽化した歩道の修繕、堀川のアカミミガメ駆除への支援、松江城の森林整備計画と森林環境譲与税の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・森本秀歳</span>
+          <span class="ttl">災害時の避難所</span>
+          <span class="sum">コロナ禍で3密回避のため避難施設の追加確保が必要となる中、公共施設の適正化方針に避難所確保を織り込む見直しの必要性と、感染症も含めた有事に備えた支所の在り方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">公共施設のネーミングライツ</span>
+          <span class="sum">山陰パナソニックとの連携協定の内容を問い、市営野球場や総合体育館等でのネーミングライツや広告料導入による施設管理・収入確保を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・三島良信</span>
+          <span class="ttl">公共施設適正化</span>
+          <span class="sum">19施設の譲渡・処分方針について、地域への意見聴取や順序立てた進め方の必要性、部局間の情報共有と報道の在り方を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・中村ひかり</span>
+          <span class="ttl">公園整備事業</span>
+          <span class="sum">老朽化して使用できない公園遊具の対応状況と今後のスケジュール、臨時休園中の北公園ミニ遊園地の遊具選定の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・たちばなふみ</span>
+          <span class="ttl">学校トイレ</span>
+          <span class="sum">洋式化率約40％の学校トイレについて、利用実態調査の現状、長寿命化計画で待つ学校の環境改善の遅れ、多目的トイレ・体育館トイレの計画的洋式化やジェンダーフリートイレ、乾式床への改修、専門業者による清掃の具体化を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">市長の所信とまちの発展</span>
+          <span class="sum">SDGsを掲げる所信と公共施設適正化による住民サービス切捨てとの整合性、市民に寄り添う事業展開のプラン、土地利用の在り方と都市計画の総合的検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・柳原治</span>
+          <span class="ttl">木材利用行動計画</span>
+          <span class="sum">玉湯学園で目標を達成した松江市木材利用行動計画について現在の状況と今後の取組を質し、率先した公共施設の木造化・木質化の推進を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・海徳邦彦</span>
+          <span class="ttl">聴覚障がい者への災害時支援</span>
+          <span class="sum">聴覚障がい者等級4級以上の人数を踏まえ、市役所等公共施設に電光掲示板やLEDフラッシュライトで緊急災害情報を告知する災害時警報システムの導入を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・南波巖</span>
+          <span class="ttl">インフラと水道管の長寿命化</span>
+          <span class="sum">松江市のインフラの現状と長寿命化の取組計画、老朽化する水道管の現状・対策・維持マネジメント力・市民への理解活動について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・河内大輔</span>
+          <span class="ttl">公共施設の子どもの入場料</span>
+          <span class="sum">屋内の遊び場確保や教育機会充実の観点から、松江市の公共施設の子どもの入場料無償化などの対応について市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・米田ときこ</span>
+          <span class="ttl">公共施設適正化計画の進捗</span>
+          <span class="sum">市民への情報提供の方法・回数、閉鎖ありきでない地域特性への配慮、残存施設と課題、適正化5原則の遵守、学校プール集約化による授業時間の変化、地域活性化に資するサービス再編を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・長谷川修二</span>
+          <span class="ttl">子育て支援と女性に優しいまちづくり</span>
+          <span class="sum">出産育児一時金引上げの今後の方針、明石市の子育て支援策の導入、市内公共施設への生理用品の試行的設置、中絶や死産へのグリーフケアの取組について所見を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・野津直嗣</span>
+          <span class="ttl">時限的な有利な起債</span>
+          <span class="sum">公共施設等適正管理推進事業債・緊急自然災害防止対策事業債・緊急浚渫事業債の概要を確認し、時限が定められた有利な起債の積極活用を都市整備部・財政部に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・海徳邦彦</span>
+          <span class="ttl">男子トイレのサニタリーボックス</span>
+          <span class="sum">前立腺がん等で尿漏れパッドを使用する男性のため、市役所本庁舎・支所・公共施設の男子トイレへのサニタリーボックスの設置状況と早急な設置について見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・野津直嗣</span>
+          <span class="ttl">総合運動公園メインスタジアム改修</span>
+          <span class="sum">都市構造再編整備集中支援事業の充当を踏まえ、老朽化したメインスタジアムの客席やテニス場・野球場を含む周辺整備一体での改修検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・長谷川修二</span>
+          <span class="ttl">財政の在り方</span>
+          <span class="sum">将来負担と現在負担の受益者負担を鑑みた市民サービスと公共施設再配置の在り方、地方消費税交付金の見込みと消費者への還元、新庁舎建設の財源の今後の見込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・柳原治</span>
+          <span class="ttl">遊休施設と未利用施設の管理</span>
+          <span class="sum">19の市有遊休施設の問合せ・利活用状況や情報提供の在り方、旧中島小学校の避難場所指定の適否と老朽化した未利用施設の今後の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・野々内誠</span>
+          <span class="ttl">ネーミングライツと直営地域振興</span>
+          <span class="sum">新座市の事例を踏まえ、公共施設へのネーミングライツ導入の考えを質し、市直営の土地区画整理事業への取組の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・南波巖</span>
+          <span class="ttl">公共施設の適正化</span>
+          <span class="sum">人口減少下で合併後の公共施設の老朽化が進む中、箱物を中心とした公共施設適正化の現状と今後の取組計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・海徳邦彦</span>
+          <span class="ttl">受動喫煙防止と分煙施設整備</span>
+          <span class="sum">地方たばこ税の税収を確認し、国が分煙を推進する中で、松江市きれいなまちづくり条例の喫煙制限区域拡大と、観光都市として公共施設を含む分煙施設の整備を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川島光雅</span>
+          <span class="ttl">周辺地域のにぎわいの創出</span>
+          <span class="sum">合併後20年を経て周辺の旧町村が過疎化する中、公共施設適正化に代わる活力源となるハード・ソフト事業への支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石倉徳章</span>
+          <span class="ttl">旧八束郡町村の振興</span>
+          <span class="sum">合併した旧八束郡町村の疲弊を憂い、公共施設適正化を進めつつ必要な施設を残し再利用する考え方を提案し、市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・長谷川修二</span>
+          <span class="ttl">生理用品の無償配置</span>
+          <span class="sum">レッドボックスによる生理用品無償配置の利用状況とアンケート、市内企業の配置状況を問い、公共施設への拡充と公費による無償配置を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・米田ときこ</span>
+          <span class="ttl">認知症バリアフリーの推進</span>
+          <span class="sum">第9期介護保険事業計画での認知症カフェの目標数、公共施設以外のまちなかカフェ等を活用した予防と共生社会の視点を計画に生かす考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・たちばなふみ</span>
+          <span class="ttl">ジェンダー平等と生理の貧困</span>
+          <span class="sum">公共施設や学校での生理用品無償配布について、防災備蓄品を更新時に無償配布へ活用する仕組み、モデル校での利用状況やアンケート結果、安価な容器での多数個室への設置など柔軟な対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・海徳邦彦</span>
+          <span class="ttl">モバイルバッテリー等の処分</span>
+          <span class="sum">リチウムイオン電池による収集車の発災事故を示し、市内の事故状況や処分・周知方法を問い、公共施設への小型充電式電池回収ボックス設置やガイドブックの多言語版更新を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・長谷川修二</span>
+          <span class="ttl">下水道の耐震化と災害時対応</span>
+          <span class="sum">珠洲市等でのボランティア経験を踏まえ、災害時にトイレ・入浴が使えなくなる問題から下水道の耐震化は避けて通れないと求め、避難所となり得る公共施設への浄化槽設備設置を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・野々内誠</span>
+          <span class="ttl">公共施設の修繕計画</span>
+          <span class="sum">学校施設や公民館など避難所指定施設で雨漏りや塗装未対応が多い現状を挙げ、定期的な修繕を行うべきとして修繕計画が適正に計画・実行されているか、公共施設適正化計画の観光施設に係る予防保全の実施状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森脇勇人</span>
+          <span class="ttl">公共施設の管理・修繕の考え方</span>
+          <span class="sum">メテオプラザや松江テルサの雨漏り等を例に予算不足で修繕が先送りされている現状を挙げ、有利な財源を活用して財源を捻出し公共施設の修繕や地域経済に寄与させるべきと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島明</span>
+          <span class="ttl">公共施設除却への地方債措置</span>
+          <span class="sum">令和7年度から集約化・複合化に伴う施設除却に公共施設等適正管理推進事業債が活用できるようになったことを踏まえ、有利な地方債を活用して地元との相談の上で公共施設を除却してはどうか質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉徳章</span>
+          <span class="ttl">周辺地域の振興と公共施設活用</span>
+          <span class="sum">旧八束郡周辺の指定管理施設の運営困難を踏まえた維持継続・整備充実、廃止施設の災害時避難場所・物資倉庫や高齢者の集いの場への利用目的変更を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森本秀歳</span>
+          <span class="ttl">市内製造事業所の現場視察</span>
+          <span class="sum">市内製造業の実態把握のための現場視察の感想、および工場建屋の老朽化や猛暑による職場環境悪化の声を、策定中のものづくりアクションプランに反映する必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島進</span>
+          <span class="ttl">松江駅前デザイン会議</span>
+          <span class="sum">松江駅前デザイン会議の経過やアンケート、長崎視察の成果を問い、議会への説明がないまま素案が作成される進め方や若い世代の参画を質し、一畑百貨店解体・複合施設化や松江テルサ解体・老朽化発言の根拠、駅南側の再開発計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・長谷川修二</span>
+          <span class="ttl">生理用品の無償配置</span>
+          <span class="sum">小中学校モデル校11校での実証結果とアンケート、公共施設での使用状況を問い、小中・皆美が丘女子高への配置の今後の方針を質し、全ての公共施設への生理用品無償配置を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・たちばなふみ</span>
+          <span class="ttl">ジェンダー平等の松江市へ</span>
+          <span class="sum">女性管理職割合と男性育休取得率の現状と課題、市立学校トイレへの生理用品配置に続く公共施設トイレへの生理用品配置の持続的な取組構築を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・柳原治</span>
+          <span class="ttl">上下水道事業と水道料金改定</span>
+          <span class="sum">国の上下水道政策の方向性への所感、本市の老朽化・耐震化対策の状況と課題、平成27年以来10年ぶりで平均26.02％となる水道料金改定の経営努力・地域間格差是正・市民周知について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉聡之</span>
+          <span class="ttl">上下水道局の管路耐震化方針</span>
+          <span class="sum">黒田町の道路陥没事故を踏まえ、管路の老朽化対策・耐震化の加速、令和10年度以降の第2次経営計画の策定方針・視点を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・海徳邦彦</span>
+          <span class="ttl">住居表示街区案内図の利活用</span>
+          <span class="sum">老朽化した住居表示街区案内図の現状と課題を質し、その掲示箇所を企業広告に活用する財源確保策を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・たちばなふみ</span>
+          <span class="ttl">原発問題</span>
+          <span class="sum">稼働37年目で点検を待たず稼働する島根原発2号機の老朽化、核のごみ最終処分場の見通しがないまま原発を稼働させる矛盾、医療・介護現場の人手不足と非現実的な広域避難計画を挙げ原発停止を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・小澤一竜</span>
+          <span class="ttl">松江市斎場再整備</span>
+          <span class="sum">昭和63年開始で老朽化した松江市斎場について、火葬炉と建物の一体整備、デザインビルドやPFIなど民間活力の活用を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉徳章</span>
+          <span class="ttl">第4次行政改革</span>
+          <span class="sum">職員数・人件費の中核市との比較とその理由、令和11年度まで定数を維持する計画の明確化、公共施設適正化の対象基準と地域・指定管理者との協議のあり方を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">183件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・岡田麻里</span>
+          <span class="ttl">AEDの公共施設設置</span>
+          <span class="sum">心室細動の救命には一刻も早い電気ショックが必要だとして、市役所・体育館・公民館など公共施設へのAED設置の考えを質し、早期設置を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・中島隆夫</span>
+          <span class="ttl">公共施設の耐震対策</span>
+          <span class="sum">災害時の指令本部となる本庁舎や避難場所となる公共施設について、現行耐震基準への適合状況と、補強・改修工事をどのような計画で実施するのかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・石倉刻夷</span>
+          <span class="ttl">AEDの配備状況と導入計画</span>
+          <span class="sum">県立学校への配備完了の報道を挙げ、市の公共施設におけるAEDの配備状況と今後の導入計画を尋ね、比田分駐所への配備を要望した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・中村健二</span>
+          <span class="ttl">スポーツ振興と体育施設の改修</span>
+          <span class="sum">買収した市民プールの運営状況と委託先の体制、体育文化振興財団への市の関与を尋ね、老朽化した体育館の改修計画、陸上競技場の第3種公認維持とくみ取り式トイレの水洗化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・中村健二</span>
+          <span class="ttl">体育施設の老朽化対策</span>
+          <span class="sum">市民体育館のサッシ腐食や柔道畳の破損、伯太運動広場のくみ取り式トイレなどを挙げ、各体育施設の改修計画を尋ね、有資格職員を生かした介護予防との連携活用を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・中村健二</span>
+          <span class="ttl">保育所指定管理導入1年の検証</span>
+          <span class="sum">赤江・城谷保育所への指定管理導入から1年の保護者要望への対応状況と新たな意見の有無を尋ね、法人・保護者・行政の三者協議の場の実現や職員の処遇、施設の老朽化整備の考え方を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・岡田麻里</span>
+          <span class="ttl">活字文書読み上げ装置の整備</span>
+          <span class="sum">視覚障害者等情報支援緊急基盤整備事業を活用した活字文書読み上げ装置の配置について県との協議状況を尋ね、図書館など公共施設への設置拡大と、日常生活用具給付の当事者への周知徹底を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嶋田豊昭</span>
+          <span class="ttl">石油価格高騰の行政への影響</span>
+          <span class="sum">原油高騰で公共施設の暖房費など施設管理への財政的影響、平成20年度予算編成への影響、今後の価格動向の見通しを尋ね、ISOの経験を生かした省エネの実践呼びかけを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・中島隆夫</span>
+          <span class="ttl">財政の弾力性確保と学校再編</span>
+          <span class="sum">経常収支比率や公債費負担比率を適正水準に保つ取り組みを尋ね、児童減少と校舎老朽化を踏まえた小学校の改築・再統合への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嶋田豊昭</span>
+          <span class="ttl">財政状況の広報・公聴と市民との認識差</span>
+          <span class="sum">公共施設建設に対する市民の財政不安の声を挙げ、わかりやすい財政公表の工夫と寄せられた市民意見の内容を尋ね、市当局・議会・市民の間の認識の差への市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石倉刻夷</span>
+          <span class="ttl">ほ場整備完了地区の再整備支援</span>
+          <span class="sum">償還後30年たつほ場での湧水処理・暗渠排水の修繕要望を紹介し、旧市町別の整備済み面積と整備率44%の実態を確認して、完了地区の再整備要望や老朽化した農業用施設の調査、団体営事業など高補助率制度の情報提供を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田淵秀喜</span>
+          <span class="ttl">土砂災害・河川・道路・橋梁のハード対策</span>
+          <span class="sum">土砂災害危険箇所の把握と砂防事業計画、河川内樹木伐採など19年度の保安管理実績と20年度計画、市道の傷みの把握と改善、市内橋梁の数と長寿命化計画、海抜ゼロメートル地帯の高潮対策、公民館等の耐震状況を一問一答で確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・梅林守</span>
+          <span class="ttl">選挙ポスターと分庁方式の疑問</span>
+          <span class="sum">「広瀬庁舎は残します」のシール貼付が公職選挙法に抵触した経緯をただし、老朽化した広瀬庁舎を分庁方式で使う場合の補修費とバリアフリー化の費用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中武夫</span>
+          <span class="ttl">バイオマスタウン構想と竹の活用</span>
+          <span class="sum">タウン構想公表後の進捗としてバイオマスストーブの公共施設導入を尋ね、無尽蔵に繁茂する竹のチップボイラー開発や草抑え資材など産官学連携による新産業創出を提案し、市の木の竹の位置づけをただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・河津清</span>
+          <span class="ttl">公共施設への洋式トイレ設置</span>
+          <span class="sum">市民会館のトイレで高齢女性が立ち上がれなくなった事例を紹介し、公共施設の洋式トイレの設置状況を確認して、健常者が当たり前に使える洋式トイレの設置と交流センター2階へのトイレ整備を早急に行うよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・金山満輝</span>
+          <span class="ttl">分庁舎方式の検証と現在地案の課題</span>
+          <span class="sum">分庁舎方式と総合庁舎の建設費・維持管理費・人件費等の比較資料の提出を求め、老朽化した広瀬庁舎に福祉4課を置く4分庁舎案への疑問、商工会議所や隣接地権者との協議状況、市民会館の建てかえと安来庁舎の耐震性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・井上峯雄</span>
+          <span class="ttl">教育支援センターあすなろの移転</span>
+          <span class="sum">雨漏りや壁のはがれなど老朽化がひどい教育支援センターあすなろの実態を現地で確認したとして、よりよい環境への早期移転の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・丸山征司</span>
+          <span class="ttl">木戸川の木橋の危険と市営住宅</span>
+          <span class="sum">第一病院近くの老朽化した木橋の修繕優先基準と耐震・交通量の把握、永久橋への改修見通しを一問一答でただし、市営住宅の建てかえ基準と待機者・入居率、民間家屋買い上げ活用や家賃99%超の徴収ノウハウの納税部門との共有を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田淵秀喜</span>
+          <span class="ttl">汐彩団地の販売分析と防災対策</span>
+          <span class="sum">汐彩住宅団地の販売状況と促進策を尋ねてなぜ売れないのかの調査分析を要請し、地震・水害を織り込んだ有効なマップの評価と、避難所となる公共施設の災害危険箇所への隣接の有無と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・中村健二</span>
+          <span class="ttl">老朽化した消防庁舎の課題</span>
+          <span class="sum">築37年の消防庁舎の被害と問題点を新体制の消防長に尋ね、波打つ車庫の床や仕切りのない仮眠室、訓練棟の腐食、排気ガスの健康影響を挙げて改修を求め、錦町交差点の渋滞を踏まえた緊急出動時の危険と庁舎位置の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中武夫</span>
+          <span class="ttl">農地有効利用支援整備事業の増額</span>
+          <span class="sum">申し込みが予定の1億円に対し2億6,000万円に達した農地有効利用支援整備事業について、老朽化した用排水路・農道の再整備の切実さを訴え、補正を組んででも全件採択する前向きな対応を市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中武夫</span>
+          <span class="ttl">農地有効利用支援整備事業への取り組み</span>
+          <span class="sum">経済危機対策で200億円増額された農地有効利用支援整備事業について、老朽化した12アール区画の水田や狭い農道の再整備の好機として市の考えを尋ね、県・市の上乗せ補助と交付金措置を組み合わせた農家負担軽減での積極活用を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・中村健二</span>
+          <span class="ttl">ファシリティマネジメントの導入</span>
+          <span class="sum">佐倉市長を招いた2日間のFM職員研修93名参加の目的と職員の評価を確認し、ISO14001や省エネ法とのつながり、高齢者にもわかる名称の工夫を尋ねて、専門スタッフによる組織体制と導入時期への市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・樋野智之</span>
+          <span class="ttl">ファシリティマネジメントの推進体制</span>
+          <span class="sum">FM研修の役職別受講者数と研修報告の活用、JFMAフォーラムへ不参加だった理由をただし、全施設調査・データ一元化の方法と資産評価の手法を尋ねて、財政・人事・情報に続く横ぐし部署の新設と市長のトップマネジメントによる導入決断の時期を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・樋野智之</span>
+          <span class="ttl">ファシリティーマネジメント導入の進捗</span>
+          <span class="sum">12月質問後の半年間の具体的行動と進捗を確認し、日本ファシリティマネジメント推進協会への公共特別会員入会を踏まえた職員研修の行動計画と、先進地佐倉市長を招いた研修の実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・中村健二</span>
+          <span class="ttl">公共施設の受動喫煙対策</span>
+          <span class="sum">原則全面禁煙を求める厚労省通知を受けた市内公共施設の現状と今後の対応を確認し、社会体育施設や公園の禁煙の徹底、たばこ税収と医療費増大への認識、新しい健康やすぎ21での啓発を市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉刻夷</span>
+          <span class="ttl">公共施設マネジメントと分庁方式</span>
+          <span class="sum">第2次行政改革実施計画に掲げられた公共施設マネジメントの推進と分庁方式の位置づけをどう両立させるのかを尋ね、合併協議での本庁一本化を基本とする合意にも触れて市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・井上峯雄</span>
+          <span class="ttl">大型事業の妥当性と財政指標</span>
+          <span class="sum">大阪・岡山便が停車しない高速バスストップ事業の実施可否と乗降見込みをただし、予算計上が見送られた給食センターの今後と老朽化した消防庁舎建設の取り組みを尋ねて、経常収支比率が6%上昇する財政の硬直化対策と古事記編さん1300年事業の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・中村健二</span>
+          <span class="ttl">消防庁舎建設の進捗</span>
+          <span class="sum">老朽化と狭隘化が進む消防本部庁舎について、横断的なプロジェクトチームによる検討で候補地が3カ所に絞られた進捗を確認し、消防救急無線のデジタル化整備にあわせた建設の今後の予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田中武夫</span>
+          <span class="ttl">高齢者向け公営住宅の充実</span>
+          <span class="sum">借家を出なければならない独居高齢者が公営住宅の空き待ちで入れない事例を挙げ、旧市街地に居住空間をつくるとした市長の考えの予算への反映、公営住宅長寿命化計画の位置づけ、新設住宅団地構想の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田中明美</span>
+          <span class="ttl">鴨来荘の老朽化と建てかえ判断</span>
+          <span class="sum">築31年で県下3番目に古く、国の設備基準を満たさず他人同士の2人部屋も残る鴨来荘について、平成23年度末が期限のスプリンクラー設置に1億円近くかかる前に、ファシリティマネジメントの観点も踏まえた建てかえの早急な結論を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田淵秀喜</span>
+          <span class="ttl">エコオフィスと公共施設マネジメント</span>
+          <span class="sum">エコオフィス終了後の省エネ法に基づく取り組みの中身と従来のISO活動の継続性を確認し、公共施設マネジメントの22年度実績と全施設調査の進め方を尋ねて、処分・民間活用による財源確保と特別会計繰出金の真の適正化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・樋野智之</span>
+          <span class="ttl">ファシリティマネジメントの推進</span>
+          <span class="sum">市有建物934棟・約29万4,000平米の現状調査とデータ化の進捗状況や調査項目を確認し、佐倉市研修の成果と国交省のBEAMSシステム導入の必要性を尋ねて、FM導入に向けた担当部署の配置と若手職員のワーキンググループ設置を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・樋野智之</span>
+          <span class="ttl">ファシリティマネジメント導入の決断</span>
+          <span class="sum">施設調査の進捗と評価基準・分析の進め方、年間約4億円という維持管理費の削減目標を尋ね、国交省系のBIMMSシステムの導入と東日本の先進地視察を求めて、やるまい運動のようだと批判しつつ市長にいつ導入へかじを切るのかを迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・作野幸憲</span>
+          <span class="ttl">ブロードバンドの低コスト活用3提案</span>
+          <span class="sum">巨費を投じたブロードバンド基盤の活用策として、1カ所1万円程度で設置できる公衆無線LANのフリースポットを庁舎ロビー・交流センター・図書館などへ設置すること、ONUと告知端末のスピーカー機能を使った安価な簡易屋外ラッパ、接続率3割台のどじょっこテレビを見られるテレビの公共施設への設置を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">原発安全神話と老朽化への認識</span>
+          <span class="sum">県地域防災計画の前提が安全神話に浸っていると指摘して原発は危険なものとの認識から出発すべきだと市長の所感を求め、運転37年の島根原発の寿命や税法上16年の減価償却、老朽化で生じる金属疲労・脆化の問題、511カ所の点検漏れなどトラブルの実態を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・丸山征司</span>
+          <span class="ttl">太陽光発電の補助拡大と公共施設導入</span>
+          <span class="sum">補正でも追いつかない家庭用太陽光発電補助について、1件当たりの額を下げても件数を倍増するバランスを提案し、建設間近の一中・消防庁舎・市庁舎での太陽光発電の具体的検討状況と既存施設への設置の費用対効果の試算、環境省補助の活用、避難所となる公共施設の停電時電源としての意義を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・佐伯直行</span>
+          <span class="ttl">経費節減と産業振興の展開</span>
+          <span class="sum">職員100人削減目標が86名まで進んだ定員適正化の今後とファシリティマネジメントやPPP・指定管理による施設管理の経費節減の考えを尋ね、インター工業団地完売・島田干拓地への農業部門進出・学習センター・大型ほ場整備・地元材活用住宅助成などの事業成果を今後どうつなげるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">老朽原発と自然エネルギーへの転換</span>
+          <span class="sum">浜岡原発の停止要請を踏まえ老朽化した島根原発1号機の運転再開への市長の所見を尋ね、ソフトバンクが提唱するメガソーラーについて休耕田やふれあい公園を持つ安来市での自然エネルギー推進の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・河津清</span>
+          <span class="ttl">自然エネルギーへの転換姿勢</span>
+          <span class="sum">原発からの撤退を重ねて訴え、公共施設への再生可能エネルギー導入への市長の姿勢を尋ねて、全小・中学校に太陽光発電を設置する雲南市の気概や平成14年の旧安来市新エネルギービジョンを示し、耐震化にあわせたエコスクール化への国庫補助の確認を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中明美</span>
+          <span class="ttl">長谷津団地建てかえと鴨来荘</span>
+          <span class="sum">公営住宅等長寿命化計画の長谷津団地建てかえ基本計画に新養護老人ホームを連携配置する案が図面つきで示されていることを挙げ、計画は建てかえを前提としていると指摘して、避難所にも指定される鴨来荘の早期建てかえの決断を市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・丸山征司</span>
+          <span class="ttl">震災後の節電とLED導入</span>
+          <span class="sum">福島原発事故後のエネルギー意識の変化を問い、省エネルギー推進委員会のもとでの公共施設の具体的な節電内容と震災前後の消費電力・金額の差を確認して、島根大学発の低コストLED開発も踏まえた庁舎や学校へのLED導入の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・作野幸憲</span>
+          <span class="ttl">インフラ点検と住環境整備</span>
+          <span class="sum">笹子トンネル事故を踏まえた道路・橋梁の定期検査と切川バイパスの早期開通に向けた考え方を尋ね、市営住宅等長寿命化計画にあわせた公共施設の再配置、汐彩の一律30%値下げへの既購入者の理解と分譲促進策を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・樋野智之</span>
+          <span class="ttl">ファシリティマネジメントの導入決断</span>
+          <span class="sum">公約ではファシリティマネジメントと言いながら答弁では公共施設マネジメントという曖昧な言葉に戻る姿勢をただし、市有建物934棟・約29万4,000平米の調査の完了状況と評価、全国平均の2倍以上の1人当たり床面積への対応を迫って、全庁に横串を刺す組織の立ち上げと来年4月からの始動を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・樋野智之</span>
+          <span class="ttl">ファシリティマネジメント導入の本気度</span>
+          <span class="sum">公約に掲げながら施政方針で言及されなかったファシリティマネジメントについて、新年度に専門部署を設けて導入に向かうのか市長の本気度を問い、市有934棟の平均築年数と今後の維持管理費の総枠、初期投資574億円に対しライフサイクルコストは約2,300億円・年55億円規模になるとの試算を示して、協会からの外部人材登用や市有財産整備基金5億円の使途の明確化を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・樋野智之</span>
+          <span class="ttl">ファシリティマネジメント導入への決断</span>
+          <span class="sum">公共施設白書の作成へ公共施設部を新設した松江市を視察した経験を紹介し、市民1人当たり延べ床面積が全国平均の2倍強の約6.9平米に上る安来市こそ導入が急務だとして、建物934棟のデータ化の進捗と期限を過ぎた独自システムの内容、今後10年間のライフサイクルコスト総額の見込み、担当部署の新設と導入時期への市長のリーダーシップを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">再選後の市政運営と行財政改革</span>
+          <span class="sum">市民クラブを代表し、厳しい選挙戦だった再選の要因と結果を受けた事業見直しの考え、市民目線での民意把握の具体策を尋ね、実質公債費比率の24年度決算見込みと、現有施設のデータベース化を終えた公共施設マネジメントシステムの構築に伴う部署新設・専門職員配置・施設統廃合、職員の人材育成の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・岡田麻里</span>
+          <span class="ttl">学校施設の長寿命化対策</span>
+          <span class="sum">建築後25年以上を経過した公立小・中学校施設が多数を占める中で、文部科学省の老朽化対策ビジョンと国の長寿命化改良事業を紹介し、改築より低コストで70〜80年の使用を可能にする長寿命化を含む中長期的な整備計画の策定と効率的な老朽化対策を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">定住・道路整備と教育施設</span>
+          <span class="sum">定住環境整備の具体策とコンパクトシティー・中心市街地活性化の考えを尋ね、企業誘致に戦略的に欠かせない切川バイパスと安来インター線への所見、島田干拓のメガソーラーのその後を確認して、教育支援センターの現状、設計後も着工されない社日小プールの現状と工事費、老朽化する陸上競技場など体育施設の整備方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・丸山征司</span>
+          <span class="ttl">市営住宅と公共施設の地産地消</span>
+          <span class="sum">政策空き家方式を見直して長寿命化しにくい長谷津・招団地の建てかえを前倒しし高齢者が住みやすい住宅にする考えを尋ね、市立病院や学校給食の地元食材割合の引き上げ、公共施設への地元産木材の使用、既存施設への太陽光発電設置の試算、使いにくいとの声がある住宅支援事業の要件見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・永田巳好</span>
+          <span class="ttl">市民会館移転と分庁方式への疑問</span>
+          <span class="sum">地区計画まで進めた切川の総合庁舎構想に投じた4億円余りの一般財源が無駄になったと指摘し、郊外へ移転する市民会館の文化施設としての位置づけや教育委員会所管への変更、劇場・音楽堂活性化法を踏まえた市民団体や専門家の意見聴取を求め、普通会計保有資産の老朽化比率の高さや広瀬庁舎の建てかえも見えているとして、分庁方式で将来にわたり市民サービスを維持できるのか柔軟な再考を市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中島隆夫</span>
+          <span class="ttl">庁舎アンケートと3.9ヘクタール協議</span>
+          <span class="sum">8月の説明会と9月までのアンケート結果をどう分析し議員や市民の意見をどう庁舎建設に反映するかを尋ね、当初の地区計画と同じ3.9ヘクタールのままで公共施設等を建設する協議を地権者や県と続ける努力をする考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・作野幸憲</span>
+          <span class="ttl">情報化提案の進捗総点検</span>
+          <span class="sum">これまで提案してきたフリースポット設置・行政告知端末を使う簡易屋外スピーカー・公共施設でのどじょっこテレビ活用・クラウドコンピューティングの検討状況を一つずつ確認し、日進月歩の情報分野は一月の遅れが大きな差になるとしてスピード感ある実行を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中明美</span>
+          <span class="ttl">特色ある給食センターへの検討</span>
+          <span class="sum">平成28年4月開設が決まった給食センターについて建設審議会の検討内容・期日・構成メンバーを尋ね、昭和46年建設の広瀬小など老朽化した各校給食室の衛生基準適合状況を確認した上で、平成30年度に児童・生徒数が2,970人を切る見込みを示して、PFI断念から2年9カ月で完成させた大田市のリース方式や米粉パンオーブン、淡路市の防災本部併設を例に市民に自慢される特色ある施設づくりを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中島隆夫</span>
+          <span class="ttl">行革・中山間地対策と議会への姿勢</span>
+          <span class="sum">ファシリティマネジメント導入への2期目の決意と職員が使命感を持って働ける環境づくりを尋ね、担い手育成から買い物・移動支援、UIターンの受け皿まで総合的な中山間地域対策の進め方と公約の進捗を市民へ説明する方法を確認して、二元代表制のもとでの議会に対する基本姿勢を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">SNS活用と電子自治体の推進</span>
+          <span class="sum">首相官邸も活用するフェイスブックやツイッターの拡散力を挙げて市の情報発信手段としての導入を提案し、クラウドコンピューティングを含むICT利活用の調査検討と市内公共施設のWi-Fiフリースポットの拡充への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">ふるさと納税改善と太陽光の活用</span>
+          <span class="sum">米子市が返礼品の工夫で2億円以上を集める中で安来市のふるさと寄附は伸びる余地があるとして入力フォームやクレジット決済など申し込みのスムーズ化を求め、全量20年買い取りを生かした10キロワット以上の太陽光への補助、米子市が既に発電を始めた公共施設の屋根貸しへの早急な取り組み、スマートシティー構想を含むエネルギー政策への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">ファシリティマネジメント導入</span>
+          <span class="sum">総務省が2年間での作成を求める固定資産台帳の整備の進捗を確かめ、855棟・延べ27万4,780平方メートル（市民1人当たり全国平均の2倍強）に上る保有施設の総量縮減に向け、縦割りを超えた横断的な専門部署によるファシリティマネジメントの導入と外部人材の期限付き招聘、集中する大型建設の修繕・維持管理費を中長期財政見通しへ反映することを市長公約の実行として迫り、保有施設を維持した場合の年間費用が概算26億円との答弁を得た。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">ファシリティマネジメント導入の決断</span>
+          <span class="sum">市有934棟・市民1人当たり床面積が全国平均の2倍、初期投資574億円に対しライフサイクルコスト約2,300億円・年55億円という試算を4年間の総括として改めて示し、基金約10億円の創設や公約明記など前進は認めつつ、部門任せでは進まないとして横串を通す組織の編成と導入をいつまでに決断するのか市長に迫り、松江でのフォーラムに参加した職員の評価も質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">再生可能エネルギーの推進</span>
+          <span class="sum">公共施設の屋根や利用しにくいのり面・未利用地での太陽光発電、山佐運動広場での太陽光と境谷川砂防ダムの落差を使った小水力発電の適地検討を提案し、安来干拓調整池のフロート式メガソーラーと中海ふれあい公園南区への誘致の進展、全量20年買い取りで有利なミドルソーラーの啓発、老朽化した布部発電所の固定価格買取制度対応の改修を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・澤田秀夫</span>
+          <span class="ttl">勤労者福祉の向上</span>
+          <span class="sum">老朽化で閉館した勤労青少年ホームに代わる勤労者の拠点の考え方と勤労者福祉活動への市の支援を確かめ、再質問で勤労者福祉会館・労働会館の建設や新庁舎建設に合わせた市民交流スペースの確保、勤労感謝祭行事のPR活動への協力を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">土木インフラの総合管理と組織編成</span>
+          <span class="sum">国のインフラ長寿命化基本計画と総務省の公共施設等総合管理計画の策定通知を踏まえ、市内の道路・橋・トンネル・上下水道の量と建設後40年を超えるインフラの現状・長寿命化の進捗、道路修繕の過去5年の予算執行と地元要望を消化するのに要する年数を質し、松江市や島根県の新組織の例を挙げて組織横断で判断できる公共インフラ担当組織の設置を今決断するよう市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">建築確認業務の体制</span>
+          <span class="sum">限定特定行政庁である安来市の建築確認申請の年間件数・対応職員数・1件当たりの業務時間を尋ね、建築住宅課の職員配置と業務バランスの妥当性を確認して、今年度計画される建築資格者1名の採用がファシリティマネジメントの組織編成を見据えたものかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岡田麻里</span>
+          <span class="ttl">橋梁の点検精度と長寿命化</span>
+          <span class="sum">橋梁点検の実施状況と全国的な点検技術者の不足の影響を尋ね、浜松市の再調査で63橋のうち26橋が損傷程度を見誤っていた例を挙げて点検結果を市側で判断できる技術の必要性を指摘し、長寿命化修繕計画の策定状況と修繕の実施状況を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩田拓郎</span>
+          <span class="ttl">給食センターと幼保一元化の進捗</span>
+          <span class="sum">6月27日に設置された給食センター検討委員会の開催状況と検討内容を確認し、平成28年4月開設に向けた切川地区の法的手続が順調かを質して、認定こども園荒島の成果と今後の幼保一元化の予定、老朽化が進む教育施設の充実・再編の課題への教育長の考えを尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">職員数適正化と公共施設更新・市民会館</span>
+          <span class="sum">人口1,000人当たり職員数11.66人は類似の倉吉市7.21人より多いとして将来を見越した最適な職員数の模索を求め、総務省が要請する公共施設等総合管理計画への取り組みと除却への地方債活用を確認して、市民会館の大ホールは800席では中途半端だとして1,000席が必要との見解をただし、島根大学との包括協定の状況も尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">行財政改革と職員の資質向上</span>
+          <span class="sum">切川地区開発費の増加が中期財政計画に与える影響を確認し、職員の研修・視察の対象と成果の生かし方、臨時職員も含めた実効性ある定員管理計画の策定、公共施設白書の継続的な作成を求めて、平成30年度から交付税が約14億円減る中で費用対効果の高い事業を行う職員の力量向上を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・丸山征司</span>
+          <span class="ttl">防犯・交通安全と原発避難</span>
+          <span class="sum">宝塚市役所の放火事件を挙げて公共施設の防犯対策や訓練の考えを尋ね、自治会任せでは進まない防犯灯の増設、夜光反射材の着用を促す交通安全条例の制定、県の犯罪のない安全で安心なまちづくり条例との連携を質して、原発事故時に30キロ圏外の伯太・比田地区がそのまま地元にとどまり続ける選択の可否も確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・丸山征司</span>
+          <span class="ttl">バリアフリーと障がい者福祉の充実</span>
+          <span class="sum">退院後に気づいた片側だけの手すりや渡り切れない信号などの点検とバリアフリー設備の更新、イエローバスの車椅子対応とバリアフリーマップの作成、鳥取県のあいサポート運動の導入、公共施設利用料の障がい者無料化やタクシー助成の拡充、障がい者スポーツの推進を求め、地域包括ケアシステムと医療相談サロンの設置、生活困窮者自立支援法が水際作戦につながらないかへの危惧と市民への説明を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉刻夷</span>
+          <span class="ttl">公共インフラ老朽化の5カ年対策</span>
+          <span class="sum">平成27年から31年の5カ年で老朽化対策が必要とされる事業として、上水道・簡易水道の管路等、下水道・集落排水の施設、保育所・児童館・幼稚園の改修について、1件500万円以上で検討されている内容と金額をわかりやすく答えるよう求め、各部局の年次的な対応を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・樋野智之</span>
+          <span class="ttl">公共施設マネジメントと新公会計</span>
+          <span class="sum">初当選以来提言してきたファシリティマネジメントについて、財政課に1人配置された担当のこの1年の目的・進捗と残された課題を尋ね、総務省が求める2017年度末までの複式簿記による新公会計制度への対応、公共施設等最適化事業債も活用した統廃合への道筋と期限の設定を質して、市長直轄組織の立ち上げと専門知識を持つ人材の招聘を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・原田貴与子</span>
+          <span class="ttl">子ども・子育て新制度と保育の充実</span>
+          <span class="sum">新制度移行を前に子ども・子育て会議の開催状況と条例上程までの日程、幼保一元化と企業参入への市の考え方を確認し、待機児童の状況や2カ所に分かれた認定こども園荒島など施設の老朽化への改善計画を質して、保育士の正規・臨時職員の給与格差の是正と指定管理保育所が処遇改善補助の対象外となる格差への対処、就労時間だけでない子供の状況を基本にした保育認定を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉刻夷</span>
+          <span class="ttl">施設老朽化と支え合い名簿の充実</span>
+          <span class="sum">体育施設・交流センター・富田山荘や湯田山荘について5年以内に見込まれる500万円以上の改修と解体を要する物件を確認し、地域支え合い活動の見守り名簿について従来の要援護者台帳との違い・対象者数・作成の流れと配付先・民生児童委員の反応を質して、夫婦の一方だけが70歳以上の世帯も名簿に加えられないかをただし、野球場の古いSBO表示の改修も促した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・樋野智之</span>
+          <span class="ttl">月山富田城整備と広瀬の観光基盤</span>
+          <span class="sum">スカイツリーでのPRに2万2,000人が来場した月山富田城について、発掘調査資料の公表方法と狭隘化した歴史資料館の今後の整備、想定する観光入り込みの数値を尋ね、道の駅や遊歩道・サインの整備とふれあい館の活用、老朽化しバリアフリー化もされていない富田山荘の整備と施設間で取り合いになっている源泉の湯量問題の早期解決、マニフェストの中間評価と広瀬図書館建設の時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・嶋田豊昭</span>
+          <span class="ttl">縮小社会への備えと自治基本条例</span>
+          <span class="sum">人口も経済も縮小する社会を前提とした備えが必要だとして国家財政への見解とこれからを乗り越える市長の経営哲学を問い、将来の安定した行政のための自治基本条例の制定の考え、統一的な基準による公会計財務書類への準備状況、国が要請する公共施設等総合管理計画の策定準備を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田中武夫</span>
+          <span class="ttl">つどいの広場と病児保育</span>
+          <span class="sum">病児・病後児保育の現状と今後の課題を確認し、利用者の多い十神幼稚園跡の親子交流センター（つどいの広場）が老朽化し駐車場もないと指摘して、駐車場を備えた大きなきちんとした施設を早期につくるよう市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">ケーブルテレビの公共施設接続</span>
+          <span class="sum">入院中の知人が病室で盆踊り中継を見たいと語った体験から、ケーブルテレビの地区別接続世帯数と割合(市全域約4割)を確認し、交流センターや学校など市管理施設の接続状況と、市立病院の個室など未設置施設への年次的な接続計画を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・嶋田豊昭</span>
+          <span class="ttl">世界情勢認識と市民理解・人材育成</span>
+          <span class="sum">中国経済の先行き不安など世界情勢の認識と今後の地方行政の行方を尋ね、公共施設等総合管理計画の策定段階から市民の理解と協力を取りつける進め方、人事権を持つ市長のリーダーシップと職員・市民リーダーの育成の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・樋野智之</span>
+          <span class="ttl">公共施設マネジメントと新電力</span>
+          <span class="sum">公約のファシリティマネジメントについて専従職員1名のまま増員されない体制への見解を求め、山陰の他自治体が先行する公共施設等総合管理計画の進捗と国の期限への見通し、遊休資産の状況と施設カルテの内容・活用を質して、米子市が電力入札で財政効果を上げた例を挙げ2年半検討のままの新電力導入への考えを尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">公共施設管理計画と耐震対策</span>
+          <span class="sum">耐震補強が必要とされる交流センター8館への取り組みを尋ね、遊休施設の利活用も含む公共施設等総合管理計画の策定の流れと考え方を確認して、施設の統廃合など大なたを振るう前には必ず市民と議会との協議の場が必要だと指摘し、予算10万円で現職員が取り組む体制での部局間の意思疎通を促した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・嶋田豊昭</span>
+          <span class="ttl">公共施設総合管理計画の体制</span>
+          <span class="sum">平成28年度中に策定する公共施設等総合管理計画について、管理台帳作成の進捗と基本方針・計画期間・長寿命化の考え方を尋ね、松江市が部長級ポストを置いて進める例と施設名公表への丁寧な合意形成の必要性を挙げて、技術職員も入れた体制で本当に進められるのか、住民の意向を酌んだ進め方とあわせてただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・澤田秀夫</span>
+          <span class="ttl">各庁舎の再配置後の姿</span>
+          <span class="sum">基盤整備部の移転で業者がふえる伯太庁舎の駐車場スペースを確認し、2部署だけになる広瀬庁舎の空きスペースの市民利用と老朽化・耐震問題を抱える庁舎の今後の方向性を出す時期を質して、公共施設総合管理計画の策定段階で方向性を出すとの答弁を引き出し、新安来庁舎着工後の来庁者の安全対策・駐車場・導線を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・永田巳好</span>
+          <span class="ttl">基金頼みの中期財政計画への警鐘</span>
+          <span class="sum">交付税の一本算定移行後の財源不足を基金で補填する中期財政計画は財政運営として問題ないのかとただし、貯金を使うのは当たり前だと胸を張る答弁に対して、かつて1桁台と言われた実質公債費比率が15%になった経緯や3大事業127億円の元利償還が平成29年度以降の実質収支に与える影響を数字を挙げて突きつけ、公共施設の解体費も将来の負債だとして慎重な財政運営を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・樋野智之</span>
+          <span class="ttl">月山観光の受け入れと富田山荘</span>
+          <span class="sum">月山富田城跡整備の見返りに観光客を呼び込むための物販・食事・宿泊の施策と、公衆無線LANや多言語サインなどユニバーサルデザイン整備の具体策を尋ね、老朽化しバリアフリー化もされていない富田山荘について、地元が設立した利用促進協議会で指定管理者の経営姿勢への意見が集中している状況を市長が知っているかとただし、早急な改善計画を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・永田巳好</span>
+          <span class="ttl">水道・下水道の繰出金と料金</span>
+          <span class="sum">人口減少で料金収入が右肩下がりとなる水道・下水道事業について、老朽化する施設の更新費用の見通しと今年度の一般会計繰出金・交付税措置されない基準外繰出金の額を確認し、たびたびの料金値上げは市民に受け入れられないとして、市民サービスのためにはむしろ繰出金を手厚くして料金を据え置くべきだと持論を展開した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・澤田秀夫</span>
+          <span class="ttl">空き施設の利活用を先に</span>
+          <span class="sum">公共施設等総合管理計画で使用しない空き施設が出ると予想されるとして、放置すれば廃墟となり防犯や地域の活力に影響すると指摘し、空き施設に選択する前段階で住民活用や介護施設誘致・更地化など今後の利用方法をあわせて検討するよう求め、計画の議会・市民への開示時期を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・金山満輝</span>
+          <span class="ttl">行財政改革と公共施設管理計画</span>
+          <span class="sum">予算規模を平成28年度をピークに圧縮しなければ人口対策の財源が捻出できなくなると危惧し、行財政改革推進への市長の決意と、公共施設等総合管理計画の策定時期・諸施策の中での位置づけ・各施設の方向性がどこまで示されるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">道路標識・カーブミラーの点検</span>
+          <span class="sum">老朽化した道路標識が倒れて子供がけがをした報道や地元でカーブミラーが根元から折れた経験を挙げ、市が管理する道路標識52基とカーブミラー860基などの数を確認して、それぞれの点検の方法と今後の点検・更新計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">29年度予算査定と財政運営</span>
+          <span class="sum">類似事業の統合や効果の低い事業の廃止として市長・副市長査定に該当した事業、公共施設等総合管理計画を推進する具体的な施策、新たな財源創出の取り組みを尋ね、基金残高を精査した新年度予算編成後の財政運営の所見を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・嶋田豊昭</span>
+          <span class="ttl">29年度予算編成の基本方針</span>
+          <span class="sum">中期財政計画で平成29年度から単年度収支が急激に悪化することに市民の不安が寄せられているとして、第3次行政改革大綱や公共施設等総合管理計画と総合計画との整合・相互調整の進め方を尋ね、地方財政計画の増加が見込めない中での平成29年度予算編成の基本方針について市長の所信を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・作野幸憲</span>
+          <span class="ttl">スポーツの町を政策の柱に</span>
+          <span class="sum">スポーツ推進計画に掲げた地域特性を生かす4つの取り組みの進展を確認し、バレーボールやフェンシングの合宿プランの推進と体育施設の整備、島根留学への学生寮支援の利用状況、少なすぎる全国大会出場激励金の拡充、老朽化率70%のスポーツ施設と避難所となる体育館の耐震化を質して、歴史と特徴あるスポーツを生かした定住・地方創生をもっと打ち出すべきだと迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">住宅・建築物の耐震化の壁</span>
+          <span class="sum">耐震化された家屋も持続的な余震で倒壊した熊本の例から耐震基準見直しへの考えと耐震改修促進計画への反映を尋ね、旧基準の住宅約1,200戸以上が残ると推測して、年金暮らしの高齢者世帯が制度を使えない実態や耐震化率2、3割の店舗など特定建築物・老朽化した民間集合住宅の課題への考えをただし、長谷津団地など耐用年数間近の公営住宅の建てかえ前倒しと耐震診断の問い合わせ状況を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・原田貴与子</span>
+          <span class="ttl">保育所民営化への反対</span>
+          <span class="sum">公共施設の25%削減計画に保育所や学校を一律に当てはめるべきではないと述べ、公立保育所の運営費は基準財政需要額で措置されると国会答弁を引いて、赤江・城谷保育所の民営化の目的と今後の方向をただし、公的保育を守ることこそ市の仕事だとして、市民への説明もないまま進む認定こども園化・民営化に住民の意見反映の場を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">公共施設マネジメントは市長の決断で</span>
+          <span class="sum">公共施設等総合管理計画は将来の財政健全化に直結するとして、国が計画を求める裏には交付金削減の意図もあるのではと副市長の見解を尋ね、本来は総合計画より先に示されるべきだったと順序への違和感をただして、経常収支比率が100を超え単年度赤字を基金で補填する現実を踏まえ、統合や廃止も含む血の出る改革の方向性を市長自身が決断して示すのかと迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・嶋田豊昭</span>
+          <span class="ttl">公共施設管理計画の体制と開示</span>
+          <span class="sum">行財政改革推進室を設置して10月策定とされていた公共施設等総合管理計画について、全庁的な策定体制と今後の執行体制、市民と情報と問題意識を共有する情報開示の時期と方法を尋ね、耐震上問題のある施設や長寿命化が可能な施設は計画策定前に個々に方向を出すべきだとして検証状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・永田巳好</span>
+          <span class="ttl">公約の広瀬庁舎予算はなぜ出ない</span>
+          <span class="sum">公共施設等総合管理計画の事業に充てる庁舎等整備基金が10億円余りで足りるのかをただし、分庁方式を公約とした市長が就任以来8回の当初予算でいまだに老朽化した広瀬庁舎の予算を出さないのはマニフェストと予算の整合性を欠くと迫り、任期4年の4分の1が過ぎる今こそ本気で示すべきだと求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐々木厚子</span>
+          <span class="ttl">分庁への疑問と広瀬庁舎の行方</span>
+          <span class="sum">新庁舎ができるのになぜ広瀬・伯太庁舎に部署を残すのかという市民の声を届け、地域センター機能は残しつつも教育委員会や福祉などは本庁舎にあるべきで分庁は無駄が多いという自らの思いを率直にぶつけて、分庁方式を決断した市長の思いと総合庁舎化の考えの有無を確認し、老朽化し耐震化もされていない広瀬庁舎を建てかえるのか使い続けるのかをただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・澤田秀夫</span>
+          <span class="ttl">可燃ごみ処理と公共施設計画</span>
+          <span class="sum">当分の間現状どおりと決定された境港市の民間業者委託による可燃ごみ処理について平成30年度に向けた今後の方向性を尋ね、総面積25%削減を掲げる公共施設等総合管理計画の個別行動計画の進め方とスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">大型施設の活用と財政の出口</span>
+          <span class="sum">来年完成する新庁舎と総合文化ホールをまちづくりの道具としてどう使うのか市長の考えを尋ね、庁舎は効率化で人材を生み出し地域に出る機動性につなげるべきだと注文して、償還と管理運営費がふえる中で単年度収支をいつプラス・マイナス・ゼロに戻すのか、公共施設総合管理計画でめり張りをつけた統廃合を早く示すことが市民への財政責任だと市長に重ねて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・樋野智之</span>
+          <span class="ttl">施設評価に基づく総量縮減を</span>
+          <span class="sum">視察した前橋市の3段階の施設評価を紹介して、人口や財政規模から何%と大ざっぱに縮減率を出すことは断じてやめるよう求め、公共施設マネジメント担当の兼務2人がなぜ解消されたのか、この2年間の役割と今後の組織体制、10月策定の予定、総務省の試算を市に当てはめた将来更新費用を質して、技術者を含む複数の目で評価する資産経営の体制を副市長にただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・丸山征司</span>
+          <span class="ttl">植樹祭誘致と木育の循環型林業</span>
+          <span class="sum">西母里の中間土場周辺の林業振興の展望を尋ね、平成32年に島根県で開催される全国植樹祭をたたらの循環型林業をテーマに雲南市・奥出雲町と連携して誘致するよう意気込みをただし、合板加工など付加価値をつけて雇用を生む林産業への支援、公共施設への市産材利用、新生児に市産材の玩具を贈るウッドスタートによる木育を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・嶋田豊昭</span>
+          <span class="ttl">病院新改革プランと建物の決断</span>
+          <span class="sum">策定が始まった市立病院新改革プランについて前期改革プランの評価の概要と課題・策定の基本方針を尋ね、病院管理者としての市長の決意を求めて、老朽化と耐震の課題は耐震補強ではなく新築も含めた突っ込んだ検討をすべきだと迫り、月1回の経営者会議で黒字を続ける日南町の病院経営も紹介して行政と病院が一体となった取り組みを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・樋野智之</span>
+          <span class="ttl">総量25%削減の根拠と推進体制</span>
+          <span class="sum">長年提言してきたファシリティマネジメントの導入を評価しつつ、公共施設等総合管理計画について旧市町別の施設数・床面積や固定資産台帳の整備状況、施設総量25%削減の根拠、総務省の更新費用試算ソフトの活用を確認し、実践行動計画の策定時期と全職員研修、2、3人では機能しないとして首長直轄の独立した専任部署の確立と新地方公会計制度への対応を市長にただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・中島隆夫</span>
+          <span class="ttl">行財政改革と管理計画の決断権限</span>
+          <span class="sum">マニフェストに掲げた職員が働きやすい環境整備と事業の再点検・行政コスト削減・民間活力導入の具体策を尋ね、公共施設の約40%が老朽化する中で策定中の公共施設等総合管理計画について、厳しい決断を最終的に誰が行うのか権限が計画案に見当たらないと指摘して、専門知識を持つ人の手当てと、個別行動計画が基本方針と異なる場合の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・遠藤孝</span>
+          <span class="ttl">財政大丈夫の根拠を数字で</span>
+          <span class="sum">切川バイパスの進展と安来港飯島線の状況、総合文化ホールの指定管理料を追加しない確認と開館後の集客策を尋ねた上で、選挙で訴えた財政は安心の確かな根拠を数字で示せと迫り、赤字のピークと黒字転換の時期・その時点の基金残高、自由に使える財政調整・減債基金は約26億6,000万円しかなく特定目的基金の充当をどう考えるのか、中期財政計画と連動した公共施設の統廃合実施計画をいつ示すのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・樋野智之</span>
+          <span class="ttl">25%削減は将来構想とセットか</span>
+          <span class="sum">1人当たり延べ床面積7.78平米と全国平均の2倍を超える公共施設について、30年間25%削減の目標数値が将来人口3万人時代のまちづくり構想・施設機能配置と整合した上で導かれたのかを正面からただし、市長・副市長をトップとした全庁横断の推進組織、国の適正管理推進事業への対応と立地適正化計画、認定ファシリティマネジャー資格取得への支援体制と人材育成を重ねて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・原田貴与子</span>
+          <span class="ttl">25%削減より住民参加のまちづくり</span>
+          <span class="sum">公共施設等総合管理計画の25%削減目標にとらわれず人口ビジョンと地域発展の長期的視点に立つべきだと市長のまちづくりの理念をただし、経済効率でははかれない中山間地の福祉・教育施設に配慮した適正配置と民営化の基準を確認して、ホームページやパブリックコメントだけでは市民の声は反映されないとして、交流センターを拠点にした住民参加型の意思決定と職員の待遇改善を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・葉田茂美</span>
+          <span class="ttl">ほ場整備の推進と市営住宅</span>
+          <span class="sum">減反と直接支払交付金の廃止で米生産農家への影響が懸念される中、担い手育成に欠かせない大区画ほ場整備の今後の事業展開を計画地区も含めて確認し、未整備地区や計画のない地域の水田農業をどう展開するのかを重ねてただして、老朽化しバリアフリー化に対応できない長谷津団地など市営住宅の建てかえを含む整備計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・金山満輝</span>
+          <span class="ttl">インフラ老朽化と縮小の基準</span>
+          <span class="sum">東京を越える距離に及ぶ市道約1,000キロメートルの年間維持管理費と橋脚点検の進捗状況を確認し、身の丈に合った行政と言っても人口定住につながる道路投資まで否定はできないとして、公共施設やインフラを縮小する計画をどういった基準で判断しているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・石倉刻夷</span>
+          <span class="ttl">予算編成方針とヘリポート周知</span>
+          <span class="sum">4期目最初の質問として、底上げの4年間と位置づける3期目2年目の平成30年度予算編成の基本方針と病院事業会計など特別会計繰出金の考え方をただし、公共施設等総合管理計画で説明された能義・島田幼稚園の認定こども園移行の予算化を確認して、南部地域の議会報告会で出たドクターヘリのヘリポート基地の現状と住民周知を求め、登録4カ所・臨時41カ所という実態を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・澤田秀夫</span>
+          <span class="ttl">公立園の老朽化とふるさと教育</span>
+          <span class="sum">竣工後30年を超えた公立保育所・認定こども園の耐震対策と改修計画、男性保育士のトイレ・更衣室など就労環境の整備、城谷保育所を除く公立園の民営化を含む今後の方向性を確認し、地域行事参加の指標だけでははかれないふるさと教育推進への教育委員会の意気込みと、県が広げる高校魅力化事業への市の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・永田巳好</span>
+          <span class="ttl">広瀬庁舎と災害拠点の備え</span>
+          <span class="sum">公共施設等総合管理計画で建てかえとされながら時期未定の広瀬庁舎について細部の説明を求め、人口が半減しつつある現実を踏まえて分庁方式の方向転換も考慮すべきだと市長に迫り、災害時の拠点施設である広瀬中央交流センターがCランクで10年間手をつけない計画になっていることに納得できないと重ねて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐々木厚子</span>
+          <span class="ttl">老朽化した病院より建てかえを</span>
+          <span class="sum">地域包括ケアにおける市立病院の役割と新改革プラン1年での経営・医師確保の改善を確認した上で、耐震化もされず老朽化する建物に毎年繰入金を投入し続けるより、規模を小さくしても耐震化と最新設備を備えた病院に建てかえるほうがよいと自らの考えをぶつけ、民間病院と連携した安心できる医療体制への市長の決断を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・作野幸憲</span>
+          <span class="ttl">25%削減とスマート農業への挑戦</span>
+          <span class="sum">社人研推計では2045年に人口が約40%減るのに公共施設25%削減が妥当なのかとただし、市長が答弁したスピードアップのその後を確認して、農産物のブランド化への市の旗振りと、国が50億円で全国50カ所に整備するスマート農業実証農場の説明会に安来市から参加がなかった問題を突き、大規模ほ場を持つ安来こそ手を挙げるべきだと市のバックアップを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・向田聡</span>
+          <span class="ttl">ひきこもり支援の体制強化</span>
+          <span class="sum">子ども・若者支援事業の内容と相談窓口の件数推移、ひきこもりの人数の把握を確認し、アウトリーチから就労支援まで担う支援員の過重負担を心配して増員を求め、公共施設を利用しやすい町なかへの居場所づくりや学び直しの場の確保、市独自の子ども・若者支援地域協議会の設置を提案して、障害者週間の周知と市報での支援制度掲載の充実も求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・向田聡</span>
+          <span class="ttl">レッドゾーン1,071とため池</span>
+          <span class="sum">土砂災害警戒区域2,060カ所・特別警戒区域1,071カ所と、その中にある学校や交流センターなど公共施設15カ所を確認し、区域内の施設や住民への対応策と特別警戒区域の指定に向けた手順・秋からの説明会の丁寧な進め方をただして、農業用ため池349カ所のうち防災重点ため池13カ所の市民への周知をマップとあわせて工夫するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">予算編成と特別会計の方針</span>
+          <span class="sum">恒例となった新年度予算編成の基本方針を尋ね、基金ありきではなく公共施設等総合管理計画に基づき市民の理解を得て予算化する施設があるかをただし、中期財政計画に具体的に示されていない市立病院や上下水道など特別会計の現時点での基本的な考えを確認して、綾部市で声をかけられた全国水源の里シンポジウムの安来開催の検討を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・樋野智之</span>
+          <span class="ttl">公共施設削減とまちづくり</span>
+          <span class="sum">延べ床面積を30年かけて25%減らす公共施設等総合管理計画についてパブリックコメントが1件もなかったことを市民への説明不足と指摘し、市長の掲げるクラスター型コンパクトシティー構想との整合性と個別計画の具体的な進捗、施設群別に誰が責任を持ちいつまでに何をするのかを問うて、資産管理の専門部署の設置と内外からの人材登用を市長任期中のめどとあわせて求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・樋野智之</span>
+          <span class="ttl">奇跡の村に学ぶ住宅政策</span>
+          <span class="sum">市営住宅のストックと空き状況を旧市町別に確認し、長寿命化計画の進捗をただした上で、国の補助に頼らず村単独の若者向け住宅で全国有数の出生率を実現した長野県下條村の奇跡を詳しく紹介して、将来の財政負担にならない民間住宅借り上げ方式など、人口減少を食いとめる本市独自の住宅政策を検討すべきだと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・樋野智之</span>
+          <span class="ttl">富田山荘と誘客チーム</span>
+          <span class="sum">観光施設で富田山荘だけイエローバスが乗り入れていない問題を取り上げ、公共施設等管理計画と切り離して存続・改修の結論を早急に出すとした過去の答弁がいつの間にか計画に組み込まれた理由を市長に問い、係長が組織横断を担う誘客チームでは観光客目線の議論ができていないとして、チームの解散と権限ある人材を据えた新組織への再編を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・樋野智之</span>
+          <span class="ttl">第三者の検査部門を新設せよ</span>
+          <span class="sum">大阪北部地震のブロック塀倒壊事故は簡易な検査で防げなかったと指摘して、国の緊急調査で市の公共施設に欠陥の指摘がなかったか、土木・建築工事の検査体制マニュアルと資格を持つ検査担当職員の配置をただし、身内の検査ではなく現業部門ににらみを利かせる利害関係のない検査部門の立ち上げを、平成15年から検査課を置く松江市の視察を踏まえて来年度の組織改革での断行を市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・原瀬清正</span>
+          <span class="ttl">老朽化率70%のスポーツ施設</span>
+          <span class="sum">くにびき国体の会場として整備され老朽化率70%とされるスポーツ施設について、各施設の利用状況と築年数・老朽化の具体的状況、施設カルテの更新と安全面のふぐあいの把握・対応、根の張り出しや鉄骨腐食が見られる緑地の整備費用を順にただし、公共施設等総合管理計画に基づく改修計画の現状を確認して、重点的な予算措置への市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・佐々木厚子</span>
+          <span class="ttl">誘導マットと福祉タクシー</span>
+          <span class="sum">平成33年度に島根県視覚障害者福祉大会が安来で開催されることを機に、公共施設への誘導チャイムと歩行誘導マットの設置を提案し、福祉タクシーを担うタクシー会社と介助資格者の配置の実態をただして、資格者がいなければ運転しかできず使いづらいという利用者の声を届け、タクシー券助成の現状と災害時の視覚障がい者への訓練・福祉避難所の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・作野幸憲</span>
+          <span class="ttl">Aランク3施設の財源</span>
+          <span class="sum">公共施設等総合管理計画で建てかえの方向が示された市立病院・広瀬庁舎・鴨来荘の3施設について、当然発生する財政負担の財源の考えをただし、具体的な答弁がない中で取り崩し予定のない特定目的基金くらいしか見当たらないと指摘して、Aランクの個別行動計画は慎重にも慎重を重ねて判断するよう求め、子ども・子育て支援事業計画の特色ある新政策も質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・樋野智之</span>
+          <span class="ttl">FM公約とAランクの期限</span>
+          <span class="sum">公共施設等総合管理計画はまちづくり構想という胴体が見えないままではないかとパネルで指摘し、市長マニフェストのファシリティマネジメント導入で今年度が意思決定期限とされるAランク施設全ての進捗とB・Cランクの状況、複式簿記移行に向け資産評価が可能な施設数を問うて、国が準備する公共FMマイスター制度への採用の手挙げを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・澤田秀夫</span>
+          <span class="ttl">レッドゾーンと警戒レベル</span>
+          <span class="sum">老朽化ため池3カ所の廃止の進捗を確認し、市内1,071カ所の土砂災害特別警戒区域の指定時期が10月下旬となることと指定に伴う来年度からの新しい補助金制度、住民説明会での相談内容をただして、減災対策協議会の協議内容と市の目標、5段階の警戒レベル導入で市民がとるべき行動と災害対応マニュアルの変更点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・樋野智之</span>
+          <span class="ttl">公共施設A区分の個別計画停滞</span>
+          <span class="sum">30年間で111億円不足の試算から延べ床面積約6万4,000平米（アルテピア約9棟分）の25%削減を掲げる公共施設等総合管理計画で、3年以内に方向を出すはずのA区分約30施設の個別行動計画が所管部署から行革部門へ皆無である経緯の詳細な説明を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・中村健二</span>
+          <span class="ttl">夢ランドしらさぎとスポーツ振興</span>
+          <span class="sum">老朽化が進む夢ランドしらさぎ振興事業団の5施設の経営状況と課題・今後の方向性を尋ね、第2期スポーツ推進計画の取り組み状況と具体化の考え、広瀬中央公園総合体育館の耐震改修に続く体育施設整備やグラウンドゴルフ大会会場の確保、スサノオマジック安来大会・春高バレーの開催の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・向田聡</span>
+          <span class="ttl">市民参加のまちづくり</span>
+          <span class="sum">第2次総合計画前期基本計画の総括と後期への反映を問い、総床面積を30年で25%削減する公共施設等総合管理計画にはパブリックコメントがゼロだったとして、岩手県紫波町のオガールで住民ワークショップが合意形成の場になった視察経験を紹介し、市民の声が反映できる仕組みづくりと交流センター単位の地域自主組織の強化・行政の協働を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岡本早智雄</span>
+          <span class="ttl">空き家772戸とバンク44件</span>
+          <span class="sum">市内の空き家772戸に対し空き家バンク登録が44件にとどまる現状を確認し、空き家活用に踏み込んだ豊島区の条例や、空き家バンクと移住定住支援の組み合わせで198人が移住した兵庫県神河町の実例を詳しく紹介して、老朽化する前の利活用へ市民や事業者と対話しニーズを把握した安来市らしい施策展開を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原瀬清正</span>
+          <span class="ttl">第4次行政改革大綱を問う</span>
+          <span class="sum">第4次安来市行政改革大綱案について第3次との違いと重点の置きどころ、基金枯渇が迫る中での事業の取捨選択と優先順位を問い、難局を乗り切るための全職員の意思統一が図られているかをただして、公共施設の更新を計画どおり進められるのかと人口割合による配置バランス、人材育成とAI・RPA導入をどう並行させるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・樋野智之</span>
+          <span class="ttl">維持管理費10倍と無償貸与2件</span>
+          <span class="sum">3大事業の完成で維持管理費が建設前の3,500万円から3億5,960万円と10倍以上になったと示し、公共施設等総合管理計画に沿った議論のプロセスを経ずに市有建物を民間へ無償貸与した2件の経緯を詳しく質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・樋野智之</span>
+          <span class="ttl">障がい者減免と低速モビリティ</span>
+          <span class="sum">高齢者に優しい町は障がい者にも優しいとの視点から、敬老週間の公共施設無料開放の実施状況と、施設ごとに無償・2割・半額とばらばらな障がい者の入館料減免の統一を求め、交通空白地帯に住む高齢者の把握と支援をただして、雲南市が実証実験するヤマハの低速電動車両を月山富田城跡の城下町観光や交通難民対策に採用するよう提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岩崎勉</span>
+          <span class="ttl">鴨来荘と広瀬庁舎の行方</span>
+          <span class="sum">公共施設等総合管理計画のA・B区分の進捗を確認し、稼働率100%なのに耐震未実施の養護老人ホーム鴨来荘は現地建てかえが事実上不可能として長谷津団地の建てかえで生まれる跡地への新築を提案し、建てかえ方針だけで時期未定の広瀬庁舎のトイレ問題や志多町の冠水対策を挙げて、生活レベルで困る市民への早急な計画提示を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岩崎勉</span>
+          <span class="ttl">今後の財政運営と公共施設</span>
+          <span class="sum">「次の世代につなげる安来市」に象徴される今後の財政運営に対する考え方と見通し、民間活力も含めた市有施設のあり方を早急に検討する必要のある公共施設総合管理計画の考えを尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・足立喜信</span>
+          <span class="ttl">企業団地の先行投資を</span>
+          <span class="sum">会派創誠を代表し、得票が過半数に達していないことを認識した公平公正な市政を求めた上で、新市長のまちづくりの理念を問い、コロナや震災リスクで企業の地方移転の目が向く今こそ、自主財源を増やすため先行投資してでも企業団地造成に早期着手すべきだと迫って、公共施設全体の運営見直しと職員数の適正化、歴史文化教育を生かした観光振興への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岡本早智雄</span>
+          <span class="ttl">地財計画の新メニュー点検</span>
+          <span class="sum">令和3年度地方財政計画から、5か年へ延長・拡充された緊急防災・減災事業費と緊急しゅんせつ推進事業費の実績と実施予定、新設の地域デジタル社会推進費で目指す地域の姿、地域おこし協力隊のインターン制度や地域プロジェクトマネジャーなど地方回帰支援への取組を順に確認し、市立病院や公共施設・上下水道への経営・財務マネジメント強化アドバイザーの活用を促した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岩崎勉</span>
+          <span class="ttl">基金30億円の見通し</span>
+          <span class="sum">行財政改革を掲げて当選した田中市長に令和3年度当初予算の編成方針と考え方を問い、基金全体の残高が毎年15億円ほど取り崩され3年後には枯渇に近づく中で、選挙戦で明言した令和5年度末に基金残高30億円という目標の見通しをただし、分庁舎体制や公共施設等総合管理計画を着実に前進させるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・澤田秀夫</span>
+          <span class="ttl">基金30億円公約を問う</span>
+          <span class="sum">令和5年度の基金残高30億円を目指すと訴えた田中新市長に、中期財政計画の見通しとの差13億円を埋める具体的な改革と事業見直し、部局再編の考えを問い、公共施設等総合管理計画のA区分30施設を中心とした個別計画の見直しと公表が来年12月になることを確認して、基金の統廃合への考えと財政非常事態宣言を出す考えの有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・佐々木厚子</span>
+          <span class="ttl">夢ランド4施設の収支</span>
+          <span class="sum">夢ランドしらさぎ振興事業団が指定管理する各施設のここ3年の経営状況と累積収支を順に確認し、夢ランドのみ黒字で富田山荘は累積4,137万円余・湯田山荘は1,358万円余の赤字という実態を整理して、老朽化への長寿命化、設置目的と社会状況の乖離、公共施設の延べ床面積25%削減計画との整合という3つの視点から大胆な見直しを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岩崎勉</span>
+          <span class="ttl">広瀬庁舎と城下町のまちづくり</span>
+          <span class="sum">A区分で建て替え方針とされる老朽化した広瀬庁舎について、複数の施設の機能を集約した建て替えの検討価値を示し、今後の取り扱いと城下町広瀬のまちづくりへの見解を尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・樋野智之</span>
+          <span class="ttl">管理計画をまちづくり起点に</span>
+          <span class="sum">公共施設等総合管理計画が国の通知の留意事項に沿っているかを確かめ、1次・2次評価と総合評価の実績件数・面積・縮減コスト、アルテピアなど3大事業の維持管理費増を加えた計画修正をただして、A〜Cのランクづけをまちづくりの体系からの施設の在り方へ方向転換することと横ぐしの利く一元管理の組織を提案し、総務省の経営・財務マネジメント強化事業のアドバイザー採用は必要不可欠だと迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・三島静夫</span>
+          <span class="ttl">若者の働く場と起業教育</span>
+          <span class="sum">若者の働く場として今後どのような職種を増やすのかと取組を問い、情報科学高校がある強みを生かしたIT企業誘致の具体的な誘因や空き家・公共施設の利活用を確認して、企業立地奨励措置の新規雇用5人要件を緩和する議案との整合を市長にただし、義務教育での起業につながるキャリア教育の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・樋野智之</span>
+          <span class="ttl">FM開花とアドバイザー</span>
+          <span class="sum">12年間提唱し続けた公共施設マネジメントが、市長をトップとする公共施設利活用推進会議の設置と外部アドバイザーの招聘で動き出したことを長年の夢に光が差したと評価し、国の適正管理推進の制度を示して来年度以降の組織体制と進め方、総務省の支援終了後もアドバイザーと関わり続ける考え、当初予算1,000万円の執行状況と推進会議の開催状況を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・石倉刻夷</span>
+          <span class="ttl">あいサポートと終活条例</span>
+          <span class="sum">田中市長2年目の予算編成方針と公共施設等総合管理計画の実施状況を確認し、障がいを知り支えるあいサポート運動のサポーター・メッセンジャーが市に少ない現状を指摘して推進を求め、終活支援条例の全国の動きを紹介して交流センターなどお金をかけずに相談できる場づくりを提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・澤田秀夫</span>
+          <span class="ttl">公約1年と投票所の感染対策</span>
+          <span class="sum">就任1年を前に、基金残高30億円の公約への現在の受け止め、公共施設等総合管理計画の見直し状況、市立病院の方向性を示す上での課題と新改革プランの進捗を確認し、検討スピードが遅いと感じる小・中学校の適正配置、市外委託が続く可燃ごみ焼却処理施設、錦町交差点など道路の渋滞緩和策をただして、秋の選挙に向けた31投票所の感染防止対策と発熱者への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福井加代子</span>
+          <span class="ttl">和鋼博物館と切川バイパス</span>
+          <span class="sum">公共施設利活用推進会議の構成と令和3年度4回の議論・令和4年度の展開を確認し、和鋼博物館を文化・観光の拠点とする改修と文化協会の入居、加納美術館や安来節演芸館と結ぶ美術館巡りを歓迎して「砂の器」の福澤監督による安来のテレビドラマ制作を市長に提案し、切川バイパス周辺ではアルテピア周辺の新たな市街地形成の具体計画とスマートインターチェンジ設置への努力を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岡本早智雄</span>
+          <span class="ttl">地財計画と全部過疎</span>
+          <span class="sum">令和4年度地方財政計画から、5年延長された公共施設等適正管理推進事業費と脱炭素化事業の追加、公立病院経営強化の財政措置、災害対応ドローンなど消防防災力の強化、緊急しゅんせつ推進事業の実績と県管理河川への働きかけを順に確認し、4月から全部過疎地域となる経緯とメリット・デメリット、固定資産税の優遇も生かした今後のまちづくりへの市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・原田貴与子</span>
+          <span class="ttl">学校再編より施設改善を</span>
+          <span class="sum">学校施設長寿命化計画は教育環境の整備だと確認した上で、保護者や地域の議論がないまま小・中学校適正配置の検討を進めるのは強引だと指摘し、学校規模と教育効果に相関はないとして地域の意向を無視した再編をしないよう求めて、洋式トイレ化が10年後に50%という目標の前倒しと避難所となる体育館の空調整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・湯浅正志</span>
+          <span class="ttl">狭あい道路に補助制度を</span>
+          <span class="sum">2世帯住宅の新築でセットバックの費用と敷地の負担に悩む市民の声を紹介し、県内5市にある後退用地整備への助成制度を挙げて、若者が住み続けたくなるまちづくりや緊急車両の進入路確保への効果と問題点をただして制度の検討を求め、公共施設利活用推進会議の進捗と令和4年度の取組、水田収益強化の方針とスマート農業に向けた情報通信環境整備の進め方も質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・三島静夫</span>
+          <span class="ttl">病院は建て替えか改修か</span>
+          <span class="sum">経営改革の議論が進む市立病院について、施設の老朽化を踏まえて建て替えか改修かの方向性をただし、市長が公約に掲げた介護医療院の設置の考えも確認して、地域医療を守りながら健全経営につなげる道筋を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岩崎勉</span>
+          <span class="ttl">財政の現状と公共施設会議</span>
+          <span class="sum">財政の健全化を第一に掲げた田中市政の現在の財政状況と今後の見通しを尋ね、公共施設利活用推進会議の令和4年度の取組の考え方と、議員4期・議長3期を経験した市長の次世代につなげるまちづくりへの思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・原瀬清正</span>
+          <span class="ttl">eスポーツと凍結への備え</span>
+          <span class="sum">高齢者の心身への好影響を示す島根大学の研究も引いてeスポーツへの市の認識と交流センターなど公共施設の通信環境をただし、体験会や大会による地域活性化を提案して、平成28年に断水2,428世帯を出した給水管凍結被害を踏まえ、漏水発生時の復旧手順、公共施設や空き家の凍結対策、自治会・消防団との緊急時の連携、市民への予防周知を順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島静夫</span>
+          <span class="ttl">中山間の公共施設と光熱費高騰</span>
+          <span class="sum">金屋子神話民俗館の閉館や認定こども園の休園への心配を挙げ、中山間地域の地域づくりにおける公共施設の在り方への見解と、光熱費の値上がりが運営を圧迫する指定管理施設への今後の対応、若年層の文化芸術離れへの行政支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石倉刻夷</span>
+          <span class="ttl">予算編成と景観・フレイル</span>
+          <span class="sum">令和5年度の予算編成方針とコロナ第8波への国・県の指示、富田山荘の公募など公共施設の新たな取組を確認し、県内で制定が進む景観条例を市として検討しないかとただして、フレイル対策では西東京市の視察を踏まえた今後の方針と一般社団法人からの3,000万円の寄附の活用を問い、過去3か年の耕作放棄地の状況と農業委員会の取組も質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・佐々木厚子</span>
+          <span class="ttl">出生数と男性用トイレ配慮</span>
+          <span class="sum">過去5年の出生数の減少と出産・育児への市独自の支援策、国の伴走型相談支援への対応を確認し、9年連続で増える不登校の市内の状況と教育支援センターあすなろの取組をただして、前立腺がんの術後などで尿漏れパッドを使う男性のために、市内5か所にとどまる男性用個室トイレのサニタリーボックスを公共施設から広げ、民間にも周知するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島静夫</span>
+          <span class="ttl">市立病院建て替えの方針</span>
+          <span class="sum">老朽化が進み部分改修では根本的な解決に至らない市立病院について、建て替えの明確な方針を決めたのかを市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・清水保生</span>
+          <span class="ttl">演芸館と夢ランドの行方</span>
+          <span class="sum">携帯電話のサービスエリア内でも家の中では電波が入らない地域の把握と解消策、老朽化した市営住宅の建て替えで家賃が約1.8倍になる試算と複数団地の並行整備、小学校適正配置の会長私案と答申の位置づけを確認し、1年休館する安来節演芸館は指定管理者との協議経過を確かめて、安来節特化には無理があると外部専門家を入れた抜本的見直しを求め、夢ランドしらさぎには働く人の働きがいへの配慮を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・清水保生</span>
+          <span class="ttl">空き家バンク登録は1割</span>
+          <span class="sum">定住対策の鍵となる空き家について市の把握方法と空き家バンクへの登録が把握数の1割程度にとどまる現状、物件の状態をただし、老朽化する前の早めの登録への働きかけと、ホームページ中心の受け身でない攻めの情報提供、地域に見合ったターゲットを絞る定住戦略や市独自の優遇措置の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・内田卓実</span>
+          <span class="ttl">AEDを使える人を増やす</span>
+          <span class="sum">島根県総合防災訓練や避難所開設訓練に参加した経験を語り、市が把握するAEDが142施設174台に増えた設置状況と設置の考え方、公共施設での購入費用やリース、点検・メンテナンスの実施を順に確かめ、心停止から救急車到着までの約10分をつなぐには講習を重ねてAEDを使える市民を増やすことが大切だと訓練の充実を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・向田聡</span>
+          <span class="ttl">マイナ保険証と原発を問う</span>
+          <span class="sum">マイナンバーカードの市内のトラブルと返納の実態、総点検の対象かどうかを確かめ、子供の医療費助成は紙の医療証でしか対応できない現状を明らかにして健康保険証の存続と運用の一旦停止を市長に迫り、再エネ地産地消ビジョンでは公共施設29施設への導入計画とマイクロ水力や地域新電力の検討を確認して、島根原発1号機廃止措置計画の延長内容と2号機再稼働撤回への市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・飯橋由久</span>
+          <span class="ttl">公共施設マネジメントの取組</span>
+          <span class="sum">公共施設利活用推進会議による令和6年度の様々な取組について、主な計画の事業概要の説明を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三島静夫</span>
+          <span class="ttl">図書館・交流センター・雨漏り</span>
+          <span class="sum">3図書館の蔵書購入費と選書基準、ひろせ図書室の複合施設への改修の進捗を確認し、交流センターを核とした地域づくり報告書が掲げる人的・財政的支援と部署連携の3本柱の取組をただして小規模館の主事増員や館長確保を重ねて求め、公共施設の約1割・27施設で雨漏りが確認され19施設が未修繕である現状を明らかにして、保証期間内の施設は業者に原因究明と修繕を求めるよう迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・清水保生</span>
+          <span class="ttl">市立病院本体の方向性</span>
+          <span class="sum">経営強化プランが耐震性に問題があり雨漏りも発生する老朽化した病院本体に言及していないと指摘し、市内医療機関との協議の経過と医療法人からの救急医療に関する要望書の受け止めを尋ね、地域医療構想の策定に当たって市立病院そのものの方向性だけでも先に示すよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・葉田茂美</span>
+          <span class="ttl">施設の安全と災害ごみ</span>
+          <span class="sum">子供たちが安心して過ごせるよう小・中学校と認定こども園の安全点検の方法、老朽化対策の進め方、台風の強風に備えた敷地内の危険樹木への対策を順に確認し、能登半島地震で課題となった災害廃棄物について、市の処理計画に基づく仮置場の確保や県・周辺自治体との応援体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・原瀬清正</span>
+          <span class="ttl">施設削減5.1%の現在地</span>
+          <span class="sum">公共施設の延べ床面積25%削減という目標に対し進捗が5.1%見込みにとどまる現状を確かめ、売却・転用の庁内検討や予防保全、効率的な管理運営の具体策をただして、富田山荘・上の台緑の村・安来節演芸館・広瀬中央交流センターの経過とスケジュールを整理させ、休止したまま何年も検討が続く施設には空白期間をつくらない速やかな判断を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・原瀬清正</span>
+          <span class="ttl">温暖化13%目標と下水道</span>
+          <span class="sum">第2次地球温暖化対策実行計画について、県より低い13%以上とした削減目標の考え方と昨年度の取組実績、意識調査の活用、地域協議会との連携、繰り返し行う市民啓発を順にただし、下水道事業では使用料収入と老朽化の現状、集落排水の統廃合など施設の適正化、企業会計化のメリット、災害にも対応できる人員確保と県との連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・作野幸憲</span>
+          <span class="ttl">スポーツ拠点とスケートボード場</span>
+          <span class="sum">老朽化が深刻な市内スポーツ施設について、インターハイ・国スポ・全スポに向けた整備と今後の整備計画を尋ね、近隣市で進むスケートボードを楽しめる場所を市として整備する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原瀬清正</span>
+          <span class="ttl">公共交通と公共施設の将来</span>
+          <span class="sum">好評だったあいのりタクシーを二種免許不要の仕組みへ拡大することも踏まえた公共交通の利便性向上の課題と将来像を尋ね、施設総量25%削減を進める一方で和田南や切川の開発で世帯数が増える地区への公共施設の在り方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・岩崎勉</span>
+          <span class="ttl">公共施設と10年20年先の展望</span>
+          <span class="sum">令和5年度の公共施設等総合管理計画の取組成果と大学准教授をアドバイザーに迎えた経営・財務マネジメント強化事業の成果、令和6年度の適正化の取組を確かめ、人口社会増の政策的アプローチと子どもたちが安来に愛着を持って住み続ける方策を問い、合併20周年を迎える年の市長に10年20年先への展望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原瀬清正</span>
+          <span class="ttl">公共施設と消防防災施設</span>
+          <span class="sum">公共施設マネジメントの削減実績（令和5年度末5.1%）と推進状況、広瀬庁舎敷地に整備する広瀬交流センター・図書館機能の複合施設の概要と今年度の計画、今後の複合施設の考え方を確かめ、防災施設の整備状況、老朽化した消防施設・設備の更新、中山間地域・洪水浸水想定区域・人口密集地域それぞれの避難方法と機材準備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三原哲郎</span>
+          <span class="ttl">公共施設マネジメント</span>
+          <span class="sum">公共建築物の施設数・棟数の推移と削減目標25%の根拠およびさらなる削減率見直しへの見解、年間3,280万円の借地料の状況、耐震化未実施の建物と今後の予定、旧奥野邸と広瀬町民会館の活用状況、民俗資料収蔵庫の保管・公開と移転計画、学童保育の待機児童解消への休園こども園の活用を確かめ、鉄骨のさびが目立つ広瀬バスターミナルの複合施設計画と合わせた移転整備を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉刻夷</span>
+          <span class="ttl">公共施設計画と携帯不感世帯</span>
+          <span class="sum">公共施設等総合管理計画の目標と実績を具体的な事例で説明するよう求めて今後の方針を尋ね、市内に残る携帯電話が利用できない世帯の実態と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・向田聡</span>
+          <span class="ttl">再エネ・通学路・給食無償化</span>
+          <span class="sum">再エネ地産地消ビジョンの公共施設への率先導入と安来らしいビジネスモデル・地域振興の検討状況、住民意思が反映される再エネ条例の在り方を確かめ、出雲市の照明灯倒壊事故を受けた点検状況と通学路の横断歩道・区画線の整備、道路照明灯の設置基準を質した上で、学校給食費値上げ（令和7年度は小学校1食26円・中学校34円）の算定根拠を問い、県の米価上昇分支援の活用による値上げ幅見直しと、第3子無償化など段階的無償化の検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・岡本早智雄</span>
+          <span class="ttl">地方財政計画への市の対応</span>
+          <span class="sum">令和7年度地方財政計画をめぐり、103万円の壁見直しに伴う税制改正の市民と市財政への影響、臨時財政対策債の発行ゼロの評価、デジタル活用推進事業債の導入と効果、公共施設の集約化・複合化への財政支援の活用、緊急浚渫推進事業費の延長と農業用排水路への拡充、水道等防災対策の推進、公立病院の資金繰り支援による市立病院の短期借入金の長期借入れへの移行、76年ぶりに改善された保育士配置基準への対応状況を順に確かめ、有利な財源を機を逸せず活用するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島静夫</span>
+          <span class="ttl">安来節を活用したまちづくり</span>
+          <span class="sum">安来節保存会の財政悪化への支援方針を会長である田中市長に確かめ、全国53支部と連携した魅力発信やネオ安来節の波及、学校での安来節学習の狙い、公共施設の電話保留音や屋外放送での安来節活用、桜まつり会場（社日公園）の手すり整備、県無形民俗文化財指定への取組、初代渡部お糸の誕生日にちなんだ「安来節の日」制定を順に提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・澤田秀夫</span>
+          <span class="ttl">市民プール</span>
+          <span class="sum">小学校プールの老朽化に伴い市民プールで水泳授業を行う学校数（6校）と自校プールの使用期限の見通し、高齢者の健康増進としての利用状況、市民プールの増設・更新時期の考えを確かめ、県立施設が市内にない現状を挙げて新たなプール建設への県要望の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原瀬清正</span>
+          <span class="ttl">市立病院の将来像と老朽化</span>
+          <span class="sum">市長が描く未来予想図として、地域医療提供体制と市立病院の10年後の予想図とそのための5年後の姿、老朽化が進行する現状の対策の考え方を尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・飯橋由久</span>
+          <span class="ttl">市長選出馬の決意</span>
+          <span class="sum">10月の市長選挙への出馬を表明した田中市長に、政治家としての信念、就任以来最も力を注いだこと、公共施設マネジメントの取組、将来の発展構想、医療・福祉の充実、小中学校適正配置の重要性、国際交流と産業振興、選挙に臨む意気込みを順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・岡本早智雄</span>
+          <span class="ttl">財政健全化4年間の検証</span>
+          <span class="sum">田中市長の公約である財政健全化について、基金残高の確保（令和5年度末約50億円で公約30億円を達成）、総額11億5,000万円余の繰上償還による公債費負担の平準化、サマーレビュー等の事務事業見直し（一般財源2億3,000万円程度の抑制）、公共施設マネジメントの4つの取組の経過と成果を順に検証し、物価高騰への国・県への働きかけと令和9年度末にも基金30億円を確保するという今後の目標を市長に確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉刻夷</span>
+          <span class="ttl">予算編成と公共施設の行方</span>
+          <span class="sum">農政会議の推薦を受けた立場から令和8年度予算編成方針を確かめ、公共施設等総合管理計画で検討対象となった夢ランドしらさぎ・ふれあいプラザの検討状況と富田山荘の利活用の現状を質し、2027年開業予定のビジネスホテルと連携した活用の可能性を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・向田聡</span>
+          <span class="ttl">体育館空調と貧困対策</span>
+          <span class="sum">学校体育館の空調設置率が市内ゼロ（全国平均22.7%・県平均12.0%）である現状を示して臨時特例交付金を活用した年次的整備と長寿命化計画への位置づけを求め、夏休み中に給食のない困窮世帯の子どもの食生活の実態把握、フードバンク支援の実施状況、松江市の「あったか元気便」を例に学校と福祉が連携して食料を届ける仕組みの強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・原瀬清正</span>
+          <span class="ttl">公共施設使用料の見直し</span>
+          <span class="sum">令和8年4月の改定に向けて検討が進む公共施設使用料について、受益者負担の適正化を踏まえた改定の考え方、近隣自治体の見直し状況と具体的な改定方法・進捗、想定される市民サービスへの影響、タイムスケジュールと周知方法を順に確かめた。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">166件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・曽田盛雄</span>
+          <span class="ttl">公共施設の耐震と防災</span>
+          <span class="sum">本庁舎と同様に老朽化が激しい平田支所庁舎と消防庁舎の早急な整備への所見、公民館等の耐震強度の状況、平田小学校と旭丘中学校の改築と耐震補強の計画および調査で不適格となった場合の対処、災害情報の伝達方法と避難場所と防災無線の導入時期、防災ネットワークの年次計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・米山広志</span>
+          <span class="ttl">大型公共施設の維持管理</span>
+          <span class="sum">１７年度予算の大型公共施設の維持管理費の総額と利用収入及び一般財源の負担額を尋ね、古代出雲王墓館やタラソテラピー、出雲阿国座それぞれの予想される維持管理費と利用料収入と負担額、類似施設が共倒れにならず並立できるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・高野成俊</span>
+          <span class="ttl">大型施設と合併特例債</span>
+          <span class="sum">新庁舎や出雲弥生博物館、大社の阿國座といった大型施設は建設費に加えて必ず維持管理経費が伴うとして将来にツケを回すことなく建設が可能なのかを尋ね、老朽化が著しい学校や幼稚園、公民館の建替えと修繕の年次計画、合併特例債はどのような事業に充てることができるものなのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・遠藤力一</span>
+          <span class="ttl">学校と公共施設の禁煙</span>
+          <span class="sum">国が推進する国民健康づくり運動でたばこ対策が大きな柱となっており子どもの健康を煙から守らねばならないとして、学校における禁煙教育など禁煙プロジェクトの推進実態と効果を尋ね、公共施設内禁煙および学校敷地内全面禁煙をすぐに実行することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・曽田盛雄</span>
+          <span class="ttl">学校給食と食育の推進</span>
+          <span class="sum">老朽化した平田と大社の学校給食センターの再編改築について場所と規模の考え方を尋ね、全国で二例目となる食育のまちづくり条例を制定した本市で学校給食の地場産の食材をどのくらい確保できるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・遠藤力一</span>
+          <span class="ttl">情報化の推進体制</span>
+          <span class="sum">公共施設の申し込みや庁内文書のやりとり、ホームページなどのＩＴ化の推進について、適正な予算配分と人員配置になっているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・曽田盛雄</span>
+          <span class="ttl">農業用水と排水機場の整備</span>
+          <span class="sum">向こう１０年間で１７６億円を投じる斐伊川沿岸地区の国営農業用水再編対策事業について下流から着手する具体的な計画と順番を尋ね、低水位地帯の治水と転作作物のための排水機場の整備、市が把握しているため池の数と現況、農家が老朽化したため池の改修を計画したときの支援対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・勝部順子</span>
+          <span class="ttl">マタニティマークの活用</span>
+          <span class="sum">厚生労働省が公募で全国統一に定めたマタニティマークについて、公共施設へのポスターの掲示や母子手帳の申請にあわせたキーホルダーの配布などを挙げ、妊産婦に優しい環境づくりの推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・高野成俊</span>
+          <span class="ttl">公債費の許容水準</span>
+          <span class="sum">新庁舎や阿國座、出雲弥生博物館、大社門前町整備といった投資的事業に加えて老朽化した学校の改修など急がれる事業も山積する中で、厳しい時期を乗り切れるのはいつなのか、今後の事業を策定するうえで公債費をどの程度まで許容できると考えているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・古福康雅</span>
+          <span class="ttl">大社給食センターの老朽化</span>
+          <span class="sum">昭和４５年建設で築後３７年が経過し老朽化が甚だしい大社の学校給食センターについて、安全面と衛生面から放置できない現状にあるとして、配送時間や児童・生徒数の増加を含めた配送学校の再編など早急な検討と方針の決定を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・曽田盛雄</span>
+          <span class="ttl">市道と道路施設の修繕</span>
+          <span class="sum">老朽化した標識やカーブミラーの倒壊で損害賠償の専決処分が生じていることを踏まえ、道路標識やカーブミラー、掲示板、市が設置した防犯灯の数とそれぞれの耐用年数や老朽化を把握できているか、市道の舗装修繕で道路の種類や幅、場所や地域によって対応に格差があるか、暖冬で残った除雪対策の経常予算を道路の施設修繕に充てられないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・山根貞守</span>
+          <span class="ttl">県立湖陵病院の跡地利用</span>
+          <span class="sum">平成二十年に移転し施設が解体撤去される県立湖陵病院の約五ヘクタールの跡地について、グランドデザイン計画で民間開発による宅地分譲や海洋観光資源活用エリアと位置付けられていることを踏まえ、地元の代表者も参画する検討会議を立ち上げる考えがあるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・山代裕始</span>
+          <span class="ttl">総合医療センターの再編</span>
+          <span class="sum">運動と食育による健康増進で新たに配置する健康づくり推進員の活動の概要を尋ね、１２年連続の赤字が確定的となった市立総合医療センターについて医師・看護師不足と建物の老朽化を踏まえた施設整備と病院機能、経営形態の見直しとスケジュールの基本方針、健康福祉拠点施設の整備の概要を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・西尾敬</span>
+          <span class="ttl">平田の学校整備と給食</span>
+          <span class="sum">平田幼稚園の改築とこれに関連する小規模な小学校の整備が真剣に検討されているのか、旭丘中学校の改築に伴う中学校の校区の検討状況、小学校の大規模改修の内容と時期、老朽化が著しく食中毒の事故が起きても不思議でないと言われる平田と大社の給食センターの改築の具体策を尋ね、合併を機に学校の統合を進めるべきだとして教育長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・広戸恭一</span>
+          <span class="ttl">水田の用排水路と揚水機</span>
+          <span class="sum">老朽化した水田の用排水路や揚水機の破損と倒壊が稲作栽培への悪影響と無駄な管理労力を生んでいるとして、その補修と改修に対する国と県と市それぞれの助成の考え方と具体的な補助制度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・米山広志</span>
+          <span class="ttl">湖陵病院跡地の活用</span>
+          <span class="sum">こころの医療センターとして下古志町へ移転する県立湖陵病院について、現病院の解体撤去の予定、地元大池地区が要望している簡易水道問題への県の対応、約５ヘクタールある跡地の利用計画を現在県とどのように協議しているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・多久和康司</span>
+          <span class="ttl">環境保全とごみ減量化</span>
+          <span class="sum">出雲市地域省エネビジョンに基づき立ち上げる出雲市環境保全推進協議会の役割と取り組みを尋ね、小中学校など公共施設でのグリーンカーテンや芝を植える取り組みと、旧出雲市で行われたごみ座談会のように職員が各地域へ出向いて減量化と資源化を継続して働きかけることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・多久和康司</span>
+          <span class="ttl">生活道路と公共交通</span>
+          <span class="sum">3カ年計画でA判定分が整備される生活道路と排水路についてB判定やC判定として漏れた部分への考え方と、老朽化が進む道路橋の点検を含めた改良整備の方針、9号バイパスの開通や新庁舎とゆめタウンの開業を踏まえた公共交通ネットワークの構築を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・牛尾尚義</span>
+          <span class="ttl">神西のマツ枯れ対策</span>
+          <span class="sum">神西地区の２００ヘクタールの市有林で長年続けてきた空中散布を今年中止した理由と判断、中止は今年だけのことかこのままやめるのか、中止によって進むマツ枯れに対して空散のほかにマツを守る対策はあるのか、枯れる前に新庁舎や総合医療センターなど今後の公共施設へ地元産のマツ材を活用することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・川上幸博</span>
+          <span class="ttl">公共施設の修繕計画</span>
+          <span class="sum">市が管理する建物の年間修繕費と、全施設内の指定管理施設数と指定管理料を尋ね、建物劣化度実態調査と施設修繕計画の策定状況を問い、修繕費を中期財政計画に反映して単年度に偏らないようにすることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・松村豪人</span>
+          <span class="ttl">公立保育所の民営化</span>
+          <span class="sum">平田保育所と大社保育所の民営化に保護者の不安があるとして、民営化後の保育所と行政のかかわり、園舎の新築や老朽化による改修が必要となった場合の制度、送迎や緊急時に保護者を支える制度と民営化後の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・長廻利行</span>
+          <span class="ttl">大社保育所の民営化</span>
+          <span class="sum">民営化する大社保育所について、市内で長年の経験のある法人が望ましいとして移管先法人の選定の基本的な考え方を尋ね、損傷の著しい備品や老朽化した施設の整備を市が担い法人の過度の負担を避けることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・山代裕始</span>
+          <span class="ttl">消防受委託と消防団</span>
+          <span class="sum">契約の無期限延長を求める斐川町からの要望を踏まえた救急消防業務の受委託への考え、老朽化した平田と大社の消防署の庁舎整備計画、小型ポンプへの積載車配備による機動化と消防コミュニティセンターの設置計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・曽田盛雄</span>
+          <span class="ttl">用排水と老朽ため池</span>
+          <span class="sum">治水上問題があり排水ができない農地の数と場所の把握、砂防指定地の数と30年以上未着工の危険箇所と県との整備方針を尋ね、ため池の総数と老朽化や漏水で修繕が必要な箇所、工事負担の割合と地元負担の軽減を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・坂根守</span>
+          <span class="ttl">緊急情報伝達システム整備</span>
+          <span class="sum">多伎・湖陵・佐田の防災行政無線の老朽化と故障を挙げて全市統一の防災行政無線を整備する時期を尋ね、全国瞬時警報システムの整備計画の有無と時期、これらに合併特例債を充てられるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・遠藤力一</span>
+          <span class="ttl">赤ちゃんの駅の設置</span>
+          <span class="sum">乳幼児を連れた外出でおむつ換えや授乳の場所に困る声があるとして、市の公共施設のベビーベッドや授乳施設の整備状況を尋ね、板橋区などの例に倣い公共施設に赤ちゃんの駅を設置することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・広戸恭一</span>
+          <span class="ttl">コミセン整備の促進</span>
+          <span class="sum">国が１０分の１０または１０分の９を負担する有利な交付金を使い、老朽化や手狭で活動に支障のあるコミュニティセンターを一度に三、四か所整備すれば地域経済の活性化にもつながるとして、選択と集中の考えに照らした整備の促進を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・萬代弘美</span>
+          <span class="ttl">公共施設の整備と運営</span>
+          <span class="sum">福祉フェスティバルで盲導犬コーナーが屋外の利用やブルーシートの使用を指導された一連の対応への考えを尋ね、文化やスポーツ施設での障がい者割引の実施、一年前から生じる利用料のキャンセル料の見直し、鰐淵寺での駐車場から山門までの輸送支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・飯塚俊之</span>
+          <span class="ttl">公的不動産の一元管理</span>
+          <span class="sum">現在の公的不動産の管理状況と利活用の方針、統合整理の方針、一元管理の必要性を問い、資産・債務改革の具体的な施策の進捗と中期財政計画への反映、廃校舎の転用や命名権など多様な手法の活用、老朽化を判断する指標や基準を市民とも共有できる形で示すことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・木佐宏</span>
+          <span class="ttl">平田地域の公共施設建設</span>
+          <span class="sum">平田の幼稚園は現地建て替えではなく国富コミュニティセンター周辺への分割移転が送り迎えの利便性と伝染性疾患のリスク分散、駐車場と安価な用地の確保の面で優れると述べ、平田小学校の放課後児童クラブの校庭への建設中止と平田消防署の移転用地をめぐる情報の是非を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・西村亮</span>
+          <span class="ttl">支所と消防署の改築</span>
+          <span class="sum">老朽化が進み震度五程度の地震で崩壊すれば緊急車両が自ら被災しかねない平田と大社の消防庁舎を今年度から順次改築することと、築五十五年を経て年間四万五千人から五万人が訪れる平田支所および大社支所の整備計画を早急に検討するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・米山広志</span>
+          <span class="ttl">消防庁舎の改築計画</span>
+          <span class="sum">昭和四十年代に竣工した平田消防署と大社消防署、西部分署の三施設の耐震度と改築計画を問い、特に老朽化した平田消防署の車庫が地震のときに出動できるのか、耐震化の調査や補強の考えはあるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・広戸恭一</span>
+          <span class="ttl">用水路改修の農家負担</span>
+          <span class="sum">土地改良事業で整備された用水路が市の財産であるならば農家に個人負担を求めず市が全額を持つべきではないかを問い、支線の老朽化と漏水が畑作への転換を妨げているとして、農家負担が六・七％で済む農地有効利用支援整備事業を関係者へ周知し活用することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・曽田盛雄</span>
+          <span class="ttl">防災と交通の危険箇所</span>
+          <span class="sum">国道九号以外の国県道で交通量が多く危険度が高い狭あいな交差点を十五から二十か所調査把握しているのかを尋ね、国道四三一号の玉木園芸付近の交差点拡幅と東部中学校に向かう道路の交通対策、老朽化した外島大橋を含む低地帯の水害と防災への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・荒木孝</span>
+          <span class="ttl">佐田中学校の改築計画</span>
+          <span class="sum">昭和38年の竣工から47年が経過し老朽化した佐田中学校について平成23年度以降の計画と財源と基本計画を誰がどのような手順と方法で決めていくのかと新市に引き継がれた佐田中学校建設基本構想をどう生かすのかを尋ね教科教室型の佐田方式の採否と地元産木材を用いた木造建築での整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・多久和康司</span>
+          <span class="ttl">公共施設の維持管理</span>
+          <span class="sum">多くの公共施設について将来の維持管理のあり方をどのように考えているのかと、各地にある施設は地区の住民にとって必要なもので老朽化に伴う再配置計画も必要となるがどのように乗り越えていくのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・山根貞守</span>
+          <span class="ttl">大工と左官業への発注</span>
+          <span class="sum">平成二十一年度に市が発注した工事のうち地元の大工や左官業の方が施工可能な件数と事業費、実際に発注した件数と事業費、公共施設工事への参加を希望する大工や左官の実態把握を尋ね、技術の継承と後継者育成に向けて入札への参加や仕様書への明記など支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・西村亮</span>
+          <span class="ttl">学校施設整備の現状</span>
+          <span class="sum">小学校のトイレの老朽化や男女共用の状況の改善と耐震構造対策の現状と今後の取り組みと通学路の防犯灯の設置状況やこれまでの要望への対応と自転車通学を含む交通安全対策と癒やし効果があるとされる木材の活用と小学校の外国語教育のモデル実施や学力への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・板倉一郎</span>
+          <span class="ttl">建物の耐震化の推進</span>
+          <span class="sum">公共施設の耐震化の調査状況と改修状況、一般住宅と商業施設の耐震化が必要な戸数と耐震化済みの戸数を尋ね、島根県が創設する木造住宅耐震診断士認定制度の概要と目的、耐震診断の助成状況と耐震改修への助成制度の創設や住宅リフォーム助成対象工事への追加、今後の耐震診断の普及への取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・飯塚俊之</span>
+          <span class="ttl">排水機の維持管理</span>
+          <span class="sum">施行主体を問わず老朽化したものも多く見受けられる排水機について本市における整備状況と維持管理の状況を尋ね、仮に排水機が稼働しなかったときに農作物等に与える被害をどのように考えているのかと、今後の設備更新や維持管理に対する方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・板倉一郎</span>
+          <span class="ttl">行財政改革と公共施設</span>
+          <span class="sum">住民に負担を求める前に行政自らが率先して改革する姿勢と具体的な取り組みを示すべきだとして行財政改革の決意を尋ね、市が管理する公共施設の数と今後十年間の維持管理費の推計、温水利用施設などの民間移譲、新たに施設を新設する計画の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・曽田盛雄</span>
+          <span class="ttl">農業基盤整備と除草</span>
+          <span class="sum">農業用水及び排水路の各地区からの整備要望の現状と数の把握および老朽化した堰止めや排水ポンプへの基本的な考えを尋ね、国道県道市道の法面や河川堤防など官地の除草の区分と役割分担、雑木や竹も含めた病害虫被害防止と環境対策の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・萬代輝正</span>
+          <span class="ttl">スポーツ施設整備の方針</span>
+          <span class="sum">老朽化した平田の体育館と出雲体育館を今後どう考えるのかとこれまでどのような検討がされたのか、松江市や浜田市が整備している人工芝グラウンドの検討、スポーツツーリズムの推進、スポーツ行政と観光の連携をとれる戦略室の新設を尋ね、湖遊館の改修だけが先行して進んだ経緯と女子スポーツへの支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">原発と自然エネルギー</span>
+          <span class="sum">老朽化する１号機の廃炉や２号機のプルサーマル計画に市長が言及しない理由と市民の代表としての政治的メッセージの必要性、住民説明会で社員や関連会社に参加を要請した中国電力への抗議、島根原発で適正な運転が行われ安全管理体制が適切と言えるかを尋ね、国と中国電力に原発からの撤退の決断を要求することと、小規模な太陽光や風力や小水力による自然エネルギーの普及を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">原発の停止と撤退の要請</span>
+          <span class="sum">中国電力がすべての原発を停止させながら関西電力へ融通するほどの余力があるという事実を認めるかを尋ね、老朽化した１号機の即時廃炉と２号機のプルサーマル計画の中止と３号機を稼働させないことを意味する撤退を中国電力に要請すること、島根原発の稼働やプルサーマル計画に県民と市民の声を反映させることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・曽田盛雄</span>
+          <span class="ttl">合併後の農業振興の方針</span>
+          <span class="sum">１０月１日の斐川町との合併後の出雲市農業の振興について、当分の間は斐川町と出雲市の現状を維持する考えかと見直すべき点をどこと認識しているかを尋ね、乾田化した稲作に野菜など付加価値を加える方向についての部長と市長の基本的な考え方、農地・水環境保全の交付金や長寿命化対策の末端の関係者への説明の時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・川上幸博</span>
+          <span class="ttl">学校施設と相談室の整備</span>
+          <span class="sum">耐震指標値では早急な補強を要しないが老朽化した校舎とプールについて今後の施設整備を年度を示して尋ね、小学校のランチルームの活用状況と児童への効果と今後の設置方針、各校の相談室とカウンセリングルームの設置状況、臨床心理士などのカウンセラーの配置状況と市単独での常時配置の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・井上惠夫</span>
+          <span class="ttl">斐川の学校給食センター</span>
+          <span class="sum">旧平田市で計画された給食センターに斐川町の給食が含まれているかを尋ね、老朽化と地盤沈下が進み給食用の米を専属でつくる営農組合を抱え地産地消と将来の農業者育成の役割を担う斐川給食センターについて、斐川町内への設置と建て替えの時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・狩野正文</span>
+          <span class="ttl">新エネルギーと農業振興</span>
+          <span class="sum">メガソーラーや中小水力発電やバイオマスなど新エネルギーの利活用について企業誘致か市が電力供給事業者として参入するのか公共施設の光熱費軽減か商工や農林水産事業者への促進かという事業主体の考え方を尋ね、出雲と斐川を一体とする農業振興地域整備計画の取り組みの中身、耕作放棄地の環境整備にあたる作業員への人件費助成、傷む前の用排水の掃除や草の除去への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・曽田盛雄</span>
+          <span class="ttl">用排水路とポンプの改修</span>
+          <span class="sum">老朽化している用排水路の整備改修の要望箇所数と延長数および工事見積積算額、揚排水ポンプの数と運転の実態および電気代などの負担のあり方、耐用年数を過ぎたポンプが数多くある中での改修の実施計画と予算措置と順番を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・萬代輝正</span>
+          <span class="ttl">スポーツ振興の施設整備</span>
+          <span class="sum">出雲市スポーツ振興ビジョンの答申を踏まえ、老朽化した出雲・平田体育館を統合した大規模体育館の整備の考え方、人工芝サッカー場の整備に向けた活用方法の具体策、２か所あるプールの今後の方向性、県立浜山球場の整備に向けた県の動きを尋ね、全国のリーグと戦えるチームとして女子サッカーを支援する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・直良昌幸</span>
+          <span class="ttl">公共施設情報の一元管理</span>
+          <span class="sum">市の財政運営の改善と行政マネジメントの転換に向けて公共施設の情報を一元的に管理すべきだとして、１０４施設を外部委託している指定管理者制度の反省点を尋ね、温浴保養施設１１か所の民間移譲や資産の売却によるコンパクト化と包括外部監査の指摘への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・木佐宏</span>
+          <span class="ttl">市営住宅の建て替え方針</span>
+          <span class="sum">財政事情が北海道夕張市と同等の危機的現実にあるとされながら市営直江東住宅建替事業６世帯に１億１千万円を当初予算計上したことに危機感がないとして、向こう４年間に老朽化で建て替えを迫られる市営住宅の実態を尋ね、松江市のように新設をやめ民間の空き物件を借り上げる手法への転換を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・小村吉一</span>
+          <span class="ttl">本陣記念館の障がい者配慮</span>
+          <span class="sum">平田本陣記念館で障がいのある方が入場する際の配慮と対策を尋ね、自動車椅子での入場を可能とすることや障がい者用入り口の表示と開閉の自動化、他の公共施設も含めた障がい者用駐車場表示などの再点検を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・直良昌幸</span>
+          <span class="ttl">植栽管理と緑のイベント</span>
+          <span class="sum">市内の公共施設のすべての植栽の情報と保守管理を一元化すべきではないかと尋ね、花と緑のフェスティバルのような行事を復活させ、鉢花や花卉の生産が盛んな斐川地域やいりすの丘を生かして市民が元気の出るものを残すよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・曽田盛雄</span>
+          <span class="ttl">老朽化した橋りょう対策</span>
+          <span class="sum">市内の国・県・市が所管する橋りょうの数と、５０年以上経過して老朽化した耐震限度以下の箇所数、安全点検で数が増えることへの対策、外島大橋のようにヒューム管を立てた程度の橋脚への対応、国土強靱化に向けた市の対応と実施計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・曽田盛雄</span>
+          <span class="ttl">農業用施設の整備と負担</span>
+          <span class="sum">用排水路や排水ポンプ、ため池などいずれも老朽化が進んでいるとして農業用施設の整備改修を急ぐ必要があるとし、その場合の受益者負担の割合と低減策を尋ね、ため池改修の地元負担を１％とする確約と整備の順番の提示を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・遠藤力一</span>
+          <span class="ttl">ＬＥＤ照明の導入</span>
+          <span class="sum">大阪府が管理する道路照明約２万３，０００灯のＬＥＤ化を例に挙げ、公共施設の省エネの取り組みの状況を尋ね、電気代とメンテ費用の低減分をリース料の原資とするリース方式による公共施設や防犯灯へのＬＥＤ照明の導入の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・遠藤力一</span>
+          <span class="ttl">公共施設の経営管理</span>
+          <span class="sum">約８００ある公共施設の大規模改修や建て替えが平成３９年度からの５年間で約４８０億円に達すると予想されるとして、経営管理手法であるファシリティマネジメントについての見解と全ての施設・資産を見える化する公共施設白書の作成、行政改革推進課の役割と権限、経費の違いの原因を特定して平準化するベンチマークの導入、水道事業の包括業務委託、警備システム等の一括発注、電力の入札、ペットボトル・紙類等の資源物の入札の可能性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・勝部順子</span>
+          <span class="ttl">公共施設再編と外郭団体</span>
+          <span class="sum">公共施設の統合再編についてこれまでどのような検討がなされたのか検討状況と今後の見通しを尋ね、受益者負担の適正化及び行政の事業領域・サービスの担い手の検討をどう進め結論をいつごろ目指すのか、包括外部監査が指摘した外郭団体等の約２４億円余りの余裕資金を市に取り入れて生かすべきとの指摘への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・長廻利行</span>
+          <span class="ttl">大社の交通渋滞対策</span>
+          <span class="sum">出雲インターから国道４３１号線が大渋滞となった中で長浜工業団地周辺にシャトルバスを出せなかったか、斐川インターから降りる誘導ができなかったか、学校やコミセンなど公共施設の駐車場対策、民間企業や個人への駐車場の依頼、渋滞対策の予算と駐車場の確保、街中のトイレ対策と案内表示、島根県及び周辺自治体への参画と経費負担の要請、一畑電車の活用と駐車場の有料化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大国陽介</span>
+          <span class="ttl">市営住宅と住宅政策</span>
+          <span class="sum">小松原住宅など老朽化の進む住宅で床が斜めになる、外壁のすき間から雨水が入るといった声を聞いたとして一日も早い建て替えの実現を求め、水回りの設備更新やエレベーターの設置などのバリアフリーについて入居者のニーズ調査と早急な検討を求め、雇用促進住宅の譲渡をめぐっては現在の入居者の権利を守ることが大切だとして今後の対応と認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・福島孝雄</span>
+          <span class="ttl">新公会計制度による見える化</span>
+          <span class="sum">総務省改訂モデルによる財務書類作成の目的と発生主義によって見えてくるもの、固定資産台帳や公共施設の白書の作成と固定資産の評価の現状と課題、会計診断ができる人材の育成の考えを尋ね、将来の財政負担が見える化される取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・伊藤繁満</span>
+          <span class="ttl">新農業政策への取り組み</span>
+          <span class="sum">米の直接支払交付金の見直しでＪＡいずも管内で約１億６，４００万円・ＪＡ斐川管内で約１億円の農家所得の減少が発生する中での短期・中長期の対策と新たな戦略、日本酒の海外販売に向けた加工米など農林水産物・食品の海外展開への対応と方針、担い手の確保や農地の集積化・６次産業化で克服すべき課題、老朽化した土地改良施設と圃場の大区画化など農業基盤の整備で急がれる課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・松村豪人</span>
+          <span class="ttl">漁港施設の老朽化対策</span>
+          <span class="sum">市内漁港の整備年度と耐用年数、耐用年数が超過している漁港の整備計画の有無、実態調査を早急に進めたうえで見通しを漁業者や地元の皆さんへ示すべきではないかを尋ね、県が求める機能保全計画を策定してこなかった理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・勝部順子</span>
+          <span class="ttl">空き家対策の取り組み</span>
+          <span class="sum">老朽化した空き家の倒壊の危険が懸念されるとして全市的な空き家の実態の調査はされたのかを尋ね、空き家問題の総合窓口の早期設置、上越市のように倒壊が心配される空き家の撤去費用の一部を助成する考え、横須賀市が学生に貸し出しているような空き家の有効利用について市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・湯淺啓史</span>
+          <span class="ttl">行財政改革の組織体制</span>
+          <span class="sum">行財政改革の戦略立案や進捗管理、公共施設の再配置に対応する今後の組織体制と、約８００の公共施設の効率的な管理運営を維持するために必要な人的な体制と情報処理システムの検討状況を尋ね、浜松市の資産経営の事例を参考にする考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・松村豪人</span>
+          <span class="ttl">行財政改革の進捗</span>
+          <span class="sum">昨年１２月に出雲市財政計画を策定して間もなく１年を迎えるとして取り組みの状況を尋ね、公共施設の見直しについてのスケジュールと行財政改革審議会の審議の状況、統合再編にあたって地域性などの諸事情やしがらみで後退することがないかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・湯淺啓史</span>
+          <span class="ttl">行革と２０３の施設</span>
+          <span class="sum">行財政改革審議会に示された今後のスケジュール案を審議会でも同様に説明したのかを尋ね、１２月議会で提示し３月議会で決定というスケジュールが本当に可能で十分に検討する時間があるのか、新大綱と新実施計画の検討状況と現段階の素案を議会に示す考え、見直し対象となっている２０３の公共施設をどのような基準で結論を得て新実施計画に具体的に盛り込めるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・保科孝充</span>
+          <span class="ttl">護衛艦いずもと愛国心</span>
+          <span class="sum">８月６日に命名進水式が行われた護衛艦「いずも」について海上自衛隊や島根県等の関係者から市に連絡があったのか、どういう経過で命名され式典への招待はあったのかを尋ね、教育の現場での愛国心を醸成する教え方の実態、支所やコミュニティセンター、学校など公共施設の国旗掲揚の実態と常時掲揚への今後の考え方、市内の外国人による土地所有の実態を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・伊藤繁満</span>
+          <span class="ttl">財政再建の進捗と成果</span>
+          <span class="sum">具体的な目標となる数値や額が明確に公表されていないため市民サービスの低下やぬるま湯だという声がささやかれているとして、総人件費の抑制と管理経費の削減額のその後、公共事業費総額の適正化と公共施設の統合再編の具体的数値目標、遊休市有地の面積及び評価額、自主財源比率向上の具体的な取り組み、普通交付税の算定方法の変更による本市への影響額、国保会計の加入率と納付状況及び９月補正予算を見送った理由、包括外部監査で指摘された外郭団体への行政指導や改善勧告、命令の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・飯塚俊之</span>
+          <span class="ttl">通学路と教育環境</span>
+          <span class="sum">登下校時の事故・事件が多発しているとして通学路の安全対策の根本的対応や早急な対応を尋ね、子ども・子育て会議の役割、３歳まで無料となっている乳幼児医療無料化の今後の方針、学校再編計画の進め方、老朽化した校舎の耐震化工事と改築する場合の判断基準を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・板垣成二</span>
+          <span class="ttl">雇用創出のプロジェクト</span>
+          <span class="sum">商工業で地域外需要の獲得により地域経済の循環拡大を図るとはどのようなことか、大型店の出店・拡大が地元商店街の空洞化を招いているとの指摘への見解、国の農業政策転換への対処、１，０００万円を計上した老朽化したため池の安全確保の方針、人が山に入る仕掛けづくりの方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・井原優</span>
+          <span class="ttl">ごみの分別とリサイクル</span>
+          <span class="sum">可燃ごみ・不燃ごみ・資源ごみを合わせたごみの排出量とリサイクル率の推移、減量・分別・再資源化の現状と今後の課題、３Ｒの実績と課題や家庭からの生ごみ堆肥化の実績と課題を尋ね、市民の参加・協力による推進をエネルギーセンターの長寿命化につなげるべきとして炉の寿命の現状認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">コミュニティセンターの役割</span>
+          <span class="sum">４３のコミュニティセンターについて公民館からの改編で目指した設置の目的と制度上・機能上の違い、行政サービスや支所との関係、自主企画事業の予算化の手順、長寿命化を念頭に置いた管理・整備の進め方と管理費・施設整備費算出の手順、４３センター体制の維持や職員の見直しを含む今後の方針を尋ね、市がセンターに求める役割と委託する事業をどの場で整理しているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・渡部勝</span>
+          <span class="ttl">中山間地域の農業と支援策</span>
+          <span class="sum">３Ｆ事業の対象外となる農業従事者へのきめ細やかな支援策と、中山間地域の道路・河川の除草作業へのさらなる支援を求め、市内のため池のうち使用されている数と使用されていない数や老朽化の進んだ危険なため池の数と今後の対応、近年市内で出没したクマの数と地域や被害状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大場利信</span>
+          <span class="ttl">公共施設の民間移譲</span>
+          <span class="sum">見直し対象２０３施設のうち指定管理料を受けずに採算ベースにのっている温浴保養施設や観光交流施設などを民間事業者へ、地域に密着した集会施設を地域へ移譲すべきではないかと尋ね、移譲する際の課題や問題点と今後の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">公共施設利用料金の減免</span>
+          <span class="sum">使用料・手数料の見直しに伴う公共施設の利用料金について、利用目的別や年齢構成別、市内外の区分などで規定の金額より減免する措置を設ける考えがあるかを尋ね、現在無料の学校の体育館やコミセンで使用料金が検討されているのかと減免規定を整理する時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・神門至</span>
+          <span class="ttl">公共施設見直しの進め方</span>
+          <span class="sum">解体を必要としながらも着手できない施設が多くリストアップして優先順位をつけながら処理するとされたことを踏まえ、市全体の公共施設は幾つあるのか、第１次見直し対象の２０３施設についてこれまでの施設管理の状況や解体予定の考え方を含めどのように統廃合や譲渡などの方向性を検討しているのか、その考え方を施設周辺の地域へどう説明し意見反映していくのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・長廻利行</span>
+          <span class="ttl">大社支所と消防署の移転</span>
+          <span class="sum">神門通りの大鳥居より南側の整備の一つとして、築約５０年弱となり老朽化し観光客の駐車場としても利用されている大社支所と大社消防署について、将来的に移転新築をし跡地を何かに利用する考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・珍部全吾</span>
+          <span class="ttl">学校統合と公共施設見直し</span>
+          <span class="sum">佐田で生まれた子どもが１年間に１５人となる中で総工費約１５億円をかけて佐田中学校を建設していることをめぐり文部科学省が３学級の学校について統合等の適否を速やかに検討すべきとした方針を挙げ、統合を見据えるのか特色ある学校づくりで生徒数を増やすのかを尋ね、一方で利用者との話し合いもないまま温泉施設を廃止する方向を改め残すべきは残すよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・保科孝充</span>
+          <span class="ttl">荒神谷史跡公園の整備</span>
+          <span class="sum">国宝出土３０周年を迎えた荒神谷史跡公園について、島根県内の国宝は何箇所で何個あるのかを尋ね、銅剣・銅鐸・銅矛のレプリカの盗掘や破損の実態と定期的な清掃や修理の実施、老朽化が著しい見学者用の手すりや階段の早期の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大国陽介</span>
+          <span class="ttl">行財政改革と市民負担増</span>
+          <span class="sum">財政悪化の原因は過大な公共投資や合併による交付税の減額にあり市民に責任は何一つないとして安易な負担転嫁があってはならないとする所見を尋ね、公共施設の利用料引き上げや補助金カット、介護保険料引き上げによる市民全体への影響額と給付削減・負担増の額を明らかにしたうえで住民合意のない見直しの撤回を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">行財政改革の進捗と今後</span>
+          <span class="sum">平成２８年度末の財政効果目標額を示すよう求め、事務事業の見直しや補助金・負担金の見直し、公共施設の整理、指定管理者及び契約内容の見直しをどのような手順で進めるのか、全体を把握してコントロールする部署と仕組みを含むファシリティマネジメント的手法の導入がなぜ後回しにされるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・湯淺啓史</span>
+          <span class="ttl">公共施設の再配置と整備</span>
+          <span class="sum">人口と財政がともに右肩下がりとなる中で、市街地が無秩序に拡散するスプロール化の把握と言葉の整理、コンパクトシティや小さな拠点という考え方の整理を尋ね、道路や橋梁、トンネル等の維持管理費・補修・かけ替え等の費用の検討、複合化や多機能化と官民の協働に対応する体制、廃止・統合の方針が示された施設や旧市庁舎跡などの遊休地への民間からの提案の募集、出雲体育館と平田体育館の統合の検討状況と過程の透明性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・勝部順子</span>
+          <span class="ttl">公共施設の自動販売機</span>
+          <span class="sum">公共施設にＷｉ－Ｆｉ付きの自動販売機や災害救援ベンダー、ＡＥＤ付き自販機の設置が広がっていることを挙げ、出雲市の公共施設への自販機の設置状況と使用料、市営住宅への設置の状況を尋ね、防犯や利便性の向上と収入増につながる市営住宅の敷地内への設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・飯塚俊之</span>
+          <span class="ttl">公共施設の解体撤去</span>
+          <span class="sum">使われなくなった公共施設の解体撤去の計画とスケジュールと対象施設数と経費見込み、総務省の意向調査への回答内容、地方債を活用する考えと公共施設等総合管理計画の策定時期と方針、跡地利用も含めた方向性の早期公表を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・神門至</span>
+          <span class="ttl">公共施設見直しの進め方</span>
+          <span class="sum">各地域協議会や関係者へいつどのような内容を説明しどのような意見が寄せられ今後どう対応し決定する考えか、民間譲渡を対象とした２０施設の公共施設再生推進費の目的と内訳と効果、廃止または使用中止を対象とした１３施設の耐震診断未実施施設の調査と解体経費の調査とその調査経費の予算化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・井原優</span>
+          <span class="ttl">公共施設見直しへの合意</span>
+          <span class="sum">出雲体育館や平田体育館など１３施設を廃止または使用中止とする方針について、地域協議会や各関係機関や市民への説明の様子、多くの市民に影響する施設で広く説明と周知と合意をどう進めるのか、市民が使用を求めるときに見直しを行うべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・山代裕始</span>
+          <span class="ttl">出雲国際交流会館の管理</span>
+          <span class="sum">出雲国際交流会館の所有形態と財産管理、市と民間の財産所有区分と市が支払う賃借料、貸付料１億３，０００万円の出どころ、無料になった土地の賃借料５万円の経過、公共施設でありながら建物の一部を民間から賃借りして指定管理を行っている経緯と修繕・改修費の負担、指定管理料と利用料の関係を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・神門至</span>
+          <span class="ttl">指定管理者制度の運用</span>
+          <span class="sum">指定管理者制度の運用に関する市と県の基本的な考え方と過大な利益の額の算出方法、公共施設と指定管理者施設の数や職員の配置状況、公募と非公募の数と理由や指定の期間と審査基準、利益還元納付金を含む採点の考え方と候補者選定委員会の構成と人数、市と指定管理者が管理すべき事項と施設の監査の実施日や方法や公表、市長ポストに寄せられた管理運営状況と利益還元納付金への回答、クアハウス湖陵の一時休館を含む今後の意見反映と制度の見直しの考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・福島孝雄</span>
+          <span class="ttl">新地方公会計制度の準備</span>
+          <span class="sum">統一的な基準による財務書類等の作成の具体的スケジュールと固定資産の棚卸しの時期と単位、公共施設マネジメントを進めるうえでの固定資産台帳など財務書類等の活用範囲、人材育成の状況と全庁的な意識向上の可能性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・湯淺啓史</span>
+          <span class="ttl">施設経営室の役割</span>
+          <span class="sum">この春に行政改革部へ新設された施設経営室について、設置の目的と陣容、行財政改革の集中期間に限った組織なのか、約８００ある公共施設全ての管理運営の改善へ広げ集中期間の後も続ける考えはあるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・伊藤繁満</span>
+          <span class="ttl">財政計画の内容と根拠</span>
+          <span class="sum">策定方針が財政健全化３指標に集中し長期計画やプロジェクトの中身を示していない狙い、平成２８年度地方税制改正の反映の度合い、予算規模が７８０億円台から６９０億円台へ下がることの地域経済への影響、投資的経費が９２億円から５３億円へ圧縮される中での公共施設の改築、人件費の構成比が高まる理由、自主財源が３７．９％にとどまり財政構造が改善されない原因を尋ね、大型プロジェクトを踏まえた現実的で精査された財政計画を再公表すべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・大場利信</span>
+          <span class="ttl">ＰＦＩ方式の公共施設建設</span>
+          <span class="sum">公共施設の老朽化や統廃合により新設や改善が必要と思われる施設数とＰＦＩ方式を採用できると思われる施設の数、行財政改革とは抵触しないとの見解、ＰＦＩ方式を採用する際の課題と解決すべき事項、採用するメリットについての意向を尋ね、全体を統一的に検討する部局の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・勝部順子</span>
+          <span class="ttl">ハート・プラスマーク導入</span>
+          <span class="sum">外見からは分かりにくい内部障がいのある人への理解を広げるハート・プラスマークについて市の現状を尋ね、公共施設の駐車場への表示や民間企業・交通事業者への広がりを踏まえ出雲市から率先して導入することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・湯淺啓史</span>
+          <span class="ttl">公共施設の省エネ対策</span>
+          <span class="sum">照明機器のＬＥＤ化の現状と温浴施設の水循環機器や大規模な冷暖房機器の省エネルギー対策、水銀に関する国際条約の影響を受ける機器を尋ね、更新時期を待たずに投資した場合の１０年単位の費用の試算の有無や、各課から改善の案が上がる仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・萬代輝正</span>
+          <span class="ttl">利用料金改定後の結果</span>
+          <span class="sum">公共施設の維持管理経費について文化関連施設とスポーツ関連施設のくくりで利用料金改定後の結果を尋ね、一度統一された利用料を単年度で見直しながら今後きちんと検討する必要はないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・神門至</span>
+          <span class="ttl">地域防災の取組み</span>
+          <span class="sum">市内の自主防災組織の進捗状況、避難所となる公共施設の震災に対する状況、各避難所の避難用品の整備状況、市の具体的な取組みの考えを尋ね、小さな地域単位で組織をつくるための具体的な支援、市の職員が地域で先頭に立つ仕掛けづくり、自治会加入率の向上、小中学校など備蓄の分散を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・井原優</span>
+          <span class="ttl">学校や幼稚園の耐震化</span>
+          <span class="sum">市内の小中学校、幼稚園、保育所の耐震化の状況を尋ね、築５０年で耐震化ができない出東幼稚園を早く改築してほしいという保護者の要望への所見と、同じく老朽化が進む中部幼稚園も含めた改築の方向を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・飯塚俊之</span>
+          <span class="ttl">新体育館建設と体育館再配置</span>
+          <span class="sum">スポーツ振興ビジョンと公共施設のあり方指針、スポーツ振興審議会の答申で示された方針とそれを踏まえた今後の取り組みを尋ね、地域への配慮を市の考え方に含む意味や、建設場所の選定より先に答申の具体化を進めることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・伊藤繁満</span>
+          <span class="ttl">森林再生に向けた課題</span>
+          <span class="sum">行政面積の約６０％にあたる３７１．７６平方キロメートルが森林でありながら木材価格の低迷や所有者の高齢化で荒廃が進むとして、木育教育の現状と市内公共施設での地域材を用いた木造建築等の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・井原優</span>
+          <span class="ttl">温浴施設の利用料金</span>
+          <span class="sum">公共施設の利用料の見直しに伴う温浴施設の値上げ前と値上げ後の利用者の数と、利用者が減った要因を尋ね、収入も減った実態を挙げて速やかに元の料金へ戻すことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・寺本淳一</span>
+          <span class="ttl">老朽化した空き家への対策</span>
+          <span class="sum">利活用や再生ができる空き家とできない空き家の件数と対応された件数、対応が進まない理由と今後の対策や方向性を尋ね、所有者が分からない建物が倒壊しそうな場合の対応や略式代執行の判断と解体後の土地の扱い、法の整備の要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・萬代輝正</span>
+          <span class="ttl">行財政改革大綱の進捗</span>
+          <span class="sum">出雲市行財政改革大綱の個別の方針に掲げた効率的・効果的な行財政運営、公共施設のあり方と管理運営、組織・機構と適正な人員管理、財源の確保と債務の抑制の各項目の進捗を実数を交えて尋ね、平成２９年度以降の行財政改革の推進体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・米山広志</span>
+          <span class="ttl">障害者差別解消法の対応</span>
+          <span class="sum">障害者差別解消法の施行を踏まえ、障害者雇用促進法に基づく市の雇用の実態と市内の公共施設での障がいのある方の減免・無料化の実態、障がいのある方のスポーツ振興の対策を尋ね、障がい者差別解消支援地域協議会の設置についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・板倉一郎</span>
+          <span class="ttl">公共施設の見直し</span>
+          <span class="sum">公共施設のあり方指針に基づく取組み状況及び成果、指針に基づく取組みが完了していない施設ごとの今後の取組みの状況、指針に記載されていないが同様の取組みが必要な施設として市が取組みを考えている施設の状況と公用車の駐車場となっている旧出雲市役所跡地及び平田木綿街道に所在する旧石橋酒造についての市の考え方と取組み状況、新年度からの行政改革部の廃止後の取組み方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・板倉一郎</span>
+          <span class="ttl">図書館の充実と建て替え</span>
+          <span class="sum">図書館の役割と出雲市の図書館の利用状況などの現状、利用者を増やす取組みとしてのサービスの充実と施設の充実の考え方、施設が老朽化し駐車場も少ない出雲中央図書館の建て替えなどの検討に入る時期についての市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">市営住宅の長寿命化と建替</span>
+          <span class="sum">耐用年数が経過した市営住宅の数、市営住宅の需要と供給のバランス、定期点検の頻度と主な点検項目、入居希望のない空き家と政策空き家の数を尋ね、住民からの建て替えや修理の要請の状況、家賃を低額に抑制するための方策、市全体の建て替え費用の総額、民間賃貸住宅の借り上げの検討、計画の見直しの要点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・神門至</span>
+          <span class="ttl">豪雪の被害と除雪対応</span>
+          <span class="sum">今回の豪雪について人的・住宅等・農業・漁業・林業・公共施設その他の被害状況、小中学校・幼稚園・児童クラブの通学や通園への支障と始業・終業・休校などの対応、市の除雪計画と市道・県道・国道・歩道・学校やコミュニティセンター等の公共施設で誰がどのように対応したか、除雪に要した費用、市民への情報提供の有無、救急搬送への支障、今回の豪雪を災害と認識したか否かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・伊藤繁満</span>
+          <span class="ttl">農業生産基盤の整備</span>
+          <span class="sum">土地改良事業で造成された生産基盤施設及び基幹水利施設等を可能な限り集約し国営事業等で近代的で効率的な施設として中長期的に実施計画を策定する時期ではないかと述べ、多面的機能支払交付金事業について老朽化する農業用施設の長寿命化計画を一歩前に進めた区画の形状変更を含む面的整備が可能か、共同作業や農家が持つ機械による除雪作業に本事業が適用されるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・福島孝雄</span>
+          <span class="ttl">マイナンバーカードの普及</span>
+          <span class="sum">マイナンバーカードの普及が低迷している理由、市における活用と公的サービスの事例、目指す活用範囲と今後のスケジュール、マイキープラットフォーム利用の構想として自治体ポイントの活用、公共施設利用カードとしての活用、各種買い物ポイントの集約による消滅ポイントの解消の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岸道三</span>
+          <span class="ttl">下水道事業の公営企業化</span>
+          <span class="sum">平成３１年度からの下水道事業の公営企業化にあたり、これまでの一般会計の繰り入れと今後の繰り入れの見通し、下水道関連事業における公営企業化後の会計上の取り扱い、管路の老朽化更新にかかわる現状経費の状況と今後の対応、人事や出納など新たに発生する事務への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・湯淺啓史</span>
+          <span class="ttl">中期財政計画の策定</span>
+          <span class="sum">現在の財政状況の判断と中期財政計画を上回る改善ができた主な要因、健全化判定比率の改善と地方債残高圧縮のペースを維持できる見通し、公共施設総合管理計画の１年あたり約２０５億円という更新費用の見積もりを踏襲するか、総合戦略策定時の人口推計と目標値を踏襲するか、常態化した臨時財政対策債の発行が将来の財政運営にもたらす影響を尋ね、策定に議会が関与する進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岸道三</span>
+          <span class="ttl">公共施設の更新問題</span>
+          <span class="sum">出雲市公共施設等総合管理計画のこの２年間での延べ床面積削減の実績と今後の見通し、ファシリティマネジメントを取り入れるにあたっての留意点、市民への浸透度と理解度を深める取組みを尋ね、秦野市の公共施設白書を挙げて後期に向けた施設の洗い出しと全戸配布による周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・児玉俊雄</span>
+          <span class="ttl">公共施設の有効活用</span>
+          <span class="sum">ジョブ・ステーション出雲の移転で空き部屋となったビッグハートの区画と平田福祉館の平田デイサービスセンター跡、廃止することとなった出雲プールの現状と今後の対応、公共施設のあり方指針で管理運営の改善が必要とされた１８施設のうちスサノオホール、国際交流会館、出雲ドームクラブハウス、斐川農村ふれあいセンターの取組状況と今後の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・大谷良治</span>
+          <span class="ttl">商工業と農林水産業の施策</span>
+          <span class="sum">県内市町村で初めて実施した市内企業の全数調査を踏まえた振興計画の具体策、事業承継・空き店舗の開業支援と中心市街地の賑わい創出の実績と具体策、分譲率が９６．４％まで高まったことを受けた新工業団地整備の進捗、飼養技術・品質向上の取組みと具体策、新規就農者支援の成果とリース団地整備の規模・内容、ため池等の長寿命化対策の状況、防護ネットや電気牧柵等の設置助成拡充の詳細を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・西村亮</span>
+          <span class="ttl">外洋と内水面の漁業振興</span>
+          <span class="sum">１２月議会で尋ねた今後の漁業振興について、その後どのような具体策や進展が図られ改善・充実した対策がなされたか、宍道湖の水草対策に向けた宍道湖水環境改善協議会での協議や活動内容と国への緊急中央要望の取組みを尋ね、一級河川として国が全面的に対応するよう県や松江市とスクラムを組んで働きかけること、長寿命化の中長期的な見通しと地元負担のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・伊藤繁満</span>
+          <span class="ttl">大黒山と斐川の観光整備</span>
+          <span class="sum">日本三美人の湯や荒神谷遺跡が十分に生かされていないとして、標高３１５．３メートルの大黒山の三つのルートの砂利道の舗装や倒木の処理、老朽化した木製の展望台の整備、国道９号の道の駅周辺やＪＲ荘原駅の環境整備を含む湯の川温泉郷一体の観光施策の展開を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・後藤由美</span>
+          <span class="ttl">学校教育の環境整備</span>
+          <span class="sum">学校の教育環境の整備が子どもの成長・発達を保障する自治体の仕事であるとの認識、児童生徒が水分や塩分を補給できる熱中症対策、幼稚園と小中学校の教室と体育館へのエアコン設置を来年の夏までに間に合わせる考え、１９７０年建設の稗原小学校をはじめ老朽化したプールの抜本的な改修、４０年以上経過と普通学級１２学級以上を要件とする整備方針の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・伊藤繁満</span>
+          <span class="ttl">防犯カメラの設置</span>
+          <span class="sum">市が管理する防犯カメラの設置基準を含む考え方、出雲地区防犯協会が関与する街頭防犯カメラの設置に地域ごとの大きな差異がある理由、市内の小中高校及びその周辺で防犯カメラを設置していない学校の有無、通学路を総点検して自宅に帰るまでに最低一度は防犯カメラに写る体制の必要性を尋ね、指定管理施設など人の集まる公共施設への重点的な設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・板垣成二</span>
+          <span class="ttl">大規模停電への備え</span>
+          <span class="sum">台風１５号で長期間の停電が続いたことを踏まえ、電力会社やその関係者とともに倒木処理ができるよう協議し協定を結んでおく必要があるとし、避難所となる公共施設にガスなど電気以外の設備を整備すべきだとして見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・後藤由美</span>
+          <span class="ttl">市営住宅の修繕と建て替え</span>
+          <span class="sum">建設から５０年近い公営住宅で畳や風呂釜、玄関のドアの修繕が自己負担で我慢されている実態から費用負担ルールを改め入居者負担を軽減すべきとの所見、長寿命化計画で管理戸数を縮小して建て替えるとされた１１の住宅を規模拡大や新設も含め市民のニーズに合わせて見直す考え、島根県住宅供給公社の対応の検証と改善を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・湯淺啓史</span>
+          <span class="ttl">新体育館建設と旧体育館除却</span>
+          <span class="sum">新体育館の建設と旧３体育館の除却にそれぞれ必要な予算と財源、両者を切り離して個々の計画とすることができるか、新体育館の供用開始と旧体育館の除却の予定日、除却後の方針を策定する時期を尋ね、公共施設等総合管理計画の延べ床面積２割減との整合や年間約９，０００万円のランニングコスト、総額５８億円を中期財政計画に見込んでいるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・神門至</span>
+          <span class="ttl">期日前投票所のあり方</span>
+          <span class="sum">島根県知事選挙及び島根県議会議員一般選挙の全体と出雲選挙区の投票数及び投票率、期日前投票所の投票者数及び投票率、期日前投票所の経費及び効果を尋ね、イオンモール出雲だけで３６０万円を要したことの是非と公共施設の活用や移動投票所の充実、今後の選挙結果の公表のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・長廻利行</span>
+          <span class="ttl">災害時の情報伝達手段</span>
+          <span class="sum">大社地域の避難勧告で屋外スピーカーが機能したか、情報伝達手段として有効かを尋ね、戸別受信機が未整備な出雲・平田・大社地域での今後の整備の考え方と設置した場合の個人負担、老朽化が進むご縁ネットの今後の見通しと利用者への周知の手順を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・湯淺啓史</span>
+          <span class="ttl">自主避難時の支援体制</span>
+          <span class="sum">避難指示や避難勧告が発令される前に自主的に近隣のコミュニティセンターなどへ避難する場合について、自主的な避難場所として公共施設を利用できるか、どのような手続を経て借りるか、センター職員や市の地区担当職員の協力は得られるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・寺本淳一</span>
+          <span class="ttl">農業用用排水路の修繕</span>
+          <span class="sum">圃場整備から４０年以上経過し老朽化した農業用用排水路に住宅やアパートの浄化槽排水や生活排水が流されている実態を挙げ、農家だけに受益者負担を求めることはふさわしくないとして、修繕についての対応を見直し改めて検討すべきだとして市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・福島孝雄</span>
+          <span class="ttl">防災と子育てと健康づくり</span>
+          <span class="sum">災害対策拠点となる市役所本庁舎の電源対策と避難所の確保及び備蓄品の状況、高齢者の免許自主返納支援策に対する返納者からの意見・要望、斐川地域の消防団再編で変更となる拠点施設の老朽化や手狭さの改善、県の発表を受けた新たな子ども医療費助成制度の考え、保育所等の周囲に設けるキッズゾーンの設置、通いの場への男性を含めた参加を促す健康づくりの対策、社会教育計画の内容と幅広い社会教育事業における実効性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・大場利信</span>
+          <span class="ttl">コロナ禍の指定管理料</span>
+          <span class="sum">指定管理者制度を導入している市の公共施設の全体の数と系統別の数、指定管理料の積算方法、新型コロナ禍による系統別の経営状況と特に厳しい経営を余儀なくされている施設への支援策を尋ね、２９施設で４，８４０万円に続き３９施設で９，９８０万円を計上した補正予算の執行方法と１０月から３月までの支援方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・山内英司</span>
+          <span class="ttl">スケートボード場の老朽化</span>
+          <span class="sum">出雲健康公園スケートボード場が建設された経緯、建設して約２０年が経過した老朽化についてどのような認識を持っているのか、これまでどのような修繕をしてきたか、全面改修等をする考えはないかを尋ね、市として改めて老朽化の調査・点検を行う考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・湯淺啓史</span>
+          <span class="ttl">公共施設の感染症対策</span>
+          <span class="sum">指定管理を行っている施設について感染症対策や利用基準等の話合いがどのように行われているのか、備品の購入や運用変更ではなく施設の設備としての感染症対策は市が整えるべきではないか、令和３年度の指定管理料についてどのような話合いがなされているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岸道三</span>
+          <span class="ttl">公共施設等総合管理計画</span>
+          <span class="sum">延べ床面積を２割削減する数値目標に対する削減の実績と今後の見通し、今年度末までの策定が求められている個別施設計画の策定状況、行政改革課と施設所管課の連携など計画の推進体制、施設の廃止や民間譲渡に向けた市民への理解を深める取組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・保科孝充</span>
+          <span class="ttl">斐川行政センターの整備</span>
+          <span class="sum">雨漏り工事が行われ老朽化した斐川行政センターと文化会館について、３月１９日の議会全員協議会での報告とその後の検討状況を尋ね、防災機能を重視した多目的棟に文化活動拠点を併設する考え方と令和５年度までの整備・移転スケジュールの見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・宮本享</span>
+          <span class="ttl">行財政改革の成果と所感</span>
+          <span class="sum">長岡市政３期１２年を振り返り、平成２６年から３か年を集中改革期間として総人件費の抑制や事務事業・補助金・負担金・使用料・手数料・公共施設のあり方の見直しに取り組んだ出雲市行財政改革大綱に掲げる行財政改革の成果と所感を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">下水道の長寿命化</span>
+          <span class="sum">下水道のストックマネジメント計画の作成時期と、今後の公共下水道と農業集落排水の長寿命化の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">安全安心のまちづくり</span>
+          <span class="sum">埋立処分場の残余容量を踏まえた市内４か所の不燃物処理施設のあり方として残余年数が４年余りの平田不燃物処理センターの今後の対策とその他の施設の考え、新体育館完成後の旧体育館３施設の対応を含む公共施設の集約化と跡地の有効活用、本年度国から依頼を受けて実施した通学路における合同点検の結果と対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・高橋扶治夫</span>
+          <span class="ttl">小学校体育館の老朽化</span>
+          <span class="sum">築４６年の四絡小学校と築４４年の北陽小学校の体育館でひび割れや戸と壁の隙間、床の傾きが生じ、児童数の増加で全校児童が入れない狭さがあるとして、改築が遅れている理由といつになるのか、学校施設整備・耐震化基本計画の見直しの計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・後藤由美</span>
+          <span class="ttl">市長の政治姿勢と暮らし</span>
+          <span class="sum">消費税増税とコロナ感染拡大で困難が広がる市民の暮らしの現状への認識、住民の福祉の増進という地方自治体の役割への認識、使用料・手数料の見直しや公共施設の縮小で市民サービスが後退している実態が市長の方針と逆行しているとして、その現状への認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・伊藤繁満</span>
+          <span class="ttl">新川地域の雨水と水路</span>
+          <span class="sum">畑地かんがい用に築造されて７０年が経つ新川中央幹線水路は流下能力が不足し市街化が進む旧新川地域で浸水が発生しているとして、浸水が発生する地域の当面する対応策と、全区間で老朽化が顕著な幹線水路の二次災害への対応策、雨水・用水機能を備えた年次的整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・伊藤繁満</span>
+          <span class="ttl">行財政改革の基本的考え</span>
+          <span class="sum">デジタル社会・脱炭素社会に向けた事務事業の見直しとスクラップ・アンド・ビルドによる行政事務量の抑制、２０３施設を対象とした公共施設の縮減の効果と指定管理料の高止まり、市内全般を把握できる人材の育成、公営企業会計への多額の繰出金を踏まえた財源の確保と債務の抑制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">農林水産業の担い手と農地</span>
+          <span class="sum">営農組織及び個人農家の担い手確保に向けた支援強化の施策、米余りの中で求められる高収益作物への転換の今後の見通し、大型営農組織のスマート農業と所得向上の関連性、農地集約の見通しと離農により増える耕作放棄地の解消策、ため池の長寿命化・防災減災事業のさらなる予算確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・湯淺啓史</span>
+          <span class="ttl">除却後の固定資産税減免</span>
+          <span class="sum">老朽化した空き家を除却して更地にすると住宅用地特例がなくなり固定資産税が高くなることが放置の一因だとして、他市の事例のように除却した土地の固定資産税等を減免し除却の促進を図る制度の検討を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石橋広信</span>
+          <span class="ttl">サニタリーボックスの設置</span>
+          <span class="sum">公共施設での男性トイレと女性トイレのサニタリーボックスの設置状況と設置の条件、利用の対象となる方々とその実態を尋ね、前立腺がんや膀胱がんの患者が使用済みの尿漏れパッドを捨てる場所がなく困っている現状を踏まえ、男性トイレへの設置に対する今後の取組みの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・高橋扶治夫</span>
+          <span class="ttl">公共施設の適正管理</span>
+          <span class="sum">平成２７年度（2015）から令和４年度（2022）までの出雲市公共施設のあり方指針の取組みによる延床面積の削減率と全体的な成果、出雲市全体の公共施設の保有量の適正化の課題と今後の方針、地方公会計における統一的な基準による固定資産台帳の整備状況と活用の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・吉井安見</span>
+          <span class="ttl">地域防災力の向上</span>
+          <span class="sum">消防団への加入状況と加入促進のための市の取組み、老朽化が進む消防施設や水防施設の改修の計画と進捗、水害時に水防団として出動する場合に対応した訓練の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・錦織稔</span>
+          <span class="ttl">地球温暖化対策の推進</span>
+          <span class="sum">グリーントランスフォーメーションの考え方、温室効果ガス排出源の６割以上を占める衣食住に関わる市民のライフスタイルの転換への取組み、企業と連携したグリーンライフ・ポイント制度の導入、ウォームビズと公共施設・職員の排出削減の取組み、市民への広報を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・寺本淳一</span>
+          <span class="ttl">太陽光パネルの廃棄問題</span>
+          <span class="sum">住宅と民間企業と公共施設での太陽光パネルの設置数とこれまでの太陽光発電や蓄電池への補助金の交付件数、２０３６年以降の最終処分場の状況、リユースやリサイクルの専門企業が県内にあるかと廃棄する太陽光パネルの処分についての国や島根県の動向、福岡県のような協議会が島根県にあるか、市としても回収処分を含めたリユース・リサイクル推進に向けた取組を検討すべきとの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・高橋扶治夫</span>
+          <span class="ttl">市民会館と市民ホール</span>
+          <span class="sum">老朽化がひどい出雲交流会館を拠点とする出雲芸術アカデミーを出雲市民会館やビッグハート出雲へ移すべきではないかと尋ね、文化行政上重要な出雲市民会館やその他の市民ホールの今後の計画や方針、建て替えに向けた特定目的基金の積立てや市民ホールの適正数といった将来の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・岸道三</span>
+          <span class="ttl">豪雨災害の復旧の進捗</span>
+          <span class="sum">昨年の豪雨や台風による土木公共施設・農業関係施設の被害復旧について、進捗状況と今後の見通し、復旧の見通しが立っていない被害箇所とその主な要因、地域住民への情報提供と丁寧な説明の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・木佐宏</span>
+          <span class="ttl">公共施設の維持管理</span>
+          <span class="sum">公共施設の維持管理について一の谷公園で１３基のうち１０基の遊具が壊れ黄色いテープを張っただけでは子どもの使用は止められないこと、市営住宅の側溝の蓋が１０センチほど開くこと、和式トイレに手すりが１本もついていないことを挙げ、洋式化より安価な手すりの設置など日常の小さな不具合への迅速な対応を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・高橋扶治夫</span>
+          <span class="ttl">公共施設のＷｉ－Ｆｉ環境</span>
+          <span class="sum">出雲市の公共施設全般についてＷｉ－Ｆｉ環境整備の現状と課題を尋ね、国が目指す「書かない窓口」に伴い担当者がタブレットで説明する本庁舎窓口や、調べ物に使う図書館など未設置箇所への今後の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・福島孝雄</span>
+          <span class="ttl">内部統制制度と地方公会計</span>
+          <span class="sum">内部統制制度の役割と効果、県内での導入状況と出雲市における考えを尋ね、統一的な基準に基づく財務書類の活用状況と作成時期を早められないか、固定資産台帳による財政指標を公共施設マネジメントや行財政改革にどう活用するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・湯淺啓史</span>
+          <span class="ttl">大型公共施設の管理運営</span>
+          <span class="sum">出雲市総合体育館（だんだんトマトアリーナ）の維持管理運営業務費用と施設管理料について今後の運営委託の見通しをどのような考え方で調整していくのか、竣工から３０年以上が経過し雨漏りも起こっている出雲ドームの長寿命化に資する取組の展望、新体育館の完成に伴い廃止が予定されている出雲・平田・斐川第二の三つの体育館の廃止・除却までのプロセスを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・萬代輝正</span>
+          <span class="ttl">窓口改革とデジタル化</span>
+          <span class="sum">デジタルファーストを実感できるまちづくりとして、マイナンバーカードを活用した窓口改革プロジェクトと公共施設の予約などオンライン申請が可能な手続の拡大、窓口に行かなくてよい・待たなくてよい・申請書を書かなくてよい改革の内容とスケジュール、マイナンバーカードの申請状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・西村亮</span>
+          <span class="ttl">管理漁港の維持管理</span>
+          <span class="sum">出雲のインフラを整え「安心」を支える取組として、至るところで老朽化が顕著であると聞く出雲市の管理漁港の現状と今後の対策や方針、今後の維持・管理の方法と施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・寺本淳一</span>
+          <span class="ttl">施設・財産の老朽化対策</span>
+          <span class="sum">街灯が倒れる事案や全国の道路陥没を挙げ、道路と上下水道、庁舎関係に絞って、全ての施設・財産の老朽化に関する点検が定期的に行われているか、点検年数が施設ごとに決められているか、施設管理のデジタル化の状況を尋ね、改修時期を予測できるシステムを構築しデータを一元化して中長期財政計画にも活用する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">コミュニティセンター整備</span>
+          <span class="sum">老朽化したコミュニティセンターを利用している市民から届けられている声とバリアフリー法や出雲市福祉のまちづくり条例に関する問題の有無、市議会へ陳情されているもの以外に地元から要望されているもの、今後どのような判断基準により優先的に整備していくのかを尋ね、大社コミュニティセンターをいつ頃整備していく方針かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">コミュニティセンター老朽化</span>
+          <span class="sum">本市に設置されているコミュニティセンターの中で古いものは何年経過しているのか、近年整備された、また整備しようとするコミュニティセンターは何年経過したものが整備されているのか、建物の法的な耐用年数と、指定避難所としているコミュニティセンターに耐震性に問題があるものはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長島和孝</span>
+          <span class="ttl">スケートパークの整備</span>
+          <span class="sum">平成１４年３月の建設以来老朽化が進む出雲健康公園スケートパークが市の資産であるという見解、セクションの点検の頻度、直近の修繕内容と費用を尋ね、専門家を含めた委員会を立ち上げ２０２８年７月を目標とするなど改築・新築の予定があるかと、看板広告枠やネーミングライツの販売も含めたその財源の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・坂本祐麻</span>
+          <span class="ttl">市営住宅の維持と活用</span>
+          <span class="sum">市営住宅の供給戸数や老朽化の状況、島根県住宅供給公社への管理戸数や委託金額と業務内容を尋ね、住宅ストックの適正配置・統廃合の方針、退去後の修繕や改修工事の優先順位と需要の高い団地の判断基準、修繕・改修費用が膨大にかかる住宅への今後の対応方針、空き住戸の地域おこし協力隊の住居やお試し移住施設などへの利活用、用途廃止後の他部局や地域団体、民間事業者への賃貸・譲渡、長寿命化計画の進捗と民間賃貸住宅との連携の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・大谷良治</span>
+          <span class="ttl">市有財産の活用の考え</span>
+          <span class="sum">市役所周辺の公共施設のあり方は点としての施設ではなく面としての拡がりをつくることが大切だとして、旧市役所跡地や旧出雲市体育館等の市有財産の活用について進捗状況などその考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・樋野千晴</span>
+          <span class="ttl">搾乳マークの導入</span>
+          <span class="sum">入院中の赤ちゃんに母乳を届けるためなどに搾乳が必要な母親が授乳室に入りにくい現状を挙げて、市民が多く利用される公共施設における授乳室と搾乳室の設置状況と搾乳マークや搾乳可能の表示の実態を尋ね、今後の表示の普及とＳＮＳやホームページによる周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・吉井安見</span>
+          <span class="ttl">米不足と米価の高騰</span>
+          <span class="sum">米不足と米価高騰の出雲市内での影響、政府が米の増産にかじを切る一方での農地の荒廃や施設の老朽化、経営や担い手確保などの課題とその対策、農家が再生産可能な価格や所得の保障の抜本的な拡充を尋ね、集約化が進めにくい地域で営農意欲を継続できる施策の拡充と網羅的な基盤整備に取り組む行政の役割を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石橋広信</span>
+          <span class="ttl">道路河川の２課体制と点検</span>
+          <span class="sum">道路河川維持課を２課体制にすることに伴い、道路河川管理課が行うＡＩパトロールで効率化する分増える対応の作業を現体制で担えるのか、道路河川維持課が行う施設の長寿命化や修繕の確認は目視だけで実施されるのかＡＩの活用が行われるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・湯淺啓史</span>
+          <span class="ttl">都市の集約と施設維持</span>
+          <span class="sum">意義や目的が浸透していないとしてコンパクト・プラス・ネットワークを推進する意義と目的及び立地適正化計画で何を規定するのかを尋ね、道路、橋梁、河川、水路、街路樹、街路灯、遊具を含む公園、上下水道など既にある施設の補修や長寿命化、管理点検業務の進め方とその財源をどこに求めるのかを質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 3市くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

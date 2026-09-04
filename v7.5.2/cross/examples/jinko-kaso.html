@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>過疎地域と中山間地域 — 当たった質問の全件 | 3市くらべ</title>
+<style>
+/* 3市くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share2:#eef1f9;   /* 2市共有 */
+  --share3:#d9e0f4;   /* 3市共有（2市より強い） */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×3市（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh2{background:var(--share2);border-radius:3px;padding:0 4px}
+table.years li.sh3{background:var(--share3);border-radius:3px;padding:0 4px;font-weight:600}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;width:30px;text-align:center;border-radius:3px;margin:0 4px;font-size:.8rem}
+.legend .c2{background:var(--share2)}
+.legend .c3{background:var(--share3);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">3市くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">3市くらべ</a> ／ 過疎地域と中山間地域</nav>
+
+  <h1 class="page-title">過疎地域と中山間地域 — 当たった質問</h1>
+  <p class="page-subtitle">
+    話題の束「過疎地域と中山間地域」に当たった質問の全件です（全283件）。
+    市ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">29件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・板垣亨</span>
+          <span class="ttl">中山間地等直接支払い制度</span>
+          <span class="sum">17年度からの制度継続に伴い、継続した旧8町村の集落数・面積、新規取り組みとやめた集落の数・面積・理由、通常単価8割・従来単価・加算単価それぞれの協定集落数と面積、対象要件の旧市郡での統一、18年度からの受付可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・森脇勇人</span>
+          <span class="ttl">過疎地域の定住対策</span>
+          <span class="sum">先送り・保留された古江団地や美保関町定住拠点団地など旧市町村の過疎対策的住宅団地事業を挙げ、住宅団地造成を見送りつつ定住対策方針を達成するための中身あるプランを問い、年間約100人減の美保関町など待ったなしの地域への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・片寄直行</span>
+          <span class="ttl">防災・原子力災害・治水対策</span>
+          <span class="sum">中山間地を抱える地域防災計画、市管理橋の耐震補強、地震と原子力の重複災害を想定した避難計画、沃素剤配備、遊水地による治水対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・石倉幹</span>
+          <span class="ttl">中山間地問題</span>
+          <span class="sum">荒廃が進む中山間地の現状把握を問い、草食家畜の放牧による里山保全・鳥獣被害対策の実践や、農林業を福祉・保健・教育の共通施策とすること、中山間地域対策担当部局の設置を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・森脇勇人</span>
+          <span class="ttl">過疎債の運用状況</span>
+          <span class="sum">旧美保関町が対象となる過疎債の適用事業の状況と今後の見通しを問い、支所が過疎地域のアドバイザー的存在となることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・板垣亨</span>
+          <span class="ttl">耕作放棄地対策と中山間地域直接支払</span>
+          <span class="sum">集落営農に踏み切れない農家への耕作放棄地発生防止の支援策、中山間地域等直接支払制度の成果と存続、制度対象外の1ヘクタール以下水田への生産調整優遇策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石倉幹</span>
+          <span class="ttl">限界集落と中山間地域対策</span>
+          <span class="sum">小集落単位での限界集落の統計調査の可否と必要性、コミュニティー形成に資する中山間地域等直接支払制度の継続と制約緩和を国へ求めることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・南波巖</span>
+          <span class="ttl">過疎・辺地・中山間地域対策</span>
+          <span class="sum">過疎地域・辺地・中山間地域の現状と市の対策・取り組み状況、市長が考える将来像と手順、期限切れとなる過疎法に代わるポスト過疎法に何を求めるかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・加本市郎</span>
+          <span class="ttl">農家戸別所得補償制度</span>
+          <span class="sum">農家戸別所得補償制度の効果への考えと、中山間地農業・耕作放棄地・後継者問題を含む本市の農業施策の基本的な考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中弘光</span>
+          <span class="ttl">集落営農体制の整備促進</span>
+          <span class="sum">中山間地域の限界的集落増加を踏まえ、松江市の限界集落や農地荒廃の状況、集落営農推進の基本認識、国・県の補助や助成の現状と集落営農が進まない要因の分析、今後の促進策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・加本市郎</span>
+          <span class="ttl">中山間地域直接支払・戸別所得補償制度</span>
+          <span class="sum">高齢化で協定継続が困難となる中山間地域等直接支払制度の課題、名称変更される戸別所得補償制度への評価を踏まえ、これら制度に対する市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森脇勇人</span>
+          <span class="ttl">過疎地域の地域医療</span>
+          <span class="sum">美保関町など過疎地域で自治会が補助金を出し合い設置した診療所の老朽化を踏まえ、診療所の改修や設置に対する行政支援ができないか、空き公共施設の活用とあわせて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・橘祥朗</span>
+          <span class="ttl">TPPと減反廃止の農業への影響</span>
+          <span class="sum">米の生産調整廃止とTPP参加による輸入米増大が、耕地面積で劣る島根の中山間地農業を壊滅させる懸念と、食料自給率低下による食の安全への影響について見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・野々内誠</span>
+          <span class="ttl">中山間地の電気自動車軽トラック購入助成</span>
+          <span class="sum">ガソリンスタンド過疎が進む中山間地の高齢者を対象に、電気自動車の軽トラック購入への市の助成制度創設の検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・津森良治</span>
+          <span class="ttl">小さな拠点と連携中枢都市圏</span>
+          <span class="sum">中山間地域で生活サービスを集約する小さな拠点のモデル地域づくりを検討する必要性と、人口20万人以上が担う連携中枢都市圏の中海・宍道湖・大山圏域におけるメリット・デメリットを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉茂美</span>
+          <span class="ttl">TPP大筋合意と農業</span>
+          <span class="sum">農家不在のまま大筋合意したTPPについて、平場や中山間地の農家への影響を懸念し、農業者に対して市長から言葉があるかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">総合戦略と住民自治</span>
+          <span class="sum">海士町や邑南町など中山間地域の人口増の実践に学ぶこと、公民館単位で住民が5カ年計画をつくる住民自治、中小企業振興条例の制定、農業・食料・エネルギーの位置づけ、原発を動かさない前提の戦略づくりを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・津森良治</span>
+          <span class="ttl">拠点連携型のまちづくりと立地適正化</span>
+          <span class="sum">拠点連携型のまちづくりを今後の基本方針とするか問い、立地適正化計画で橋北・橋南に複数拠点を想定する必要性や交通政策の位置づけ、LRT構想の再提起、線引き制度と中山間地域除外問題への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川島光雅</span>
+          <span class="ttl">中心市街地と周辺・中山間地の振興</span>
+          <span class="sum">空洞化する中心市街地の活性化と白潟・東本町のまちづくり、農山漁村地域活性化基本計画の成果と次期計画の方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・南波巖</span>
+          <span class="ttl">新過疎対策法と過疎計画</span>
+          <span class="sum">旧鹿島町・旧島根町が新たに一部過疎指定されたことを受け、過疎地域持続的発展計画の策定に当たっての基本的な考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">特定地域づくり事業協同組合</span>
+          <span class="sum">過疎地域に限らない全市的な事業展開の可能性、海士町のマルチワーカーシステムを根本とし地域おこし協力隊の次のフェーズとする制度趣旨、市の積極的な連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">調整区域等での定住支援の適用</span>
+          <span class="sum">手角地区から下東川津の調整区域で新築物件が建てられず集落が衰退する現状を踏まえ、中山間・過疎地域の民間開発事業にも補助内容を適用できるか質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">過疎地域の指定と地域振興</span>
+          <span class="sum">過疎法・原発地域振興特別措置法・半島振興法の不均一課税改正点、集落再編整備等の事業募集、新たに過疎認定された島根町・鹿島町の過疎計画策定と定住対策、担当部局強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・野津直嗣</span>
+          <span class="ttl">移動販売車と事業継承</span>
+          <span class="sum">島根半島や中山間地域の移動販売車の必要性と現況、事業継承の考え方、複数社の取りまとめなど調整に動く必要性について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・細木明美</span>
+          <span class="ttl">立地自治体の地域振興と企業誘致</span>
+          <span class="sum">鹿島町・島根町が過疎地域である現状を踏まえ、原発特措法等がうたう地域振興の実現と国・県・中国電力への働きかけを問い、電気料金補助やデータセンター誘致を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・舟木健治</span>
+          <span class="ttl">訪問介護事業所の実態と支援</span>
+          <span class="sum">訪問介護の基本報酬引下げを受け、市の過去５年間の事業所数の推移と黒字・赤字の状況、新処遇改善加算による影響緩和策の効果や加算取得への援助、中山間地など条件不利地域への独自支援、訪問介護ヘルパーの充足率と60代以上の割合、介護職員確保への市独自の支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森本秀歳</span>
+          <span class="ttl">農地の保全</span>
+          <span class="sum">中山間地の離農でソーラーパネル設置に安易に同意する懸念、多面的機能支払交付金でも維持管理が困難な実態の認識、国への要望を含む今後の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・川島光雅</span>
+          <span class="ttl">市長の市政運営の現状と課題</span>
+          <span class="sum">選挙戦を通じて感じた市街地周辺への拡大や旧町村過疎地域への所感、人口減少解消先進市を掲げる中身、雇用や生活環境施設立地による人口対策を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉徳章</span>
+          <span class="ttl">米価格高騰と農業施策</span>
+          <span class="sum">米価格高騰を受け、中山間地域の圃場規模拡大とスマート化、耕作放棄地の復田、値上がりが続く農業機械の更新助成の県・市・JA共同による拡大を求めた。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">133件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・遠藤孝</span>
+          <span class="ttl">中山間地域の維持と定住支援</span>
+          <span class="sum">限界集落に近い集落の数や中山間地域等直接支払制度のフォローアップを尋ね、担い手支援や定住条件向上への財政支援、県東部の水がめである2つのダム周辺山林の保全への県費投入要請を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田淵秀喜</span>
+          <span class="ttl">中山間地域の活性化と森林の多面的機能</span>
+          <span class="sum">森林の多面的機能の貨幣評価約70兆円を挙げて中山間地域の重要性への認識を尋ね、県中山間地域活性化基本条例に基づく取り組みや水と緑の森づくり税の活用、自然環境保全・河川整備・定住対策・雇用創出の現状と考え方、推進リーダーの育成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・上廻芳和</span>
+          <span class="ttl">中山間地域等直接支払制度と市独自施策</span>
+          <span class="sum">2期対策で協定集落が減り10割交付は27集落にとどまる現状を挙げ、品目横断的経営安定対策の推進方法と、集落崩壊を防ぐための安来市独自のプラスアルファ施策の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・石倉刻夷</span>
+          <span class="ttl">地上デジタル放送移行への支援</span>
+          <span class="sum">2011年のアナログ放送終了に向け、ケーブルテレビのない安来市では中山間地域・難視聴地域の共聴施設の新設・改修負担が過重になるとして、受信への支援検討と早目の市民への情報提供を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・梶谷厚</span>
+          <span class="ttl">携帯電話サービスエリアの拡大</span>
+          <span class="sum">中山間地域で携帯電話が通じず交通死亡事故の通報が遅れた実例を挙げ、圏外地域の実態把握と、サービスエリア拡大への対策と今後の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・梶谷厚</span>
+          <span class="ttl">農政転換への安来市の基本姿勢</span>
+          <span class="sum">品目横断的経営安定対策など平成19年度からの農政大転換を前に、基幹産業である農業振興の基本的考え方、担い手対策、対象から外れる兼業農家や中山間地小規模生産者への支援策、生産調整への市のかかわり方を質し、農業ビジョンの策定を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・上廻芳和</span>
+          <span class="ttl">中山間地域直接支払制度の評価と継続</span>
+          <span class="sum">8年間の制度の評価と協定未締結集落を含む現状・課題、21年度で終わる制度の見通しを尋ね、参加できない集落の要因を分析して全集落が参加できる体制づくりと国・県への継続要望を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・田淵秀喜</span>
+          <span class="ttl">中山間地農業の課題と新たな発想</span>
+          <span class="sum">農業従事者の高齢化の実態と受託できる大規模農家の数、耕作放棄地の面積、鳥獣被害の状況を確認し、トータルマネジメントできるコーディネーターの人的支援など中山間地農業への新たな施策を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石倉刻夷</span>
+          <span class="ttl">中海圏域と中山間地域の振興</span>
+          <span class="sum">米子ソウル便運休問題への官民一体の対応、中海市長会の事務局体制と課題を絞ったシンポジウムの定期開催を尋ね、雲南市・奥出雲町と接する中山間地域の振興策や道路整備期成同盟会の進捗、全国和牛能力共進会への支援の意気込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・中島隆夫</span>
+          <span class="ttl">人口構造の変化と中山間地域対策</span>
+          <span class="sum">市の高齢化率28.4％・年少人口13.1％の受けとめと見通し、高齢化率が4割に近い比田・赤屋・布部など中山間地域で安心して暮らすための取り組み、閉校校舎の再利用を質し、定住促進条例の制定を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・上廻芳和</span>
+          <span class="ttl">品目横断的経営安定対策と農地・水事業</span>
+          <span class="sum">中山間地では要件を満たす担い手がないとして取り組みの現状と水田の利用権設定の動向を尋ね、農地・水・農村環境保全向上活動は交流センター単位の広域での取り組みが効果的と提案し、市独自の中山間地域振興計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・梶谷厚</span>
+          <span class="ttl">限界集落の実態と再生</span>
+          <span class="sum">高齢化率70％以上の集落が県内に67カ所あるとされる中、安来市の限界集落の現状と地域再生への見解を尋ね、中山間地対策の専門部署の設置や再生整備計画・水源の里条例の検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岩田拓郎</span>
+          <span class="ttl">中山間地域への課題認識とポスト過疎法</span>
+          <span class="sum">市長選への出馬表明を踏まえ中山間地域の課題認識と対策の抱負を尋ね、過疎法による本市の取り組みの成果と過疎債活用事業を確認し、新法制定への強力な働きかけを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岩田拓郎</span>
+          <span class="ttl">中山間地域対策と緊急経済対策の位置づけ</span>
+          <span class="sum">ポスト過疎法では合併による、みなし規定の維持を重点要望するよう求め、交流センターを窓口にした元気いきいき補助金の展開を評価し、緊急経済対策を中・長期の足腰の強いまちづくりにつなげる位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石倉刻夷</span>
+          <span class="ttl">元気いきいき補助事業の半期実績</span>
+          <span class="sum">中山間地域元気いきいき補助事業の各地域の実績と特筆される取り組み、協議中の団体を尋ね、冬期の取り組みを見据えた12月補正の考えと次年度継続を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・嘉本祐一</span>
+          <span class="ttl">市政運営の理念と公約の基本的考え</span>
+          <span class="sum">所信表明を踏まえた市政全般の運営理念をわかりやすく示すよう求め、まちづくり・環境保全、地域振興と中山間地域の均衡ある発展の基本的考え方を項目別に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田淵秀喜</span>
+          <span class="ttl">市道の雑草管理と通学路の安全</span>
+          <span class="sum">中山間地域で市道に雑草が生い茂り通行の妨げになっている現状への認識を尋ね、通学路の安全確保への対応と、ボランティア頼みでなく交流センターと連携した仕組みづくりを提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岩田拓郎</span>
+          <span class="ttl">直接支払制度と元気いきいき補助金の充実</span>
+          <span class="sum">中山間地域等直接支払制度の成果と延長への働きかけを尋ね、元気いきいき補助金の地域別申請状況と窓口の所感を確認して、交流センターと一体になった支援と事業の充実・増額を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石倉刻夷</span>
+          <span class="ttl">直接支払制度と農地・水・環境保全対策</span>
+          <span class="sum">中山間地域等直接支払制度への会計検査の状況や対象面積の確認基準、国土調査の実績と今後を尋ね、3期継続への市の姿勢と、農地・水・環境保全向上対策の19年度実績・20年度新規地区・未実施地区への働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石倉刻夷</span>
+          <span class="ttl">過疎地域自立促進計画の検証と新過疎法</span>
+          <span class="sum">過疎債を充当した主要事業の実施状況と21年度の施策内容を確認し、法延長後に適用したい事業と過疎法再構築への市の対処を尋ね、辺地計画と辺地債の動向もただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・丸山征司</span>
+          <span class="ttl">イエローバス車両の小型化</span>
+          <span class="sum">27台の車両内訳と路線別平均乗車人数を確認し、中山間地では10〜15人乗りワゴンの試験導入で細い道への乗り入れと経費削減が図れると車両価格の比較まで示して提案し、路線統合による循環ルートも提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・嘉本祐一</span>
+          <span class="ttl">子育て支援と超高齢化への福祉対策</span>
+          <span class="sum">10年間で児童のいる世帯の平均所得が約76万円減少したことを挙げ、子育て世代支援と、中山間地・限界集落を抱える超高齢化社会に向けた福祉対策の方針を尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田淵秀喜</span>
+          <span class="ttl">定住対策の全体像と中山間地支援</span>
+          <span class="sum">人口4万3,000人割れが迫る中での定住対策全般の現状認識と中山間地域の具体的取り組み、地域センターの役割と支援の必要性を尋ね、定住を統括する部署・プロジェクトの設置と情報開示を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中武夫</span>
+          <span class="ttl">農地有効利用支援整備事業の採択と漏れ対策</span>
+          <span class="sum">一時凍結後に一部採択となった農地有効利用支援整備事業の申し込み・採択・執行状況を確認し、周知期間が短く申請できなかった中山間地の希望箇所への今後の手だてと農林予算での整備継続を市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉刻夷</span>
+          <span class="ttl">中山間地直接支払第3期と大河ドラマ運動</span>
+          <span class="sum">中山間地域等直接支払制度の第2期実績と第3期の協定取りまとめ状況・取り組めない集落の検証を尋ね、元気いきいき事業の全市拡大を提案し、山中鹿介大河ドラマ実現へゲゲゲの女房で効果を実証したラッピングバスの運行を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田淵秀喜</span>
+          <span class="ttl">戸別所得補償制度と中山間地農業</span>
+          <span class="sum">本年度導入された米戸別所得補償制度と水田利活用事業の実施結果と問題点を尋ね、被害が大きい広瀬・伯太の有害鳥獣対策について高齢化する猟友会だけに頼らない一歩踏み込んだ対策の議論を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田淵秀喜</span>
+          <span class="ttl">中山間地農業と交通弱者対策</span>
+          <span class="sum">担い手不足で閉塞感のある中山間地農業の分析を尋ね、小さな水田に適した農機具の貸し出しなど大規模集団経営とは別の仕組みづくりの研究を求めるとともに、地域センターの機能強化と、イエローバスでは補完し切れない買い物・通院の交通弱者対策として地元タクシー・バス会社を活用する仕組みの検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田淵秀喜</span>
+          <span class="ttl">台風12号を踏まえた水害対策</span>
+          <span class="sum">台風12号の被害を受け、ダム放流を見越した飯梨川・山佐川水系の堤防対策、河川内の立木・流木の撤去、危険箇所の把握を尋ね、避難経路・避難場所の安全性や孤立のおそれがある中山間地の市道管理、防災センター機能の体制を検証するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・樋野智之</span>
+          <span class="ttl">地産地消循環システムと給食センター</span>
+          <span class="sum">合併協議会で提案された給食センターを核に中山間地農家の食材を学校給食や高齢者配食で消費する地産地消循環システムの進捗を確認し、給食センターの具体的な建設計画と、広瀬中学校の弁当給食が米子の業者への入札になっている理由や地元業者の採算性に配慮した入札形式かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中武夫</span>
+          <span class="ttl">夢を持てる農林政策</span>
+          <span class="sum">農政会議の要望への回答が消極的だと指摘し、高齢化や手続の煩雑さで中山間地域等直接支払制度への参加が減っている実態と、ほ場整備で労働時間が10アール44時間から12時間に減ってもなお利益が出ない現状を示して、農業者に夢を与える来年度の農林政策を市長に求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・作野幸憲</span>
+          <span class="ttl">TPPと農林業・中山間地対策</span>
+          <span class="sum">TPP参加交渉への市長の立場を確認し、農林振興協議会に創設する新事業の中身、中山間地域の現状を把握する専門部の設置、土地改良事業の意向調査を踏まえた取り組み、竹粉砕器の貸し出しにとどまらないバイオマス活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉刻夷</span>
+          <span class="ttl">プロジェクトチームの実態</span>
+          <span class="sum">スピード感ある市政運営のため4月に施行された企画調整会議設置規定に基づくプロジェクトチームの目的・名称・構成員・スケジュールを尋ね、6月議会で市長が組んでいると答弁した中山間地対策プロジェクトの実働状況を再質問でただして、何でも副市長が会長では機動性に欠けると指摘した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉刻夷</span>
+          <span class="ttl">中山間地域対策の受け皿</span>
+          <span class="sum">県が部局横断のプロジェクトチームを発足させた中山間地域対策について、市が実施している活性化施策と予算措置を確認し、県の施策に呼応する特化した対策室の設置と、地域センターの専門スタッフが何をもとに動くのか本課の受け皿を明確にするよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・梶谷厚</span>
+          <span class="ttl">中山間地対策の制度活用と専門部署</span>
+          <span class="sum">限界集落が21に達し伯太の商店が5戸まで減って買い物困難率が県下ワーストという中山間地の現状認識を問い、県下ほとんどの市町村が活用する集落支援員や地域おこし協力隊を安来市が一人も置いていない理由をただして、しまね郷づくりカルテの活用、過疎債ソフト事業、空き家バンクの確立と中山間地活性化対策課のような責任ある専門部署の設置を迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">中山間地農業の5年後10年後</span>
+          <span class="sum">直接支払制度がなければ大半が絶えていた中山間地農業の5年後・10年後の見通しへの認識を尋ね、次の契約更新で脱落しほ場整備した優良農地が荒廃田になる懸念を示して、利益追求型でない集落営農の組織化を具体的にどう推進するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・葉田茂美</span>
+          <span class="ttl">中山間地農業への有効な支援</span>
+          <span class="sum">全国平均より10年以上先を行く高齢化と14.5%の耕作放棄地率という中山間地域の現状を示し、有害鳥獣と戦いながら米づくりと和牛飼育で農業と景観を守る高齢農家に行政として何か有効な支援ができないかとして、平地農業とあわせた中山間地域の振興対策への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・勝部幸治</span>
+          <span class="ttl">企業誘致の条件整備と設計図</span>
+          <span class="sum">企業誘致を掲げるなら日本エアロフォージを側面支援する切川バイパスやインター線など条件整備を並行して進めるべきだと迫り、中山間地や中心市街地に入り込む専門職員の配置は総論でなく具体で示せとただして、都市計画マスタープランというまちづくりの設計図を市民に示さないことが最大の欠落だと批判した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">定住対策と中山間地への企業誘致</span>
+          <span class="sum">日本一の子育て村を掲げる邑南町の定住促進課と定住コーディネーターの取り組みを紹介し、ほ場整備済みの田が荒れる中山間地で農業をする企業の誘致、UIターン者向け住宅の整備、中山間地域プロジェクトチームの活動内容と定住専門課の設置を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">定住研修者の住まいと対策室</span>
+          <span class="sum">アグリ体験セミナー参加10人のうち3組が定住に意欲を持つ成果を紹介し、研修受け入れ時に案内できる住宅が荒れていて定住をためらわせる実態から住まいの確保を求め、県の部局横断プロジェクトに呼応する中山間地対策室の設置と集落営農立ち上げへの機械導入支援の国・県への要望を訴えた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・梶谷厚</span>
+          <span class="ttl">小規模多機能型介護施設の地区設置</span>
+          <span class="sum">介護施設の待機者が多く入所がままならない中山間地の緊急課題として、市町村に指定権限があり空き家を改装して通い・訪問・泊まりのサービスを提供できる小規模多機能型居宅介護施設を地区単位で設置すれば、地産地消や雇用も生まれ活性化につながるとして早期設置を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中島隆夫</span>
+          <span class="ttl">行革・中山間地対策と議会への姿勢</span>
+          <span class="sum">ファシリティマネジメント導入への2期目の決意と職員が使命感を持って働ける環境づくりを尋ね、担い手育成から買い物・移動支援、UIターンの受け皿まで総合的な中山間地域対策の進め方と公約の進捗を市民へ説明する方法を確認して、二元代表制のもとでの議会に対する基本姿勢を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">農業活性化と中山間地対策</span>
+          <span class="sum">集落営農推進・担い手確保など施政方針の具体的な説明を求め、活動が見えない中山間地対策プロジェクトチームの構成と実働、専門部署を設けて集落に入り込む体制、全共大敗を踏まえた和牛・乳牛農家への具体的支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・石倉刻夷</span>
+          <span class="ttl">合併10年の総括と振興事業の検証</span>
+          <span class="sum">合併10年を迎えて市長が体感したメリットとデメリット、デメリットへの対策や戦略を市民目線で尋ね、交付税減額に対する市独自の対策と総合計画を見据えた重点振興策の方針を質して、合併当初から続くトライアングル事業と中山間地域元気いきいき事業の総括と今後の方向を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・上廻芳和</span>
+          <span class="ttl">地元材バイオマスと中山間地対策</span>
+          <span class="sum">市民会館の熱源に木材チップを6割使う方針を県内初のバイオマスタウンらしいと評価して、地元安来市の木材を利用すれば山の整備と雇用にもつながると迫り、25年度の50余りに上る中山間地対策の主な施策と7集落で話し合いが進む集落ビジョン推進事業の現場の苦労を確認して、来年度予算での拡充と地域センター長が住民の声を集める役割を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田淵秀喜</span>
+          <span class="ttl">特殊鋼特区と農業のブランド化</span>
+          <span class="sum">動きが見えなくなった特殊鋼関連の特区認定の状況と市の支援策を尋ね、企業の新規立地や事業拡大に応える工業用地として中海干拓農地の転用可能性まで踏み込んで質し、農業では水稲・果樹・野菜のブランド化による所得向上と研究機関との連携、中山間地の水路・のり面の維持管理支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・作野幸憲</span>
+          <span class="ttl">米政策改革と市独自の農政</span>
+          <span class="sum">米の直接支払交付金半減や農地中間管理機構創設など国の4つの改革への基本的な考えと安来市農業への影響を尋ね、平場と中山間地を抱える安来市独自の農業政策の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・井上峯雄</span>
+          <span class="ttl">自主防災組織と防犯灯への支援</span>
+          <span class="sum">自主防災組織の結成状況と世帯に占める割合を確認して運営費助成の基礎額・補助率の改正の考えを尋ね、市内約3,200灯の防犯灯のLED化の状況と、家々が点在し広範囲の設置が必要な南部中山間地の自治会に対する設置補助の運用の実際を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・石倉刻夷</span>
+          <span class="ttl">農業4改革への対応と防犯カメラ</span>
+          <span class="sum">農地中間管理機構の創設や経営所得安定対策の見直しなど4つの農業改革について、水稲が基幹の中山間地の後継者問題を踏まえた市の基本的な考えを誰が担当するのかも含めて質し、市内の防犯カメラの設置状況と安来警察署長が出発式で言及した計画的設置の内容、補助制度を使った市の設置計画を確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩田拓郎</span>
+          <span class="ttl">辺地・限界集落への対策</span>
+          <span class="sum">南部の谷間に数戸が点在しイエローバスも通わない集落の生活交通の確保と、高齢者にはできない市道の草刈り・除雪などの生活環境整備への支援を尋ね、中山間地対策という一くくりではなく消滅しかねない集落に踏み込んだ辺地対策を考えるべきだと市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中明美</span>
+          <span class="ttl">集落ビジョン推進事業と中山間地対策</span>
+          <span class="sum">集落営農組織の数と中山間地域での組織状況（24団体）や国・県の農業振興対策を確認し、家族も交えた集落の話し合いに市・県普及部・JAの担当者が入って将来像づくりを支援する安来独自の集落ビジョン推進事業を高く評価して事業の拡充を求め、交通や買い物対策も含め総合的に取り組む中山間地域対策プロジェクトの開催状況と検討内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・上廻芳和</span>
+          <span class="ttl">集落ビジョン推進事業への期待</span>
+          <span class="sum">わかさ会館で開かれた「集落のこれからを考える研究会」を紹介し、今年度始まった安来集落ビジョン推進事業に8集落が取り組みを申し込んでいることを確認して、中山間地の農業と集落を守るモデルとなるよう脱落者を出さない支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・田淵秀喜</span>
+          <span class="ttl">人口対策の検証と企画力</span>
+          <span class="sum">人口の現状と将来推計、県や中海・宍道湖・大山圏域市長会の取り組みを確認した上で、合併以降の中山間地対策と中心市街地活性化の検証結果を質し、総花的な取り組みでなく成果につながるものに資源を集中投下すべきだとして、定住企画課を抱える政策企画部長の企画力と、具体的な中身を持った国・県への要望活動の体制づくりを迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・田淵秀喜</span>
+          <span class="ttl">商品券・雇用を将来につなぐ設計</span>
+          <span class="sum">プレミアム付商品券について前回実施時の反省点の分析と生かし方を尋ね、中山間地域では商品券を使う場所自体がないとして移動販売などこれからの買い物支援に寄与する長期的な事業として組み立てるよう求め、企業誘致や既存事業所の拡充に向けたインフラ整備、6次産業化など新しい産業を生み出す総合的な支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・中島隆夫</span>
+          <span class="ttl">小さな拠点づくりと地域分析</span>
+          <span class="sum">人口減少で2050年には居住地域の2割が無居住化するという国の推計を踏まえ、中山間地域の生活サービス機能を基幹集落に集約しネットワークでつなぐ「小さな拠点」の形成を念頭に置いたモデル地域づくりの検討を市長に求め、集落や小学校区単位で人口・高齢化率や医療・交通など暮らしの環境を分析し住民とともに将来を考えるツールとする取り組みを提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・上廻芳和</span>
+          <span class="ttl">平たん地・中山間地農業の将来像</span>
+          <span class="sum">大型区画整理と集落営農が進む平たん地と、大型ほ場整備が難しい中山間地それぞれの農業の将来像を尋ね、不作付地476ヘクタールが米価下落と担い手不足で逆にふえるのではないかと危惧を示した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉刻夷</span>
+          <span class="ttl">月山整備のわかりやすさと農政・環境の課題</span>
+          <span class="sum">月山富田城跡の保存管理計画と整備基本計画の違いを誰にでもわかるように説明するよう求め、山中御殿先の大きな段差で登山を断念する人や七曲がりに手すりがない実情を市民の声として改修の可否を質し、集落ビジョンの26年度応募状況や中山間地域直接支払・多面的機能支払の取り組みを確認して、草ぼうぼうの庁舎前9号線歩道の除草対策も市長に投げかけた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・上廻芳和</span>
+          <span class="ttl">集落営農・農地中間管理と中山間整備</span>
+          <span class="sum">広瀬・伯太で進まない集落営農と法人化の現状と対策、農地中間管理機構の現状と推進の問題点、地域おこし協力隊の活用、中山間地域総合整備事業の状況と今後のスケジュール、宮城県での全国和牛能力共進会への意気込みを尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">中山間地域対策の体制強化</span>
+          <span class="sum">元気いきいき事業の地域別実績と次年度への考え、トライアングル事業の実績と補助要綱見直し、中山間地域等直接支払制度の取りまとめ状況と5カ年計画を断念した未実施地区への抜本対策を順に確認し、上山佐地区の集落消滅への危機感を伝える報道を引いて、地域センターの担当を明確にした中山間地域対策室の設置と、草刈りなどを担う中山間地域支援隊の創設を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・岩田拓郎</span>
+          <span class="ttl">中山間農業の振興と獣害対策</span>
+          <span class="sum">給食センター稼働を控えて中山間地域研究センターや農林振興センター・JAと連携した新しい視点での産地化と基盤整備への所見を尋ね、要望が多く出た中山間地域総合整備事業の概況と見通し、イノシシやカラスの獣害の被害状況と防止の取り組み・成果を確認して、継続的な対策と多発した稲こうじ病への啓発を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">中山間農業を支える制度の総点検</span>
+          <span class="sum">議会報告会での中山間地域農業はもう個人の努力ではどうにもならないという訴えを受けて17名の議員勉強会を立ち上げた経緯を語り、第4期中山間地域等直接支払制度の提出状況と未提出地区への対策、取り組み率55%の多面的機能支払、対策本部を立ち上げるべき耕作放棄地と相続未登記農地、中山間地域総合整備事業の広瀬・伯太2地区同時採択、環境保全型農業直接支払の取り組みを順に質し、緩傾斜100分の1要件に合う地区の再調査を重ねて求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">地域おこし協力隊の受け入れ要件</span>
+          <span class="sum">今年度任用を開始した地域おこし協力隊の応募状況と今後の方針を尋ね、退任者24名中16名が定住した新潟県十日町市の地域ニーズ・世話役・住居という独自要件を紹介して安来独自の要件の有無をただし、中山間地域に限らず市内全域・多様な職種での受け入れと退任後の定住対策の充実を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・岩田拓郎</span>
+          <span class="ttl">拠点集落と移住の受け入れ体制</span>
+          <span class="sum">人口目標を達成しても中山間地域の過疎化は格段に進むと懸念して拠点集落の整備への考えを尋ね、Iターン・Uターン・市内転居それぞれの対策を確認して、ワンストップパーソンや住民の受け入れ協議会で成果を上げる和歌山県の例を紹介し、ハードだけでなく人と組織の面での受け入れ体制の充実を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・上廻芳和</span>
+          <span class="ttl">確定申告会場の縮小への怒り</span>
+          <span class="sum">平成28年度の中山間地域活性化の事業を確認した上で、これまで各交流センターで受け付けていた確定申告の会場がことしから削られ、広瀬・伯太庁舎も隔日となったことに住民から怒りの声が上がっているとして、その理由をただし、納税という義務を果たそうとする住民へのサービスを県への働きかけも含め来年に向けて検討するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・岩田拓郎</span>
+          <span class="ttl">祭りと集落を支える行政支援</span>
+          <span class="sum">中山間地域では運動会にチームで参加できず、みこしも担げないほど集落機能の維持が難しくなっているとして、住民参加とコミュニティー形成の場として見直される祭りの歴史的・文化的価値に対して行政としてどのような支援ができるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・永田巳好</span>
+          <span class="ttl">過疎地域と交流センターへの配慮</span>
+          <span class="sum">総合文化ホールなど大型事業の財源の7割が過疎債である一方、過疎地域に住む高齢者には実感が薄いとして、過疎地域自立促進計画を進めるためにも地域センター長に自由に使える予算を持たせることと、地域の課題に立ち向かう交流センターの館長・主事の処遇への考慮を市長に重ねて求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">道の駅の管理体制と山の駅構想</span>
+          <span class="sum">レジ通過100万人を超えたあらえっさなど市内2つの道の駅の管理体制と市の財政支援の実態を確認し、広瀬・富田城では絣センターや資料館を統括する駅長機能がないと苦言を呈して、中山間地の市管理・指定管理施設を「山の駅」と位置づけ上の台緑の村を第1号に国や県の支援を引き出す構想を市長に提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・遠藤孝</span>
+          <span class="ttl">3期目の決意と防災の総点検</span>
+          <span class="sum">3期目の当選を祝しつつ4年間で何を最重要としてやり遂げるのかを冒頭に尋ね、防災について、昼間に若い人が留守の場合など状況に応じた訓練、中山間地の道路寸断時の迂回ルート、避難勧告など避難情報の市民の理解度、水道老朽管の総延長と更新年数・財源、高齢者の所在情報の共有、危険空き家への行政代執行の適用範囲、原子力広域避難計画の周知と避難先との連絡まで幅広くただし、中山間地域の活性化こそ災害に強い町をつくると訴えた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・丸山征司</span>
+          <span class="ttl">サルボウガイと雇用の場づくり</span>
+          <span class="sum">サルボウガイ養殖の現況と生産量増加の考えを確認し、道の駅の水産加工場を松江のカニ小屋のように自分で焼いて食べられる場にする提案を行って、職住近接への市の見解と中山間地域の雇用の場の確保、要望に合わせて建てるオーダーメード貸工場の今後、新工業団地とのすみ分け、都会の若者の起業誘致への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">中山間農業への支援</span>
+          <span class="sum">新年度予算で中山間地域に特化した予算の内容と国・県の支援制度の情報を尋ね、集落営農研修会を主催する安来地域担い手育成総合支援協議会と安来市集落営農組織連絡協議会の活動内容と目的を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">市道の優先順位と中山間農林業</span>
+          <span class="sum">限られた予算の中で市道の維持管理をどう評価して優先順位をつけ計画に載せるのか進め方を確認し、想定を超える気象への備えも促して、耕作放棄地や担い手不足に苦しむ中山間地域の農林業を将来どうしていくのか、雇用や定住と絡めたパッケージ的な事業の推進を農林部局に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・澤田秀夫</span>
+          <span class="ttl">新総合事業と生活支援の準備</span>
+          <span class="sum">平成29年度から始まる介護予防・日常生活支援総合事業について、全国でサービス切り下げの事例もある中で要支援者へのサービスをどう考えるのかを確認し、地域で説明会が始まった生活支援ボランティア制度の内容と参加方法、買い物支援など準備中の生活支援事業を尋ねて、中山間地域の現実の課題として市が責任を持った積極的な実施を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・澤田秀夫</span>
+          <span class="ttl">落石危険区域と赤屋の県道改良</span>
+          <span class="sum">邑南町の落石死亡事故を受けて市内132カ所の落石危険箇所の点検と整備計画を確認し、特に危険な箇所の明確化による注意喚起と中山間地の行きどまり道路の整備の考えを尋ねて、赤屋地区の県道安来伯太日南線の県境までの整備見込みと、小竹地区127世帯の生活道路である本山伯太線の1車線区間の改良計画・迂回路の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・作野幸憲</span>
+          <span class="ttl">農業特区・ICTとケーブルテレビ</span>
+          <span class="sum">大型ほ場と中山間地の両面を持つ全国でも珍しい環境を生かした農業特区への挑戦と、普及が進む農業ICTへの人的支援による技術のデータ化・継承を提案し、開局5年のどじょっこテレビとの連携によるまちづくりの推進と、圏域でほぼ唯一視聴できないテレビ東京系列への働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・中島隆夫</span>
+          <span class="ttl">農業環境・観光テーマ・交通弱者</span>
+          <span class="sum">食と農の条例制定の必要性も述べながら、若者が夢を持って農業に携われる環境とはどんな環境でどんな支援が要るのかを尋ね、観光資源が多いがゆえに総花的になっているとしてエコ・グリーン・産業観光などわかりやすい統一テーマを持った観光誘客への考えを質し、イエローバス見直しやデマンド運行など中山間地域の交通手段確保の見通しと、スマートインターチェンジ設置への市長の意気込みを確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・原田貴与子</span>
+          <span class="ttl">25%削減より住民参加のまちづくり</span>
+          <span class="sum">公共施設等総合管理計画の25%削減目標にとらわれず人口ビジョンと地域発展の長期的視点に立つべきだと市長のまちづくりの理念をただし、経済効率でははかれない中山間地の福祉・教育施設に配慮した適正配置と民営化の基準を確認して、ホームページやパブリックコメントだけでは市民の声は反映されないとして、交流センターを拠点にした住民参加型の意思決定と職員の待遇改善を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">イエローバスの先の公共交通</span>
+          <span class="sum">中山間地域の買い物や通院の足をめぐる社会実験の状況と課題の整理を確認し、イエローバスだけではフォローし切れない支線の地域を自治会輸送などでどう網羅するのか、事故時の補償や安全確保も含めた安来らしい交通体系の結論を出す時期だと迫って、新庁舎とアルテピアという2つのシンボル施設への公共交通の導線と周知を早急に計画するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">クラスター型まちづくりの具体化</span>
+          <span class="sum">市長が提唱してきたクラスター型のコンパクトシティーの方向性が今も変わらないかを確認し、人口密度の維持に視点を移した立地適正化計画の作成の有無、中心市街地と中山間地域のまちづくりのすみ分け、既存の建物や観光資源を活用した地域づくりを順にただして、おくれている地域ビジョンの策定を地元と一緒に早く進めるよう行政の踏み込んだ支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・澤田秀夫</span>
+          <span class="ttl">中山間地域農業の支援策</span>
+          <span class="sum">大区画ほ場約1,016ヘクタールが市の農地の約25%を占める一方、継続の危機にある中山間地域の小規模農業について、7,000トン不足するきぬむすめなど需要の旺盛な品種への切りかえも例に挙げ、市長の考える支援策のイメージを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">事象別の危機管理と孤立対策</span>
+          <span class="sum">風水害・地震・ミサイル・原発・感染症など事象ごとの危機管理体制が整理されているかを確認し、公民館や公会堂など古い建物が多い避難所の安全性の確認状況をただして、一本道で行きどまりになる中山間地域の集落の孤立への対応を尋ね、多発する災害に現有の防災人員で対応できるのか人員補強も含めた強化を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・原田貴与子</span>
+          <span class="ttl">介護保険の負担増から守る</span>
+          <span class="sum">改定ごとに上がる介護保険料について基金を活用してこれ以上負担を重くすべきでないと決定の考え方をただし、前年所得で判定され所得激減に救済のない保険料・利用料の減免制度の創設、2割負担導入後の利用状況調査、点数のつかない要支援者の入浴サービスへの事業評価、総合事業での現行相当サービスの維持、全産業より10万円低い介護労働者の処遇改善と中山間地の送迎への一般会計からの補填を重ねて迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・作野幸憲</span>
+          <span class="ttl">他業種連携と農業ビジョン</span>
+          <span class="sum">選挙で痛感した中山間地域の深刻さから、草刈りや防護柵設置の重労働を建設業者などへ外部委託できる中山間地域等直接支払制度の要件を確認し、先進県とされる農福連携の市内実績と今後の考え、新規就農者のUIターン比率、兼業で現金収入を確保する半農半Xの現状を順にただして、減反廃止で不安を抱える農家に市長の農業ビジョンを明確に示すよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・金山満輝</span>
+          <span class="ttl">定住施策のプロデュース体制</span>
+          <span class="sum">集約化に向かえない中山間地域の農地活用と産業基盤の整備・展開の具体的方策を尋ね、定住促進は子育て・雇用・地域の魅力の総合的な施策展開でなければ一過性のアドバルーンに終わるとして、政策をプロデュースする役割を誰が果たし、市長のリーダーシップのもとに一丸となって遂行する体制が整っているのかと重ねて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・澤田秀夫</span>
+          <span class="ttl">小規模自治会と市道管理</span>
+          <span class="sum">消滅が懸念される中山間地域の小規模自治会への支援の考え方と、草や樹木で狭隘になり危険を感じる箇所もある約1,000キロメートルの市道全般の管理責任のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・岩崎勉</span>
+          <span class="ttl">水田フル活用の実績と対策</span>
+          <span class="sum">平成30年度の農業振興への意気込みと目玉事業を確認した上で、水田フル活用ビジョンについて29年度の作物ごとの作付実績と、大豆や麦の反収低下を招く排水不良への対策、中山間地で広がる不作付地への対策、30年度の目標を順にただし、主食用米や飼料用米がわずかに未達となった要因の分析を再質問で確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・永田巳好</span>
+          <span class="ttl">減額した予算の復活と過疎債</span>
+          <span class="sum">昨年減額修正された1億7,000万円が補正予算でほぼ復活して29年度が終わったことに、あれは何だったのかと市長の政治家としての考えをただし、過疎対策事業債の定義と旧広瀬・伯太両町に向けた事業・予算を確認して、有利な起債でも借金には変わりないとして過疎地域の住民が理解できる説明と税収をふやす施策を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・樋野智之</span>
+          <span class="ttl">神山町に学ぶIT企業の誘致</span>
+          <span class="sum">IT系ベンチャー9社がサテライトオフィスを開いた徳島県神山町の例を挙げ、市内全域に張りめぐらされた高速通信網という武器を生かして中山間地の空き家をIT企業誘致に活用する施策をただし、松江市ばかりが報道される企業誘致の現状に対し、本市のブロードバンドの通信速度で大容量通信に対応できるのかもあわせて確認した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・石倉刻夷</span>
+          <span class="ttl">総合戦略と農林業の課題</span>
+          <span class="sum">議会報告会の声をもとに、総合戦略の情報発信・推進会議の開催状況・じげを形成する基本目標の動向を確認し、今年度で廃止される米の直接支払交付金と生産調整廃止後の再生協議会のあり方、意向調査を終えて採択を待つ地域が多い中山間地域総合整備事業の国県動向を尋ねて、経営が厳しい森林組合を支える農林中央金庫の森林再生基金の調査・助言を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・岡本早智雄</span>
+          <span class="ttl">自治会とは何かを問い直す</span>
+          <span class="sum">中山間地域では良好な地域社会を維持する協働活動がやりたくてもできない自治会があるとして、明確な定義のない自治会の位置づけ・あり方・役割への市の認識を原点からただし、冠婚葬祭や伝統行事、農村環境の維持まで担ってきた自治会機能が消滅すれば市政と市民生活に多大な影響が出ると、厳しい地域の現状認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">若者が住める思い切った施策を</span>
+          <span class="sum">最終バッターとして市長の目指す安来市の将来像を聞いた上で、道具はそろったとして、年収300万円の若者が家を建てられるよう土地の無償貸与のような思い切った土地政策や学校給食の無償化を提案し、南部の中山間地域は土地が安く米子や高速道路にも近いとして道路網整備と土地政策で発展を仕掛けるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・岡本早智雄</span>
+          <span class="ttl">行政が遠くなった中山間地域</span>
+          <span class="sum">初質問で、合併13年の人口減少率が安来地区9.1%に対し広瀬20.6%・伯太16.2%と中山間で顕著だと示し、選挙を通じて聞いた市役所が遠いものになったという声や、困り事をどこに相談してよいかわからないという実態を訴えて、地域自治組織の動きも踏まえ、地域と行政をつなぐ地域センターの位置づけと役割の現状、役割を十分果たしているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岡本早智雄</span>
+          <span class="ttl">2人しか集まらなかった火災</span>
+          <span class="sum">自らの分団区域の山林火災で招集に集まったのが2名でポンプ積載車を出せなかった実体験を明かし、現在の分団体制で実質的な消火活動ができるのかと問うて、消防団協力事業所が他市に比べ少ない現状と応援の店の拡大、定数を超えた入団で条例定数を確保する考え方への違和感、中山間地域の分団の今後を重ねてただし、1カ所の火災に全署から出動する現状を踏まえた消防署の人員・機材の強化と非番招集される職員のケアを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・金山満輝</span>
+          <span class="ttl">イベント見直しと外国人・農業</span>
+          <span class="sum">多種多様なイベントを支えるボランティアの疲弊を憂いてスクラップ・アンド・ビルドによるイベントの見直しと新しい取り組みへの決断を市長に求め、改正入管法の施行を前に市内企業の外国人就労の実態把握と地域生活へのアフターケア・就学支援への考えを確認して、ほ場整備を進めた後の農業振興・成長産業化と中山間地域での具体的な展開策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岡本早智雄</span>
+          <span class="ttl">自治会統合への具体的な一手</span>
+          <span class="sum">3回目となる中山間地域の質問で、組織全体で地域課題をカバーするという昨年来の答弁のその後をただし、統合・再編も必要と認めた自治会について具体的な対策を確認して、相談を待つだけでは廃止に至る自治会は救えないと指摘し、補助金と行政主導のコーディネートで小学校区単位の自治会統合を進めた鹿児島県日置市の例を詳しく紹介した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岡本早智雄</span>
+          <span class="ttl">集落支援員の増員を</span>
+          <span class="sum">中山間地域振興事業も受け皿となる自治会がなければ意味がないとして、特別交付税措置があり市の持ち出しなく配置できる集落支援員が県内235名・益田市87名に対し安来市は3名にとどまる現状を示し、地域に精通した人材に自治会統合のコーディネートも委ねる増員を提案して、市域の82%が県条例の中山間地域に当たる安来こそ総合的施策を計画的に実行すべきだと迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">中間管理機構と担い手の現実</span>
+          <span class="sum">制度開始5年の農地中間管理機構について、農地・認定農業者・営農組織の推移と大区画基盤整備の状況、旧市町ごとの離農の状況を順に確認し、耕作条件が不利な中山間地域の集積課題と機構関連基盤整備の受益者負担の軽減をただして、まち・ひと・しごと創生総合戦略の自然減・社会減の状況と丸山知事の人口ビジョン前倒し発言への所見も質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">小さな拠点づくりの実態</span>
+          <span class="sum">島根県が中山間地域活性化計画の重点施策とする小さな拠点づくりについて市の理解と整理、8地区の地域ビジョンなど市内の取り組みの実態、今後の考え方を順に確認し、合併時約4万5,000人から3万8,700人余に減った人口の実情を示して、就任2カ月の副市長に中山間地域への思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・作野幸憲</span>
+          <span class="ttl">特定地域づくり組合に手を</span>
+          <span class="sum">人手不足の農林水産業や介護などへ若者を派遣する特定地域づくり事業協同組合を柱とする人口急減対策の特別措置法案について市の評価と方針を問い、農繁期は農業・冬場は建設業といった業種間連携で中山間地域の命綱になる法案だとして、市が出資者への働きかけの仲立ちを担い県内でも一番に取り組むよう市長に迫った。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">直接支払第5期と任用職員</span>
+          <span class="sum">中山間地域等直接支払制度の1期から4期までの面積の推移と17%減の実態を旧市町ごとに確認し、第5期の見直し内容と平場を含めた周知・支援を求めて、新設の会計年度任用職員制度では対象450名超の職種と約1億円の費用増・交付税措置の有無をただし、交流センター館長の任期が1年となることへの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島静夫</span>
+          <span class="ttl">耕作放棄地を再エネ資源に</span>
+          <span class="sum">主食米の生産量が市民の必要量の倍以上ある現状を確認した上で、増加する中山間地域の耕作放棄地について原状回復の費用と時間、放置による費用増、農業以外への転用の考えを順にただし、農山漁村再生可能エネルギー法を活用して行政がイニシアチブをとった基本計画を作成し、売電による企業誘致や災害時電源など地域振興の資源とするよう提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">転用の権限移譲と草刈り支援</span>
+          <span class="sum">県から市農業委員会へ権限移譲された内容と4ヘクタール未満の農地転用許可、農地法3条の下限面積50アールの緩和検討を確認し、中山間地域の陳情が趣旨採択となった経緯を経て今年度創設された市道草刈り等の支援制度について、新規要望の状況、農道・林道・河川への対応、広瀬地域センター等での申請受け付けを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岩崎勉</span>
+          <span class="ttl">みなし過疎の恩恵を守れ</span>
+          <span class="sum">令和3年3月末で失効する過疎地域自立促進特別措置法について、過疎対策事業債や国庫補助率のかさ上げなど市の財政運営上のメリットと、みなし過疎・一部過疎の違い、みなし過疎で実現してきた市内の事業例を市民に分かるよう説明させ、新法で指定地域から外れた場合の弊害をただして、新たな過疎対策法の制定へ市長の積極的で具体的な働きかけを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・石倉刻夷</span>
+          <span class="ttl">中山間の整備事業と譲与税</span>
+          <span class="sum">要望から10年近くたつ中山間地域総合整備事業について、補助事業への変更と来年度採択に向けた進捗を確認して市長を先頭にした予算獲得と地域への的確な説明を求め、3年目に入る森林環境譲与税を中山間地対策の目玉の施策として当面の方針をただした。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・石倉刻夷</span>
+          <span class="ttl">消防団員の確保と防災士</span>
+          <span class="sum">少子高齢化が進む中山間地域での消防団員確保に向けた今後の方針と、防災士資格を取得した団員がどのような位置づけになるのかを尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・飯橋由久</span>
+          <span class="ttl">病院再生とダウンサイジング</span>
+          <span class="sum">田中新市長の公約の柱である市立病院の再生について、就任1カ月時点の取組の進捗と、病床廃止時に国が10分の10を補助する病床ダウンサイジング支援への取組を確認し、新病院の移転建設は行わず現在地を改修して中山間地域の医療の核として継続する考えに変更がないかを改めて確かめ、広瀬地域の住民の安心につながる言葉だと受け止めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岩崎勉</span>
+          <span class="ttl">農家支援と申請書の壁</span>
+          <span class="sum">コロナ下の農業への現状認識と経営継続補助金・県の収益向上緊急対策事業の状況、要件変更された高収益作物次期作支援交付金の影響、鳥獣害対策の実績と狩猟免許取得後のサポート、鳥インフルエンザ対策、特定地域づくり事業協同組合への取組を順に確認し、未来トークで聞いた「申請書の書き方が分からない」という中山間地の高齢者の声を紹介して事業を隅々まで行き渡らせる工夫を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・清水保生</span>
+          <span class="ttl">イノシシ・米価と市立病院</span>
+          <span class="sum">中山間地域等直接支払や多面的機能支払の先進的な取組と課題を確認し、計画を超えて1,000頭以上捕獲されるイノシシへの補助金が予算を上回った場合の対応や新規猟友者の養成支援を求め、30キロ1,000円を超す米価下落への国への要望を促して、南部の小学校の複式学級の現状と適正配置への見解、市立病院の救急・僻地医療の役割と経営改革の方針決定の時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・石倉刻夷</span>
+          <span class="ttl">ワクチン3割と相続登記</span>
+          <span class="sum">65歳以上のワクチン接種予約が約3割にとどまる状況と今後の予定、コロナ下の市立病院の診療・経営状況を確認し、中山間地域等直接支払の交付面積が56ヘクタール減少した原因と対策をただして、相続登記の義務化に向けた国の方針への市の捉え方と未登記の土地の状況、国土調査での指針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・澤田秀夫</span>
+          <span class="ttl">中山間地域の農業支援</span>
+          <span class="sum">高齢化や米価下落で耕作放棄地が増加傾向にあるとして、耕作放棄地の推移の状況と、高齢者でもできる軽労働・高収入の農産物作付支援の考え方を尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岡本早智雄</span>
+          <span class="ttl">中山間地域を残すために</span>
+          <span class="sum">選挙の遊説で見た広瀬・伯太など南部地域の疲弊を語って中山間地域振興への市長の基本姿勢を確かめた上で、地域包括ケアシステムの構築状況、こども園・学校の体制、解散が増える自治会の統合・再編と補完の仕組み、空き家活用の促進、防災・減災の観点も加えた耕作放棄地対策、年1,200頭を超える駆除でも追いつかない有害鳥獣対策を順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・三島静夫</span>
+          <span class="ttl">制服・トイレ・産後ケア</span>
+          <span class="sum">補正予算の質疑で過疎地域持続的発展計画の可決との関係や住宅入居の確認を行った上で、ジェンダーレス制服の導入が市内17校中9校に広がった状況と学校トイレの洋式化を確認し、産後ケア事業やショートステイの利用状況をただして子育て世代を支える環境の充実を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岡本早智雄</span>
+          <span class="ttl">地財計画と全部過疎</span>
+          <span class="sum">令和4年度地方財政計画から、5年延長された公共施設等適正管理推進事業費と脱炭素化事業の追加、公立病院経営強化の財政措置、災害対応ドローンなど消防防災力の強化、緊急しゅんせつ推進事業の実績と県管理河川への働きかけを順に確認し、4月から全部過疎地域となる経緯とメリット・デメリット、固定資産税の優遇も生かした今後のまちづくりへの市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・石倉刻夷</span>
+          <span class="ttl">米応援金と暮らしの安全</span>
+          <span class="sum">中山間地域等直接支払の交付面積が245ヘクタール減った状況と多面的機能支払の実績を確認し、飯南町の水稲栽培応援金を例に米生産者の意欲向上対策を求めて、カーブミラーや消えた区画線、原発30キロ圏トンネル内のラジオ電波、除雪状況の告知、通学路の照明という市民の声5点をただし、非農地判断766筆への登記の助言となかうみマラソンの民間主導への考えも質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・中村健二</span>
+          <span class="ttl">草刈りロボットと鹿の出現</span>
+          <span class="sum">急傾斜ののり面での草刈りは高齢農家に危険な重労働だとして市による草刈りロボットの貸出制度の創設を求め、令和2年度の有害鳥獣の捕獲実績と支援の拡充、中山間地域の農地維持と集落営農への生産活動支援をただして、鹿3頭の捕獲地域を確かめ植林被害への警戒を促した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・岩崎勉</span>
+          <span class="ttl">タマネギと館長の処遇再び</span>
+          <span class="sum">タマネギの作付・収穫と乾燥調整貯蔵施設の状況、作付目標7.5ヘクタールにとどまる課題、水田園芸の方向性と法人でない中山間地域の担い手への支援策を確認し、交流センターを核とした地域づくりの在り方検討委員会の議論を確かめて、月17日勤務の主事の任用形態と研修実績、1年前に検討課題とされた週12時間勤務・6万500円の館長の処遇の調査結果を重ねて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島静夫</span>
+          <span class="ttl">中山間の公共施設と光熱費高騰</span>
+          <span class="sum">金屋子神話民俗館の閉館や認定こども園の休園への心配を挙げ、中山間地域の地域づくりにおける公共施設の在り方への見解と、光熱費の値上がりが運営を圧迫する指定管理施設への今後の対応、若年層の文化芸術離れへの行政支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・清水保生</span>
+          <span class="ttl">中山間への配慮と拉致問題</span>
+          <span class="sum">行財政改革の影響を受けやすい南部中山間地域の疲弊を懸念し合併20周年を機に市全体の均衡ある発展を求め、拉致被害者向け短波放送しおかぜの送信所視察を踏まえて拉致問題や竹島問題など国政・外交課題に一自治体としても向き合う所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・内田卓実</span>
+          <span class="ttl">中山間農業と圃場整備</span>
+          <span class="sum">未来トークで聞いた10年後には農業従事者が半分になるという中山間地域の不安を踏まえ、直接支払や多面的機能支払など支援の内容と効果、平場と異なり水管理や除草の省力化に重点を置く中山間の圃場整備の特徴を確かめ、県内で最も進む安来市の圃場整備の現状と新規地区の要望への対応、持続可能な農業に向けた市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・清水保生</span>
+          <span class="ttl">中山間農業と農地法の緩和</span>
+          <span class="sum">中山間地域における圃場整備の現状と今後の取組を尋ね、農地として維持が困難な荒廃農地は現状を踏まえた利活用がより現実的だとして、農地法の緩和の国への要望など農地の維持・利活用の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石倉刻夷</span>
+          <span class="ttl">医療・比田・20年で9,236人減</span>
+          <span class="sum">常勤の総合診療医など医師確保の状況と県の助言を確かめ、自ら帯状疱疹を患った経験から吉賀町など県内の助成の動きを尋ねて、小さな拠点づくりのモデル比田地区の進捗と冬期居住機能を加えた湯田山荘の運営、中山間地域等直接支払の加算3割減への対応をただし、合併20年で旧広瀬町の人口に相当する9,236人が減った現実を示して、交流センターへの一律交付など市民が参加できる20周年記念事業を提案した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三島静夫</span>
+          <span class="ttl">外国人観光と安来節振興</span>
+          <span class="sum">観光地再生の地域計画と空き家を活用した宿泊施設への支援、金屋子神話民俗館の集約後に中山間地域へ人を流す取組、サイクリングコースやヘルメットの整備をただし、欧米豪の外国人観光客を呼び込む観点から景観条例の制定とストーリー性のあるグルメ開発を提案して、安来節の県無形民俗文化財指定への働きかけ、中学校への三味線や鼓の配備と購入助成、若手作家への支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・清水保生</span>
+          <span class="ttl">2期目の市政運営</span>
+          <span class="sum">石破政権が掲げる地方創生への市の取組を確かめ、市立病院の在り方は期限を切って対処すべきと迫り、学校再編に伴う遠距離通学の負担軽減と保育施設の在り方、高齢者の買物・通院支援を自治体の責務として早急に講じること、南部山間地域の農林業の課題解決、空き家の有効活用を移住定住施策と位置づけた組織体制、「オールやすぎ」の意味を順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島静夫</span>
+          <span class="ttl">コロナワクチンとまちづくり</span>
+          <span class="sum">新型コロナの感染状況の分析とメッセンジャーRNAワクチンの仕組みを確かめ、自己増殖型のレプリコンワクチンを不安視する市民への行政の姿勢と接種広報を質した上で、中心市街地の振興・産業振興・にぎわいづくり・中山間地域対策・教育環境整備・市立病院の今後・文化芸術振興の7項目を田中市長に順に問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・作野幸憲</span>
+          <span class="ttl">スマート農業の展開と鳥獣対策</span>
+          <span class="sum">県のモデル地区として自動操舵システムの稼働率向上、果樹・野菜・畜産への拡大、GNSSサービスの建設・測量など他業種への展開を挙げ、国の予算が増えるこの機会にスマート農業施策をどう展開するかを尋ね、ジビエ利用促進を含む鳥獣対策と猟友会との連携強化、林地化も行われる中山間地農業への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉刻夷</span>
+          <span class="ttl">中山間直接支払第6期と農地中間管理</span>
+          <span class="sum">雲南市の郵便局連携や市主導の農地管理組織構想を紹介し、中山間地域等直接支払制度第6期対策の改正内容と説明会の参加状況・今後の申請日程、12月に奨励金が増額補正された農地中間管理事業の推進の仕組みを尋ねた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原瀬清正</span>
+          <span class="ttl">公共施設と消防防災施設</span>
+          <span class="sum">公共施設マネジメントの削減実績（令和5年度末5.1%）と推進状況、広瀬庁舎敷地に整備する広瀬交流センター・図書館機能の複合施設の概要と今年度の計画、今後の複合施設の考え方を確かめ、防災施設の整備状況、老朽化した消防施設・設備の更新、中山間地域・洪水浸水想定区域・人口密集地域それぞれの避難方法と機材準備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉刻夷</span>
+          <span class="ttl">地域計画と中山間・畜産</span>
+          <span class="sum">来年3月末が策定期限の地域計画の進捗とJA等との協力体制、中山間地域等直接支払制度の旧市町別実績と事務負担の軽減策、第6期対策の予定、令和の米騒動を受けた米価安定への働きかけと肥育センターの現状、肉用牛飼養農家への支援を順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原瀬清正</span>
+          <span class="ttl">消防団と自主防災の将来</span>
+          <span class="sum">消防団員数が減少傾向にあり特に中山間地域の消防・防災に将来的な不安を感じるとして、自主防災組織の組織率向上を含む地域消防と防災活動の将来を見据えた考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・植田真矢樹</span>
+          <span class="ttl">中山間地の買物弱者支援</span>
+          <span class="sum">他自治体の買物弱者支援の事例と市が実施・計画している支援事業を確かめ、移動距離が長く収益が上がりにくい移動販売事業者への事業継続に向けた直接的な支援制度がない点を指摘し、買物弱者支援を部署横断で統括する体制の検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉刻夷</span>
+          <span class="ttl">中山間対策と限界集落・加納莞蕾</span>
+          <span class="sum">中山間地域等直接支払制度の第5期実績と、9協定・約80ヘクタール減となった第6期の取組状況、渇水による仮設ポンプ支援の要望状況を確かめ、交流人口・関係人口の実態と拡大戦略、2019年調査から進行する限界集落の実態への市の認識と自治会存続への支援策、「赦し難きを赦す」の画家加納莞蕾の関係書籍が市有形文化財に指定された経緯と今後の展開を順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・清水保生</span>
+          <span class="ttl">地域医療の確保</span>
+          <span class="sum">市立病院と安来第一病院の経営統合を柱とする基本方針が両病院の合意によるものであることを確認し、後戻りしない踏み込んだ基本構想策定への基本的考え、広瀬地域に設置する中山間地域の外来診療拠点施設の姿（市立病院をコンパクトにした診療施設のイメージ）、職員の身分・処遇にも関わる両病院間の協議体制を順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・内田卓実</span>
+          <span class="ttl">多面的機能支払と中山間直接支払</span>
+          <span class="sum">多面的機能支払交付金の目的と交付団体数・対象面積・交付総額、農地維持・資源向上の使途区分、水土里ネット島根への事務委託による負担軽減、市の評価と今後を確かめ、中山間地域等直接支払制度では過疎法により市内全域が対象となる範囲、第6期対策の変更点とネットワーク化活動、農業生産活動の具体的内容、今後の活用への市の考え方を順に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・清水保生</span>
+          <span class="ttl">熊の出没と中山間農業</span>
+          <span class="sum">今シーズンの熊の出没・被害状況と登下校時の児童生徒の安全対策、観光地への風評被害と庁内横断の情報共有を確かめ、農地の地区別利用実態と増え続ける耕作放棄地、地域計画と農業振興地域整備計画の策定過程、農振除外や非農地認定の手続きと基準を質し、荒れる前の早期対応と中山間地域の現状を踏まえた制度運用、今後の農業支援の考え方を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉刻夷</span>
+          <span class="ttl">買物難民・景観・中山間・大河ドラマ</span>
+          <span class="sum">広瀬のスーパー閉店を受けて商業再生支援事業の買物不便対策・移動販売宅配支援の3か年実績と物価高騰を踏まえた補助率見直し、景観計画策定の進捗、中山間地域等直接支払第6期の支援状況と個人の田畑の草刈りへの市単独支援、月山富田城まちづくり委員会のNHK要望活動を受けた尼子一族大河ドラマの署名活動への市の関わりと山中鹿介ラッピングバスの更新を順に質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">121件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・坂根守</span>
+          <span class="ttl">中心市街地と産業振興</span>
+          <span class="sum">中心市街地の振興策を検討協議する有識者のメンバーと結論の時期、超大型店の出店計画の最終決定の時期、マダイやヒラメの中間育成放流など栽培漁業の効果と魚離れへの対策、新ビジネスパークの場所と広さと完成時期、２１世紀出雲産業見本市の入場者数と商談件数と経済効果、燃料電池での産学官の共同研究の内容、中山間地域直接支払制度の条件変更と集落の増減を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・萬代弘美</span>
+          <span class="ttl">交通と治水と防災</span>
+          <span class="sum">中山間地の実情に即したドア・ツー・ドアの乗合タクシーの運行と平田地区の生活バス方式を他のまちへ広げることを提案し、所原地内の4.８キロに限定された神戸川上流部の治水計画区域を新市全域へ拡大して国の直轄事業に採択させる努力、有線放送の撤去までの災害無線の設置を含む統一した防災システムの早期確立を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・牛尾尚義</span>
+          <span class="ttl">南部地区の振興策</span>
+          <span class="sum">事業総額１５億円で一たん休止となった中山間地域総合整備事業の県との話し合いの経過と事業規模や実施時期の見通し、凍結時に大渋滞となる国道１８４号宇比多岐トンネル付近の改良に対する県の考えと市の受けとめ、休止状態にある神戸川上流部の改修促進、携帯電話の使用不能地域の解消に向けた事業者への指導と格差是正事業の適用実績を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・高野成俊</span>
+          <span class="ttl">周辺地域の過疎対策</span>
+          <span class="sum">過疎地域自立促進計画が旧佐田町と旧多伎町のみを対象としていることを挙げ、朝山、上津、乙立、稗原や旧平田市の北浜など同様の状況にある地域への市の認識と対応策、特定農山村地域など地域振興五法に該当する地域も対象とした自立計画書の策定、周辺地域の防火水槽など防火設備の整備状況と森林火災の消火防災対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・曽田盛雄</span>
+          <span class="ttl">地場産業の振興と発展策</span>
+          <span class="sum">２１世紀出雲農業フロンティア・ファイティング・ファンドなど市独自の補助制度の取り組みを尋ね、集落営農組織づくりの進み具合と、中山間地で地域密着型の農業と雇用の場の確保を図る企業の農業参入への取り組み、資源管理型漁業による漁価の安定の具体的な考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・大国陽介</span>
+          <span class="ttl">品目横断対策と中小農家</span>
+          <span class="sum">認定農業者が全域で２.６ヘクタール以上、集落営農組織が中山間地域で１０ヘクタール以上といった特例基準でも要件に満たない多数の中小零細農家や山地を政策対象から排除するとして、大規模化や農家選別を押しつけず規模の大小にかかわらず意欲を引き出す施策こそ必要だとの立場から市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・川上幸博</span>
+          <span class="ttl">林業振興の今後の方針</span>
+          <span class="sum">間伐実施率と間伐材の利用率が全国を下回ること、国産材需要の低迷、林道の未整備、労働力の高齢化という林業の現状を挙げ、中山間地の活性化を含めた林業振興の立場から今後の活性化への方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・川上幸博</span>
+          <span class="ttl">環境保全からの林業助成</span>
+          <span class="sum">豊かな森林資源を活用し再生産可能な資源を組み合わせて活動する中山間地域は特に環境保全に寄与しているとして、林業政策だけでなく環境政策の面からも何らかの助成をしていく必要があるのではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・石川寿樹</span>
+          <span class="ttl">農業の新たな二つの対策</span>
+          <span class="sum">品目横断的経営安定対策で助成制度がどう変わり担い手の要件と市内の該当数はどれほどか、対象外となる零細農家への市独自の救済制度、農地の集積状況と今後の方針、認定農業者と集落営農組織の調整、農地・水・環境保全対策の骨子と本市の取り組み状況及び中山間地の直接支払制度や市の愛護活動支援事業との併給の可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・高野成俊</span>
+          <span class="ttl">中山間地の定住対策</span>
+          <span class="sum">半世紀前から人口が半減した地区が多い中山間地域をはじめとする過疎少子高齢化地域への定住対策をどのように考えているのか、子育て世代を対象とした一戸建て公営住宅をニーズを調べたうえで建設できないか、寺田橋での接続を例に他の路線や交通機関と接続させる地域循環型の乗り合いバス方式についての所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・曽田盛雄</span>
+          <span class="ttl">中山間地の農業の維持</span>
+          <span class="sum">国の当初計画の約半分の面積にとどまった農地・水・環境向上対策事業について見直しや延長はあるのかないのか、同事業と計画区域が重なると市の道路・河川ふれあい愛護活動支援制度の草刈り助成が打ち切られることへの見解、認定農業者がいない集落で着実に増えている荒廃農地への手当があるのかないのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・松村豪人</span>
+          <span class="ttl">災害時の情報伝達と津波</span>
+          <span class="sum">土砂災害の危険性が高く道路が１本しかない山間地域や沿岸地域に携帯電話の不感地域があることは防災計画上問題ではないか、そうした地域で災害が起き一刻を争う場合にどのように情報を伝達しどのような対応をとるのかを尋ね、津波に備える海岸保全施設の点検時期と危険箇所の把握と対応、沿岸住民への津波警報の伝達手段と不十分な地域への今後を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・荒木孝</span>
+          <span class="ttl">ポスト過疎法の制定</span>
+          <span class="sum">過疎地域自立促進特別措置法が平成22年3月末で失効することを踏まえ、県の関係自治体や全国の市長会、町村会の活動状況を尋ね、新法制定の見通しと佐田中学校の改築に平成21年度から着手するとした答弁の確認を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・高野成俊</span>
+          <span class="ttl">中山間地の過疎化対策</span>
+          <span class="sum">人口増がほとんど旧出雲市に集中し佐田町や多伎町、大社町の高齢化率が3割を超える現状を挙げ、人口減少地区の問題と課題、コミュニティの将来像、定住対策の考えとこれまで講じた策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・大国陽介</span>
+          <span class="ttl">農林水産業の振興</span>
+          <span class="sum">例外なく関税撤廃を目指す日米自由貿易協定には農業を守り育てる観点から反対すべきだと求め、全国一律で十アールあたり一万五千円とする戸別所得補償制度は中山間地などの条件不利地域を切り捨てるとして所見を尋ね、学校の机やいすや住宅リフォームへの地元産材の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・高野成俊</span>
+          <span class="ttl">過疎地域の定住支援</span>
+          <span class="sum">人口が著しく減少している地域の実情をどう考えているのか、佐田地域の空き家を借り上げる定住希望者向け住宅の整備を旧出雲地区南部の中山間地や他地区の山間地、漁村を含む過疎振興地域へ広げるべきとの意見への所感、集落支援員制度の具体案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・勝部順子</span>
+          <span class="ttl">買い物難民への対策</span>
+          <span class="sum">6月議会で現状認識を示してから5か月間どのような検討がなされたのかと中山間地域の店舗整備や移動販売の車両と設備にかかる2分の1補助制度の広報と島根県商工会連合会が6月から7月に実施した消費者アンケートの結果を尋ね国の新制度に併せた市の積極的な支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・萬代弘美</span>
+          <span class="ttl">高齢者の買い物支援</span>
+          <span class="sum">中山間地や漁村や市街地など地域ごとの高齢者の買い物の方法や買っているものについて市が主体的に調査を実施することを求め、空き店舗等を利用した商店の誘導の支援や中山間地域での移動販売車の運行など地域の実情に応じた支援の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・坂根守</span>
+          <span class="ttl">中山間地域の商業維持</span>
+          <span class="sum">空き店舗等への補助制度がいつから設けられ何件の利用があったか、店舗改装費と家賃補助の支出総額、撤退した件数と無駄になったと感じられる金額を尋ね、中山間地域で現に食料品雑貨店や理髪店を営む人の改修にも補助を広げ平成２４年度（2012）から取り組むよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大国陽介</span>
+          <span class="ttl">人口減少地域の定住政策</span>
+          <span class="sum">旧自治体別の人口の推移を尋ね、中山間地域や海岸沿いで人口減少と限界集落が問題となるなか、ファミリーや若者向けの低家賃住宅と安価な宅地の供給体制の確立など、市場任せにしない小さな地域単位での定住政策を推進すべきだとして所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・井原優</span>
+          <span class="ttl">企業誘致と産業振興の転換</span>
+          <span class="sum">多額の補助金と各種の優遇施策による大企業呼び込み方式から地元産業の育成と地元中小業者の支援へ軸足を移すべきだとして所見を尋ね、中山間地域の集落維持に必要な商業支援の早急な具体策と、県の調査で誘致企業１６０社の従業員２万１，２１９人のうち２，６４３人が派遣である実態を挙げて安易なリストラや閉鎖や撤退を許さない誘致企業の社会的責任を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・坂根守</span>
+          <span class="ttl">工業団地と中山間の商業</span>
+          <span class="sum">完成が平成２６年（2014）１０月と予定される斐川中央工業団地について打診してきた企業が待ってくれるのか、少しでも完成を早めることはできないか、約３８億円の巨費を投じて売れないということがないよう企業誘致は大丈夫かを尋ね、新たに実施される中山間地域の集落維持に必要な商業支援の具体的な支援内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・勝部順子</span>
+          <span class="ttl">通学路の安全対策</span>
+          <span class="sum">市内の通学路の現状を尋ね、交通量の多い通学路の安全性の調査と危険箇所や防犯灯の設置状況の点検、車の速度を抑制する路面整備などハード面での取組み、集団登校のあり方の見直し、クマの目撃情報がある中山間地域の通学路での安全対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・福島孝雄</span>
+          <span class="ttl">中山間地域の営農</span>
+          <span class="sum">中山間地域では転作が思うようにいかず数量払いに匹敵する収量もとれないため水田活用の直接支払交付金を受けられないとして、耕作放棄地の増加につながらないよう市として独自の対策があるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・小村吉一</span>
+          <span class="ttl">地域の小売商の存続</span>
+          <span class="sum">地域の小売商の変貌と衰退が極めて著しい中で行政はその存在と役割をどう把握し今後どのように展望して存続と振興を考えているのかを地域外に経営母体を置く商店との数の変貌や売上高に触れながら尋ね、中山間地域商業支援事業を市全域に拡大した商店リニューアル助成制度の実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・勝部順子</span>
+          <span class="ttl">地域コミュニティの維持</span>
+          <span class="sum">高齢化で町内の維持ができない、自治会の脱退も考えているという悲痛な声にどう対応しているのか市内の状況と今後の取り組みを尋ね、自治会加入促進のこれまでの成果と今後の方針、過疎地域専門員の役割と機能維持が困難な地域の実態への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・勝部順子</span>
+          <span class="ttl">定住促進と交流人口</span>
+          <span class="sum">平成３３年の目標人口を１７万人台とする中で出雲市に住んでいただける取り組みの具体的な考え、人口減少が続く中山間地域の魅力をどう発信するのか、遷宮後の観光客の動向をどう考えるか、賑わう神門通り周辺で以前から大社の町に住む方の出店が少ないことへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・福島孝雄</span>
+          <span class="ttl">日本型直接支払の制度</span>
+          <span class="sum">共同活動を支援する多面的機能交付金や農地維持支払の具体的な内容、中山間地域直接支払の区域以外で山を抱えながら指定に入っていない地域への支援、現行の農地・水保全管理からの移行の仕方とその違いやメリットを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・福島孝雄</span>
+          <span class="ttl">米政策の転換と飼料用米</span>
+          <span class="sum">減反廃止など米の政策見直しに伴う出雲市の平野部と山間部の農業所得への影響、飼料用米の作付面積の拡大の可否と受け入れ施設、調整水田を再利用した飼料用米生産の見通しと中山間地への政策、日本型直接支払と従来の補助金との関連を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・神門至</span>
+          <span class="ttl">豪雪等の雪害対策</span>
+          <span class="sum">市が考える想定内の雪害と想定外の雪害への対策、島根半島の海岸地域と山間地域への対応、雪害の際の救急患者の対応とひとり暮らしの高齢者の搬送・避難について尋ね、除雪業者との連携と停電時の暖房を含む地域への周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・福島孝雄</span>
+          <span class="ttl">農業施策と鳥獣の処理</span>
+          <span class="sum">「人・農地プラン」における農地集積の実態と各ブロックの目標、今後の課題を尋ね、引き受け手がいない中山間地の圃場整備と放棄地対策への市の考え、捕獲したイノシシやシカの死骸の処理が現状どのように行われているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大場利信</span>
+          <span class="ttl">過疎地域の人づくり</span>
+          <span class="sum">高齢化率が６１．９％と高い大社町鵜鷺地区の取り組みを例に、過疎・高齢化地域の活性化を担う人づくりへの支援策、まちづくりにおける地元の島根大学や県立大学との連携、市費負担のない有利な国県事業を紹介するなど地域振興を目指す職員の育成と頑張り発揮策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・米山広志</span>
+          <span class="ttl">過疎地域支援センター</span>
+          <span class="sum">少子高齢化と過疎化対策について、過疎地域支援センターの設置はいつでなぜ佐田支所なのかを尋ね、配置される支援専門員は何人配置されるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・松村豪人</span>
+          <span class="ttl">中山間地域の耕作放棄</span>
+          <span class="sum">周辺部の農村・漁村を再生させるため地域の基幹産業としてさらなる振興に力を入れてほしいとして、米価の低迷等で農業を取り巻く環境が厳しい中、特に中山間地域で就農意欲の減退から耕作放棄が進んでいる現状にどう取り組むのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・渡部勝</span>
+          <span class="ttl">中山間地域の農業と支援策</span>
+          <span class="sum">３Ｆ事業の対象外となる農業従事者へのきめ細やかな支援策と、中山間地域の道路・河川の除草作業へのさらなる支援を求め、市内のため池のうち使用されている数と使用されていない数や老朽化の進んだ危険なため池の数と今後の対応、近年市内で出没したクマの数と地域や被害状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・福島孝雄</span>
+          <span class="ttl">人口減少下の農業政策</span>
+          <span class="sum">人口減少と高齢化が進む中で、就業人口に占める農業従事者の割合や営農組織及び個人営農者の平均年齢、中山間地域の耕作放棄地と担い手の状況から１０年先２０年先の農業維持の見通しを尋ね、担当職員の現地視察の年間件数と農家からの意見・要望の吸い上げ、農・福連携の現状と指導員の状況や障がい者への作業報酬、今後の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・福島孝雄</span>
+          <span class="ttl">地方創生と過疎地域</span>
+          <span class="sum">地方創生の取り組みは中心街だけでなく過疎地域対策も重要であるとして、定住人口キープ１７万人プロジェクトにおける地方創生の取り組みが過疎地域にどのような影響を与えるのか具体的な内容を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・福島孝雄</span>
+          <span class="ttl">多面的機能と地域の衰退</span>
+          <span class="sum">中山間地域の高齢化・担い手不足は深刻で耕作放棄地が非農家証明申請により山林化し多面的機能の環境保全は人手不足でお金では解決できない状況になるおそれがあるとして見解を尋ね、地域をまとめてきた農業関係者が高齢化して農業から離れまとめ役がいなくなり地域コミュニティが衰退する状況に行政がもっと地域の状況を察知し的確なアドバイスをすべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・神門至</span>
+          <span class="ttl">豪雪時の孤立集落対策</span>
+          <span class="sum">海岸地域や山間地域の集落にひとり暮らしや高齢者世帯が平野部より多く屋根や木戸道の除雪に不安があるとして、積雪が５０センチを越えた際の豪雪体制を含めた具体的な対策と、豪雪時に孤立した地域への具体的な対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・福島孝雄</span>
+          <span class="ttl">中山間地の農林水産業</span>
+          <span class="sum">ＴＰＰ大筋合意が中山間地等の農林水産業に与える影響をどう見ているか、農地集積や営農組織化に限界がある中山間地域での所得向上政策を尋ね、邑南町の里山イタリアンを挙げて中山間地域だからこそできる食材のブランド化により付加価値をつけて利益を上げること、自然と農林水産・観光をテーマに地域の方々との交流を含めた新たなまちづくりへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・福島孝雄</span>
+          <span class="ttl">中山間地の農業支援</span>
+          <span class="sum">ＴＰＰ発効による政府の試算と中山間の条件不利地域での影響をどう見るか、産地パワーアップ事業の利用状況と見通し、出雲３Ｆ事業やひかわ元気農業支援事業の条件緩和、半農半Ｘへの取り組みと営農組織ができない地域の小さな農業を維持する施策、中山間地域省力化チャレンジ事業の対象地域と面積、新技術ＧＰＳ活用チャレンジ事業の内容と対象件数と導入経費、中山間地域での利用権決定状況と放棄地対策としての農地中間管理機構の役割を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・珍部全吾</span>
+          <span class="ttl">出雲の農業のあり方</span>
+          <span class="sum">ＴＰＰ交渉の現状と今後の見通しおよび関税の問題が日本と出雲の中小の農業に及ぼす影響、農振地域と用途地域の農地が同じ扱いである点、高齢者が支える中山間地の農業を福祉の観点で見る考え、地域創生総合戦略への農業の位置付けを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・福島孝雄</span>
+          <span class="ttl">米価下落と中山間の営農</span>
+          <span class="sum">農家及び生産組織の経営状況の見方と収入影響緩和対策の今年の扱いを尋ね、飼料用米の需要と供給のバランスや乾燥・保管施設の状況、飼料用米と加工用米のどちらが有利か、中山間地域での営農組織化の進み具合と、集落機能と営農の両立を図る今後の組織づくりの方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・宮本享</span>
+          <span class="ttl">過疎地域支援とまちづくり</span>
+          <span class="sum">合併以降に若者減少が著しい過疎地域について、過疎地域支援専門員の配置や集落応援隊のやり方で十分かとこれまでの検討経過や具体的な施策を尋ね、日本版ＣＣＲＣで近隣からの転居の考えを取り入れることと、小さな拠点を結ぶネットワークの構築や全国の先進地事例を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・井原優</span>
+          <span class="ttl">ＴＰＰ大筋合意の影響</span>
+          <span class="sum">重要５品目の関税撤廃を含み国会決議に違反するＴＰＰの大筋合意について批准を中止し撤廃を求めるべきとの所見を尋ね、仮に批准された場合の米やブドウ、カキ、イチジクなどが受ける影響の想定、食糧自給率の低下と米価下落への対策、中山間地域の未耕作地の拡大と後継者対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・珍部全吾</span>
+          <span class="ttl">中山間地域の人口と定住</span>
+          <span class="sum">乙立の人口が昭和３０年の１，６８０人から６５５人へ減った例を挙げ、このままでは地域が消えるとして、稗原の宅地分譲７区画が全て売れた実績を踏まえ、中山間地域への定住に市が手厚い手立てを講じることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・福島孝雄</span>
+          <span class="ttl">中山間地域直接支払交付金</span>
+          <span class="sum">第１期から第４期までの申請状況の動向と、島根県で協定数２，４０７・取り組み面積３万３，０００ヘクタールが減った要因、交付金の返還に至る要件を一般と集落連携に分けて尋ね、集落連携の面積要件や長期の計画づくりの負担、集落をつなぐ行政のかかわりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・福島孝雄</span>
+          <span class="ttl">出雲市の農業の動向</span>
+          <span class="sum">本年度の主食用米・加工用米・飼料用米の生産割合と低コスト栽培による所得向上の実態、ＪＡしまねが概算払いをやめ一括買い取り制度を取り入れたことを市がどう見ているかを尋ね、国のＴＰＰ対策関連補正予算の取り組み状況と中山間地域の所得向上支援策が本市で活用可能かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・岸道三</span>
+          <span class="ttl">定住対策とＵターン就職</span>
+          <span class="sum">定住対策の取組みの現状とその評価及び課題、Ｕターン就職支援の取組みを尋ね、中山間地域や海岸部の人口減少に対する出雲市移住促進住まいづくり助成の増額と重点地域の考え方、小・中学生のキャリア教育や大学生のインターンシップの受け入れ、ジョブ・ステーションの今後のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・大谷良治</span>
+          <span class="ttl">鳥獣被害対策とジビエ</span>
+          <span class="sum">中山間地の集落維持には効果的な鳥獣対策が欠かせないとして有害鳥獣被害の状況と今後の対策、捕獲従事者の現状と今後の見通し及び確保対策、イノシシやシカ肉の食肉利用とジビエの取り組みの現状と今後の課題を尋ね、多伎町で出ているサル被害への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・飯塚俊之</span>
+          <span class="ttl">うみ・やま応援センター</span>
+          <span class="sum">少子高齢化や人口減少に悩む地域の主体的な取り組みをサポートするうみ・やま（中山間地域）応援センターについて、これまでの実績が分かりにくいという声があるとして実績を示すよう求めるとともに、その中で見えてきた課題と今後どのような体制強化を行っていくのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・勝部順子</span>
+          <span class="ttl">コミュニティ活動支援</span>
+          <span class="sum">地域課題の解決や活性化に向けた事業と自治会加入促進の取組みを支援する「元気！やる気！地域応援補助制度」の詳細と、海岸部や山間部をサポートする「うみ・やま（中山間地域）応援センター」に期待できる効果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・後藤由美</span>
+          <span class="ttl">中山間地域の定住策支援</span>
+          <span class="sum">市内の中山間地域とその他の地域とで人口の格差が生じている原因の認識と中山間地域の人口減少の状況、南部ブロック自治連絡協議会からの定住策支援の要望への市長の受けとめと手だて、移住促進住まいづくり助成事業による過疎地・辺地等への３年間の移住実績を尋ね、過疎地・辺地等の地区別の定住施策を地域住民とともに検討し実施することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・今岡真治</span>
+          <span class="ttl">人口減少と少子化対策</span>
+          <span class="sum">市街地と周辺地域や山間地域・海岸地域で現状が大きく異なる中での各地域の分析と限界集落・準限界集落の数と推移および合計特殊出生率、自治協会等からの意見・要望の取り扱いと取組み状況、各地域への人口減少・地域づくりの今後の方策、様々な理由で働くことができない状態にある人たちへの就業支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・萬代輝正</span>
+          <span class="ttl">地域応援制度の内容</span>
+          <span class="sum">「元気！やる気！地域応援補助制度」と「うみ・やま（中山間地域）応援センター」について、それぞれの具体的な制度の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・渡部勝</span>
+          <span class="ttl">外国人の定住支援</span>
+          <span class="sum">在住外国人の増加が人口増の大きな要因であり人口減少に歯どめをかけるには定住が鍵となるとして在住外国人の今後の推移をどのように把握しているのか、共働きで夜間勤務時の在住外国人の保育園児や児童の対策、閉校した学校の利活用も含め拠点施設を設けて日本語指導をする考え、中山間地域への定住策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・岸道三</span>
+          <span class="ttl">応援センターの方向性</span>
+          <span class="sum">これまでの過疎地域支援センターにおける成果と、それを改編して少子高齢化や人口減少に悩む海岸部や中山間部などもサポートする「うみ・やま（中山間地域）応援センター」の目指す方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・福島孝雄</span>
+          <span class="ttl">新農業チャレンジ事業</span>
+          <span class="sum">新出雲農業チャレンジ事業について地域農業・農村社会の維持の中の中山間地域支援、地域課題解決支援、集落営農広域連携支援の各内容と、有望品目・新品目への支援の中の有望品目の条件、取組み要件、申請スケジュール、宍道湖西岸地区の営農支援の具体的な内容、農家や生産組合への説明の方法と１，５００万円の予算の配分のバランスを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">移住定住と空き家対策</span>
+          <span class="sum">出雲大好きＩターン女性支援事業と移住・定住促進住まいづくり助成事業の成果と見直しのポイント、出雲で住まいる（スマイル）事業と中山間地域の活性化がどのようにつながるのか、空き家バンクの登録を促す助成事業の具体的な内容、未婚化・晩婚化対策に関する総事業費と３年間の成果と評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・後藤由美</span>
+          <span class="ttl">米の直接支払交付金廃止</span>
+          <span class="sum">政府による米の生産調整の廃止と米の直接支払交付金制度廃止という政策を市としてどう認識しているか、現在の米の直接支払交付金の加入申請件数と支払い件数と支払い金額、戸別所得保障制度復活を国に求めるべきとして市長の所見、意欲ある全ての生産者が米づくりを続けるための米の所得保障と価格保障の必要性への所見、米しかつくれず転作が不可能な中山間地への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">自治会加入と協力隊</span>
+          <span class="sum">加入しようにも組織がないところなど様々あるとして自治会の加入促進の課題と解決策を尋ね、高齢化が進む中で地域おこし協力隊は中山間地域だけでなく市全体で必要と考えられるとしてこうした取組みを広げる考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・児玉俊雄</span>
+          <span class="ttl">高齢者の買い物支援</span>
+          <span class="sum">老老介護支援事業の生活支援サービス券による買い物支援の概要と利用状況及び市が実施している他の買い物支援、出雲市社会福祉協議会の「てごナビ」に掲載された小売店舗の宅配サービスの利用状況や利用者と小売店側の評価、移動販売や宅配に対する支援と中山間地域における小売店などの持続化のための支援の実績と評価、福祉や交通、産業部門などによるプロジェクトチームを立ち上げ総合的な施策の立案に取り組むべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・児玉俊雄</span>
+          <span class="ttl">高齢者等の住宅確保対策</span>
+          <span class="sum">改正住宅セーフティネット法の登録制度などを担う県の対応と居住支援協議会の動き、改正を受けた市の新たな取組みと市が居住支援協議会を設置する考えを尋ね、光回線の整備や女子サッカーチームの中山間地域への居住も挙げて、空き家対策課の設置を含む総合的な体制強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・渡部勝</span>
+          <span class="ttl">ＵＩターンと定住対策</span>
+          <span class="sum">出雲大好きＩターン支援助成金と出雲市移住促進住まいづくり助成金のこれまでの成果と課題、出雲市まち・ひと・しごと創生総合戦略による未婚化・晩婚化対策の成果と課題、新たに設置する「うみ・やま（中山間地域）応援センター」の狙いと内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・山内英司</span>
+          <span class="ttl">定住とコミュニティ活動</span>
+          <span class="sum">うみ・やま（中山間地域）応援センターの体制強化の内容と期待される効果、平成１７年の７６．４％から平成３０年４月に６３．７％まで下がった自治会加入率の引上げに向けた市の考えと役割、企業版を含むふるさと納税の目標額と返礼品参加企業数の推移を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・板垣成二</span>
+          <span class="ttl">市政運営の所信と課題</span>
+          <span class="sum">日本海側の発展をリードする元気な地方都市へのシフト宣言を受け、生産年齢人口の減少や中山間地域の急激な人口減少といった課題への言及が今回の所信になかったとして、出雲市の現状をどう捉えその課題にどう立ち向かうのか市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・福島孝雄</span>
+          <span class="ttl">移住・定住の住まい助成</span>
+          <span class="sum">移住・定住促進住まいづくり助成事業による中山間地活性化の成果と、今後の新たな事業内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・後藤由美</span>
+          <span class="ttl">中山間地域農業への支援</span>
+          <span class="sum">中山間地域等直接支払制度や多面的機能支払交付金、新出雲農業チャレンジ事業を挙げ、条件不利と言われる地域や農家を維持発展させる施策のさらなる拡大、農地に接している官地の草刈りへの思い切った支援、集落営農組合の声をじっくり聞いた地域にあった施策を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・福島孝雄</span>
+          <span class="ttl">主食用米減少と農業経営</span>
+          <span class="sum">米の生産調整の変更から２年の評価と検証及び今後の動向、飼料用米とＷＣＳの生産と転作面積の推移、令和２年産主食用米の適正生産量の減少を踏まえた水田フル活用の維持、中山間地域と平場地域の格差、長期展望に立った農業ビジョン、農業共済と収入保険制度の加入状況と違いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・伊藤繁満</span>
+          <span class="ttl">安心して住み続けられる出雲</span>
+          <span class="sum">道路・河川・上下水道のライフラインや中山間地域の土砂災害防止など防災・減災・縮災に向けた日常の点検活動強化、加入率６１．６％まで下がった自治会とコミセンへの支援を若者が集う形につくりかえる検討、地域・社会全体で支え合う子育て環境の充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岸道三</span>
+          <span class="ttl">小規模事業者と林業の支援</span>
+          <span class="sum">中小・小規模企業振興計画推進事業で新たに計上されたセミナー３０万円と支援事業費補助金１７０万円の目的と事業内容、女性創業者のためのセミナーを新たに盛り込んだ目的と期待される効果、中山間地域農業の課題と新出雲チャレンジ農業の事業実績と効果、新たな森林管理システムの現在の進捗状況と構築に向けた今後の課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・保科孝充</span>
+          <span class="ttl">工業団地と農林業の振興</span>
+          <span class="sum">新工業団地の企業進出後の交通渋滞対策と周辺の道路整備、ＩＴ産業や事務センターの立地場所と誘致の見通し、米の消費量が減少する中での米にかわる作物生産への転換と農業団体との協調、新出雲農業チャレンジ事業における中山間地域農業の取組み、スマート農業に向けて大学・農業大学校・農林高校へ関係学部の設置を働きかける産学官連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・児玉俊雄</span>
+          <span class="ttl">ふれあい農業施設の整備</span>
+          <span class="sum">中山間地域の維持と小規模農家の収入確保のため、児童遊園・農業体験施設・常設の産直市場・農家レストランを複合したふれあい農業施設について、農業公園の整備事業や道の駅としての整備、クラウドファンディングなどの手法を挙げ、うみ・やま応援センター主導での実現に向けた検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・児玉俊雄</span>
+          <span class="ttl">中山間地域の農業対策</span>
+          <span class="sum">中山間地域の除草対策として道路等の新設や改修時のコンクリート化と防草シートの敷設、電柱や境界ぐいの周辺への配慮を求めたうえで、新出雲農業チャレンジ事業を中山間地域対策と分けて再編し予算をつけることと、うみ・やま応援センターを各課横断の窓口とすることへの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・児玉俊雄</span>
+          <span class="ttl">中山間地域の農業対策</span>
+          <span class="sum">センチピードグラスの吹きつけ補助の官地部分への事業拡大のその後、電柱や境界ぐいの周辺の除草対策の進展、出雲農業未来の懸け橋事業や新出雲農業チャレンジ事業の見直しにおける中山間地域の農業対策を尋ね、耕作放棄地の発生や後継者不足への施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・大谷良治</span>
+          <span class="ttl">出雲市の農業振興策</span>
+          <span class="sum">新出雲農業チャレンジ事業のうち地域農業問題解決メソッド提案事業と中山間地域水田省力化支援事業の波及と効果や活用実績と今後検討すべき課題、事業周知と啓発の取組み、中山間地農業や小規模・兼業農業者に重きを置いた次期事業への考え方と課題、多面的機能支払交付金事業の現在の取組状況と今後の取組みの課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・福島孝雄</span>
+          <span class="ttl">水田農業の展望と課題</span>
+          <span class="sum">新型コロナウイルス感染症の水稲・野菜・果物・花卉・畜産等への影響と現状、国・県のコロナ対策交付金事業の利用状況、２０２１年産の米の適正生産量の減少による出雲市の生産量と水稲作付面積や情報提供の時期、水田園芸と水田のフル活用の施策と課題、中山間地域への市単独の基盤整備支援の拡大、飼料用米の乾燥施設と需給バランスの現状、農業所得の見通しと所得安定の施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・板倉一郎</span>
+          <span class="ttl">高齢者の通院送迎支援</span>
+          <span class="sum">自ら車両を運転して移動できない高齢者が市中心部の医療機関を受診する際の送迎について現在どのような支援制度があるのかと介護保険サービスの適用の可否、高齢者福祉タクシー事業の助成対象を同居家族が就労している場合や駅・バス停から５００メートル以上という距離、中山間地や海岸部の所得の条件の面で見直す考え、今後の高齢者の移動支援の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・本田一勇</span>
+          <span class="ttl">コロナ後の出雲の観光</span>
+          <span class="sum">出雲市の魅力とは何か、人は何を求めて旅に出るのかをどう分析しているか、海外の人は何を求めて日本へ来てなぜ出雲に来ないのかを国際交流員や英語教師の意見も含めて尋ね、神在月カレンダーの販売や稲佐の浜から勢溜までの擁壁に統一したデザインでしめ縄を描くこと、中山間地域の旧砕石場や森を使ったアドベンチャー的なランニング大会の開催を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・児玉俊雄</span>
+          <span class="ttl">中山間地域の集落調査</span>
+          <span class="sum">国や県が実施している集落調査のうち市がチェックしているものの概要と、それをどのように分析し本市の施策に反映してきたか、中山間地域の人口減少の原因の把握と集落の１０年後の想定を尋ね、それらを中心に据えた実態調査を行う考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">中山間地域振興室の役割</span>
+          <span class="sum">課・室の組織改革により新設される中山間地域振興室について、具体的な役割と目標があれば示すよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・寺本淳一</span>
+          <span class="ttl">中山間地農業のスマート化</span>
+          <span class="sum">中山間地域の農業従事者数と新就農者数の直近と５年前と１０年前の推移、中山間地域でのスマート農業の現状とメリット及び課題とその課題に対する支援策、持続可能な中山間地域農業の推進についての今後の具体的方針を尋ね、特定地域づくり事業協同組合制度の活用と専門的な知識を持つ地域おこし協力隊の派遣を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・大谷良治</span>
+          <span class="ttl">中山間農業と鳥獣被害</span>
+          <span class="sum">事業構成が見直された出雲農業未来の懸け橋事業と新出雲農業チャレンジ事業のうち中山間地域農業支援の取組と事業実績、令和４年の和牛能力共進会に向けた飼養技術・品質向上の支援策、イノシシ捕獲檻の増設と補強強化の具体的内容、水揚げ量が減る中での水産物の消費拡大策に加え、総事業費の枠内の組替えにとどまる予算の増額と農業者への周知・啓発を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・大谷良治</span>
+          <span class="ttl">人口の二極化への対策</span>
+          <span class="sum">県内唯一の人口増加の一方で中山間地域や海岸部ではコミュニティの維持が危ぶまれるとして人口の二極化対策を尋ね、うみ・やま応援センターのこれまでの取組と成果、サポート体制の拡充内容と期待できる効果、庁内横断的なワーキングチームの体制と市内部の推進体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川上幸博</span>
+          <span class="ttl">人口減少と子育て支援</span>
+          <span class="sum">令和２年度国勢調査で県内唯一人口が増加した要因の分析と市内間の人口移動、中山間地域振興室の新設と地域おこし協力隊の過去の実績に基づく具体策、若者のＵＩターン促進と切れ目のない子育て政策、子ども支援制度の充実施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">人口減少対策と中山間地域</span>
+          <span class="sum">アグリビジネススクールの現状と成果、出雲農業未来の懸け橋事業の利用状況と予算増額への意向、新出雲チャレンジ事業による中山間地域でのスマート農業の利用拡大と予算増額、米に代わる高収益作物への転換の見通しと将来の転作目標、森林環境譲与税を活用した循環型林業の実現のプロセス、ミッション型の地域おこし協力隊によるサポート体制、地域農業の維持や課題解決の自発的な取組みの実例と課題、有害鳥獣対策の要点、未来につなぐ中山間地域道路環境整備事業のボランティア軽減策の実施要件を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・寺本淳一</span>
+          <span class="ttl">出雲力の中身と活用</span>
+          <span class="sum">知名度が高く潜在能力の高い出雲力とは具体的にどのような力を指すのかを尋ね、その出雲力を人口減少、少子・高齢化や中山間地域、経済再生などを含めた多くの課題にどのように活かしていくのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">切れ目ない支援と中山間</span>
+          <span class="sum">結婚から子育てまでの切れ目のない支援の充実について近隣自治体よりも勝る支援があるかを尋ね、中山間地域が抱える個別問題ごとに立ち上げるワーキングチームの内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・鐘推義憲</span>
+          <span class="ttl">次期総合計画の農業振興</span>
+          <span class="sum">現行「出雲未来図」の農業に関する取組結果の数値分析に基づく評価、次期総合振興計画のロードマップと農業者やＪＡなど現場の声の聴取、農業振興政策を設定する方針、特産品ごとの産出額や新規就農者数といった細部にわたる目標設定と予算の確保、中山間地の担い手確保や地域コミュニティの維持と中山間地域振興室の役割、イノシシの捕獲おり７０基を７４０万円で購入する鳥獣害対策の年次ごとの捕獲目標と予算、耕作放棄地の解消、市街地の農地と宅地の共存と担い手確保、中山間地域と市街地域の交流を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・西村亮</span>
+          <span class="ttl">農林水産業の担い手確保</span>
+          <span class="sum">出雲農業未来の懸け橋事業や新出雲チャレンジ事業による産地の維持拡大と担い手育成、中山間地域農業への支援とスマート農業の普及、漁業者による資源回復とブランド化や消費拡大、市管理漁港の保全工事に向けた水産業予算の増額を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">農業のデジタル化の推進</span>
+          <span class="sum">スマート農業の現状と拡大に向けての課題、行政としての農林水産のデジタル化とは何か、生産者にとってのデジタル化のメリットと課題と支援策、中山間地域農業でのデジタル化で何ができるか、有害鳥獣対策で電気牧柵などを遠距離で管理する仕組みへの考えと支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・川上幸博</span>
+          <span class="ttl">みどり戦略と農業振興</span>
+          <span class="sum">国のみどりの食料システム戦略に合わせた環境にやさしい農業を市としてどう位置づけ担い手育成や有機農業普及に重点的に予算を配分するのか、旧経営体２４ヘクタールで全耕地面積の１％未満にとどまる有機農業の今後の課題と対策、更新期を迎える未来の懸け橋事業で有機農業やスマート農業にどのような助成・支援が考えられるか、就農者をどのような作物に導き担い手育成を未来にどうつなげるか、平地から中山間地まで地域や規模に応じた農業振興の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・福島孝雄</span>
+          <span class="ttl">イノシシ被害への対策</span>
+          <span class="sum">イノシシの出没の動向と被害状況および被害対策の現状を尋ね、中山間地域を中心に高齢化・人手不足で防護柵の見回りに苦労しているとして電気牧柵の電圧低下をパソコンやスマホで確認できる被害対策のデジタル化への予算の確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・錦織稔</span>
+          <span class="ttl">中山間の交付金の広域化</span>
+          <span class="sum">中山間地域等直接支払交付金や多面的機能支払交付金の取組組織に対して、組織の広域化や事務委託の導入の課題と利点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・本田一勇</span>
+          <span class="ttl">中山間地でのイベント開催</span>
+          <span class="sum">中山間地域にいかに光を当てるかが自分の仕事だとして市内５か所でイベントを計画中であることを挙げ、できない理由やさせない理由ばかりを考えるのではなく市長も一緒にイベントのスクラムを組んで前へ進もうと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・寺本淳一</span>
+          <span class="ttl">中山間地域の農業支援</span>
+          <span class="sum">これまでの減反政策のメリットとデメリット、廃止による生産量と生産者への変化、米の消費拡大対策と主な取組みを尋ね、中山間地域で進めるべき農業の姿、中山間地農業ルネッサンス推進事業と農村ＲＭＯ形成推進事業の内容と市内の取組み状況、市の単独補助事業への複合的な補助の追加検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・児玉俊雄</span>
+          <span class="ttl">人口減少対策と中山間振興</span>
+          <span class="sum">４子以上の子どもへの破格の支援など異次元の少子化対策の必要性についての基本的な考え方、子ども医療費助成を中学生の通院費に拡大することで想定される通年ベースの事業費と財源、大学や企業と連携した中山間地域のフィールドワークやワーケーションの具体的なスキーム、未来につなぐ中山間地域道路環境整備事業の初年度の実績と予算増額の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・岸道三</span>
+          <span class="ttl">農村ＲＭＯへの支援</span>
+          <span class="sum">佐田地域づくり協議会における農村ＲＭＯ形成推進事業の具体的な計画と進捗状況、市としての関わり方と役割、国の採択状況と令和８年（2026）までを踏まえた今後の展開、中山間地域における持続可能な地域づくりを支援する市の施策を尋ね、補助金の使途の制約や県内他市町の事業、思い切った施策の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・鐘推義憲</span>
+          <span class="ttl">スマート農業への支援</span>
+          <span class="sum">実証試験の結果を踏まえて平野部や中山間地域などそれぞれの環境に適した技術の普及を進めるスマート農業について、導入に多くの資金が必要となることから導入する農家に対する金額面での支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・萬代輝正</span>
+          <span class="ttl">中山間地域の農地管理</span>
+          <span class="sum">地域とともに持続可能な中山間地域をつくるため、中山間地域の農業について花木栽培やビオトープなど新たな農地管理の方向性が示されたことを受け、それがどのようなものなのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・湯浅万里子</span>
+          <span class="ttl">介護現場の負担軽減</span>
+          <span class="sum">限られた人材で対応している介護サービスの現場について、介護ロボットや見守りセンサー、ケア記録ソフト、インカムなどの活用とそれに伴う通信環境の整備といったデジタル化による働く人の負担軽減の考え、通所介護の送迎の人員確保や家と家の距離が遠く効率が悪い中山間地域の訪問介護を踏まえた効率的な送迎や移動方法の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・児玉俊雄</span>
+          <span class="ttl">地域計画と目標地図</span>
+          <span class="sum">市内３４の地域に設ける協議の場のこれまでの開催状況と協議内容および参加メンバー、令和７年３月までの策定スケジュール、地籍調査が未実施でも目標地図の作成に支障がないか、土地改良事業補助金の補助率引上げなど支援を拡充する考え、保全等を進める区域の望ましい利用と協議の場での話し合い、中山間地域農業に対する展望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・後藤由美</span>
+          <span class="ttl">持続可能な農業振興</span>
+          <span class="sum">出雲市の農業経営体が１５年前の４２％に減少する中で、国の農政を転換させ食料自給率を早急に５０％に引き上げ６０％台を目指すよう国に要求すべきとの認識と、家族農業や中小農家を支援し生産費を賄える価格の保障を国に求めつつ中山間地域でも多様な担い手によって持続的な農業ができるようにすることへの認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・鐘推義憲</span>
+          <span class="ttl">移住定住と中山間振興</span>
+          <span class="sum">移住・定住の推進と交流人口・関係人口の拡大、中山間地域振興として、観光基本計画を官民一体で策定するのかとその手順とスケジュール、周遊型観光のシェアサイクルの実施予定地域と自転車活用推進計画の目的・内容及び島根県の計画との関連、ドアツードアの定額乗合交通の実証運行の現状と佐田地域以外での実施予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・西村亮</span>
+          <span class="ttl">移住定住と観光戦略</span>
+          <span class="sum">移住・定住の推進、交流人口・関係人口の拡大と中山間地域振興として、東京圏等での若者を対象とした交流会など移住・定住の促進の課題、交流人口・関係人口の拡大の対策と所見、観光戦略の推進と観光基本計画の方針及び具体化に向けた取組、中山間地域振興で企業や団体と連携して配置する地域おこし協力隊員の現状と今後の配置の具体策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川上幸博</span>
+          <span class="ttl">若者の定住と交流</span>
+          <span class="sum">若者に定住してもらう政策と、令和元年度に市内高校生に対し実施された定住等意識調査で挙がった出雲市に住みたくない理由の解消に向けた取組及びえにしをつなぐための政策を尋ね、移住・定住の助成を中山間地域以外にも広げることや大学生との意見交換・出前講座を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・福島孝雄</span>
+          <span class="ttl">農業の現状と将来展望</span>
+          <span class="sum">令和７年３月までに策定が義務づけられた地域計画と人・農地プランとの関連、地域別の対象面積及び利用権設定農地面積、地域内で受け手が不足する場合の対策、目標地図作成に関連する各種補助金、受け手が難しい中山間地域及び条件不利地域での協議の進め方と策定まで想定される課題、支援のない準中山間地域の官地の除草を行政で行うこと、農業振興区長と補助員のあり方、インボイス開始にあたっての農業者の現状、地域活性化に向けたイベント等の企画への支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・福島孝雄</span>
+          <span class="ttl">農業支援と中山間地対策</span>
+          <span class="sum">出雲農業未来の懸け橋事業と新出雲チャレンジ事業の中山間地域や耕作条件不利地域への支援内容、農業機械のリース物件への支援の見通し、飼料用米とＷＣＳの需給バランスと加工用米との所得の比較、和牛の頭数や小規模農家の動向と買取り価格の下落や飼料高騰への支援、畑地化支援交付金の要件達成件数と面積および助成事業のスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・後藤由美</span>
+          <span class="ttl">高齢者福祉タクシーの要件</span>
+          <span class="sum">高齢者福祉タクシー事業の現在の利用状況と、４月からの中山間地域における距離要件の緩和による申請件数の伸びを尋ね、昨年度は１０２世帯・１０８万円にとどまっていることを挙げて、高齢者の移動や外出、生きがいを保障するために距離要件をなくすことを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・福島孝雄</span>
+          <span class="ttl">スマート農業の進展</span>
+          <span class="sum">平野部と中山間地域におけるスマート農業の動向を尋ね、導入経費が高額で小規模経営では対応できないとして機械導入に対する支援のさらなる拡充と、約３０万円ほどかかるドローンの免許取得への支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・後藤由美</span>
+          <span class="ttl">中山間地域の定住促進</span>
+          <span class="sum">中山間地域とそれ以外の地域で人口の格差が広がっている原因の分析、保育所や幼稚園、小学校があってこそ地域活性化が保たれるとの認識、二つの住まいづくり助成金による移住・定住の現状、新婚・若者定住促進住宅を計画的に建設するなど特別な施策の必要、地域ごとの計画づくりへの幅広い住民参加と中山間地域振興室とともに検討し実施することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・福島孝雄</span>
+          <span class="ttl">中山間地域の環境維持</span>
+          <span class="sum">官地の草刈りをボランティアに頼るには限界があることを行政として認識すべきだとして耕作放棄地の拡大防止の政策と併せた今後の考えを尋ね、中山間地域直接支払制度の集落機能強化加算が廃止された場合の市への影響と対応策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・児玉俊雄</span>
+          <span class="ttl">まちづくりビジョン支援</span>
+          <span class="sum">中山間地域の「まちづくりビジョン」の策定支援について、出雲南部支部で５地区に１人、大社支部は統括支援員の兼務という体制は手薄だとして地域支援員等の増員についての考え方と今後の具体策を尋ね、策定後のフォローアップとして要となるハード整備を積極的に事業採択したり市全体の中での優先順位を上げる仕組みをつくる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・後藤由美</span>
+          <span class="ttl">中山間地域と農業振興</span>
+          <span class="sum">中山間地域にこそ移住・定住対策支援を思い切って強化すべきとして県外から移住する新婚・子育て世帯や独身Ｉターン者への特別な家賃助成への認識を尋ね、米の価格高騰の原因は米の需給と価格の調整を３０年にわたり市場任せにしてきた国の農政にあるとの認識と、所得保障と価格保障に政府が責任を果たすよう国に要請することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">中山間地域の振興策</span>
+          <span class="sum">さらに増員する地域おこし協力隊のこれまでの実績と今後の活用の考えを尋ね、策定を支援する「まちづくりビジョン」はどのような内容のもので誰が策定するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・大谷良治</span>
+          <span class="ttl">中山間地域の支援体制</span>
+          <span class="sum">地域おこし協力隊の増員数と「元気・やる気・地域応援補助金」の拡充内容、「地域支援員等による伴走支援」及び「まちづくりビジョン」の作成に関わるサポート体制、遠隔診療の実証事業と介護予防や生活支援サービスを行う団体への支援強化の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・後藤由美</span>
+          <span class="ttl">医療・福祉の充実</span>
+          <span class="sum">約３億円の基金を生かした国民健康保険料の１世帯１万円引下げと約１７億円の介護保険基金を取り崩した介護保険料の軽減、昨年４月時点で８０８人が入れない特別養護老人ホームの増設を求め、軽度・中等度難聴者補聴器購入助成制度の所得制限の撤廃と中山間地域以外も含む訪問介護事業所への市独自支援の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・鐘推義憲</span>
+          <span class="ttl">地域と暮らしを支える基盤</span>
+          <span class="sum">保育所において性被害防止のための備品を購入することになった経過と購入する備品、中山間地域のまちづくりビジョンの策定状況と支援状況及び策定後のフォローアップと効果の評価、地域インフラ群再生戦略マネジメントの導入方式と導入計画の内容及びスケジュール、ＪＲ山陰本線の益田・出雲市間の利用促進協議会設立の経過と設立趣旨及び組織体制と活動計画、地域課題の解決と行政施策の推進に向けた本市におけるＡＩの活用具体策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">学校教育環境と市民活動</span>
+          <span class="sum">幼稚園の再編等を進める上で子どもたちにとってより好ましい教育環境とはどのようなものか、デジタル教育支援センターが既存の教育支援センターとどう違い何が期待されるのか、学習用タブレットの更新の事業規模や財源と何年計画でどう更新するのか、小学校の屋内運動場に係る今後のエアコン整備計画、中山間地域の課題解決に資する市民活動への支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・保科孝充</span>
+          <span class="ttl">縁結びと出会いの場</span>
+          <span class="sum">合併から現在までの旧市町の人口数や婚姻数、出生数と死亡者数、社会増減数を尋ね、島根県が進める「はぴこ」のボランティア登録者数と活動内容、市との連携状況と支援策、関わった婚姻数の実績、行政と民間主催による出会いの場の回数と実態や民間実施への支援、大人の島留学から見る中山間地域を主とした対策の可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・錦織稔</span>
+          <span class="ttl">遠隔診療の実証事業</span>
+          <span class="sum">中山間地域にお住まいの特に高齢者は通院に一苦労しているとして、最新技術を活用した遠隔診療の実証事業における受診する側の利点を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 3市くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

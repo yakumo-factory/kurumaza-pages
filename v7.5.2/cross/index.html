@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3市くらべ — 議会の横断比較 | 車座プロジェクト</title>
+<style>
+/* 3市くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share2:#eef1f9;   /* 2市共有 */
+  --share3:#d9e0f4;   /* 3市共有（2市より強い） */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×3市（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh2{background:var(--share2);border-radius:3px;padding:0 4px}
+table.years li.sh3{background:var(--share3);border-radius:3px;padding:0 4px;font-weight:600}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;width:30px;text-align:center;border-radius:3px;margin:0 4px;font-size:.8rem}
+.legend .c2{background:var(--share2)}
+.legend .c3{background:var(--share3);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">レポート一覧へ</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <h1 class="page-title">3市くらべ — 議会の横断比較</h1>
+  <p class="page-subtitle">
+    松江市・安来市・出雲市の議会で、平成17年〜令和7年に
+    何が語られてきたかを、3市に共通の物差し（話題の語彙 v1）で並べました。
+    対象は本会議の一般質問 4,323件です。
+    ここにあるのは数え上げの結果だけです。<b>そこから何を読むかは、読み手に委ねます。</b>
+  </p>
+
+  <div class="howto">
+    <strong>このページの読み方</strong><br>
+    ここに並ぶのは「その年度に、その市の議会で多く語られた話題」です。
+    <b>1つの年度だけを取り出して「この市はこういう市だ」と読まないでください</b>——
+    年度ごとの順位は年によって大きく入れ替わります。読めるのは年度の並びだけです。
+    また、質問の総数が市ごとに違うため、<b>件数を市の間で比べることはできません</b>。
+  </div>
+
+  <section class="q-wide">
+  <h2>問い1: その年、それぞれの市で多く語られた話題は</h2>
+  <p class="q-lede">
+    各年度・各市で、<b>その年度に質問に立った議員の25%以上が触れた話題</b>をすべて挙げています
+    （何本になるかは年度と市によって違います）。
+    %は、その年度に質問に立った議員のうち、その話題に触れた議員の割合で、
+    <b>分母は「その年度に質問に立った議員の数」</b>です（議員全員ではありません）。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    <div class="tbl-scroll">
+    <table class="years">
+      <thead>
+        <tr><th>年度</th><th>松江市</th><th>安来市</th><th>出雲市</th></tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td class="yr">H17</td>
+          
+          <td><ol><li class="sh2">自治会と地域自治組織<span class="pct">34%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">32%</span></li><li>指定管理者制度と民間委託<span class="pct">30%</span></li><li class="sh2">財政健全化と基金<span class="pct">30%</span></li><li>支所と行政センターの体制<span class="pct">27%</span></li><li class="sh2">湖沼と水質保全<span class="pct">27%</span></li><li class="sh2">ごみの減量と資源循環<span class="pct">25%</span></li><li>公立病院の経営と地域医療<span class="pct">25%</span></li><li>治水と河川改修<span class="pct">25%</span></li><li class="sh2">生活保護と生活困窮<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>総合計画と施政方針<span class="pct">35%</span></li><li class="sh2">湖沼と水質保全<span class="pct">29%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>行財政改革と定員管理<span class="pct">38%</span></li><li>観光振興と交流人口<span class="pct">38%</span></li><li>中心市街地と商店街<span class="pct">34%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">34%</span></li><li class="sh2">ごみの減量と資源循環<span class="pct">31%</span></li><li>上下水道の経営<span class="pct">31%</span></li><li>地域の拠点施設<span class="pct">31%</span></li><li>都市計画と景観<span class="pct">31%</span></li><li>介護保険と介護予防<span class="pct">28%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">28%</span></li><li>庁舎の整備<span class="pct">25%</span></li><li class="sh2">生活保護と生活困窮<span class="pct">25%</span></li><li class="sh2">財政健全化と基金<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H18</td>
+          
+          <td><ol><li>移住・定住とＵＩターン<span class="pct">34%</span></li><li>待機児童と保育所整備<span class="pct">29%</span></li><li>支所と行政センターの体制<span class="pct">29%</span></li><li>総合計画と施政方針<span class="pct">29%</span></li><li>財政健全化と基金<span class="pct">29%</span></li><li>ごみの減量と資源循環<span class="pct">26%</span></li><li>使用済み核燃料と廃炉<span class="pct">26%</span></li><li>原発再稼働<span class="pct">26%</span></li><li>治水と河川改修<span class="pct">26%</span></li><li>観光振興と交流人口<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">庁舎の整備<span class="pct">26%</span></li><li class="sh2">耕作放棄地と農地の利用<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">庁舎の整備<span class="pct">32%</span></li><li>障害者支援<span class="pct">32%</span></li><li>豪雨災害と土砂災害<span class="pct">29%</span></li><li>農業の担い手と新規就農<span class="pct">29%</span></li><li>いじめと不登校<span class="pct">25%</span></li><li class="sh2">耕作放棄地と農地の利用<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H19</td>
+          
+          <td><ol><li>生活保護と生活困窮<span class="pct">38%</span></li><li>原発再稼働<span class="pct">32%</span></li><li class="sh2">財政健全化と基金<span class="pct">32%</span></li><li>治水と河川改修<span class="pct">30%</span></li><li>総合計画と施政方針<span class="pct">30%</span></li><li class="sh3">地域の拠点施設<span class="pct">27%</span></li><li>自治会と地域自治組織<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>ごみの減量と資源循環<span class="pct">40%</span></li><li class="sh3">地域の拠点施設<span class="pct">33%</span></li><li>過疎地域と中山間地域<span class="pct">33%</span></li><li>公共施設マネジメント<span class="pct">27%</span></li><li>公立病院の経営と地域医療<span class="pct">27%</span></li><li>耕作放棄地と農地の利用<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">地域の拠点施設<span class="pct">27%</span></li><li>庁舎の整備<span class="pct">27%</span></li><li>待機児童と保育所整備<span class="pct">27%</span></li><li class="sh2">財政健全化と基金<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H20</td>
+          
+          <td><ol><li>治水と河川改修<span class="pct">30%</span></li><li>生活保護と生活困窮<span class="pct">30%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>公立病院の経営と地域医療<span class="pct">48%</span></li><li>庁舎の整備<span class="pct">43%</span></li><li>市町村合併の検証<span class="pct">35%</span></li><li>自治会と地域自治組織<span class="pct">30%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol></ol><span class="cell-none">該当なし</span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H21</td>
+          
+          <td><ol><li>公立病院の経営と地域医療<span class="pct">45%</span></li><li class="sh2">湖沼と水質保全<span class="pct">31%</span></li><li>子育ての経済的支援<span class="pct">28%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>庁舎の整備<span class="pct">31%</span></li><li>公共施設マネジメント<span class="pct">27%</span></li><li>学校給食<span class="pct">27%</span></li><li>広域連携と圏域<span class="pct">27%</span></li><li>情報通信基盤の整備<span class="pct">27%</span></li><li class="sh2">湖沼と水質保全<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>住民投票と自治基本条例<span class="pct">39%</span></li><li>財政健全化と基金<span class="pct">39%</span></li><li>支所と行政センターの体制<span class="pct">35%</span></li><li>情報公開とパブリックコメント<span class="pct">32%</span></li><li>地域ブランドと販路拡大<span class="pct">29%</span></li><li>総合計画と施政方針<span class="pct">29%</span></li><li>行財政改革と定員管理<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H22</td>
+          
+          <td><ol><li>待機児童と保育所整備<span class="pct">31%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">31%</span></li><li class="sh2">市税と徴収<span class="pct">28%</span></li><li>水産業と漁業<span class="pct">28%</span></li><li class="sh2">湖沼と水質保全<span class="pct">28%</span></li><li>生活保護と生活困窮<span class="pct">28%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>庁舎の整備<span class="pct">37%</span></li><li>公共施設マネジメント<span class="pct">32%</span></li><li>公園と遊具の整備<span class="pct">32%</span></li><li class="sh2">湖沼と水質保全<span class="pct">32%</span></li><li>公立病院の経営と地域医療<span class="pct">26%</span></li><li class="sh2">地域の拠点施設<span class="pct">26%</span></li><li class="sh2">市税と徴収<span class="pct">26%</span></li><li>情報通信基盤の整備<span class="pct">26%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">26%</span></li><li>行財政改革と定員管理<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">地域の拠点施設<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H23</td>
+          
+          <td><ol><li class="sh3">原発再稼働<span class="pct">67%</span></li><li class="sh2">公共施設マネジメント<span class="pct">43%</span></li><li class="sh2">原発事故と安全性への不信<span class="pct">40%</span></li><li class="sh2">原子力防災と広域避難<span class="pct">37%</span></li><li>広域連携と圏域<span class="pct">37%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">33%</span></li><li class="sh2">湖沼と水質保全<span class="pct">33%</span></li><li>スポーツ振興<span class="pct">30%</span></li><li>介護保険と介護予防<span class="pct">30%</span></li><li class="sh2">避難所と要支援者の避難<span class="pct">30%</span></li><li>都市計画と景観<span class="pct">30%</span></li><li>図書館と生涯学習<span class="pct">27%</span></li><li class="sh3">地域の拠点施設<span class="pct">27%</span></li><li class="sh2">市税と徴収<span class="pct">27%</span></li><li>支所と行政センターの体制<span class="pct">27%</span></li><li>観光振興と交流人口<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>庁舎の整備<span class="pct">59%</span></li><li class="sh2">公共施設マネジメント<span class="pct">47%</span></li><li>再生可能エネルギーの導入<span class="pct">41%</span></li><li class="sh3">原発再稼働<span class="pct">41%</span></li><li class="sh3">地域の拠点施設<span class="pct">41%</span></li><li>学校給食<span class="pct">41%</span></li><li class="sh2">湖沼と水質保全<span class="pct">41%</span></li><li>中心市街地と商店街<span class="pct">35%</span></li><li class="sh2">企業誘致と工業団地<span class="pct">35%</span></li><li>公園と遊具の整備<span class="pct">35%</span></li><li>公立病院の経営と地域医療<span class="pct">35%</span></li><li>原子力安全協定と立地同意<span class="pct">35%</span></li><li class="sh2">原発事故と安全性への不信<span class="pct">35%</span></li><li>情報通信基盤の整備<span class="pct">35%</span></li><li class="sh2">原子力防災と広域避難<span class="pct">29%</span></li><li class="sh2">市税と徴収<span class="pct">29%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">29%</span></li><li>自主防災組織と消防団<span class="pct">29%</span></li><li>行財政改革と定員管理<span class="pct">29%</span></li><li class="sh2">避難所と要支援者の避難<span class="pct">29%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">企業誘致と工業団地<span class="pct">42%</span></li><li class="sh3">原発再稼働<span class="pct">36%</span></li><li class="sh3">地域の拠点施設<span class="pct">33%</span></li><li>住民投票と自治基本条例<span class="pct">31%</span></li><li>小中学校の統廃合と小規模校<span class="pct">31%</span></li><li>治水と河川改修<span class="pct">31%</span></li><li>自治会と地域自治組織<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H24</td>
+          
+          <td><ol><li class="sh2">原発再稼働<span class="pct">57%</span></li><li class="sh3">都市計画と景観<span class="pct">40%</span></li><li class="sh2">湖沼と水質保全<span class="pct">37%</span></li><li class="sh3">地域の拠点施設<span class="pct">30%</span></li><li>広域連携と圏域<span class="pct">30%</span></li><li class="sh2">中心市街地と商店街<span class="pct">27%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>庁舎の整備<span class="pct">70%</span></li><li>学校給食<span class="pct">60%</span></li><li>医療費の抑制<span class="pct">45%</span></li><li class="sh2">湖沼と水質保全<span class="pct">45%</span></li><li class="sh2">中心市街地と商店街<span class="pct">40%</span></li><li>公共施設マネジメント<span class="pct">40%</span></li><li class="sh3">都市計画と景観<span class="pct">40%</span></li><li>公園と遊具の整備<span class="pct">35%</span></li><li class="sh3">地域の拠点施設<span class="pct">35%</span></li><li>情報通信基盤の整備<span class="pct">35%</span></li><li>耕作放棄地と農地の利用<span class="pct">35%</span></li><li>過疎地域と中山間地域<span class="pct">35%</span></li><li class="sh2">原発再稼働<span class="pct">30%</span></li><li>空き家対策<span class="pct">30%</span></li><li>総合計画と施政方針<span class="pct">30%</span></li><li>農業の担い手と新規就農<span class="pct">30%</span></li><li>いじめと不登校<span class="pct">25%</span></li><li>スポーツ振興<span class="pct">25%</span></li><li>企業誘致と工業団地<span class="pct">25%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">25%</span></li><li>避難所と要支援者の避難<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">地域の拠点施設<span class="pct">28%</span></li><li>治水と河川改修<span class="pct">28%</span></li><li class="sh3">都市計画と景観<span class="pct">28%</span></li><li>行財政改革と定員管理<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H25</td>
+          
+          <td><ol><li>原発再稼働<span class="pct">55%</span></li><li class="sh2">公共施設マネジメント<span class="pct">48%</span></li><li class="sh2">都市計画と景観<span class="pct">45%</span></li><li class="sh2">市税と徴収<span class="pct">38%</span></li><li class="sh2">湖沼と水質保全<span class="pct">34%</span></li><li>中心市街地と商店街<span class="pct">31%</span></li><li class="sh3">観光振興と交流人口<span class="pct">31%</span></li><li>地方交付税と地方分権<span class="pct">28%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>庁舎の整備<span class="pct">50%</span></li><li>学校給食<span class="pct">46%</span></li><li>耕作放棄地と農地の利用<span class="pct">42%</span></li><li class="sh2">市税と徴収<span class="pct">38%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">29%</span></li><li>空き家対策<span class="pct">29%</span></li><li>財政健全化と基金<span class="pct">29%</span></li><li>過疎地域と中山間地域<span class="pct">29%</span></li><li>ごみの減量と資源循環<span class="pct">25%</span></li><li>公立病院の経営と地域医療<span class="pct">25%</span></li><li class="sh2">湖沼と水質保全<span class="pct">25%</span></li><li>総合計画と施政方針<span class="pct">25%</span></li><li class="sh3">観光振興と交流人口<span class="pct">25%</span></li><li class="sh2">都市計画と景観<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>行財政改革と定員管理<span class="pct">52%</span></li><li class="sh2">公共施設マネジメント<span class="pct">38%</span></li><li class="sh3">観光振興と交流人口<span class="pct">38%</span></li><li>企業誘致と工業団地<span class="pct">34%</span></li><li>地域の拠点施設<span class="pct">31%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">31%</span></li><li>水産業と漁業<span class="pct">31%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H26</td>
+          
+          <td><ol><li>広域連携と圏域<span class="pct">37%</span></li><li class="sh3">地方創生と総合戦略<span class="pct">30%</span></li><li>湖沼と水質保全<span class="pct">30%</span></li><li>認知症と地域包括ケア<span class="pct">30%</span></li><li>都市計画と景観<span class="pct">30%</span></li><li class="sh3">公共施設マネジメント<span class="pct">27%</span></li><li>原発再稼働<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">地方創生と総合戦略<span class="pct">47%</span></li><li>学校給食<span class="pct">47%</span></li><li class="sh2">人口減少<span class="pct">41%</span></li><li class="sh2">企業誘致と工業団地<span class="pct">35%</span></li><li class="sh2">子育ての経済的支援<span class="pct">35%</span></li><li>総合計画と施政方針<span class="pct">35%</span></li><li class="sh3">公共施設マネジメント<span class="pct">29%</span></li><li>公立病院の経営と地域医療<span class="pct">29%</span></li><li>少子化対策と出生率<span class="pct">29%</span></li><li class="sh2">市税と徴収<span class="pct">29%</span></li><li>庁舎の整備<span class="pct">29%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">29%</span></li><li>自主防災組織と消防団<span class="pct">29%</span></li><li>自治会と地域自治組織<span class="pct">29%</span></li><li>観光振興と交流人口<span class="pct">29%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">企業誘致と工業団地<span class="pct">33%</span></li><li class="sh3">公共施設マネジメント<span class="pct">33%</span></li><li class="sh3">地方創生と総合戦略<span class="pct">33%</span></li><li class="sh2">子育ての経済的支援<span class="pct">30%</span></li><li class="sh2">市税と徴収<span class="pct">30%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">30%</span></li><li class="sh2">人口減少<span class="pct">26%</span></li><li>空き家対策<span class="pct">26%</span></li><li>行財政改革と定員管理<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H27</td>
+          
+          <td><ol><li class="sh3">地方創生と総合戦略<span class="pct">68%</span></li><li class="sh3">公共施設マネジメント<span class="pct">43%</span></li><li class="sh2">湖沼と水質保全<span class="pct">43%</span></li><li>都市計画と景観<span class="pct">43%</span></li><li class="sh2">観光振興と交流人口<span class="pct">39%</span></li><li class="sh2">地域の拠点施設<span class="pct">36%</span></li><li class="sh2">文化財と日本遺産<span class="pct">36%</span></li><li>原発再稼働<span class="pct">32%</span></li><li class="sh3">待機児童と保育所整備<span class="pct">32%</span></li><li>水産業と漁業<span class="pct">32%</span></li><li class="sh2">生活保護と生活困窮<span class="pct">32%</span></li><li>空き家対策<span class="pct">32%</span></li><li>自治会と地域自治組織<span class="pct">32%</span></li><li>広域連携と圏域<span class="pct">29%</span></li><li class="sh2">スポーツ振興<span class="pct">25%</span></li><li>中小企業と創業支援<span class="pct">25%</span></li><li>人口減少<span class="pct">25%</span></li><li>公園と遊具の整備<span class="pct">25%</span></li><li class="sh2">子育ての経済的支援<span class="pct">25%</span></li><li>市税と徴収<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>公立病院の経営と地域医療<span class="pct">65%</span></li><li class="sh3">地方創生と総合戦略<span class="pct">53%</span></li><li class="sh3">公共施設マネジメント<span class="pct">47%</span></li><li class="sh2">地域の拠点施設<span class="pct">47%</span></li><li>学校給食<span class="pct">47%</span></li><li>移住・定住とＵＩターン<span class="pct">47%</span></li><li>企業誘致と工業団地<span class="pct">41%</span></li><li>庁舎の整備<span class="pct">35%</span></li><li>指定管理者制度と民間委託<span class="pct">35%</span></li><li class="sh2">生活保護と生活困窮<span class="pct">35%</span></li><li>自主防災組織と消防団<span class="pct">35%</span></li><li class="sh2">子育ての経済的支援<span class="pct">29%</span></li><li class="sh3">待機児童と保育所整備<span class="pct">29%</span></li><li class="sh2">文化財と日本遺産<span class="pct">29%</span></li><li>林業と森林の管理<span class="pct">29%</span></li><li class="sh2">湖沼と水質保全<span class="pct">29%</span></li><li>総合計画と施政方針<span class="pct">29%</span></li><li class="sh2">観光振興と交流人口<span class="pct">29%</span></li><li>過疎地域と中山間地域<span class="pct">29%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">公共施設マネジメント<span class="pct">35%</span></li><li class="sh3">待機児童と保育所整備<span class="pct">35%</span></li><li class="sh3">地方創生と総合戦略<span class="pct">31%</span></li><li class="sh2">スポーツ振興<span class="pct">27%</span></li><li>介護保険と介護予防<span class="pct">27%</span></li><li>耕作放棄地と農地の利用<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H28</td>
+          
+          <td><ol><li>介護保険と介護予防<span class="pct">33%</span></li><li class="sh2">地方創生と総合戦略<span class="pct">33%</span></li><li class="sh3">待機児童と保育所整備<span class="pct">33%</span></li><li class="sh2">スポーツ振興<span class="pct">30%</span></li><li>広域連携と圏域<span class="pct">30%</span></li><li class="sh2">湖沼と水質保全<span class="pct">30%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">30%</span></li><li>使用済み核燃料と廃炉<span class="pct">26%</span></li><li class="sh3">公共施設マネジメント<span class="pct">26%</span></li><li class="sh2">公立病院の経営と地域医療<span class="pct">26%</span></li><li>原発再稼働<span class="pct">26%</span></li><li class="sh2">地域の拠点施設<span class="pct">26%</span></li><li>総合計画と施政方針<span class="pct">26%</span></li><li class="sh2">観光振興と交流人口<span class="pct">26%</span></li><li>認知症と地域包括ケア<span class="pct">26%</span></li><li class="sh2">避難所と要支援者の避難<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">公共施設マネジメント<span class="pct">76%</span></li><li class="sh2">公立病院の経営と地域医療<span class="pct">53%</span></li><li>財政健全化と基金<span class="pct">47%</span></li><li>文化財と日本遺産<span class="pct">41%</span></li><li>行財政改革と定員管理<span class="pct">41%</span></li><li>過疎地域と中山間地域<span class="pct">41%</span></li><li class="sh2">地方創生と総合戦略<span class="pct">35%</span></li><li>大規模地震と耐震化<span class="pct">35%</span></li><li>庁舎の整備<span class="pct">35%</span></li><li class="sh3">待機児童と保育所整備<span class="pct">35%</span></li><li class="sh2">湖沼と水質保全<span class="pct">35%</span></li><li>空き家対策<span class="pct">35%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">35%</span></li><li>農業の担い手と新規就農<span class="pct">35%</span></li><li class="sh2">避難所と要支援者の避難<span class="pct">35%</span></li><li>公園と遊具の整備<span class="pct">29%</span></li><li>学校給食<span class="pct">29%</span></li><li>市税と徴収<span class="pct">29%</span></li><li>自主防災組織と消防団<span class="pct">29%</span></li><li class="sh2">観光振興と交流人口<span class="pct">29%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">スポーツ振興<span class="pct">35%</span></li><li class="sh3">公共施設マネジメント<span class="pct">35%</span></li><li class="sh2">地域の拠点施設<span class="pct">31%</span></li><li class="sh3">待機児童と保育所整備<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H29</td>
+          
+          <td><ol><li>広域連携と圏域<span class="pct">65%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">45%</span></li><li class="sh2">公共施設マネジメント<span class="pct">32%</span></li><li>原発再稼働<span class="pct">32%</span></li><li>地方創生と総合戦略<span class="pct">32%</span></li><li>生活保護と生活困窮<span class="pct">32%</span></li><li>中小企業と創業支援<span class="pct">26%</span></li><li class="sh3">移住・定住とＵＩターン<span class="pct">26%</span></li><li class="sh2">空き家対策<span class="pct">26%</span></li><li>総合計画と施政方針<span class="pct">26%</span></li><li class="sh3">観光振興と交流人口<span class="pct">26%</span></li><li>都市計画と景観<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>公立病院の経営と地域医療<span class="pct">43%</span></li><li class="sh2">過疎地域と中山間地域<span class="pct">43%</span></li><li>庁舎の整備<span class="pct">39%</span></li><li class="sh2">公共施設マネジメント<span class="pct">35%</span></li><li>地域の拠点施設<span class="pct">35%</span></li><li class="sh3">移住・定住とＵＩターン<span class="pct">26%</span></li><li>自治会と地域自治組織<span class="pct">26%</span></li><li class="sh3">観光振興と交流人口<span class="pct">26%</span></li><li>財政健全化と基金<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>企業誘致と工業団地<span class="pct">34%</span></li><li>文化財と日本遺産<span class="pct">34%</span></li><li class="sh3">観光振興と交流人口<span class="pct">34%</span></li><li class="sh2">過疎地域と中山間地域<span class="pct">34%</span></li><li class="sh3">移住・定住とＵＩターン<span class="pct">31%</span></li><li>スポーツ振興<span class="pct">28%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">28%</span></li><li>放課後児童クラブ<span class="pct">28%</span></li><li class="sh2">空き家対策<span class="pct">28%</span></li><li>空港と港湾<span class="pct">28%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">H30</td>
+          
+          <td><ol><li>広域連携と圏域<span class="pct">43%</span></li><li class="sh2">市税と徴収<span class="pct">37%</span></li><li class="sh2">観光振興と交流人口<span class="pct">37%</span></li><li class="sh3">避難所と要支援者の避難<span class="pct">37%</span></li><li>湖沼と水質保全<span class="pct">33%</span></li><li class="sh3">公共施設マネジメント<span class="pct">30%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">30%</span></li><li class="sh2">自主防災組織と消防団<span class="pct">30%</span></li><li class="sh2">スポーツ振興<span class="pct">27%</span></li><li class="sh2">地域の拠点施設<span class="pct">27%</span></li><li>地方創生と総合戦略<span class="pct">27%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">スポーツ振興<span class="pct">47%</span></li><li class="sh2">地域の拠点施設<span class="pct">47%</span></li><li>公立病院の経営と地域医療<span class="pct">41%</span></li><li>空き家対策<span class="pct">41%</span></li><li class="sh3">公共施設マネジメント<span class="pct">35%</span></li><li class="sh2">市税と徴収<span class="pct">35%</span></li><li class="sh2">自主防災組織と消防団<span class="pct">35%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">29%</span></li><li>放課後児童クラブ<span class="pct">29%</span></li><li>林業と森林の管理<span class="pct">29%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">29%</span></li><li>農業の担い手と新規就農<span class="pct">29%</span></li><li class="sh3">避難所と要支援者の避難<span class="pct">29%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">避難所と要支援者の避難<span class="pct">37%</span></li><li>企業誘致と工業団地<span class="pct">30%</span></li><li class="sh3">公共施設マネジメント<span class="pct">27%</span></li><li>学校施設の整備<span class="pct">27%</span></li><li class="sh2">観光振興と交流人口<span class="pct">27%</span></li><li>都市計画と景観<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">R01</td>
+          
+          <td><ol><li class="sh2">市税と徴収<span class="pct">40%</span></li><li>人口減少<span class="pct">37%</span></li><li>地方創生と総合戦略<span class="pct">37%</span></li><li class="sh2">子育ての経済的支援<span class="pct">33%</span></li><li class="sh2">湖沼と水質保全<span class="pct">33%</span></li><li class="sh2">避難所と要支援者の避難<span class="pct">30%</span></li><li>原発再稼働<span class="pct">27%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">27%</span></li><li>治水と河川改修<span class="pct">27%</span></li><li>空港と港湾<span class="pct">27%</span></li><li>認知症と地域包括ケア<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>公立病院の経営と地域医療<span class="pct">62%</span></li><li class="sh2">公共施設マネジメント<span class="pct">50%</span></li><li>企業誘致と工業団地<span class="pct">44%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">44%</span></li><li>財政健全化と基金<span class="pct">44%</span></li><li>行財政改革と定員管理<span class="pct">38%</span></li><li class="sh2">地域の拠点施設<span class="pct">31%</span></li><li class="sh2">子育ての経済的支援<span class="pct">31%</span></li><li class="sh2">湖沼と水質保全<span class="pct">31%</span></li><li>交通安全と防犯<span class="pct">25%</span></li><li>健康づくりと検診<span class="pct">25%</span></li><li class="sh2">市税と徴収<span class="pct">25%</span></li><li>総合計画と施政方針<span class="pct">25%</span></li><li>観光振興と交流人口<span class="pct">25%</span></li><li>農業の担い手と新規就農<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">避難所と要支援者の避難<span class="pct">39%</span></li><li>スポーツ振興<span class="pct">29%</span></li><li class="sh2">待機児童と保育所整備<span class="pct">29%</span></li><li>いじめと不登校<span class="pct">25%</span></li><li class="sh2">公共施設マネジメント<span class="pct">25%</span></li><li class="sh2">地域の拠点施設<span class="pct">25%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">R02</td>
+          
+          <td><ol><li class="sh3">感染症対策<span class="pct">67%</span></li><li>庁舎の整備<span class="pct">52%</span></li><li>湖沼と水質保全<span class="pct">41%</span></li><li>広域連携と圏域<span class="pct">37%</span></li><li>公園と遊具の整備<span class="pct">33%</span></li><li>スポーツ振興<span class="pct">30%</span></li><li>市税と徴収<span class="pct">30%</span></li><li>水産業と漁業<span class="pct">30%</span></li><li>生活保護と生活困窮<span class="pct">30%</span></li><li>人口減少<span class="pct">26%</span></li><li>自治会と地域自治組織<span class="pct">26%</span></li><li>財政健全化と基金<span class="pct">26%</span></li><li>避難所と要支援者の避難<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>公立病院の経営と地域医療<span class="pct">53%</span></li><li class="sh2">公共施設マネジメント<span class="pct">37%</span></li><li class="sh3">感染症対策<span class="pct">37%</span></li><li>企業誘致と工業団地<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">感染症対策<span class="pct">62%</span></li><li class="sh2">公共施設マネジメント<span class="pct">25%</span></li><li>地域の拠点施設<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">R03</td>
+          
+          <td><ol><li class="sh3">感染症対策<span class="pct">71%</span></li><li class="sh2">原発再稼働<span class="pct">42%</span></li><li>地域の拠点施設<span class="pct">35%</span></li><li>自治会と地域自治組織<span class="pct">35%</span></li><li>湖沼と水質保全<span class="pct">32%</span></li><li>スポーツ振興<span class="pct">29%</span></li><li>待機児童と保育所整備<span class="pct">29%</span></li><li class="sh2">避難所と要支援者の避難<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>公共施設マネジメント<span class="pct">41%</span></li><li>公立病院の経営と地域医療<span class="pct">32%</span></li><li class="sh3">感染症対策<span class="pct">27%</span></li><li class="sh2">過疎地域と中山間地域<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">感染症対策<span class="pct">41%</span></li><li>脱炭素とカーボンニュートラル<span class="pct">34%</span></li><li>治水と河川改修<span class="pct">31%</span></li><li>農業の担い手と新規就農<span class="pct">31%</span></li><li class="sh2">避難所と要支援者の避難<span class="pct">31%</span></li><li>交通安全と防犯<span class="pct">28%</span></li><li class="sh2">原発再稼働<span class="pct">28%</span></li><li class="sh2">過疎地域と中山間地域<span class="pct">28%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">R04</td>
+          
+          <td><ol><li class="sh2">感染症対策<span class="pct">47%</span></li><li>原発再稼働<span class="pct">37%</span></li><li>庁舎の整備<span class="pct">33%</span></li><li class="sh3">自治会と地域自治組織<span class="pct">33%</span></li><li>公園と遊具の整備<span class="pct">30%</span></li><li>地域公共交通の維持<span class="pct">30%</span></li><li>都市計画と景観<span class="pct">30%</span></li><li>スポーツ振興<span class="pct">27%</span></li><li>子育ての経済的支援<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>公立病院の経営と地域医療<span class="pct">44%</span></li><li>地域の拠点施設<span class="pct">44%</span></li><li>公共施設マネジメント<span class="pct">31%</span></li><li>指定管理者制度と民間委託<span class="pct">25%</span></li><li>林業と森林の管理<span class="pct">25%</span></li><li>自主防災組織と消防団<span class="pct">25%</span></li><li class="sh3">自治会と地域自治組織<span class="pct">25%</span></li><li class="sh2">行政のデジタル化<span class="pct">25%</span></li><li>農業の担い手と新規就農<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">自治会と地域自治組織<span class="pct">29%</span></li><li class="sh2">感染症対策<span class="pct">25%</span></li><li class="sh2">行政のデジタル化<span class="pct">25%</span></li><li>過疎地域と中山間地域<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">R05</td>
+          
+          <td><ol><li>湖沼と水質保全<span class="pct">46%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">39%</span></li><li>地域公共交通の維持<span class="pct">36%</span></li><li>都市計画と景観<span class="pct">36%</span></li><li>公園と遊具の整備<span class="pct">32%</span></li><li class="sh2">行政のデジタル化<span class="pct">32%</span></li><li>スポーツ振興<span class="pct">29%</span></li><li>中心市街地と商店街<span class="pct">29%</span></li><li class="sh2">大規模地震と耐震化<span class="pct">29%</span></li><li class="sh3">避難所と要支援者の避難<span class="pct">29%</span></li><li class="sh2">公共施設マネジメント<span class="pct">25%</span></li><li>原発再稼働<span class="pct">25%</span></li><li>子育ての経済的支援<span class="pct">25%</span></li><li>生活保護と生活困窮<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh3">避難所と要支援者の避難<span class="pct">50%</span></li><li class="sh2">公共施設マネジメント<span class="pct">44%</span></li><li>地域の拠点施設<span class="pct">44%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">38%</span></li><li>公立病院の経営と地域医療<span class="pct">31%</span></li><li class="sh2">大規模地震と耐震化<span class="pct">31%</span></li><li>林業と森林の管理<span class="pct">25%</span></li><li>空き家対策<span class="pct">25%</span></li><li class="sh2">過疎地域と中山間地域<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>観光振興と交流人口<span class="pct">37%</span></li><li class="sh2">行政のデジタル化<span class="pct">33%</span></li><li>いじめと不登校<span class="pct">30%</span></li><li class="sh2">過疎地域と中山間地域<span class="pct">30%</span></li><li class="sh3">避難所と要支援者の避難<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">R06</td>
+          
+          <td><ol><li>地域公共交通の維持<span class="pct">44%</span></li><li>湖沼と水質保全<span class="pct">44%</span></li><li class="sh2">スポーツ振興<span class="pct">41%</span></li><li class="sh2">公共施設マネジメント<span class="pct">33%</span></li><li class="sh2">都市計画と景観<span class="pct">33%</span></li><li>大規模地震と耐震化<span class="pct">30%</span></li><li>情報公開とパブリックコメント<span class="pct">30%</span></li><li class="sh2">行政のデジタル化<span class="pct">30%</span></li><li>観光振興と交流人口<span class="pct">30%</span></li><li>地域の拠点施設<span class="pct">26%</span></li><li>待機児童と保育所整備<span class="pct">26%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">26%</span></li><li class="sh2">農業の担い手と新規就農<span class="pct">26%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">公共施設マネジメント<span class="pct">67%</span></li><li>公立病院の経営と地域医療<span class="pct">53%</span></li><li>自主防災組織と消防団<span class="pct">33%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">33%</span></li><li>過疎地域と中山間地域<span class="pct">33%</span></li><li>インバウンド<span class="pct">27%</span></li><li class="sh2">スポーツ振興<span class="pct">27%</span></li><li>地方創生と総合戦略<span class="pct">27%</span></li><li>小中学校の統廃合と小規模校<span class="pct">27%</span></li><li>林業と森林の管理<span class="pct">27%</span></li><li>空き家対策<span class="pct">27%</span></li><li>耕作放棄地と農地の利用<span class="pct">27%</span></li><li class="sh2">行政のデジタル化<span class="pct">27%</span></li><li class="sh2">都市計画と景観<span class="pct">27%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">農業の担い手と新規就農<span class="pct">33%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+        <tr>
+          <td class="yr">R07</td>
+          
+          <td><ol><li>地域の拠点施設<span class="pct">29%</span></li><li>湖沼と水質保全<span class="pct">29%</span></li><li class="sh2">いじめと不登校<span class="pct">25%</span></li><li>上下水道の経営<span class="pct">25%</span></li><li class="sh2">地域公共交通の維持<span class="pct">25%</span></li><li>物価高騰と経済対策<span class="pct">25%</span></li><li class="sh2">自治会と地域自治組織<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li>耕作放棄地と農地の利用<span class="pct">33%</span></li><li>都市計画と景観<span class="pct">28%</span></li></ol><span class="cell-none"></span></td>
+          
+          <td><ol><li class="sh2">自治会と地域自治組織<span class="pct">50%</span></li><li>待機児童と保育所整備<span class="pct">32%</span></li><li>観光振興と交流人口<span class="pct">32%</span></li><li>スポーツ振興<span class="pct">29%</span></li><li>公共施設マネジメント<span class="pct">29%</span></li><li>農業の担い手と新規就農<span class="pct">29%</span></li><li>避難所と要支援者の避難<span class="pct">29%</span></li><li class="sh2">いじめと不登校<span class="pct">25%</span></li><li>交通安全と防犯<span class="pct">25%</span></li><li>原子力防災と広域避難<span class="pct">25%</span></li><li class="sh2">地域公共交通の維持<span class="pct">25%</span></li><li>子育ての経済的支援<span class="pct">25%</span></li><li>学校施設の整備<span class="pct">25%</span></li><li>空き家対策<span class="pct">25%</span></li><li>過疎地域と中山間地域<span class="pct">25%</span></li></ol><span class="cell-none"></span></td>
+          
+        </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    <p class="legend">
+      色付きは、<b>同じ年度に複数の市で同じ話題が現れたもの</b>:
+      <span class="chip c2">2市</span>2つの市に現れた
+      <span class="chip c3">3市</span>3つの市すべてに現れた。
+      判定の対象は<b>表に出ている束だけ</b>——25%以上のものだけです。
+      <b>25%という線</b>は、質問に立った議員の半分（2分の1）の、さらに半分（4分の1）にあたる大きさとして選びました。
+      数えているのは、その年度に一般質問に立った議員の実人数に対する割合です。
+      機械的な数え上げによる色分けで、話題の中身の評価ではありません。
+    </p>
+  </section>
+  </section>
+
+  <section class="q-narrow">
+  <h2>問い2: 同じ課題に見えて、中身が違うのは</h2>
+  <p class="q-lede">
+    同じ名前の課題でも、市によって指しているものが違うことがあります。
+    課題の中で使われた言葉を数えました。<b>言葉のリストは網羅ではなく</b>（挙げなかった言葉は数えていません）、
+    言葉がどんな文脈で使われたかは、実際の質問の題を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    <h3>原子力
+      <span class="range">（区分・平成17年〜令和7年）</span>
+    </h3>
+    <div class="tbl-scroll">
+    <table class="words">
+      <thead><tr><th class="w">語</th><th>松江市</th><th>安来市</th><th>出雲市</th></tr></thead>
+      <tbody>
+        
+        <tr><td class="w">立地</td><td>71</td><td>12</td><td>15</td></tr>
+        
+        <tr><td class="w">周辺自治体</td><td>11</td><td>3</td><td>3</td></tr>
+        
+        <tr><td class="w">安全協定</td><td>21</td><td>18</td><td>22</td></tr>
+        
+        <tr><td class="w">避難計画</td><td>72</td><td>16</td><td>40</td></tr>
+        
+        <tr><td class="w">避難訓練</td><td>14</td><td>3</td><td>7</td></tr>
+        
+        <tr><td class="w">30キロ</td><td>14</td><td>10</td><td>14</td></tr>
+        
+        <tr><td class="w">1号機</td><td>35</td><td>3</td><td>7</td></tr>
+        
+        <tr><td class="w">2号機</td><td>73</td><td>12</td><td>24</td></tr>
+        
+        <tr><td class="w">3号機</td><td>41</td><td>6</td><td>6</td></tr>
+        
+        <tr><td class="w">プルサーマル</td><td>62</td><td>3</td><td>11</td></tr>
+        
+        <tr><td class="w">廃炉</td><td>29</td><td>0</td><td>7</td></tr>
+        
+        <tr><td class="w">使用済み核燃料</td><td>21</td><td>0</td><td>2</td></tr>
+        
+        <tr><td class="w">活断層</td><td>41</td><td>4</td><td>4</td></tr>
+        
+        <tr><td class="w">UPZ</td><td>5</td><td>1</td><td>0</td></tr>
+        
+        <tr><td class="w">EPZ</td><td>4</td><td>0</td><td>3</td></tr>
+        
+        <tr><td class="w">中国電力</td><td>58</td><td>17</td><td>23</td></tr>
+        
+        <tr><td class="w">保安院</td><td>9</td><td>0</td><td>0</td></tr>
+        
+        <tr><td class="w">交付金</td><td>44</td><td>4</td><td>2</td></tr>
+        
+        <tr><td class="w">雇用</td><td>3</td><td>0</td><td>0</td></tr>
+        
+        <tr class="denom"><td class="w">この区分の該当論点数／論点総数</td><td>499／7,912</td><td>78／3,180</td><td>118／5,157</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">
+      数字は「その語を含む論点の数」です（同じ論点に何度出てきても1件と数えます）。
+      質問の総数が市ごとに違うため、<b>数の大小を市の間で比べることはできません</b>。
+      語は互いに独立に数えているので、<b>足しても該当論点数にはなりません</b>。
+      <b>語のリストは網羅ではありません</b>——数えた語の全文と数え方は、このページの最後に載せています。
+      
+      
+      この区分は4つの話題の束をまとめたもので、<b>複数の束にまたがる質問も1件として数えています</b>（重複を除いた実際の論点数）。
+      そのため、束ごとの実例ページの件数を足した数（965件）は、
+      この表の該当論点数の合計（695件）と一致しません——
+      1つの質問が、当たった束それぞれのページに載るためです。
+      
+    </p>
+    <ul class="ex-links">
+      
+      <li><a href="examples/genpatsu-saikado.html">▸ 「原発再稼働」に当たった質問をすべて見る</a><span class="ex-n">全563件</span></li>
+      
+      <li><a href="examples/genpatsu-kyotei.html">▸ 「原子力安全協定と立地同意」に当たった質問をすべて見る</a><span class="ex-n">全76件</span></li>
+      
+      <li><a href="examples/genpatsu-bosai.html">▸ 「原子力防災と広域避難」に当たった質問をすべて見る</a><span class="ex-n">全178件</span></li>
+      
+      <li><a href="examples/genpatsu-hairo.html">▸ 「使用済み核燃料と廃炉」に当たった質問をすべて見る</a><span class="ex-n">全148件</span></li>
+      
+    </ul>
+    
+    <h3>人口減少と地域の維持
+      <span class="range">（区分・平成17年〜令和7年）</span>
+    </h3>
+    <div class="tbl-scroll">
+    <table class="words">
+      <thead><tr><th class="w">語</th><th>松江市</th><th>安来市</th><th>出雲市</th></tr></thead>
+      <tbody>
+        
+        <tr><td class="w">東京</td><td>14</td><td>6</td><td>5</td></tr>
+        
+        <tr><td class="w">米子</td><td>0</td><td>10</td><td>0</td></tr>
+        
+        <tr><td class="w">松江</td><td class="na">—</td><td>9</td><td>0</td></tr>
+        
+        <tr><td class="w">出雲</td><td>8</td><td>8</td><td class="na">—</td></tr>
+        
+        <tr><td class="w">安来</td><td>1</td><td class="na">—</td><td>0</td></tr>
+        
+        <tr><td class="w">県外</td><td>2</td><td>1</td><td>5</td></tr>
+        
+        <tr><td class="w">市外</td><td>0</td><td>10</td><td>2</td></tr>
+        
+        <tr><td class="w">県内</td><td>2</td><td>20</td><td>7</td></tr>
+        
+        <tr><td class="w">中海</td><td>12</td><td>8</td><td>3</td></tr>
+        
+        <tr><td class="w">都会</td><td>4</td><td>4</td><td>0</td></tr>
+        
+        <tr class="denom"><td class="w">この区分の該当論点数／論点総数</td><td>391／7,912</td><td>337／3,180</td><td>318／5,157</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">
+      数字は「その語を含む論点の数」です（同じ論点に何度出てきても1件と数えます）。
+      質問の総数が市ごとに違うため、<b>数の大小を市の間で比べることはできません</b>。
+      語は互いに独立に数えているので、<b>足しても該当論点数にはなりません</b>。
+      <b>語のリストは網羅ではありません</b>——数えた語の全文と数え方は、このページの最後に載せています。
+      
+      自分の市の名前は「—」にしています（当然多く出るため、読みに使いません）。
+      
+      
+      この区分は6つの話題の束をまとめたもので、<b>複数の束にまたがる質問も1件として数えています</b>（重複を除いた実際の論点数）。
+      そのため、束ごとの実例ページの件数を足した数（1,230件）は、
+      この表の該当論点数の合計（1,046件）と一致しません——
+      1つの質問が、当たった束それぞれのページに載るためです。
+      
+    </p>
+    <ul class="ex-links">
+      
+      <li><a href="examples/jinko-gensho.html">▸ 「人口減少」に当たった質問をすべて見る</a><span class="ex-n">全225件</span></li>
+      
+      <li><a href="examples/jinko-iju.html">▸ 「移住・定住とＵＩターン」に当たった質問をすべて見る</a><span class="ex-n">全210件</span></li>
+      
+      <li><a href="examples/jinko-kaso.html">▸ 「過疎地域と中山間地域」に当たった質問をすべて見る</a><span class="ex-n">全283件</span></li>
+      
+      <li><a href="examples/jinko-akiya.html">▸ 「空き家対策」に当たった質問をすべて見る</a><span class="ex-n">全221件</span></li>
+      
+      <li><a href="examples/jinko-okoshi.html">▸ 「地域おこし協力隊」に当たった質問をすべて見る</a><span class="ex-n">全44件</span></li>
+      
+      <li><a href="examples/jinko-chihososei.html">▸ 「地方創生と総合戦略」に当たった質問をすべて見る</a><span class="ex-n">全247件</span></li>
+      
+    </ul>
+    
+  </section>
+  </section>
+
+  <section class="q-narrow">
+  <h2>問い3: 違う言葉に見えて、同じものを指しているのは</h2>
+  <p class="q-lede">
+    同じものが、市によって別の名前で呼ばれていることがあります。
+    同じ話題の束の中で、どの言い方が使われたかを数えました。該当0の語も、0の市も省略していません。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    <h3>地域の拠点施設 <span class="range">（話題の束・平成17年〜令和7年）</span></h3>
+    <div class="tbl-scroll">
+    <table class="words">
+      <thead><tr><th class="w">語</th><th>松江市</th><th>安来市</th><th>出雲市</th></tr></thead>
+      <tbody>
+        
+        <tr><td class="w">地域の拠点施設</td><td>0</td><td>0</td><td>0</td></tr>
+        
+        <tr><td class="w">公民館</td><td>169</td><td>15</td><td>18</td></tr>
+        
+        <tr><td class="w">交流センター</td><td>0</td><td>131</td><td>7</td></tr>
+        
+        <tr><td class="w">コミュニティセンター</td><td>0</td><td>0</td><td>85</td></tr>
+        
+        <tr><td class="w">コミセン</td><td>0</td><td>0</td><td>74</td></tr>
+        
+        <tr><td class="w">自治協会</td><td>1</td><td>0</td><td>38</td></tr>
+        
+        <tr class="denom"><td class="w">この束の該当論点数／論点総数</td><td>169／7,912</td><td>142／3,180</td><td>172／5,157</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">
+      数字は「その語を含む論点の数」です（同じ論点に何度出てきても1件と数えます）。
+      質問の総数が市ごとに違うため、<b>数の大小を市の間で比べることはできません</b>。
+      語は互いに独立に数えているので、<b>足しても該当論点数にはなりません</b>。
+    </p>
+    <ul class="ex-links">
+      
+      <li><a href="examples/kyoten-shisetsu.html">▸ 「地域の拠点施設」に当たった質問をすべて見る</a><span class="ex-n">全483件</span></li>
+      
+    </ul>
+    
+    <h3>庁舎の整備 <span class="range">（話題の束・平成17年〜令和7年）</span></h3>
+    <div class="tbl-scroll">
+    <table class="words">
+      <thead><tr><th class="w">語</th><th>松江市</th><th>安来市</th><th>出雲市</th></tr></thead>
+      <tbody>
+        
+        <tr><td class="w">庁舎の整備</td><td>0</td><td>2</td><td>0</td></tr>
+        
+        <tr><td class="w">庁舎建設</td><td>20</td><td>50</td><td>11</td></tr>
+        
+        <tr><td class="w">新庁舎</td><td>57</td><td>50</td><td>28</td></tr>
+        
+        <tr><td class="w">市庁舎</td><td>24</td><td>15</td><td>4</td></tr>
+        
+        <tr><td class="w">本庁舎</td><td>6</td><td>5</td><td>15</td></tr>
+        
+        <tr><td class="w">庁舎整備</td><td>9</td><td>0</td><td>1</td></tr>
+        
+        <tr><td class="w">分庁方式</td><td>0</td><td>47</td><td>0</td></tr>
+        
+        <tr class="denom"><td class="w">この束の該当論点数／論点総数</td><td>86／7,912</td><td>142／3,180</td><td>52／5,157</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">
+      数字は「その語を含む論点の数」です（同じ論点に何度出てきても1件と数えます）。
+      質問の総数が市ごとに違うため、<b>数の大小を市の間で比べることはできません</b>。
+      語は互いに独立に数えているので、<b>足しても該当論点数にはなりません</b>。
+    </p>
+    <ul class="ex-links">
+      
+      <li><a href="examples/chosha-seibi.html">▸ 「庁舎の整備」に当たった質問をすべて見る</a><span class="ex-n">全280件</span></li>
+      
+    </ul>
+    
+    <h3>公共施設マネジメント <span class="range">（話題の束・平成17年〜令和7年）</span></h3>
+    <div class="tbl-scroll">
+    <table class="words">
+      <thead><tr><th class="w">語</th><th>松江市</th><th>安来市</th><th>出雲市</th></tr></thead>
+      <tbody>
+        
+        <tr><td class="w">公共施設マネジメント</td><td>1</td><td>14</td><td>2</td></tr>
+        
+        <tr><td class="w">公共施設</td><td>126</td><td>113</td><td>85</td></tr>
+        
+        <tr><td class="w">公共施設等総合管理計画</td><td>1</td><td>37</td><td>4</td></tr>
+        
+        <tr><td class="w">ファシリティマネジメント</td><td>0</td><td>18</td><td>3</td></tr>
+        
+        <tr><td class="w">長寿命化</td><td>10</td><td>14</td><td>14</td></tr>
+        
+        <tr><td class="w">老朽化</td><td>53</td><td>60</td><td>71</td></tr>
+        
+        <tr><td class="w">解体撤去</td><td>5</td><td>0</td><td>3</td></tr>
+        
+        <tr class="denom"><td class="w">この束の該当論点数／論点総数</td><td>182／7,912</td><td>183／3,180</td><td>166／5,157</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">
+      数字は「その語を含む論点の数」です（同じ論点に何度出てきても1件と数えます）。
+      質問の総数が市ごとに違うため、<b>数の大小を市の間で比べることはできません</b>。
+      語は互いに独立に数えているので、<b>足しても該当論点数にはなりません</b>。
+    </p>
+    <ul class="ex-links">
+      
+      <li><a href="examples/kokyo-shisetsu.html">▸ 「公共施設マネジメント」に当たった質問をすべて見る</a><span class="ex-n">全531件</span></li>
+      
+    </ul>
+    
+  </section>
+  </section>
+
+  <h2>この比較の限界</h2>
+  <section class="limits">
+    この比較は、次の限界を持ったまま公開しています。
+    <ul>
+      <li><b>質問の題・要約の細かさには市ごとの差があります。</b>市ごとに読み取りの条件が異なるため、
+      件数を市の間で比べることはできません。このページの数字は「その市の中での姿」を見るためのものです。</li>
+      <li><b>対象は本会議のみです。</b>委員会での議論は含まれていません。</li>
+      <li><b>%の分母は「質問に立った議員の数」です。</b>議員全員ではありません。</li>
+      <li><b>1つの年度の順位から、市の性格は読めません。</b>隣り合う年度でも順位は大きく入れ替わります。</li>
+      <li><b>問い2・問い3 で数えた言葉のリストは網羅ではありません。</b>リストと数え方はこのページの下に明記しています。
+      言葉は文脈を見分けません（例:「東京」は東京一極集中も東京五輪も同じに数えます）——
+      題の全文で確かめられるよう、当たった質問はすべて実例のページで開けるようにしています。</li>
+    </ul>
+  </section>
+
+  <h2>この比較で数えた言葉</h2>
+  <section class="panel">
+    <p class="note">
+      問い2 で数えた言葉のリストの全文です。
+      数え方は「その語を含む論点の数を、語ごとに独立に数える」——同じ論点に同じ語が何度出てきても1件で、
+      語どうしは独立に当てるため、<b>足しても該当論点数にはなりません</b>。
+      <b>同じ語の全角と半角の書き分けは、1つの語として数えています</b>（書き方の差が語られた量の差に見えないようにするためです）。
+      問い3 の語は、それぞれの表に束の別名を全部載せています。
+      <span class="range">対象期間: 平成17年〜令和7年</span>
+    </p>
+    
+    
+    <h3>区分「原子力」で数えた語（19語）</h3>
+    <ul class="termlist">
+      <li>立地</li><li>周辺自治体</li><li>安全協定</li><li>避難計画</li><li>避難訓練</li><li>30キロ</li><li>1号機</li><li>2号機</li><li>3号機</li><li>プルサーマル</li><li>廃炉</li><li>使用済み核燃料</li><li>活断層</li><li>UPZ</li><li>EPZ</li><li>中国電力</li><li>保安院</li><li>交付金</li><li>雇用</li>
+    </ul>
+    
+    <h3>区分「人口減少と地域の維持」で数えた語（10語）</h3>
+    <ul class="termlist">
+      <li>東京</li><li>米子</li><li>松江</li><li>出雲</li><li>安来</li><li>県外</li><li>市外</li><li>県内</li><li>中海</li><li>都会</li>
+    </ul>
+    
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

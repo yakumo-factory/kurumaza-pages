@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>総合計画のしくみ — 安来市 総合計画レポート</title>
+    <style>
+/* 総合計画レポート — スタイルシート（M8 #446 で M6 統一デザインへ刷新）
+   plan は byte baseline を持たないため自由に拡張してよい。
+   議会レポート templates/council/styles.css の M6 外殻 CSS を移植し、モック
+   docs/mocks/m8/06-09 の統一列・2本並列バー・カード意匠を取り込む。 */
+
+:root {
+    /* 意味色（増減・強調・中立） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・design-convention 準拠・藍アクセント基調） */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+    font-feature-settings: "palt";
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   Cross Navigation（レポート切替メニューの中身）
+   ============================================================ */
+.cross-nav {
+    font-size: 0.8rem;
+    line-height: 1;
+}
+.cross-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.cross-nav-portal { color: var(--accent); text-decoration: none; font-weight: bold; }
+.cross-nav-link { color: var(--ink); text-decoration: none; }
+.cross-nav-sep { color: var(--line); }
+
+/* ============================================================
+   外殻 shell（議会レポート M6 と同型・折りたたみサイドバー）
+   ============================================================ */
+svg.ico, svg.rico, svg.shico, svg.dico, svg.card-ic,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- ページ列木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.items { }
+.item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+.collapsed .subtoc { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); font-weight: 400; }
+.mobile-toggle { display: none; }
+
+.mainwrap .content { flex: 1; width: 100%; }
+.main-inner { max-width: 880px; margin: 0 auto; padding: 22px 28px 60px; width: 100%; }
+
+/* ============================================================
+   ページ見出し
+   ============================================================ */
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+.page-sub { color: var(--ink-soft); font-size: .9rem; margin-bottom: 22px; }
+
+/* ============================================================
+   セクション白箱（880px 内・面/線・濃色影）
+   ============================================================ */
+.section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+.section h2 {
+    font-size: 1.12rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.section h2 .unit { font-size: .74rem; color: var(--ink-faint); font-weight: 400; }
+.section .lead { font-size: .84rem; color: var(--ink-soft); margin-bottom: 14px; max-width: 64ch; }
+
+/* ============================================================
+   要点カード（3枚・数値の結論先出し）
+   ============================================================ */
+.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media(max-width:640px){ .cards3 { grid-template-columns: 1fr; } }
+.mcard {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+}
+.mcard .l { font-size: .78rem; color: var(--ink-soft); }
+.mcard .v { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.mcard .v small { font-size: .9rem; font-weight: 400; color: var(--ink-soft); }
+
+/* ============================================================
+   積み上げ横帯（立場分類の構成比）
+   ============================================================ */
+.stack { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin: 4px 0 10px; }
+.stack span { display: flex; align-items: center; justify-content: center; color: #fff; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+.legend { display: flex; gap: 14px; font-size: .76rem; color: var(--ink-soft); flex-wrap: wrap; margin: 2px 0 10px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+.lg-plan { background: var(--accent); }
+.lg-cp { background: #a7adcf; }
+
+/* ============================================================
+   統一列テーブル（名称・棒〔規模〕・数字・付属）
+   ============================================================ */
+table { width: 100%; border-collapse: collapse; font-size: .83rem; margin-top: 4px; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+th { color: var(--ink-faint); font-weight: 700; font-size: .76rem; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+td.c, th.c { text-align: center; }
+.up { color: var(--color-up); }
+.down { color: var(--color-down); }
+
+/* 表内「規模」棒 */
+.tbar { display: block; width: 100%; height: 10px; background: var(--line-soft); border-radius: 4px; vertical-align: middle; overflow: hidden; }
+.tbar > i { display: block; height: 100%; background: var(--accent); }
+
+/* 2本並列の対比バー（計画=濃／対比=淡） */
+.dbar { display: flex; flex-direction: column; gap: 2px; height: 16px; justify-content: center; }
+.dbar .t { height: 5px; background: var(--line-soft); border-radius: 3px; overflow: hidden; }
+.dbar .t > i { display: block; height: 100%; }
+.dbar .t.plan > i { background: var(--accent); }
+.dbar .t.cp > i { background: #a7adcf; }
+
+/* 列揃え: 名称/棒/数字/付属 を全表で同一列幅に固定 */
+.ptbl { table-layout: fixed; width: auto; max-width: 100%; }
+.ptbl col.c-name { width: 150px; }
+.ptbl col.c-bar { width: 150px; }
+.ptbl col.c-num { width: 70px; }
+.ptbl col.c-sub { width: 78px; }
+
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ============================================================
+   開示（details）
+   ============================================================ */
+details.dd { border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; background: var(--panel); }
+details.dd > summary { padding: 9px 12px; cursor: pointer; font-size: .83rem; font-weight: 700; color: var(--accent-ink); list-style: none; display: flex; align-items: center; gap: 7px; }
+details.dd > summary::before { content: "\25B8"; color: var(--accent); font-size: .8rem; }
+details.dd[open] > summary::before { content: "\25BE"; }
+details.dd .ddc { padding: 4px 12px 12px; }
+
+.note { font-size: .76rem; color: var(--ink-faint); margin-top: 8px; }
+.no-data { color: var(--ink-faint); font-style: italic; padding: 1rem 0; }
+
+/* ============================================================
+   着地（このレポートについて）
+   ============================================================ */
+.intro { color: var(--ink-soft); max-width: 66ch; margin-bottom: 14px; }
+.plan-meta { list-style: none; display: flex; gap: 18px; flex-wrap: wrap; font-size: .83rem; color: var(--ink-soft); margin-bottom: 26px; }
+.plan-meta li strong { color: var(--ink); }
+.h-sec { font-size: 1.05rem; font-weight: 700; margin: 26px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--accent-soft); }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media(max-width:760px){ .cards { grid-template-columns: 1fr; } }
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    transition: border-color .15s, transform .15s;
+    text-decoration: none;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+.card-ic { width: 26px; height: 26px; color: var(--accent); }
+.card-title { font-size: 1rem; font-weight: 700; color: var(--ink); }
+.card-desc { font-size: .82rem; color: var(--ink-soft); }
+.info { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.info h3 { font-size: .98rem; font-weight: 700; margin-bottom: 6px; }
+.info p { font-size: .85rem; color: var(--ink-soft); margin-bottom: 6px; }
+.info ul { margin: 2px 0 0 1.2em; font-size: .85rem; color: var(--ink-soft); }
+.info a { font-weight: 600; }
+
+/* ============================================================
+   歳出合計サマリーカード（予算ページ）
+   ============================================================ */
+.summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.summary-cards .mcard { text-align: left; }
+
+/* ============================================================
+   フッター（濃色地・メイン末尾）
+   ============================================================ */
+.mainwrap .site-footer { flex: none; }
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    font-size: 0.85rem;
+}
+.footer-inner { max-width: 880px; margin: 0 auto; padding: 0 28px; }
+.project-credit { margin-top: 0.5rem; color: var(--footer-ink); }
+.project-credit a { color: #a9b4e0; }
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+.footer-notice a { color: #a9b4e0; text-decoration: underline; }
+
+/* ============================================================
+   レスポンシブ（モバイル：サイドバー オーバーレイ）
+   ============================================================ */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .main-inner { padding: 18px 16px 40px; }
+}
+
+/* ============================================================
+   施策軸ページ（policies.html・確定モック案D2）— M10-4 #497 追記
+   俯瞰表＋18基本施策の CSS-only アコーディオン×3面（議会/財源/行政）。
+   既存トークン（--accent 等）で藍アクセント基調に整合させる純 additive 追記。
+   ============================================================ */
+
+/* 中立性・範囲注記の帯（藍の左罫・淡い藍地） */
+.pa-note {
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    padding: 11px 15px;
+    border-radius: 6px;
+    font-size: .8rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin: 12px 0 18px;
+}
+
+/* --- 俯瞰表（18施策一覧・ヘッダ藍） --- */
+.pa-otbl {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: .78rem;
+    margin: 6px 0 10px;
+}
+.pa-otbl th, .pa-otbl td {
+    border: 1px solid var(--line);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+.pa-otbl thead th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: .72rem;
+}
+.pa-otbl tbody tr:hover { background: var(--accent-soft); }
+.pa-otbl .pa-c { text-align: center; }
+.pa-otbl .pa-r { text-align: right; }
+.pa-otbl .pa-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pa-otbl .pa-name { font-weight: 600; }
+.pa-otbl .pa-name a { color: var(--accent); text-decoration: none; }
+.pa-otbl .pa-name a:hover { text-decoration: underline; }
+.pa-otbl .pa-goal, .pa-otbl .pa-themes { font-size: .72rem; color: var(--ink-faint); }
+
+/* 汎用（俯瞰表以外でも整列を効かせる） */
+.pa-c { text-align: center; }
+.pa-r { text-align: right; }
+.pa-num { font-variant-numeric: tabular-nums; }
+
+/* --- 施策カード（CSS-only アコーディオン・白面） --- */
+.pa-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 12px 0;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    scroll-margin-top: 56px;
+}
+.pa-card > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.pa-card > summary::-webkit-details-marker { display: none; }
+/* 開閉マーカーは CSS のみ（JS 非依存・要件6.2） */
+.pa-card > summary::after {
+    content: "\25B8 開く";
+    margin-left: auto;
+    font-size: .72rem;
+    color: var(--ink-faint);
+    white-space: nowrap;
+}
+.pa-card[open] > summary::after { content: "\25BE 閉じる"; }
+.pa-card > summary:hover { background: var(--panel); }
+.pa-card > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.pa-pno {
+    background: var(--accent);
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .9rem;
+    flex: 0 0 auto;
+}
+.pa-pname { font-weight: 700; font-size: .95rem; color: var(--ink); }
+.pa-pgoal { font-size: .72rem; color: var(--ink-faint); }
+
+.pa-body { padding: 2px 16px 14px; border-top: 1px solid var(--line-soft); }
+
+/* --- 3面（議会=藍／財源=緑／行政=橙で淡く色分け） --- */
+.pa-face { margin-top: 14px; }
+.pa-face h4 {
+    margin: 0 0 6px;
+    font-size: .84rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid var(--line-soft);
+}
+.pa-face.pa-q h4 { color: var(--accent-ink); border-color: #c9d8ff; }
+.pa-face.pa-b h4 { color: #1d6b3a; border-color: #bfe6cd; }
+.pa-face.pa-s h4 { color: #9a5312; border-color: #f6d5b3; }
+.pa-cnt {
+    font-size: .68rem;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid currentColor;
+    padding: 1px 8px;
+    border-radius: 999px;
+}
+
+/* --- 詳細表（列幅整合・design-convention §3） --- */
+.pa-dtbl {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: .74rem;
+    margin: 2px 0;
+}
+.pa-dtbl th, .pa-dtbl td {
+    border: 1px solid var(--line-soft);
+    padding: 5px 7px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+.pa-dtbl th { font-weight: 600; font-size: .7rem; }
+.pa-face.pa-q .pa-dtbl th { background: #eef3ff; color: var(--accent-ink); }
+.pa-face.pa-b .pa-dtbl th { background: #eef7f1; color: #1d6b3a; }
+.pa-face.pa-s .pa-dtbl th { background: #fdf2e8; color: #9a5312; }
+.pa-dtbl .pa-c { text-align: center; white-space: nowrap; }
+.pa-dtbl .pa-r { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pa-ttl { font-weight: 600; color: var(--ink); }
+.pa-sm { color: var(--ink-soft); font-size: .7rem; }
+
+.pa-subcap { font-size: .72rem; color: var(--ink-soft); margin: 8px 0 3px; font-weight: 600; }
+.pa-footnote { font-size: .66rem; color: var(--ink-faint); margin-top: 6px; line-height: 1.7; }
+.pa-backtop-wrap { margin: 12px 0 0; text-align: right; }
+.pa-backtop { font-size: .72rem; color: var(--ink-faint); text-decoration: none; }
+.pa-backtop:hover { color: var(--accent); text-decoration: underline; }
+
+/* ============================================================
+   施策↔8テーマ対応表（index.html crosswalk）— M10-4 #497 追記
+   ============================================================ */
+.pa-crosswalk { margin-top: 8px; }
+.pa-crosswalk-lead { font-size: .85rem; color: var(--ink-soft); margin: 2px 0 12px; max-width: 66ch; }
+.pa-crosswalk-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: .8rem;
+}
+.pa-crosswalk-table th, .pa-crosswalk-table td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.6;
+}
+.pa-crosswalk-table thead th { background: var(--accent); color: #fff; font-weight: 600; font-size: .74rem; }
+.pa-crosswalk-table th[scope="col"]:first-child { width: 26%; }
+.pa-crosswalk-table th[scope="row"] { background: var(--panel); font-weight: 700; color: var(--ink); }
+.pa-crosswalk-policy {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin: 2px 4px 2px 0;
+    font-size: .74rem;
+    white-space: nowrap;
+}
+.pa-crosswalk-nav { font-size: .82rem; color: var(--ink-soft); margin-top: 12px; }
+.pa-crosswalk-nav a { font-weight: 600; }
+
+    </style>
+</head>
+<body>
+    
+    <svg style="display:none" aria-hidden="true"><defs>
+      <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+      <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+      <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+      <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+      <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+      <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+    </defs></svg>
+
+    
+    
+
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">安来市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-target"/></svg><span class="rlbl">総合計画レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../council/index.html" class="cross-nav-link">議会レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../financial/index.html" class="cross-nav-link">財政レポート</a>
+        </div>
+    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                <div class="group">
+                    <div class="items">
+                        
+                        <a class="item cur" href="governance.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-people"/></svg><span class="lbl">総合計画のしくみ</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#shingikai">計画をつくる審議会</a></li>
+                            
+                            <li><a href="#iin">委員構成の内訳</a></li>
+                            
+                        </ul>
+                        
+                        
+                        <a class="item" href="council.html">
+                            <svg class="ico"><use href="#ic-bank"/></svg><span class="lbl">議会と計画</span>
+                        </a>
+                        
+                        
+                        <a class="item" href="budget.html">
+                            <svg class="ico"><use href="#ic-money"/></svg><span class="lbl">予算と計画</span>
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">安来市 · 総合計画レポート / <b>総合計画のしくみ</b></span>
+            </div>
+
+            <main class="content">
+                <div class="main-inner">
+                    
+<h1 class="page-title">計画のしくみ</h1>
+<p class="page-sub">安来市の総合計画を誰がどんな体制で策定・点検しているか。</p>
+
+
+<section class="section" id="shingikai">
+    <h2>計画をつくる審議会</h2>
+    <p class="lead">総合計画は市の最上位計画です。市が設置する審議会が原案を審議し、市民の関わりも設けられています。</p>
+
+    
+    
+    
+    
+    <div class="cards3">
+        
+        
+        <div class="mcard"><div class="l">計画期間</div><div class="v">H28〜R07<small> 年度</small></div></div>
+    </div>
+    
+</section>
+
+
+<section class="section" id="iin">
+    <h2>委員構成の内訳</h2>
+    <p class="lead">委員がどんな立場の人で構成されているか。市民の声がどれだけ入る設計かの目安になります。</p>
+
+    
+    
+    <p>第2次安来市総合計画は、安来市総合計画審議会条例に基づき設置された審議会の調査審議を経て策定されました。同条例により、委員は20人以内で、「公共的団体等の代表者」と「学識経験を有する者」のうちから市長が委嘱し、諮問事項の審議が終了したときに解任されます。前期基本計画の策定にあたっては、市民から公募した委員も加えた審議会が、平成26年8月の諮問から平成27年11月の答申まで計4回にわたり調査審議を行いました。第2次計画では審議会委員の個人名簿が公開されていないため、本レポートでは個人名ではなく条例に基づく構成の概要を示しています。</p>
+    <p class="note">※この計画では審議会委員の個人名簿が公開されていないため、構成の概要を示しています。</p>
+
+    
+</section>
+
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v7.5.2</p>
+                    
+                    <p class="project-credit">
+                        安来市 総合計画レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは総合計画データの集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+</body>
+</html>
