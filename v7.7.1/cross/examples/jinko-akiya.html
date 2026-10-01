@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空き家対策 — 当たった質問の全件 | 4自治体くらべ</title>
+<style>
+/* 4自治体くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share-part:#eef1f9;  /* shared by some of the municipalities that hold data */
+  --share-all:#d9e0f4;   /* shared by all of them (stronger than --share-part) */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×自治体（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh-part{background:var(--share-part);border-radius:3px;padding:0 4px}
+table.years li.sh-all{background:var(--share-all);border-radius:3px;padding:0 4px;font-weight:600}
+/* How many municipalities a shared bucket appeared in, printed as text beside the
+   bucket. The two tints alone cannot say "all" without the reader knowing how many
+   municipalities held data that year, so the number is written out - the same move
+   as design-convention 3 "read it by length *and* number". */
+table.years .shn{color:var(--ink-faint);font-size:.85em;margin-left:4px}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+/* The three kinds of empty cell (Req 3.5). They must not look alike, and the
+   difference has to survive colour blindness and a greyscale print, so all three
+   keep one colour and differ by marker glyph and rule style instead:
+     none-zero        measured zero - no marker, no rule
+     none-source      the minutes are not in the source - U+203B + dashed rule
+     none-unpublished the term is left out of the reports - U+25C7 + dotted rule
+   The wording differs as well, but that comes from the data (`notices`); the marks
+   here are a second channel, not the only one. Glyphs, never emoji (file header).
+
+   These three are keyed on the class alone, not on `table.years`, so the legend can
+   show the reader what the two marks mean by carrying the very same classes on an
+   empty span - the glyph is written once, here, and cannot drift from the table. */
+.none-zero{border-bottom:0}
+.none-source{border-bottom:1px dashed currentColor}
+.none-source::before{content:"\203B";margin-right:3px}
+.none-unpublished{border-bottom:1px dotted currentColor}
+.none-unpublished::before{content:"\25C7";margin-right:3px}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;min-width:30px;text-align:center;border-radius:3px;margin:0 4px;padding:0 6px;font-size:.8rem}
+.legend .c-part{background:var(--share-part)}
+.legend .c-all{background:var(--share-all);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">4自治体くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">4自治体くらべ</a> ／ 空き家対策</nav>
+
+  <h1 class="page-title">空き家対策 — 当たった質問</h1>
+  <p class="page-subtitle">
+    話題の束「空き家対策」に当たった質問の全件です（全268件）。
+    自治体ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">81件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・畑尾幸生</span>
+          <span class="ttl">中心市街地の振興計画</span>
+          <span class="sum">城東地区で事業がふくそうする中、総合的なまちづくりプランと全庁的なプロジェクト、用途指定の見直し、歴史資料館の用地取得の見通し、専門家の活用や起業支援による空き家対策、縦の動線を生かした観光誘導、北殿町などの景観を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・加本市郎</span>
+          <span class="ttl">U・Iターンと定住対策</span>
+          <span class="sum">栃木県鹿沼市の第3子対策事業を紹介しつつ、定住人口20万人を目指すなかでのU・Iターンに関するアンケート調査の結果と、空き家活用事業の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・川井弘光</span>
+          <span class="ttl">土地の有効かつ計画的な利用</span>
+          <span class="sum">定住適地調査の進捗と視点、中心市街地の空き家・空き店舗・空き土地の活用で意欲ある地区を集中支援する手法、都市マスタープラン見直しに向けた土地利用の基本方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・篠原栄</span>
+          <span class="ttl">子供の安全対策</span>
+          <span class="sum">不審者情報の実態、地域ボランティアの見守り活動と教育委員会の取り組み、空き店舗や空き家の点検、路線バスの活用の検討とスクールバスの活用状況、学校運営協議会の取り組み、CAPプログラムのモデル的導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中弘光</span>
+          <span class="ttl">定住対策と線引きの見直し</span>
+          <span class="sum">人口減少を受けた定住対策の取り組み状況と将来展望を問い、空き家を行政があっせんする仕組みづくりと、定住推進のための都市計画の大幅見直しや線引き廃止の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中明子</span>
+          <span class="ttl">市営住宅の現状</span>
+          <span class="sum">市営住宅の待機者の状況と今後の建設・借り上げ公営住宅の予定、空き家活用の動きを尋ね、住み替えを申請した入居者の実態を担当者が現地で把握する心通う窓口対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・畑尾幸生</span>
+          <span class="ttl">住宅マスタープランの施策</span>
+          <span class="sum">住宅マスタープランを踏まえ、高台団地の住宅ストックの売買・賃貸を促す公的な枠組み、まちなか居住推進の重点とまちづくり主体の構築、当面力を注ぐ分野、持ち家施策の考え方、被災者向け公営住宅の空き家確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・林干城</span>
+          <span class="ttl">空き家対策と市営住宅</span>
+          <span class="sum">8,000戸を超える空き家を踏まえた住宅政策課の今後の空き家対策と、市営住宅の入居難と空き家の活用をセットにし、結婚する人などへ行政が空き家を安くあっせんする仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・畑尾幸生</span>
+          <span class="ttl">空き家活用のＮＰＯ支援</span>
+          <span class="sum">団塊世代の２地域居住や空き家活用を進めるＮＰＯ法人ＡＳＳ松江の活動への市長の見解、これまでの助言の経過、財政的・人的支援と部局横断の支援体制、他地区での同様の活動に臨むスタンスを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中豊昭</span>
+          <span class="ttl">原発３号機建設の影響</span>
+          <span class="sum">３号機建設作業員の市内での宿泊の現状把握と建設終了に伴う約2,000人減少の影響、定期検査の拠点化による雇用対策、作業員宿舎などを活用した滞在型観光など空き家対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・吉金隆</span>
+          <span class="ttl">空き家問題</span>
+          <span class="sum">全国で増え続ける空き家について、本市で問題が起きていないかと本市の空き家率を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・貴谷麻以</span>
+          <span class="ttl">まちづくりの戦略</span>
+          <span class="sum">空き店舗や空き家へのアート導入を念頭に、縦割りでない職員を含むまちづくりのディレクター集団の育成と外部の美的デザインの担い手の必要性、まちなかすべて優先座席構想を含む多層的なまちづくり戦略への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・加藤富章</span>
+          <span class="ttl">レンタサイクルと雇用対策</span>
+          <span class="sum">観光客数や観光動態の分析と今年度の取り組み、観光客とわかるレンタサイクルの工夫と利用状況、名所旧跡地への中継施設の増設による雇用創出、空き家の観光施設への活用と専門部署の新設や公募制度の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・野津直嗣</span>
+          <span class="ttl">子育て世代と空き家対策</span>
+          <span class="sum">増え続ける空き家の状況と家主の意識の把握、若年の子育て世代の中心市街地の空き家への誘導と空洞化対策を両輪で進める考え、若者感覚でリフォームしたモデルルームなどによるＰＲを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・貴谷麻以</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">8,000の空室や4,700軒の空き家などの現状、火災警報器の設置義務づけへの考え、空き家を貸し出すための効果的な方法と清掃補助の考え、市民活動との協働の連携状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・貴谷麻以</span>
+          <span class="ttl">高齢者世帯の清掃と空き家</span>
+          <span class="sum">お年寄りだけの世帯への清掃補助の実態と周知、自治会等が粗大ごみの搬出を手伝う際の相談先、空き家の貸し出しをＮＰＯ等と協働してコーディネートする仕組み、住宅の道路側を店舗として貸し出す動きへの補助を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・畑尾幸生</span>
+          <span class="ttl">まちづくりの基本方針</span>
+          <span class="sum">ビジョン懇話会設置の意義と地域目線の議論、駐車場化した中心市街地へのゾーニングによる投資誘導、公営住宅の質と量、空き家活用の誘導策、未利用の国・県・市有地の公的借家への活用、小浜アパートや京店の市有地の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・加本市郎</span>
+          <span class="ttl">放置空き家の対策</span>
+          <span class="sum">空き家条例の施行後に立入調査や指導をした件数と倒壊の危険がある建物の把握状況を問い、足立区の解体助成などを例に松江市独自の助成制度の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・野津直嗣</span>
+          <span class="ttl">空き家プロジェクト</span>
+          <span class="sum">中心市街地の空き家を若者の実行委員会で改築し、若者が集う場や趣味を生かして活動する母親たちの拠点として活用する空き家プロジェクトを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・畑尾幸生</span>
+          <span class="ttl">空き家条例と住宅団地整備</span>
+          <span class="sum">空き家条例の適用実績と、相談会の開催など周知の工夫の必要性を質すとともに、まちなか住宅団地整備事業の採択要件である整備面積や対象住宅の面積が過大ではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・野津直嗣</span>
+          <span class="ttl">空き旅館・空き家の活用</span>
+          <span class="sum">玉湯の空き旅館や空き家を作家やクリエーターの拠点とする整備、まちあるきや防災など地域の実情に合った空き家対策と部局横断の対応、松江流の家プロジェクト、県物産館の移転と産直市の複合化を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・石倉徳章</span>
+          <span class="ttl">まちあるき観光の推進</span>
+          <span class="sum">まちあるき観光の現状と課題を問い、空き家・空き店舗を活用した神社仏閣めぐりの企画や、松江出身の著名人や自然風景・古い建造物などを紹介する合同展示館の検討について見解と意気込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・畑尾幸生</span>
+          <span class="ttl">空き家の有効活用</span>
+          <span class="sum">空き家条例の適用状況や勧告等の実績と空き家解消につながった事例を問い、越前市の例を挙げて自己居住用に限らない支援など他自治体の制度を調査研究し、不断に見直すことについて所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・新井昌禎</span>
+          <span class="ttl">空き家・貸し事務所対策</span>
+          <span class="sum">市内の空き家等の状況、危険な空き家への指導・勧告・代執行の実績、自主撤去への助成制度、更地化で住宅用地特例が外れる固定資産税格差の是正、所有者不明時の対応、空き家バンクの実績、家財保管やリフォームへの助成、まちなか居住促進や郊外団地の隣地買い増しへの助成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・南波巖</span>
+          <span class="ttl">線引き制度の見直し</span>
+          <span class="sum">線引き廃止の請願・陳情の要望について緩和区域や地区計画など現行制度での対応可能性と市民への周知を問い、空き家率、商業雇用、人口、地価、公共施設の維持管理、優良農地の保全、中心市街地と観光への影響についての所見と、県を含めた幅広い議論の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・南波巖</span>
+          <span class="ttl">両軸沿線の活性化</span>
+          <span class="sum">城山北公園線の完成の見通しと、同線とくにびき通りの両軸沿線の活性化を中心市街地のまちづくりとして強力に推進するよう求め、空き家がふえる沿線近辺の再編施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・津森良治</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">町内会を通じた空き家実態調査の結果と見えてきた課題、空家対策特別措置法の基本指針を踏まえた今後の取り組み方針とスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・畑尾幸生</span>
+          <span class="ttl">空き家対策と条例改正</span>
+          <span class="sum">約90件の空き家相談のうち措置できた件数、調査結果の施策への生かし方、解体すると固定資産税が上がる税制への考えと全国市長会での議論、法制化を受けた空き家の定義の見直しなど条例改正を含む総合的な対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・貴谷麻以</span>
+          <span class="ttl">農業と地産地消の推進</span>
+          <span class="sum">米価下落に対する市単独の所得補償の考え、地産地消の成果と今後の方針、前橋市を例にした学校給食の地産地消の拡大、Ｉ・Ｕターン者が農地つき空き家を取得できる仕組み、地域おこし協力隊の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・新井昌禎</span>
+          <span class="ttl">駅周辺の空き家と空き店舗</span>
+          <span class="sum">松江駅から宍道湖に向かう道路周辺の再整備に関し、中心市街地での空き家対策の取り組み状況、緊急安全代行措置の実績、空き店舗と新規出店希望者のマッチングの現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・橘祥朗</span>
+          <span class="ttl">まちおこしへの総合的支援</span>
+          <span class="sum">八束町での耕作放棄地対策や朝市、空き家活用など住民のまちおこしに対し、助成申請の手間や窓口の消極性の改善と、国・県の支援事業や関係団体を結びつけるコーディネーター役を果たす総合的で積極的な対応を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・長谷川修二</span>
+          <span class="ttl">アクティブシニアの移住策</span>
+          <span class="sum">日本創成会議の提言や国の日本版ＣＣＲＣを踏まえ、地方版総合戦略の一環として若年高齢者の移住策を取り入れること、農林漁業への就業希望者への情報発信、空き家を利用した移住の推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野々内誠</span>
+          <span class="ttl">元気な高齢者づくり</span>
+          <span class="sum">介護保険財政の硬直化を防ぐため元気な高齢者をふやす取り組みとして、空き家や借り上げた建物を活用した近所単位の日常的な居場所づくりと、介護予防・健康づくりの機会づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">公共施設適正化計画</span>
+          <span class="sum">第1期計画で廃止・譲渡・統合等とされた73施設を関係自治会や利用団体にいつ示しどう対応するか、既に空き家となった施設の活用時期と方法、早期の取り壊しや広報で物件を示し意見を求める方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川井弘光</span>
+          <span class="ttl">国宝指定を契機とした施策</span>
+          <span class="sum">松江城天守の国宝指定を契機に、景観計画重点区域の拡大や町人文化エリアの活用、城下町の空き家・空き土地の市による買い取り、観光協会の人材配置と事業の充実による民間主導への転換、松江城への案内板の設置状況と計画、国宝指定までの歴史と功労者の記録・顕彰を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・新井昌禎</span>
+          <span class="ttl">教育の視点での地方創生</span>
+          <span class="sum">教育の視点から見た地方創生として、道徳の検定教科書の導入と教科書採択のスケジュール、文部科学省の教科書採択に関する通知の目的、越前市の小学校英語教育への所見と外国語活動の検討状況、地域スポーツクラブ関係者への空き家を活用した住宅支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・新井昌禎</span>
+          <span class="ttl">松江駅周辺と中心市街地</span>
+          <span class="sum">松江駅から宍道湖・松江城へ続く動線での空き家や駐車場の増加、市立病院跡地の残地活用を含む中心市街地の整備改善の検討体制、空き家実態調査の実効性向上、松江出身者等を対象とする特別住民制度の創設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・篠原栄</span>
+          <span class="ttl">空き家対策の計画</span>
+          <span class="sum">町内会・自治会による空き家調査の報告と、空家対策特別措置法に基づく空家等対策計画策定のスケジュール、協議会の構成員と任務を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・新井昌禎</span>
+          <span class="ttl">空き家管理の推進</span>
+          <span class="sum">特定空家等の把握と強制的な対処の手順・期間、NPO法人や地域による空き家の清掃管理への補助の拡大、空き家問題に関わる野良猫の管理実態を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野津照雄</span>
+          <span class="ttl">空き家解体と固定資産税</span>
+          <span class="sum">鳥取県の事例を挙げ、空き家の解体撤去を進めるため、解体後も一定期間は従前の評価で固定資産税を課税するなどの措置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・橘祥朗</span>
+          <span class="ttl">空家対策特措法と市条例</span>
+          <span class="sum">空家対策特別措置法と市の空き家管理条例との関係、これまでの調査結果と特定空家の指定の進め方、空き家の活用策、解体撤去費用の補助や更地の税の緩和措置、国への施策充実と罰則緩和の要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・津森良治</span>
+          <span class="ttl">空家対策特措法への対応</span>
+          <span class="sum">町内会を通じた一戸建て空き家調査の分析結果と課題、特定空家の認定と勧告後の固定資産税の特例除外や行政代執行への姿勢、解体費用の補助や税の軽減措置、不動産業界や福祉団体・金融機関と連携する組織の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・宅野賢治</span>
+          <span class="ttl">住宅施策と市営住宅</span>
+          <span class="sum">住宅マスタープランの評価と見直し、市営住宅の高齢化の状況と若年・子育て世帯の優遇策、適正な供給量、空き家を活用した低廉な賃貸住宅の推進、市営住宅の運営ビジョンを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・津森良治</span>
+          <span class="ttl">名義不明農地への対応</span>
+          <span class="sum">島根県で農地の約３割を占める相続未登記の名義不明農地への対応策と担い手への農地集積への影響を問い、森林や空き家を含む相続未登記の問題への市長の認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・野々内誠</span>
+          <span class="ttl">空き家の集会所活用</span>
+          <span class="sum">集会所の改築に住民組織の余力がないことから、空家等対策計画の耐震改修費補助や鳥取市のような家賃補助を活用し、空き家を地域の集会所として利用する選択肢を考えられないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・野津照雄</span>
+          <span class="ttl">空き家対策の現状</span>
+          <span class="sum">平成28年度の空き家調査で被害が予想される物件数、修繕・撤去を申し入れた件数と強制対応の件数、除却後の固定資産税優遇の検討状況、国の空き家対策助成の見込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田中肇</span>
+          <span class="ttl">中核市移行と身近な自治</span>
+          <span class="sum">中核市移行に当たり周辺部が栄え住民に身近な自治が栄える市政を進める決意と、賃借による集会所や空き家・空き店舗の活用を含む集会所運営支援の拡充の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野々内誠</span>
+          <span class="ttl">危険空き家と空き家活用</span>
+          <span class="sum">特定空家とそれに該当しない危険な空き家の数と具体的事例の解決方法を問い、空き家バンクの充実や仏壇・家財の処分制度など、空き家を定住対策の資源として活用する具体的な展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・貴谷麻以</span>
+          <span class="ttl">宿泊施設の多様化</span>
+          <span class="sum">宿泊のバリエーションと容量を増やすため、郊外のアグリツーリズムと民泊による島根半島や八束町の資源活用と、空き家対策やインバウンドの観点から耐震対策を含むゲストハウスの推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・出川桃子</span>
+          <span class="ttl">松江てらこや事業の拡充</span>
+          <span class="sum">７月に始まった松江てらこや事業について、実施期間や対象年次、対象地域の拡充と、図書館や学校の空き教室、空き家など公民館以外の実施場所の活用の展望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・太田哲</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">市内で把握している空き家と特定空家の件数と、中国地方で広がる解体・撤去費用の助成制度を踏まえた特定空家の解体への補助金の支給予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・太田哲</span>
+          <span class="ttl">空き家対策と利活用</span>
+          <span class="sum">解体やリフォームされた空き家の件数と特定空家への行政代執行、空き家バンクの仕組みと登録状況、古民家を借りた開業を阻む市街化調整区域の緩和策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・篠原栄</span>
+          <span class="ttl">空き家対策の推進</span>
+          <span class="sum">松江市の空き家バンクの現状を問い、空き家を地域資源として利活用し、まちづくり、災害対策、防犯、地域コミュニティーに生かすため今後どのような施策を推進するかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・細木明美</span>
+          <span class="ttl">農山漁村の定住対策</span>
+          <span class="sum">農山漁村への人口移動と定住対策の考え、地域版まちづくり総合戦略への市長の意気込み、宅地や空き家の情報を集め発信する仕組みづくり、指定地域での土地取得への補助や若い世帯向け賃貸住宅の整備の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・宅野賢治</span>
+          <span class="ttl">高齢化した住宅団地の再生</span>
+          <span class="sum">東光台や淞北台など高齢化率の高い住宅団地の再生に向け、国の支援制度を踏まえ子育て世帯の呼び込みや空き家活用の支援策を都市計画マスタープラン等に位置づけて進める考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉徳章</span>
+          <span class="ttl">公共施設適正化の進め方</span>
+          <span class="sum">公共施設適正化の第１次計画で決定した49施設の削減床面積と解体方針、大規模施設が空き家化しない対処、長寿命化の算入、縮減して充実させる発想への転換を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・橘祥朗</span>
+          <span class="ttl">空き家の撤去と利活用</span>
+          <span class="sum">特定空家の現状と撤去への市の協力、空き家の火災防止に向けた地域や警察との連携体制、密集地での市の買い上げやミニ公園、空き家バンクなど利活用の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・太田哲</span>
+          <span class="ttl">空き家対策と司法書士</span>
+          <span class="sum">空き家と特定空家の現状と対策を問い、相続人調査や後見制度などに通じた司法書士会と空き家対策や住宅相談で連携することへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・細木明美</span>
+          <span class="ttl">移住推進と空き家対策</span>
+          <span class="sum">総合戦略策定後の移住者数と全国・県内他市との比較、移住施策の内容と評価、空き家バンクの登録が少ない理由、市街化区域の空き家増加と調整区域の住宅開発、都市計画区域外の空き家のバンク掲載、住みたい田舎ランキングに回答しなかったことへの見解、家財処分費用の支援を含む戦略的な空き家対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・宅野賢治</span>
+          <span class="ttl">空家条例の見直し</span>
+          <span class="sum">管理不全空き家への対策として、所有者の管理責務の義務化、勧告段階での標識設置、危険が迫った際の応急措置を空家等対策条例に盛り込むことを提起し、今後の空き家対策強化の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・田中明子</span>
+          <span class="ttl">老朽空き家の対策</span>
+          <span class="sum">空き家の現状、空家等対策計画の数値目標の進捗、今年度創設の老朽空き家除却補助の財源・対象・補助内容と構造物や庭木の撤去の扱い、特定空家化を防ぐ今後の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岩本雅之</span>
+          <span class="ttl">空き家・空き店舗の把握</span>
+          <span class="sum">まちづくりに重要な場所にある空き家や空き店舗、ポケットパークを鳥瞰的に把握し、民間が選定した場所に市が関わりやすい助成を計画的に整理して地域の拠点を整備すべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・たちばなふみ</span>
+          <span class="ttl">農業の担い手を増やす施策</span>
+          <span class="sum">就農に関する問合せや相談の件数を問い、「就農ｉｎ松江新規就農ガイド」に農業の意義や魅力を加味することと、定住や農地つき空き家の紹介と併せた窓口の一本化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・河内大輔</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">空き家対策について、市の施策とその成果、不動産事業者との連携と役割分担、空き家バンクの周知と物件の充実、空き家除去後の固定資産税の減免制度の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・村松りえ</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">大地震で倒壊する可能性がある空き家の数と所有者による管理が難しい物件数、空き家の家財道具処分への補助制度の有無、空き家対策に取り組む地域団体の数と市との連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・錦織伸行</span>
+          <span class="ttl">まちづくりを考える日</span>
+          <span class="sum">まちづくりを考える日で横浜町が発表した空き家活用の取組への市長の所感、提言を受けた市の具体的な対応と予算措置、これまでの発表を受けて市が動いた実例の有無、まちなかで活動する大学生の足代の支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・岩本雅之</span>
+          <span class="ttl">ネットワークと生活機能の維持</span>
+          <span class="sum">コンパクト・プラス・ネットワークのネットワークづくりについて、施設を点在させるだけでは持続しないとして、空き家・空き店舗の活用など生活機能維持の取組を強化し、住民や関係団体がネットワークづくりに関与することの重要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・細木明美</span>
+          <span class="ttl">一畑百貨店閉店と駅前整備</span>
+          <span class="sum">一畑百貨店閉店について、市長が事前に把握や相談を受けていたか、市として手だてはなかったか、対策チームの構成と協議内容、駅前再整備の遅れとの関係、殿町再開発や跡地活用など大型事業の先送り、大橋際で空き家となった老舗料亭の現状への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・南波巖</span>
+          <span class="ttl">中心市街地の空き家対策</span>
+          <span class="sum">中心市街地の空き家の状況、その対応策と取組状況、駅前など交通の便のよい物件や築年数の浅い優良な中古住宅の活用に向けた制度の充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・津森良治</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">空き家の地域別の特徴と発生原因の分析、周辺地域での定住対策の現状、水洗化など初期投資費用への助成制度の創設、部局横断のプロジェクトチームによる公民館区ごとの実態調査と活用策・補助制度の整備への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・中村ひかり</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">相続登記義務化の背景、所有者不明土地への市の対応、行政だからこそできる空き家の掘り起こし、空き家バンク事業の目的と課題、登録のメリット、出雲市のような所有者支援による登録件数の拡大策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島明</span>
+          <span class="ttl">市内開発のコントロール</span>
+          <span class="sum">松江城前の準タワーマンションやメガソーラーへの市長の率直な気持ちと「最初から反対だった」との発言の事実、松江駅周辺でのタワーマンション建設が空き家増加や投資目的の転売、将来の廃墟化を招く懸念、線引き制度撤廃による先方主導の開発への危惧と開発のコントロール、市民が安心して暮らせる市政の方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・太田哲</span>
+          <span class="ttl">相続登記の申請義務化</span>
+          <span class="sum">相続登記の義務化に関する市民相談の状況と担当部署・周知方法、法務局や司法書士会と連携した出前講座、相続登記されない特定空家の数、危険な空き家の解体費補助の条件と実績、相続人に寄り添った解決を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・中村ひかり</span>
+          <span class="ttl">空き家と市営住宅の活用</span>
+          <span class="sum">空き家の可能性がある住宅の分布傾向、空家等対策計画の中間見直しによる施策と支援制度、コールセンターの対応者、市営住宅の空室状況と学生寮やお試し居住など空室の利活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉徳章</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">市内の空き家の把握と対応への見解、買手の見つかりにくい周辺部の空き家や古民家への施策の粘り強い周知、各支所や地域への空き家対策担当の設置による官民協力の体制づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・吉岡麻美</span>
+          <span class="ttl">こどもの屋内遊び場</span>
+          <span class="sum">小学生以上の児童向けの全天候型の遊び場が少ないことから、県立プール跡地の計画を待たず、廃校の教室や体育館、空き家などを官民連携でこどもの遊び場として開放することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・たちばなふみ</span>
+          <span class="ttl">大規模火災の教訓と火災予防</span>
+          <span class="sum">大分市佐賀関の大規模火災を受け、木造住宅が密集し空き家も増える半島部などでの火災予防や復興支援策について松江市としての教訓を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長谷川浩司</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">７月に新設された空き家の専用相談窓口の開設後の相談状況と効果、定住促進や地域コミュニティー向上のため空き家を地域資源として生かす施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・太田哲</span>
+          <span class="ttl">空き家対策と旧知事公舎</span>
+          <span class="sum">県建築住宅センターに変更した空き家相談窓口の周知と相談件数・効果、家財処分費用支援や老朽危険空き家解体費用支援の活用状況、旧知事公舎を取得しない結論に至った経緯とにぎわい創出用途への補助の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・太田哲</span>
+          <span class="ttl">空き家対策の体制</span>
+          <span class="sum">空き家の相談窓口が７月から島根県建築住宅センターに変わることによる変化と体制、相談件数の増加を踏まえ、水道が止まっているなど住んでいない空き家の数を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐藤和彦</span>
+          <span class="ttl">６次産業の推進</span>
+          <span class="sum">空き家や倉庫を室内栽培や加工場に活用する６次産業の推進に向け、市内の室内栽培施設等の状況と、農地を持たない人も含め空き家等を農業に使う場合の支援事業を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">67件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・上廻芳和</span>
+          <span class="ttl">雪害対策マニュアルの作成</span>
+          <span class="sum">昨冬の豪雪を教訓に、比田地区雪害対策協議会で協議された警戒本部の解除と地元との連携、窓口の一本化、積雪の測定地点、援助が必要な高齢世帯の把握、空き家の倒壊、有償の除雪・雪おろしの組織、通学路の安全、表層雪崩箇所の確認、避難所の事前協議を挙げ、除雪体制を含む雪害独自の危機管理マニュアルの作成と実行を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中武夫</span>
+          <span class="ttl">空き家のＩ・Ｕターン活用</span>
+          <span class="sum">農地を持つ農家の空き家が増える中、団塊の世代などのＩターン・Ｕターンの受け皿として空き家を活用できないかと市全体の空き家状況を尋ね、空き家になった段階で早く住める体制づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・石倉刻夷</span>
+          <span class="ttl">空き家活用と公営住宅の整備</span>
+          <span class="sum">総合計画の定住環境整備として公共賃貸住宅と定住住宅の現状と具体的計画、入居待機者100人余りへの空き家あっせん、12月議会で答弁された空き家調査の進捗、県職員住宅を市が譲り受けて活用する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・嘉本祐一</span>
+          <span class="ttl">古民家を活用した定住対策</span>
+          <span class="sum">汐彩住宅団地へのＵＩＪターンを促す体験バスツアーに加え、田舎暮らしにあこがれるＩターン者向けに空き家の優良な古民家を利用する定住対策の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・樋野智之</span>
+          <span class="ttl">まちづくりと空き家の定住対策</span>
+          <span class="sum">人口減少と無人化エリアの拡大を見据え、まちづくりで重視する施策と横断的組織、地域センター長を実践部隊の長とする提言への考え、安来・広瀬・伯太の空き家の状況把握と空き家を活用した定住施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・丸山征司</span>
+          <span class="ttl">宿泊施設の拡充</span>
+          <span class="sum">市内の宿泊施設が11カ所しかなく大規模な大会や少人数の小旅行で満室になりやすいことから、誘致を含めて市として保養宿泊施設をふやす考えと、空き家のアパートや民家を活用した小規模な宿泊施設の案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田中武夫</span>
+          <span class="ttl">近藤市政の目指すもの</span>
+          <span class="sum">近藤市長就任後2年間の方針と残り任期の市政運営について、給食センター建設の決断、空き家を利用した中心市街地活性化の具体策、現地での庁舎建て替えの資材搬入や駐車場・借地と耐震補強との比較、伯太庁舎の有効活用と広瀬庁舎の改修、切川の地区計画への対応、公約の住民投票条例の制定、実証実験の活用を含む企業誘致の方針、地域自治制度の実施状況、一中建設の地域住民への説明を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉刻夷</span>
+          <span class="ttl">空き家と廃屋への対策</span>
+          <span class="sum">長年放置された市営住宅の政策空き家の解体・撤去計画、市内に点在する廃屋の実態把握と対策、空き家や空き店舗の利活用に向けた関係部局の定期的な情報交換の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・梶谷厚</span>
+          <span class="ttl">中山間地域の現状と活性化</span>
+          <span class="sum">伯太・広瀬の人口減少や限界集落、商店閉店による買い物困難などの現状認識と今後の取り組みを尋ね、集落支援員や地域おこし協力隊を活用しない理由、郷づくりカルテの状況、過疎債の活用、空き家バンクや中山間地活性化の専門部署の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・梶谷厚</span>
+          <span class="ttl">小規模多機能型施設の整備</span>
+          <span class="sum">介護施設の待機者が多く介護疲れの声がある中山間地域について、新過疎法がうたう小規模多機能型居宅介護施設を空き家を改装するなどして地区単位で早期に設置するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・丸山征司</span>
+          <span class="ttl">市営住宅の建て替え</span>
+          <span class="sum">中長期財政計画で公営住宅の予算が削られ長谷津団地の建て替えが先送りされる中、政策空き家方式を見直し、長寿命化しにくい長谷津団地や招団地の建て替えを前倒しして高齢者が住みやすい建物とする考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">快適環境のまちづくり</span>
+          <span class="sum">Ｉターン・Ｕターン希望者に対応する空き家の状況把握と所有者との協定に至る市の窓口、県の職員官舎等の有効活用、凍結している切川バイパスについての県との協議と今後の進め方、安来道路西地区へのスマートインター設置に向けた国との協議状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・丸山征司</span>
+          <span class="ttl">空き家対策と中心市街地</span>
+          <span class="sum">空き家をＩＪＵ希望者へ無償に近い形でお試し貸し出しするよう市が働きかける考えと担当職員の増員、中心市街地の空き店舗を活用したチャレンジショップ等や旧納屋川筋のコミュニティー道路化、再生協議会や商店街との協働を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・岡田麻里</span>
+          <span class="ttl">防災・減災対策の充実</span>
+          <span class="sum">被災者支援システムの導入、消防バイク隊の配置、アマチュア無線技士との協力体制、遠隔地の自治体とのホームページ代理掲載、空き家対策と空き家再生等推進事業の活用、防災教育と節電教育、学校施設のマンホールトイレ・非構造部材の耐震点検・省エネルギー対策と一中の非構造部材への取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・樋野智之</span>
+          <span class="ttl">ＵＩターンと空き家対策</span>
+          <span class="sum">合併以降のＵＩターン誘致の施策と実績、ふるさとモニターツアーの効果、定住支援の体制や窓口の一本化、定住希望者に向けたホームページの改善、空き家の実態調査と空き家バンク、所管の一元化、空き家適正管理条例の制定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・上廻芳和</span>
+          <span class="ttl">中山間地域対策と定住対策</span>
+          <span class="sum">中山間地対策と定住対策が緊急の課題だとして、3月議会で求めた専門課の設置状況、空き家調査の状況と今後の定住への結びつけ方、花嫁花婿対策の現況、地元木材を使った木質チップ利用による山林整備と雇用、25年度の50余りの中山間地対策施策の主なもの、集落ビジョン推進事業の取組集落数と担当職員が抱える課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">住みたくなるまちづくり</span>
+          <span class="sum">人口減少の推計を踏まえ安来・広瀬・伯太の均衡ある発展に向けたまちづくりの方針を尋ね、あらエッサくんの活用と各地域のゆるキャラ、空き家・商店街調査を安来町内に限った理由、定住計画とＵターン支援の助成、ふるさと読本の活用、広瀬の古民家とイエローバス広瀬駅舎・広瀬図書館・広瀬庁舎の方針、尼子の史跡の誘導サインとスマートフォンを使った観光案内を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・作野幸憲</span>
+          <span class="ttl">参加と交流のまちづくり</span>
+          <span class="sum">新安来市発足10周年を機に市の木（竹）の再考と記念式典までの結論、なかうみマラソンを有名ゲスト頼みから市民のための大会へ移行する検討、印刷物に頼らないＩＣＴを活用した情報発信、空き家登録物件をふやす方策と情報発信、専属の定住支援コーディネーター配置など定住促進の体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">均衡あるまちづくり</span>
+          <span class="sum">均衡あるまちづくりの課題として、旧市町別の空き家の現状と家主の意思確認、空き家解消策やＵＩターン者への支援策、目標人口と将来推計の乖離を踏まえた人口流入策を尋ね、図書館3館の格差への対応と開館日・時間の拡大、広瀬図書館の整備時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中武夫</span>
+          <span class="ttl">定住企画課の役割</span>
+          <span class="sum">機構改革で新設された定住企画課の基本的な考え方と従来の企画課との違い、長年調査中が続く空き家対策、雇用やＢＣＰを取り入れた全市的な定住促進への市長の意気込み、商業施設など人が集まる場への窓口の出張を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田淵秀喜</span>
+          <span class="ttl">市政課題への対応</span>
+          <span class="sum">都市計画マスタープランの市民への情報公開と早期策定、25年度経済対策の道路・橋梁・住宅事業の進捗、危険空き家の調査と行政の関与、自治会運営の困難と地域センターの役割、ごみ袋の価格と分別及び広域処理を含む将来のごみ処理、国保の運営状況と４方式から３方式への算定方式の変更を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・澤田秀夫</span>
+          <span class="ttl">空き家改修支援事業</span>
+          <span class="sum">平成26年度に新たに実施する空き家改修支援事業の概要、空き家バンクの登録物件の地区別状況、事業促進の問題点と課題を尋ね、人の住めない空き家も定住施策に活用する検討を含めて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・梅林守</span>
+          <span class="ttl">空き家条例の制定</span>
+          <span class="sum">浜田市の空き家等適正管理条例や危険空き家対策の例を挙げ、市の空き家調査の現状と危険空き家の把握、これまでの空き家対応と市に対応を求められた事例、空き家条例制定の考え、広瀬の空いた県官舎の市への払い下げと活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・上廻芳和</span>
+          <span class="ttl">地方創生と人口対策</span>
+          <span class="sum">ＵＩターン者の定住には住む所と職場が大切との観点から、トップセールスの今後の考え方、市内事業所への企業訪問による事業拡大と雇用増、企業誘致に向けた工業団地の考え方、空き家調査の分析結果と平成27年度に確保する空き家の目標、市外からの通勤者の意見把握、卒業生が地元に残った場合の特典制度、人口対策の考え方と目標数値を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・中島隆夫</span>
+          <span class="ttl">小さな拠点と地域の人口分析</span>
+          <span class="sum">人口減少と地域経済の縮小を背景に、中山間地域での小さな拠点の形成を念頭に置いたモデル地域づくりの検討を尋ね、集落や小学校区単位で人口・高齢化率や医療・福祉・空き家・交通などを把握・分析し将来推計を住民とともに考えるツールとする取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・澤田秀夫</span>
+          <span class="ttl">人口対策と市職員</span>
+          <span class="sum">人口対策の観点から、安来市・松江市・米子市に住む市職員の人数、職員の空き家改修事業補助金や定住促進支援事業補助金の利用実績、地域消防団への入団状況、平成26年度の研修実績と27年度の研修計画を尋ね、再質問で住居に関する補助金制度への担当部局の考えと職員の市外転出等への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">地域おこし協力隊の住まい確保に苦労した例を挙げ、利活用できる空き家の把握状況、不在所有者の老朽家屋の適切な管理を定める条例制定の考え、専属スタッフや地域協力員を置いて所有者の意向を把握する体制の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐伯直行</span>
+          <span class="ttl">空き家対策と空き家条例</span>
+          <span class="sum">定住促進事業の対象とならない特定空き家等への見解、市内の空き家の推移、全国と県内の空き家条例の制定状況と制定自治体で起きていること、安来市として空き家条例を制定する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・金山満輝</span>
+          <span class="ttl">総合戦略に基づく新年度施策</span>
+          <span class="sum">2060年の人口目標３万人の実現に向け、平成28年度の人口対策事業として、民間賃貸住宅建設助成と空き家対策、切れ目のない子育て支援の新規・拡充事業、工業団地の適地選定調査の結果と供用開始時期、商工業の事業承継と後継者育成、結婚活動支援の成功件数と今後の取り組み、総合戦略のＫＰＩに基づく検証体制とスケジュール、定住相談窓口の業務内容と相談実績、地域おこし協力隊の採用見込みと増員計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・樋野智之</span>
+          <span class="ttl">人口対策と住まいづくり</span>
+          <span class="sum">住宅セーフティーネット法の改正案を踏まえ、旧市町別の高齢者単身世帯数と見守りの施策を尋ね、広瀬町中心部で安来市独自のセーフティーネット特区として住宅整備や空き家対策を進めるまちづくりの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">将来を見据えたまちづくり</span>
+          <span class="sum">第２次総合計画と総合戦略の実行に向け、まちづくりにおける官民連携の具体策、クラスター型コンパクトシティーの政策間連携と市長の考え方、人の流れを生む空間づくり、空き家の有効活用と危険空き家対策、まちづくり人材の育成、公共施設マネジメントの管理計画の時期と市長の決断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">空家等対策計画の策定</span>
+          <span class="sum">平成25年の調査で660戸とされる空き家について、県内市町村別調査の取り組み状況と空き家バンクなど細かなデータ化を含む調査方法、老朽危険家屋の除却対策、空家等対策計画の目標・目的と実行計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">総合戦略の進捗と展望</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略の平成28年度までの進捗と見直しについて、成婚数や子育て応援サイトママフレなど評価の低い事業の見直し、20歳代の社会移動の改善に向けた創業支援や企業誘致、定住関連３事業の統合やお試し住宅・空き家バンクの状況、自主防災組織やがん検診、地域おこし協力隊の状況、国や県の動きに合わせた市の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・遠藤孝</span>
+          <span class="ttl">防災対策と災害時の備え</span>
+          <span class="sum">自主防災組織のリーダー不在時を想定した訓練、中山間地域の道路寸断時の対応と迂回ルート、避難情報の市民理解、中山間地域の活性化、防災拠点施設と福祉避難所、水道老朽管の更新と財源、高齢者の所在情報の共有、危険な空き家の解体と行政代執行、原子力災害の広域避難計画の周知と避難先の把握を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・飯橋由久</span>
+          <span class="ttl">中心市街地の活性化と整備</span>
+          <span class="sum">中心市街地の空き家・空き地対策として、社会福祉協議会の自立支援ハウス事業への市の参画、空き家のレンタルオフィス活用、長谷津団地の再利用、空き家バンクの状況を尋ね、木戸川改修の進捗と今後の計画、八幡町付近の鉄橋下道路の安全対策、植栽やトイレの設置と検討の進め方、未定とされた八幡町裏付近の改修の県への要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・飯橋由久</span>
+          <span class="ttl">住環境の向上</span>
+          <span class="sum">結婚する人がふえるような少子化対策についての見解と支援、民生委員だけに頼らない独居老人への行政の協力体制、安来市空家等対策計画に基づく空き家の活用法など主な取り組み、安来庁舎建設と木戸川東線道路改良事業の完了後に道路より東側の中心市街地を活性化する計画の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・澤田秀夫</span>
+          <span class="ttl">空家対策</span>
+          <span class="sum">空家等対策計画の策定を前に、地区ごとの空き家数と使用可能な空き家数、空き家バンク登録数と直近の取り組み、所有者への助言・指導等や特定空き家の指定・勧告の事例、建て替えを促すなど空き家を生み出さないための補助金の考え方、相続放棄された宅地の面積と活用制度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・樋野智之</span>
+          <span class="ttl">ＩＴ企業誘致による空き家対策</span>
+          <span class="sum">市内全域に整備した高速通信網ブロードバンドを生かし、徳島県神山町のサテライトオフィスの例を挙げて、中山間地の空き家解消策としてのＩＴ企業の誘致施策と担当部署の対策、誘致に必要な通信速度が十分かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・飯橋由久</span>
+          <span class="ttl">中心市街地の空き家対策</span>
+          <span class="sum">安来市空家等対策計画について、実態調査の経緯・方法と空き家の実態・地域分布、空き家バンクの認知度の低さと66％が登録を希望しない理由、4つの基本方針の具体的施策と実施時期、地域おこし協力隊員など外部の知見を利活用に生かす考え、除却後の土地の固定資産税減免の可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・原田貴与子</span>
+          <span class="ttl">危険な空き家への対策</span>
+          <span class="sum">あちこち壊れて周囲の市民に被害を及ぼすおそれのある危険度の高い空き家について、市の対応状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・中村健二</span>
+          <span class="ttl">空き家対策と固定資産税</span>
+          <span class="sum">家屋を除却して更地にした場合の固定資産税額と住宅用地の課税標準の特例が外れることによる家屋・土地の税額の変化、安来市空家等対策計画の策定に当たった実態調査による市内の空き家の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">空き家対策と空き家バンク</span>
+          <span class="sum">空き家の直近の調査と旧市町別の実態、空き家バンクの登録状況と平成28〜30年の利活用実績、情報発信、定住相談窓口の体制と地域センターでの情報共有、納税通知に合わせた登録協力要請、宅建業者との連携を尋ね、再質問で農地法第３条の下限面積の見直し状況と周知方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">空き家対策の取り組み</span>
+          <span class="sum">全戸配布したパンフへの市民の反応、特定空き家の除却支援の実績、広瀬・伯太の地域センターとの情報共有と担当者の配置、お試し住宅の実績と見直し、不動産業者との協力関係、安来市に住みたいと思える施策で何が大切かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">耕作放棄地の有効活用</span>
+          <span class="sum">担い手への農地利用集積の実績、荒廃農地の実態調査に当たる委員の手当と調査の進捗・農家への周知、農地法第３条の下限面積の現行要件と空き家と農地をセットにした要件緩和の考え、旧市町村ごとの実績を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・澤田秀夫</span>
+          <span class="ttl">道路・住宅・空き家対策</span>
+          <span class="sum">臨港道路の傾斜と県道334号安来インター線の県境までの延長・重点要望化、民間賃貸住宅建設助成の補助物件で建築基準法違反が生じた場合の対応、略式代執行の対象物件と所有者不明の跡地の活用、木造住宅耐震化の実績を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・作野幸憲</span>
+          <span class="ttl">安来市の強みを生かす政策</span>
+          <span class="sum">観光ではビジネスホテルの誘致推進と県内・市内の民泊事業者数、民泊希望者への空き家紹介などの支援を尋ね、スマート農業の検討・導入状況と今後の方針、スマートフォンやウェアラブル端末を活用した健康増進施策、ペーパーレスシステムの導入、オープンデータの更新と利活用の取り組みと課題、ローカル５Ｇのメリットと課題、特定地域づくり事業推進法の検討状況と協同組合の設置の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原瀬清正</span>
+          <span class="ttl">小・中学校の通学路の確保</span>
+          <span class="sum">通学路の選定方法と手順、危険箇所の把握方法と改善の優先度の判断を尋ね、通学路に面した倒壊のおそれがある空き家の件数と、報告のあった３件の対応策や行政代執行の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岡本早智雄</span>
+          <span class="ttl">空き家の利活用</span>
+          <span class="sum">旧市町別の空き家件数と空き家バンクの登録状況、空き家を出さない取り組みを含む今後の対策と利活用の方策を尋ね、豊島区の空き家活用条例を例に条例制定を含む考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・石倉刻夷</span>
+          <span class="ttl">市長公約と新年度予算</span>
+          <span class="sum">８項目の公約のうち新年度予算に文言が見当たらなかった空き家対策とスマートインターチェンジの実現について、進捗状況と市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・三島静夫</span>
+          <span class="ttl">若者の働く場の創出</span>
+          <span class="sum">10代から30代の若者の働く場として増やす職種と取組、ソフトＩＴ関係企業の立地を促す誘因の具体策、空き家や空いた公共施設の利活用、義務教育における若者の起業につながる教育の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岡本早智雄</span>
+          <span class="ttl">中山間地域の振興</span>
+          <span class="sum">中山間地域振興への市長の基本的な考えを尋ね、地域包括ケアシステムの状況と今後、こども園・学校の体制、自治会の統合・再編や人手不足の補完、空き家活用、防災の観点を含む耕作放棄地対策、イノシシを中心とした有害鳥獣対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・飯橋由久</span>
+          <span class="ttl">安来町中心市街地の活性化</span>
+          <span class="sum">安来町の中心市街地の範囲の認識、たたらと安来港の調査の成果と歴史文化を生かした活性化、空き家の状況とサテライトオフィス誘致の取組、しまね留学生の住まいへの空き家活用、にぎわい創出への市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岩崎勉</span>
+          <span class="ttl">定住政策と交通網の充実</span>
+          <span class="sum">新築住宅への市産材利用促進事業以外の補助の有無と同事業の執行状況、新規の助成の検討、空き家バンクの利活用状況と意義を尋ね、和田南地区へのスクールバス停留所の設置と和田団地へのイエローバス乗り入れや実証実験の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・原瀬清正</span>
+          <span class="ttl">冬季の給水管凍結被害対策</span>
+          <span class="sum">平成28年１月の被害を踏まえ、漏水発生時の連絡から復旧までの手順、経年劣化が想定される公共施設の漏水対策、閉栓中と開栓中の空き家の凍結対策、緊急時の協力体制と地域との連携、漏水発生家屋と周辺住民・市民への周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・清水保生</span>
+          <span class="ttl">危険家屋の対策</span>
+          <span class="sum">空き家調査で把握した危険家屋の件数と前回比、老朽危険建築物等除却助成事業の近年の実績を尋ね、補助要件の緩和、相続人が全て相続放棄した物件の取扱いと新たな制度の創設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・清水保生</span>
+          <span class="ttl">空き家の活用と定住対策</span>
+          <span class="sum">市内の空き家の把握方法と空き家バンクの登録件数、登録が増えない現状と把握済み空き家の状態、ホームページ以外の情報提供や定住希望者の引込み戦略、定住世帯への市独自の優遇措置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・佐々木厚子</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">市の空き家に関する課題、対策の基本的な考え方と基本施策、今年度見直す空家等対策計画の従来との違い、連携協定を結んだクラッソーネとａｋｉｓｏｌの事業内容と利用状況を尋ね、空き家の終活ノートの作成について所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・湯浅正志</span>
+          <span class="ttl">円滑な土地の利用と管理</span>
+          <span class="sum">所有者不明土地と空き家の現状、所有者不明土地関連法改正の概要と市の周知方法を尋ね、農業経営基盤強化促進法等の改正の概要と所有者不明農地への市の対応と周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・内田卓実</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">法改正で新設された管理不全空家の内容と特定空家との違い、市による解体と費用請求、所有者不在時の扱い、固定資産税、適正管理と点検、所有者死亡後の実態と相続登記義務化の影響、所有者の意識、空き家を減らす方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・作野幸憲</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">令和４年度調査後の空き家の利活用件数、空き家バンクの登録・成約件数と成約者の元の地域を尋ね、動画やＺｏｏｍ内覧による空き家バンクの充実、空き家を使った外国人向け簡易宿泊所の支援、空家等対策協議会での新たな展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・福井加代子</span>
+          <span class="ttl">空き家対策とお試し住宅</span>
+          <span class="sum">相続登記義務化が空き家対策に与える影響、老朽危険建築物除去助成事業の対象者と建物、民間との協定の利用状況、空き家バンクの登録件数と成約件数、お試し住宅の場所・入居条件・利用状況と定住例を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三島静夫</span>
+          <span class="ttl">観光振興の取組</span>
+          <span class="sum">観光地再生に向けた地域計画と支援内容、空き家活用の宿泊施設支援、日本遺産たたら風土記による中山間地域への誘客と周遊、サイクリング事業とレンタル自転車、外国人観光客の目標と取組、景観条例、観光客アンケート、ご当地グルメ開発、月の輪まつり、戦国尼子フェスティバルを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・福井加代子</span>
+          <span class="ttl">住まいの引き継ぎノート</span>
+          <span class="sum">空き家対策として配布された住まいの引き継ぎノートの作成の目的と狙い、使い方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・清水保生</span>
+          <span class="ttl">地域を守る取組</span>
+          <span class="sum">空き家を移住・定住策として活用するための組織体制を尋ね、廃校舎の利活用や交流センターを核とした地域づくりにも触れ、オールやすぎの意味と地域の存続・成長に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・作野幸憲</span>
+          <span class="ttl">施政方針と市政全般</span>
+          <span class="sum">国政の影響と総合計画（年収の壁引上げの市財政への影響、新たな交付金の使途、人口ビジョンの見直し）、保健・医療・福祉（市立病院の建て替え方針、医師の働き方改革の影響、健康増進アプリ、介護のデジタル化、交通弱者・買物弱者支援）、子育て・教育・スポーツ（公立保育施設の定員減、小中学校適正配置、高校魅力化、スポーツ拠点とスケートボード場の整備）、防災の情報共有、産業・観光（スマート農業、鳥獣害対策、中山間地農業、林業人材育成拠点、安来節演芸館とネオ安来節）、都市計画・土地利用（切川地区とスマートインターチェンジ、線引き制度、空き家対策、中海ふれあい公園の利活用）、ＤＸ推進リーダーの研修と推進会議への民間・外部有識者の参画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・飯橋由久</span>
+          <span class="ttl">持続可能なまちづくり</span>
+          <span class="sum">産業振興では商工業の所管部署と定住産業課の事業者支援、産業サポートネットやすぎの経緯と役割を尋ねて地域内事業所の投資意欲を高める施策の必要性を、空き家対策では実態調査の件数、対策計画の見直し点、除却後の固定資産税減免の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・三島静夫</span>
+          <span class="ttl">日本遺産の構成文化財の活用</span>
+          <span class="sum">安来の魅力を生かしたまちづくりとして、日本遺産構成文化財の内容とまちづくりへの生かし方、安来港と街並みの認定理由と空き家が増える町並みの維持、空き家のオーダーメードリフォーム、卜蔵新田の耕作放棄地と認定解除の懸念を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">72件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H21・多久和康司</span>
+          <span class="ttl">子育て支援と体験活動</span>
+          <span class="sum">少子化対策と子育て支援で子育て費用の新たな負担軽減策が必要ではないか、発達段階に即した特色ある体験活動の充実とは具体的にどのような取り組みか、佐田町で空き家を借り上げる定住希望者向け住宅に希望者があるのかと中心市街地に近い場所でも同様の取り組みができないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・板垣成二</span>
+          <span class="ttl">定住促進の空き家活用</span>
+          <span class="sum">過疎法で規定された佐田や多伎以外の地域に対する空き家対策の支援策、今年度限りとなる過疎法のもとでこの事業を続けられる見通し、空き家バンクのほかに職の確保を含めどのような定住対策の支援策を考えているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・高野成俊</span>
+          <span class="ttl">過疎地域の定住支援</span>
+          <span class="sum">人口が著しく減少している地域の実情をどう考えているのか、佐田地域の空き家を借り上げる定住希望者向け住宅の整備を旧出雲地区南部の中山間地や他地区の山間地、漁村を含む過疎振興地域へ広げるべきとの意見への所感、集落支援員制度の具体案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・直良昌幸</span>
+          <span class="ttl">震災の教訓と防災の備え</span>
+          <span class="sum">東日本大震災から何を学び何を研修して平素の日常業務に反映しているのかを尋ね、斐川を含めた地域防災計画の拡充と自治協会長らへの情報の伝達、消防の救援隊の派遣報告、学校での防災教育と教職員の履物、二百人以上が集まる催しでの主催者の腕章と非常口の案内、定住促進空き家活用と耐震化の整合性を挙げ、今この場で震度６の地震が発生したらどう対応するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・萬代輝正</span>
+          <span class="ttl">出雲未来図の具体策</span>
+          <span class="sum">何が柱で何を我慢し何に重点的に投資するのかがいまだに見えないとして、今なぜ出雲未来図を描いたのかという思いを尋ね、民間からの資金を活用できる市民活動支援の基金の創出、市営住宅や雇用促進住宅を含む定住支援の考え方、一畑電車への今後の取り組み、空き家対策条例の具体案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・飯塚俊之</span>
+          <span class="ttl">空き家対策と条例化</span>
+          <span class="sum">空き家の数と相談窓口の有無、相談件数や対応など空き家対策の現状を尋ね、今後の対策として直ちに実態調査を行うことと窓口の一本化、防災・防犯・火災の不安や危険要因を取り除く空き家対策条例の制定を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・大国陽介</span>
+          <span class="ttl">空き家対策の推進</span>
+          <span class="sum">長浜地区の外園町で庭木が茂り建物が傾く空き家を見た経験や町内２９軒のうち６軒が空き家である実情を挙げ、市内の現状をどう認識しているのかを尋ね、現況を把握する実態調査と検討組織の立ち上げなど何らかの対策を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・板垣成二</span>
+          <span class="ttl">住みやすさの重点課題</span>
+          <span class="sum">来島ダムから潮発電所への分水問題で調整会議に何を主張するのか、志津見ダムから馬木堰までの県管理区間を国直轄にする今後の取り組み、放水路の完成で斐伊川の大量の砂が神戸川に流れ込むことへの対処、空き家条例に盛り込む内容と制定時期および空き家活用事業の復活、小学校就学前児童の医療費無料化への所得制限を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・勝部順子</span>
+          <span class="ttl">空き家対策の取り組み</span>
+          <span class="sum">老朽化した空き家の倒壊の危険が懸念されるとして全市的な空き家の実態の調査はされたのかを尋ね、空き家問題の総合窓口の早期設置、上越市のように倒壊が心配される空き家の撤去費用の一部を助成する考え、横須賀市が学生に貸し出しているような空き家の有効利用について市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・板倉明弘</span>
+          <span class="ttl">空き家対策の取り組み</span>
+          <span class="sum">本年７月から８月末に実施された空き家などに関するアンケート調査の結果と傾向、条例制定に向けてのポイントと今後のスケジュール、空き家の活用を促す予防的な施策を尋ね、空き店舗や空き工場の実態把握と担当する窓口を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・板倉明弘</span>
+          <span class="ttl">空き家対策の条例</span>
+          <span class="sum">空き家対策について、適切な管理を促すための条例の内容とその制定時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・神門至</span>
+          <span class="ttl">不法投棄と空き家と野焼き</span>
+          <span class="sum">不法投棄について地域における被害状況や課題をどう把握しているかと今後の対策を尋ね、空き家についてアンケート調査で示された状況と条例の制定を含む今後の対策、野焼きについて市民からの苦情や相談の把握と政令で定められた例外規定の解釈、今後の対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・米山広志</span>
+          <span class="ttl">住宅の空き家対策</span>
+          <span class="sum">全国の住宅の７戸につき１戸が空き家になっている実態を挙げ、市内の空き家の戸数と所有者が分からない戸数を尋ね、全国で約３５０団体が空き家対策に関する条例を制定していることを踏まえた出雲市の今後の計画と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・寺本淳一</span>
+          <span class="ttl">空き家と耕作放棄地の活用</span>
+          <span class="sum">いずも空き家バンクで家屋６８件・土地２０件の成約という一定の成果が出ているとして空き家や耕作放棄地の情報収集の方法と登録方法、未登録だが少し手を加えると住むことができる空き家の軒数や耕作放棄地の地域別の面積を尋ね、家・土地だけでなく耕作放棄地もセットで登録して情報発信し定年帰農をターゲットに支援する取り組みの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・福島孝雄</span>
+          <span class="ttl">空き家バンクの一般公開</span>
+          <span class="sum">空き家台帳が整備されることを踏まえ、空き家バンクの意義と迷惑防止の意義から一般公開の考えはあるかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">空き家対策と活用の体制</span>
+          <span class="sum">空き家対策特別措置法の一部施行を踏まえ、縁結び定住課の定住推進事業と防災安全課の空き家対策事業の二つのワンストップ窓口がそもそも何を指すのかとその違い、それぞれの窓口が置かれる場所を尋ね、市内約７，０００戸を調査して整備する空き家台帳の記載内容と使用目的、出雲空き家バンクの仕組みと実績、トラブル対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・岸道三</span>
+          <span class="ttl">空き家対策と相談の窓口</span>
+          <span class="sum">周囲に危険を及ぼす空き家や廃屋が８９４軒あるとの調査結果を踏まえ、これまでに寄せられた相談件数と主な内容を尋ね、現行法令で対応ができる事例と昨年度対応した件数を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・勝部順子</span>
+          <span class="ttl">高齢者の住まいの確保</span>
+          <span class="sum">市内の特別養護老人ホームで必要な利用者が入所できているのかの現状と、サービス付き高齢者向け住宅の市内の整備の状況を尋ね、月額約１５万円程度の利用料がかかり入居が難しい低所得の高齢者について、空き家を改修したシェアハウスなど地域資源を生かした住まいの確保策への市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・板垣成二</span>
+          <span class="ttl">空き家対策と条例の制定</span>
+          <span class="sum">空家対策特別措置法の要点と市の対応、空き家条例制定に向けての進捗状況及び検討内容、空き家予防対策と空き家活用策のそれぞれの現状と課題・今後の方針を尋ね、除却費用の補助制度、固定資産税の優遇措置の延長、定住促進空き家活用事業の新規整備、空き家バンクの登録、窓口の体制強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・寺本淳一</span>
+          <span class="ttl">空き家対策のネットワーク</span>
+          <span class="sum">出雲市空家等対策協議会で議論された空き家等対策の内容、近年の苦情相談件数と管理不全と思われる空き家及び利活用可能な空き家に対する相談件数を尋ね、防災安全課と縁結び定住課に分かれている窓口の完全一本化、建築士会や宅建・不動産業者など専門知識を持つ民間で構成された組織の設立、市・民間・地域がスムーズに連携できるネットワークの構築を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川上幸博</span>
+          <span class="ttl">空き家対策の現状と活用</span>
+          <span class="sum">空き家と老朽危険空き家の件数、相談の内容と対応、空家等連絡会議と対策協議会の協議状況、空き家台帳の利用方法を尋ね、貸し出し申請に基づく利活用と今年度の経費、組織体制の強化、国のモデル事業への公募、補助制度やコーディネーターの雇用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・寺本淳一</span>
+          <span class="ttl">出雲市の地域防災計画</span>
+          <span class="sum">指定避難所１８３か所のうち安全確認が必要とされた２８か所の今後の耐震化計画と避難所の非構造部材の補強状況、道路や橋梁の安全性と危険度の高い箇所の改修計画及び住民への周知方法を尋ね、特定空家を災害と位置付けて地域防災計画に盛り込むこと、学校施設の非構造部材の点検の実施方法、空き家の跡地を防災拠点に活用することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・神門至</span>
+          <span class="ttl">空き家の実態と対策</span>
+          <span class="sum">市全体と地域別の空き家の実態、これまでの空き家対策の検討状況と今後の市の考え方を尋ね、２，５７０件という調査の時期と方法や所有者が分からない物件の扱い、草木をめぐる近隣トラブル、条例化と民泊への活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・湯淺啓史</span>
+          <span class="ttl">空き家の実態調査と対策</span>
+          <span class="sum">平成２７年度の実態調査による台帳整備の結果と空き家の総数、特定空家となる危険な空き家の数、今後の対策の立案、地図と連動した台帳の活用、空家等対策協議会の位置付けと検討事項を尋ね、変化する空き家を把握し続ける仕組みや地域と民間との情報共有、対策計画の策定時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・福代秀洋</span>
+          <span class="ttl">空き家対策条例の制定</span>
+          <span class="sum">屋根が落ちかけ通学路の変更に至った空き家を挙げ、特定空家としたものしか助言や命令ができず手続の簡素化も認められない空家法の問題点を示し、宮崎市の緊急安全措置や京都市の緊急立ち入り調査、神戸市の応急的危険回避措置を紹介して、市の実情に合わせた空き家対策条例を一刻も早く制定する方針と今後の予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・湯淺啓史</span>
+          <span class="ttl">空き家情報の開示と活用</span>
+          <span class="sum">平成２７年度（2015）の調査で市が把握した情報のうち具体的に公表できる情報と公表できない情報は何かを尋ね、空き家の活用を進めるためＮＰＯやＴＭＯなど地域で問題解決を担うグループが立ち上がることを推奨し支援することを空家対策計画に盛り込む考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・寺本淳一</span>
+          <span class="ttl">老朽化した空き家への対策</span>
+          <span class="sum">利活用や再生ができる空き家とできない空き家の件数と対応された件数、対応が進まない理由と今後の対策や方向性を尋ね、所有者が分からない建物が倒壊しそうな場合の対応や略式代執行の判断と解体後の土地の扱い、法の整備の要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・萬代輝正</span>
+          <span class="ttl">住みやすさの各施策</span>
+          <span class="sum">市内の空き家数と出雲市空家対策協議会の議論および代執行を含む対策の実施状況、真に待機児童がゼロになる定員、児童クラブの社会福祉法人等による運営制度とエリアの拡大、斐川学校給食センターの移転新築のスケジュール、新体育館のソフトの運営面、トキの一般公開のスケジュール、公共下水の整備率と課税用途区域の１００％達成までの期間を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・飯塚俊之</span>
+          <span class="ttl">定住促進と空き家対策</span>
+          <span class="sum">出雲大好きＩターン女性支援事業と移住・定住促進住まいづくり助成事業を見直して新たに設けられる「出雲で住まいる（スマイル）事業」の事業内容及び目指す方向性を尋ね、空き家対策を住みやすさＮｏ．１プロジェクトから定住人口キープ１７万人プロジェクトへ移した理由と意図及びとろうとする対策、新規に創設される空き家バンクへの登録を促す助成事業の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">市営住宅の長寿命化と建替</span>
+          <span class="sum">耐用年数が経過した市営住宅の数、市営住宅の需要と供給のバランス、定期点検の頻度と主な点検項目、入居希望のない空き家と政策空き家の数を尋ね、住民からの建て替えや修理の要請の状況、家賃を低額に抑制するための方策、市全体の建て替え費用の総額、民間賃貸住宅の借り上げの検討、計画の見直しの要点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大場利信</span>
+          <span class="ttl">暮らしと福祉の施策</span>
+          <span class="sum">空き家の活用や流通を促進する環境整備の検討内容、社会福祉法人が運営する児童クラブへの運営費支援の範囲、第７期介護保険事業計画の策定にあたってのポイントと病院退院後の要介護者が入所できる制度、日本語指導が必要な児童生徒の学習支援を行うＮＰＯ法人への支援、工科系高等教育機関の誘致の今後の検討方法と内容、新体育館の設置場所とそれを決定する時期、水鳥が成育する自然環境を生かした地域経済の活性化、次期可燃ごみ処理施設の現在の進捗状況と今後の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・神門至</span>
+          <span class="ttl">東京オリンピックへの対応</span>
+          <span class="sum">東京２０２０年オリンピック・パラリンピックについて、スポーツ振興及び観光振興などの地域活性化の視点でのこれまでの市と県の具体的な検討状況と、今後の具体的な対応とスケジュールを尋ね、出雲空港や東西の道の駅、空き家の利活用によるおもてなしの環境づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・湯淺啓史</span>
+          <span class="ttl">移住・定住と就職支援</span>
+          <span class="sum">出雲市の人口動向を自然増・社会増の数と外国籍の方を除いた実数で尋ね、ＵＩＪターン者のニーズの把握・分析の方法と本人たちの情報収集の方法、ＰＲしている出雲の魅力や暮らしのよさ、定住コーディネーターの業務内容と実績、創業塾やビジネスプランコンテストの状況、県外での活動、空き家バンクや移住・就職支援を外部組織に委託する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">移住定住と空き家対策</span>
+          <span class="sum">出雲大好きＩターン女性支援事業と移住・定住促進住まいづくり助成事業の成果と見直しのポイント、出雲で住まいる（スマイル）事業と中山間地域の活性化がどのようにつながるのか、空き家バンクの登録を促す助成事業の具体的な内容、未婚化・晩婚化対策に関する総事業費と３年間の成果と評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・寺本淳一</span>
+          <span class="ttl">空き家対策の進捗</span>
+          <span class="sum">過去３年間の空き家の相談件数と主な相談内容、空家等対策協議会の開催回数と現在の協議内容と課題等検討内容、空家等対策計画にある具体的取組みの発生抑制・適正管理の推進・活用・除却・跡地の利活用の進捗状況、市と専門家が活用の課題を検討し政策提案するための空き家活用推進協議会のような組織を立ち上げる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・萬代輝正</span>
+          <span class="ttl">雇用創出と産業支援</span>
+          <span class="sum">空き家店舗の開業支援と中心商店街の賑わい創出の実績と具体策、既存の工業団地の実績を数値で示したうえでの新たな工業団地開発の方向性、農業３Ｆ事業やひかわ元気農業支援事業の農政新時代に対応する見直しの具体策、新設された森林・山村多面的機能発揮対策事業の支援内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・児玉俊雄</span>
+          <span class="ttl">高齢者等の住宅確保対策</span>
+          <span class="sum">改正住宅セーフティネット法の登録制度などを担う県の対応と居住支援協議会の動き、改正を受けた市の新たな取組みと市が居住支援協議会を設置する考えを尋ね、光回線の整備や女子サッカーチームの中山間地域への居住も挙げて、空き家対策課の設置を含む総合的な体制強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・玉木満</span>
+          <span class="ttl">空き家の増加防止策</span>
+          <span class="sum">空き家と回答されたうち７５５件分の固定資産税及び都市計画税の税額、住宅が滅失し住宅用地の特例が適用されなくなった場合の課税額と１件あたりの税額増減率及び増減額、利活用の予定なしとの回答への見解、解体及び処理費用の一部助成や減免の考え、相続登記が行われていないことへの対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・板垣成二</span>
+          <span class="ttl">空き家対策と地域活動</span>
+          <span class="sum">空き家対策室の新設で市民の窓口を一本化するのか従来の担当部署との関係はどうなるのかを尋ね、ＮＰＯ法人出雲市空き家相談センターと連携した平成３０年度の地域別の利活用・流通促進の実績、元気！やる気！地域応援補助制度とうみ・やま応援センターの実績と課題、平成３１年度の取組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・寺本淳一</span>
+          <span class="ttl">空き家等の予防と活用</span>
+          <span class="sum">出雲市空家等対策連絡会議のこれまでの検討内容と空き家等に対する市の考え、合併当初から６，３０２世帯増え１世帯あたり２．６５人へ減った状況の受け止め、出雲市空き家相談センターと連携することで期待される効果、ふるさと教育や終活セミナー、空き家予備群バンクによる予防、用途変更に対する市独自の緩和措置、中古住宅の流通への財政措置や税制措置、出雲市空き家等の適正な管理及び活用の推進に関する条例の制定と総合戦略への位置づけ、市とセンターの協定を含む具体的なサポートを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・湯淺啓史</span>
+          <span class="ttl">空家実態アンケート調査</span>
+          <span class="sum">平成２９年１０月に実施された空家実態アンケート調査について、送付先不明となった理由、郵便局から返送された送付不能分の今後の処理、空き家ではないと回答があった数とその理由、委託管理や空き家バンクへの登録など活用や処分を検討したいとの回答数を尋ね、調査結果の報告書を議会へ示すのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・神門至</span>
+          <span class="ttl">通学路の危険空き家対策</span>
+          <span class="sum">通学路に隣接する危険空き家の状況と対策をどのように調査し把握しているか、調査していればその状況と対応を尋ね、通学路に隣接しかつ交差点に隣接する見通しの悪い空き家は所有者と協議しつつ見通しのよい交差点にする対策が必要だとして市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・寺本淳一</span>
+          <span class="ttl">ふるさと納税の推進</span>
+          <span class="sum">出雲市へのふるさと納税額の推移と令和元年度の見込み、返礼品の旅行プランをきっかけに出雲を訪れた人数や移住した人数、納税額の推移の分析と拡大を目指す対策、移住のきっかけづくりとして空き家を活用した宿泊サービスを返礼品とする考え、クラウドファンディング型ふるさと納税を活用したふるさと移住交流促進プロジェクトの内容と活用の課題、返礼品以外に利用者へ送っているものを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・福島孝雄</span>
+          <span class="ttl">地域コミュニティの維持</span>
+          <span class="sum">自治協会やコミュニティセンターが解決できない地域課題に対する市の課題認識と支援策、若者の意見や発想をくみ上げる場、高齢化により手間不足と危険が危惧される官地の除草作業への対策、防草シートの効果の検証と今後の取組み、管理されていない空き家周辺の環境悪化の早期解決、通学路や生活道路に繁茂する立ち木や竹林への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・飯塚俊之</span>
+          <span class="ttl">宍道湖西岸の農地再編事業</span>
+          <span class="sum">宍道湖西岸地区国営緊急農地再編整備事業の目的と内容と効果と事業スケジュール、事業推進協議会を中心に行われている取組み、農地集積率の現状と見込みを尋ね、平田高校の平田プラタナスプランなど人材育成や空き家の利活用を含む地域への波及効果をどのように捉えているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・保科孝充</span>
+          <span class="ttl">自治会加入と空き家対策</span>
+          <span class="sum">高齢者を各種役員から外し会費等を減額するなどの配慮を市が指導して自治会加入を継続させるべきではないか、市全体で約２，２００件ある空き家の対策として行政センター単位の相談会に加え不動産業者等と連携し積極的に情報提供する必要はないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・板倉一郎</span>
+          <span class="ttl">空き家の防火対策</span>
+          <span class="sum">５月２５日に出雲市中心部の人の住んでいない住宅から火災が発生し住宅密集地での大火災となりかねなかったことを踏まえ、空き家の防災対策とりわけ防火対策についての市の取組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・伊藤繁満</span>
+          <span class="ttl">農地法第３条の別段面積</span>
+          <span class="sum">農地法第３条第２項第５号に規定する別段面積について５０アール制定以後に検討・修正された経過、近隣市と比べ地域ごとに不均衡な設定を踏まえ本気で農地を守るために何をすべきか、施行規則第１７条第２項に係る１アールの別段面積の申請件数と受理件数及び事務処理の簡素化、空き家に付随した遊休農地の売買で定住促進を行う大田市を参考に農地を生かす考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・寺本淳一</span>
+          <span class="ttl">ふるさと納税と留学生</span>
+          <span class="sum">クラウドファンディング型ふるさと納税を活用して空き家を宿舎に改装し、宿舎がないため県外からの問い合わせを断っている市内２校の私立高校へ県外の高校留学生を取り込む施策を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・寺本淳一</span>
+          <span class="ttl">ソフト産業の誘致拡大</span>
+          <span class="sum">日御碕サテライトオフィスを活用したソフト産業の誘致について現状と今後の誘致目標数を尋ね、入居できる受け皿を増やすため空き家などを活用してサテライトオフィスを増やす考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・木佐宏</span>
+          <span class="ttl">田舎流デイサービスの復活</span>
+          <span class="sum">元平田市長の発案による田舎流デイサービス事業について、空き家などを月１万円か２万円で借りて自由に趣味や話をする形が認知症の進行を防いでいたとして、現在の新しい制度がどこまで近づいているかの再検証と事業の復活を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・寺本淳一</span>
+          <span class="ttl">空き家安心サポート事業</span>
+          <span class="sum">年々増加する空き家が景観や今後のまちづくりに大きな影響を及ぼすとして、今年度新たに取り組む空き家安心サポート事業の具体的な内容と、空き家の発生予防と利活用に向けてどのような役割を果たしていくのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・湯淺啓史</span>
+          <span class="ttl">空き家対策の方針と施策</span>
+          <span class="sum">第２期空家等対策計画の策定にあたり、市が空き家の発生原因をどのように分析し主な要因を何と捉えているか、今後どのような方針で対策を進め具体的にどのような施策をとる考えか、発生予防に向けた啓発活動の具体的な内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・湯淺啓史</span>
+          <span class="ttl">被害状況の把握と共有</span>
+          <span class="sum">市がどのようにして被害状況を把握し庁内でどう共有したかを尋ね、地区災害対策本部が独自に取りまとめた資料と床上・床下浸水の被害戸数が異なる理由、聞き取り調査で空き家が把握されないこと、道路の冠水状況の把握、スマートフォンで画像を送るアプリなどデジタル技術による被害把握の仕組みづくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・湯淺啓史</span>
+          <span class="ttl">課税明細書の名義人明記</span>
+          <span class="sum">固定資産税の課税明細書に登記名義人を明記してはどうかと提案し、納税者と名義人が一致せず登記が済んだと勘違いして空き家問題の解決が先送りされる例を挙げ、空き家対策室だけでなく各課が自分たちにできることを一つひとつ問い直すよう提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・湯淺啓史</span>
+          <span class="ttl">除却後の固定資産税減免</span>
+          <span class="sum">老朽化した空き家を除却して更地にすると住宅用地特例がなくなり固定資産税が高くなることが放置の一因だとして、他市の事例のように除却した土地の固定資産税等を減免し除却の促進を図る制度の検討を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川上幸博</span>
+          <span class="ttl">雇用創出と農業振興</span>
+          <span class="sum">地場中小・小規模企業への支援の検証と新たな支援策、地元の高校生や大学生への企業情報の発信による人材確保、人・農地プランを踏まえた経営体の育成と空き家を絡めた担い手確保、新規就農への資金・農地・技術の支援、ＧＰＳ活用など農業分野へのデジタル技術導入、作物転換による高収益を目指す総合支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・今岡真治</span>
+          <span class="ttl">所有者不明土地と空き家</span>
+          <span class="sum">本市における所有者不明土地と空き家の現状と課題、令和６年４月１日に施行される相続登記の申請の義務化をはじめとする民法・不動産登記法の改正と新たに創設された相続土地国庫帰属法の概要とその周知の方法、法改正を踏まえて空き家・空き地の解消と適切な管理における市の対応が今までとどのように変わるのかと法改正の活用についての見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・湯淺啓史</span>
+          <span class="ttl">空家対策の成果と課題</span>
+          <span class="sum">ＮＰＯ法人に委託して２年目を迎える空き家安心サポート事業の相談件数や相談会の実施状況などの成果と協業のメリット、老朽危険空家等除却事業の実績と本年度の支援限度額引上げの経緯、市で初めてとなる特定空家の指定と略式代執行に向けた経緯・今後の予定および指定に至らない危険な空家への対応、管理不全空家や空家等管理活用支援法人を定めた法改正の情報の把握、空き家バンク登録物件への住宅リフォーム助成の要件緩和を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・鐘推義憲</span>
+          <span class="ttl">都市計画マスタープラン</span>
+          <span class="sum">現行の出雲市都市計画マスタープランにおける土地利用と市街地整備、都市施設、自然環境や景観や防災防犯という三つの分野の取組状況と進捗状況、前回の市民アンケート調査で課題となった若い世代の定住意識の向上対策と交通利便性や子どもが安全に遊べる場所の確保への取組を尋ね、次期計画の策定体制とロードマップおよび住民参加の方法、市民アンケート調査の時期や内容や方法、本市の現況と主要課題、目標年次、将来人口と将来都市像、分野別整備方針、ＳＤＧｓと脱炭素社会への取組、空き家の適正管理、公共建築物と公共インフラ施設の維持管理と再編、自然災害への備えと河川の整備・改修、コンパクト・プラス・ネットワークによる都市づくり、島根県の出雲都市計画区域マスタープランの位置づけと見直しの予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・大場利信</span>
+          <span class="ttl">コンパクトシティ計画</span>
+          <span class="sum">コンパクトシティの内容と目的や全国の導入状況、都市計画区域と四つの都市計画用途地域の範囲と関連、既に施設が集積する用途地域での空き家の利活用、居住誘導と市民の居住の自由、土砂災害警戒区域及び地すべり防止区域の箇所数と防災指針、地域公共交通計画との連携、周辺部との地域間格差、国の支援策の概要を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・川上幸博</span>
+          <span class="ttl">地域コミュニティの活性化</span>
+          <span class="sum">人口減少に悩み地域行事にも支障が出ている地域コミュニティや自治協会があると推察されるとして、地域振興の担い手となる青少年の育成につながる人づくり教育や移住者の空き家活用、農地貸出し、ふるさと会などの関係人口の拡大を挙げ、地域活性策の今後に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・鐘推義憲</span>
+          <span class="ttl">空き家対策と二地域居住</span>
+          <span class="sum">本市の空き家の現状と空き家対策の取組状況、借りたい人が貸したい人を探す小松市のさかさまバンクのような取組が実施されているかとその内容と実績、先月１５日に改正された広域的地域活性化法に規定される二地域居住等の促進の概要と今後の本市の取組方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">個別避難計画と脱炭素</span>
+          <span class="sum">個別避難計画の現状の作成率と来年度の作成率の目標値、空き家対策で想定される支援策や体制、森林Ｊ－クレジットの内容と実施効果、出雲環境センターの今後の在り方についてどのような課題があり何を検討しているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・湯淺啓史</span>
+          <span class="ttl">市街地水害対策室の機能</span>
+          <span class="sum">新設された市街地水害対策室が包括的な窓口機能を持ち他の部署との連絡調整が可能となるのかを尋ね、空き家対策室のように住民向けの外向きの窓口機能を充実させるべきだとして、災害がなかったことになっている場所があるという被害把握の課題と併せて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・吉岡拓也</span>
+          <span class="ttl">空き家の利活用推進</span>
+          <span class="sum">島根県内各自治体との比較で見た戸数総数と空き家の増減における出雲市の特徴、空き家バンクの業務委託など官民の連携状況、移住・定住支援の所管部署と支援内容及び空き家対策との連携を尋ね、増加する空き家を遊休住宅ストックとして位置づける考えや利活用した場合の減税策、官民連携の一層の強化と空き家の掘り出しの強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・萬代輝正</span>
+          <span class="ttl">空き家対策のサイト</span>
+          <span class="sum">誰もが「安全・安心」に暮らせるまちに向けて開設する空き家対策の総合ウェブサイトについて、運用管理者や概要を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・湯淺啓史</span>
+          <span class="ttl">空き家対策の計画と条例</span>
+          <span class="sum">第２期出雲市空き家等対策計画の実施で大きく進展した点と次期計画を策定する上で検討される内容及び策定スケジュール、空き家対策協議会がどのような目的で開催され次期計画策定へどう関わるのか、空き家対策の推進に関する条例の必要性についての市当局の認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・坂本祐麻</span>
+          <span class="ttl">空き家調査と把握体制</span>
+          <span class="sum">５年に一度実施する行政調査の進捗状況を含めた本市の空き家調査の現状と課題を尋ね、兵庫県西脇市への視察を踏まえ、地域と協働した空き家情報の把握体制や支援体制を構築する考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">防災情報と空き家活用</span>
+          <span class="sum">防災行政無線の加入に地域によって相当の格差があるとして全域に広げる施策の必要性を尋ね、年々増える空き家について民泊や店舗への改修など出雲市の利活用の実態を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・錦織稔</span>
+          <span class="ttl">防犯灯の設置と負担</span>
+          <span class="sum">市設置の防犯灯について小中学校からの設置要望と設置の現状、自動販売機の照明や民間の街灯も考慮した設置基準と、それらの撤去や空き家となった場合の設置を尋ね、世帯当たりの負担が増加している町内会設置の防犯灯について市が電気料金の一部を補助するなどの支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石橋広信</span>
+          <span class="ttl">高齢者の住まいの確保</span>
+          <span class="sum">改正住宅セーフティネット法について、市内の高齢者単身世帯や身寄りのない方の孤独死、賃貸用空き家住宅数の現状と居住サポート住宅を中心とした改正のポイントを尋ね、居住支援法人や生活困窮者自立支援法等改正法に関する市の現状、島根県との連携と居住支援協議会の設置、取組の機能充実と市民への周知方法を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>奥出雲町<span class="ex-n">48件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H22・景山孝志</span>
+          <span class="ttl">大雪シーズンの除雪対応</span>
+          <span class="sum">今シーズンの除雪を振り返った町長の所見、除雪委託料の総額見込みと過年度の平均、普通交付税による支援見通し、公共施設の雪害と修繕計画、空き家の雪害倒壊への対応、ガードレールや標識など道路の被害と応急対策、弱者対策事業による独居老人への除雪援助の状況を尋ね、屋根の雪おろし援助策の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田正男</span>
+          <span class="ttl">定住促進の空き家購入</span>
+          <span class="sum">定住促進事業として、個人から空き家の提供の申請があった場合の町による空き家と土地の購入の考えと、Iターン者が15年以上入居した場合や家賃を一括で支払った場合の売却の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・塔村俊介</span>
+          <span class="ttl">情報通信基盤の町づくり活用</span>
+          <span class="sum">奥出雲ごこちの内容とねらい・成果、ネットショップの内容と農家の参加、テレビ電話システムの今後の展開と夜間の体制、情報政策課を廃止した理由と専門人材の採用・育成を尋ね、ホームページでの空き家・求人情報の公開、デザイン専門学校によるケーブルテレビ番組の制作、情報化に対応できる人材育成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田勇</span>
+          <span class="ttl">新たな過疎対策と過疎債</span>
+          <span class="sum">過疎法の改正で対象が拡充された過疎債について、交通弱者のための乗り合いタクシーやバス運行、景観保全活動や空き家の利活用、新産業の創出への活用の考えと上限額を尋ね、公共交通協議会の結論を受けた運行の実施時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・塔村俊介</span>
+          <span class="ttl">既存施設の有効活用</span>
+          <span class="sum">ナカバヤシ工場跡地と田園倶楽部奥出雲跡地の利用状況、空き家バンクの運用状況、交流館三国と道の駅おろちループの集客対策、ヴィラ船通山の冬の運営方針、玉峰山荘の入り込み客減少の原因、佐白の新温泉を含む3温泉のすみ分けと相乗効果の戦略を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・岩田明人</span>
+          <span class="ttl">有害鳥獣対策と空き家</span>
+          <span class="sum">高齢化が進む中での農業振興の見通し、有害鳥獣の捕獲状況と財源、タヌキの捕獲報奨金の引き上げ、牛の放し飼いによるイノシシ対策の研究、増える空き家への対策と逆の発想、傷んだ空き家の撤去を指導する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・内田勇</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">自治会を通じた空き家等実態調査の結果、空き家の整備状況と活用実態、町内在住者も入居できるか、空き家バンク制度の現状、倒壊や犯罪・火災を防ぐため解体の代執行もできる空き家条例の制定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・岩田明人</span>
+          <span class="ttl">財政状況と今後の見通し</span>
+          <span class="sum">平成２３年度決算を踏まえ、平成２１〜２４年度の繰上償還の総額と実質公債費比率の見通し、地方交付税減少の影響、繰上償還の必要性と起債残高の目標、投資的経費や要害山交流拠点施設・空き家対策の財源内訳と町の実質負担、基金の積立計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田雅人</span>
+          <span class="ttl">健康寿命の延伸</span>
+          <span class="sum">１０年後の高齢者の医療費・介護費用の試算、町の男女別の健康寿命、げんきプラン２１推進計画の成果と課題を尋ね、空き家を利用した生活圏内の小規模施設やウオーキングの達成者への特典など健康な高齢者の励みになる仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・塔村俊介</span>
+          <span class="ttl">奥出雲らしい住まいの整備</span>
+          <span class="sum">空き家バンクと空き家調査の活動状況を尋ね、３世代同居住宅や子育て世代・新婚夫婦の住宅取得への支援、移住体験住宅の整備、町や土地開発公社による住宅の購入整備と貸し出しや店舗の貸し事務所化、雇用促進住宅や公社単身住宅の活用策、町内産木材を使った奥出雲のモデル住宅の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田勇</span>
+          <span class="ttl">奥出雲町のブランド化</span>
+          <span class="sum">地域資源を掘り起こし奥出雲そのものをブランドとして売り出すことへの所見、若者や中高年を呼び込むキャッチフレーズの全国募集、特区申請による農地つき空き家住宅でのＵ・Ｉターン者の呼び込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩田明人</span>
+          <span class="ttl">空き家の管理対策</span>
+          <span class="sum">人口流出や後継者不足で増える空き家の対策と、屋根の破片やトタンが庭先に飛んでくるなど管理が行き届かない空き家への町の対応を尋ね、原発事故時に受け入れる２，５００人の住まいに古い空き家を活用する方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田雅人</span>
+          <span class="ttl">Ｕ・Ｉターンの促進</span>
+          <span class="sum">平成２１年度の１４件２２人から前年度の６８件１１２人へＵ・Ｉターンが増えた理由を尋ね、移住者への情報収集・情報提供と意見集約の状況、今年度以降の強化策、Ｕ・Ｉターンフェアの内容、空き家情報の充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・岩田明人</span>
+          <span class="ttl">人口減少への対応</span>
+          <span class="sum">町の人口が２０年のうちに５，０００人ぐらいまで減ると予測されることや空き家の増加を踏まえ、人口減少に対する町の具体策を尋ね、転入者の困りごとなど転入後の状況の確認を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・藤原和範</span>
+          <span class="ttl">定住促進の支援体制</span>
+          <span class="sum">Ｕ・Ｉターン者への定住支援・相談体制の現状と空き家バンクの登録数の増加を尋ね、相談員が欠員の中、神山町や日野町、雲南市の例を挙げて、民間組織等への業務委託や役場内の独立したセクションの設置による体制の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・藤原和範</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">町内の空き家の件数と空き家バンクの登録数・活用状況を尋ね、老朽・危険家屋の所有者等に助言・指導・勧告を行う空き家条例の制定、自治会等と官民一体となった取り組み、高齢者の生きがい対策として空き家を管理する仕組みづくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田雅人</span>
+          <span class="ttl">空き家対策特措法への対応</span>
+          <span class="sum">空き家等対策の推進に関する特別措置法の成立を受けた町の対応を尋ね、国のガイドラインに即した空き家等対策計画の策定と協議会などの体制づくり、実施できる時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田勇</span>
+          <span class="ttl">空き家対策の条例制定</span>
+          <span class="sum">空家対策特別措置法の全面施行を受けた空き家条例の制定時期、特定空き家になる前の予防策と該当する戸数を尋ね、ふえ続ける空き家を有効活用する抜本的な対策のためのプロジェクトチームの設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田雅人</span>
+          <span class="ttl">空き家対策の進捗</span>
+          <span class="sum">おととしの１２月議会で前向きに検討すると答弁のあった空き家対策特別措置法に伴う計画作成や条例制定の進捗状況と特定空き家の指定の時期を尋ね、検討すると答弁した質問について全員協議会などで報告する仕組みを設けるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田雅人</span>
+          <span class="ttl">空家対策特措法への対応</span>
+          <span class="sum">施行された空家対策の推進に関する特別措置法に基づく特定空き家等の判断の今後のスケジュールと体制、代執行の時期を尋ね、所有者への相談窓口の設置や管理を促す啓発活動、危険が切迫した空き家への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石原武志</span>
+          <span class="ttl">老朽空き家の対策</span>
+          <span class="sum">危険家屋など老朽化した空き家の町内での状態や数量の把握と管理の状況を尋ね、所有者が不明な空き家などについて当事者間に入り、集落自治会や常会の要望にあるものへの対処方法を再考するよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・内田雅人</span>
+          <span class="ttl">住宅と避難所の耐震化</span>
+          <span class="sum">町独自の木造住宅耐震化補助事業の拡充として耐震診断への全額補助や寝室など部分的な改修への対象拡大を提案し、県や国への拡充の働きかけ、指定避難所の耐震化の状況、空き家対策特別措置法に基づく所有者の特定と空き家の管理に関する条例の早期制定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・景山孝志</span>
+          <span class="ttl">地域活性化策の推進</span>
+          <span class="sum">町長を囲んで小集団で意見交換するタウンミーティングの実施、新しい仁多庁舎でのイベントや町内温泉めぐりなどの企画立案と四半期ごとの事前周知、２名増員する地域おこし協力隊に横田高校魅力化で期待することと隊員との報告・連絡・相談の政策への反映、まち・ひと・しごとセンターの空き家バンク事業と無料職業紹介所の内容と期待を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・塔村俊介</span>
+          <span class="ttl">産業としての観光振興</span>
+          <span class="sum">奥出雲町の観光産業の概要と入り込み客数や観光関連消費額の算出を尋ね、農林漁業体験民宿などの民泊、大会や合宿の宿泊に向けた空き家や単身者住宅や高田小学校の活用、教育・研修旅行とスポーツ合宿の誘致と受け入れ環境の整備、ランチでの誘客、休業したサイクリングターミナルのレストランの今後、インバウンド観光の可能性、たたらを核とした景観整備、観光戦略の方針と鳥取との広域連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・大垣照子</span>
+          <span class="ttl">若者定住と仕事づくり</span>
+          <span class="sum">若者定住と仕事はセットで行う必要があるとして企業誘致の進捗状況と合宿を体験した企業の意見を尋ね、全域の交通体系、空き家を希望者へそのまま売却する対応、町の自然や食の魅力の発信の取り組みと成果、ＩＴ人材の確保とプログラミングの講座や学校教育、職員派遣による人材育成、町ホームページの充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大垣照子</span>
+          <span class="ttl">リハビリ学院の専門職大学化</span>
+          <span class="sum">島根リハビリテーション学院の専門職大学への移行について、学院運営との違い、県立大学としなかった理由、2学科60人の定員確保の見通しを尋ね、若者住宅の空き家負担の解消と世帯向け住宅の今後、学生の家賃補助を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・糸原壽之</span>
+          <span class="ttl">土地利用の再点検</span>
+          <span class="sum">人口減少で公共施設・教育施設・民間施設・空き家の利活用や撤去、移転が見込まれることから、施設の将来的な適正化を含む土地利用の計画を地区単位で行政と協働して検討する体制の立ち上げを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・内田雅人</span>
+          <span class="ttl">地域おこし協力隊の総括</span>
+          <span class="sum">任期満了を迎える地域おこし協力隊について、定住や就労を含めた3年間の総括と共有、統括アドバイザー退職後の体制、この経験を新たな隊員の受け入れに生かす具体策、空き家に入る隊員への家賃補助の適用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・内田勇</span>
+          <span class="ttl">現役世代の移住推進</span>
+          <span class="sum">社会増を達成した過疎自治体の先進事例を引き、Uターン・Iターン者や就農希望者に町営住宅・空き家を格安で提供する事業の創設と人口減少への危機感を尋ね、町外の児童生徒を受け入れる奥出雲留学、お試し移住による若者の転入増加を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大垣照子</span>
+          <span class="ttl">種子法廃止と仁多米の将来</span>
+          <span class="sum">主要農作物種子法の廃止による仁多ブランド米生産への影響と対策、県とともに国へ根拠法令の整備を求める考え、島根県と連携した米の新品種開発、10年20年先を見据えた仁多ブランド米生産の将来展望を尋ね、農業女子の募集や空き家と農地をセットにした活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・藤原和範</span>
+          <span class="ttl">空き家の活用と対策</span>
+          <span class="sum">町内の空き家の件数と空き家バンクの登録数・活用状況、空き家リノベーションの積極的な推進、空き家等対策計画の概要と特定空き家の認定基準・町民への普及啓発、日南町や浜田市にある解体補助制度の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・藤原和範</span>
+          <span class="ttl">空き家管理と遊休農地の活用</span>
+          <span class="sum">昨年の調査による空き家の件数と空き家バンクの登録数を尋ね、シルバー人材センターと業務提携した空き家の管理委託を提案するとともに、雲南市や日南町の例を挙げ、空き家と周辺の遊休農地をセットで取得する場合に農地取得の下限面積を引き下げる制度の運用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・田食道弘</span>
+          <span class="ttl">文化財研究資料の保存</span>
+          <span class="sum">高橋一郎氏や杉原清一氏が遺したたたら製鉄の歴史や町内の古墳などの研究資料が空き家となった住宅に残っているとして、町の貴重な資源として一元的に集約し大切に保管するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・内田勇</span>
+          <span class="ttl">空き家の活用推進</span>
+          <span class="sum">町内240戸の空き家と15戸の特定空き家を挙げ、空き家対策特別措置法に基づく計画策定と専門家を含むプロジェクトチームの設置、住宅セーフティネット法の登録制度の活用、災害時等に入居できる空き家の活用と基金の創設、ふるさと納税による募集を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・糸原壽之</span>
+          <span class="ttl">限界集落への対応</span>
+          <span class="sum">県の調査で増加した限界集落と危機的集落の定義と町内の箇所数を尋ね、買い物難民や空き家、亡くなって数日後に発見される事態が生じる中での行政の対応と公助のあり方、安全安心な地域づくりの考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・内田勇</span>
+          <span class="ttl">関係人口の創出</span>
+          <span class="sum">地域づくりの担い手を呼び込む関係人口の創出に向け、都市部の若者を農村に受け入れるインターンシップの募集、若者と地域のつながりを支える仕組みの構築、古民家を活用した農泊の推進、若者を呼び寄せる空き家再生事業を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・糸原文昭</span>
+          <span class="ttl">空き家等対策計画</span>
+          <span class="sum">今年度で終了する空き家等対策計画の成果を尋ね、特定空家等の認定方法と対応、屋根だけ残る朽ちた空き家、納屋や蔵も対象とする老朽危険空き家除去の補助の拡充、防火対策、農地付き空き家バンクの推進、他のサイトや住宅情報誌への掲載を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・高橋恵美子</span>
+          <span class="ttl">空き家対策と移住定住</span>
+          <span class="sum">空き家数と空き家バンク登録数、登録が進まない理由、空き家バンクによる移住定住者とのマッチングの成果と就労状況、管理が不十分な危険な空き家への対策を尋ね、飯南町のお試し滞在や農業支援を例に長く移住してもらうための相談支援の在り方と奥出雲ファンを増やす活動を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・内田精彦</span>
+          <span class="ttl">岩屋寺の土地取得</span>
+          <span class="sum">岩屋寺の建築物エリアの土地をオランダ人とオランダ財団が取得したことについて、町の関与、平成24年度に町が取得した周辺山林との境界の協議、天然記念物の岩屋寺の切開の所在、宗教法人の施設か否か、管理不全空き家等への該当、将来の管理の相談への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・内田精彦</span>
+          <span class="ttl">空き家等対策の状況</span>
+          <span class="sum">奥出雲町空き家等対策の推進に関する条例に基づく空き家等対策計画と空き家等対策協議会の状況、条例に該当する町内の空き家の箇所数と対応、老朽建物の撤去補助の実績、町有の建物が条例の対象となるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・糸原文昭</span>
+          <span class="ttl">高齢者・単身者の意思共有</span>
+          <span class="sum">一人暮らしの高齢者や単身者への町の支援、身元保証や死後の手続などの困り事に対する民間代行サービスとは別の支援、認知症や障害のある人への成年後見制度以外の行政の終活支援、住まいを空き家にしないための相談・支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・北村千寿</span>
+          <span class="ttl">空き家のシェアハウス活用</span>
+          <span class="sum">横田高校の３クラス維持や島根デザイン学校の来年６０名の生徒募集に向けた居住の確保のため、横田地区の学校に近い空き家を利用したシェアハウスの検討と、空き家バンクに未登録の空き家を自治会を通じて把握し町全体で学生を受け入れることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・小田川謙一</span>
+          <span class="ttl">高校・専門学校生の住居確保</span>
+          <span class="sum">横田高校と来年度以降毎年６０名の入学を見込む島根デザイン専門学校の入学希望者の受入れに向け、学生寮に加えて下宿やシェアハウスなどによる住居の確保と、空き家活用を含め卒業後も町内に住みたいと思える環境整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・大垣照子</span>
+          <span class="ttl">公営住宅の入居状況</span>
+          <span class="sum">公営住宅の入居可能な全戸数と空き家戸数を尋ね、住宅に困っている人への空き家の柔軟な対応、老朽化した住宅の耐震と建て替えの考え、建て替えによる家賃の上昇への入居者への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・糸原壽之</span>
+          <span class="ttl">町なかの生徒の居場所</span>
+          <span class="sum">中高生が地域と関わる機会を増やすため町なかの空き家などを活用した居場所づくりを挙げ、たたＬＡＢＯの現在の利用状況と今後の利用推進、運営組織を含めた子供たちが地域社会と触れ合う場所の設置について町長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・落合孝行</span>
+          <span class="ttl">空き物件の利活用</span>
+          <span class="sum">空き家バンクなどから受入れ可能な人数と複数人世帯向けの物件数、その充足の認識を尋ね、民間の賃貸住宅の建設やリフォームへの一部助成、小さな拠点づくりの会などと連動した空き家バンクの登録増加と飯南町の例、中古住宅の解体費の一部補助、智頭町を参考にした災害支援と移住対策の掛け合わせを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・糸原文昭</span>
+          <span class="ttl">限界集落への対応</span>
+          <span class="sum">町の限界集落の現状と今後の集落の見通し、限界集落になるまでとなった後の支援を尋ね、出身者会を通じた定年後の帰郷のＰＲを提起し、空き家対策への見解、農業用水路や道路の管理が行われなくなることによる土地の荒廃を防ぐ対策、過疎地域持続的発展計画と第２次総合計画・立地適正化計画との関連を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・高橋恵美子</span>
+          <span class="ttl">高齢者の終活支援</span>
+          <span class="sum">町の空き家の状況と空き家バンクの登録・マッチングの状況、査定できない物件の理由や窓口への相談件数、成年後見制度の利用実態を尋ね、安来市などの例を挙げて町独自の住まいの引継ぎノートの作成への見解を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 4自治体くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
