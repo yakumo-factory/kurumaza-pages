@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>移住・定住とＵＩターン — 当たった質問の全件 | 4自治体くらべ</title>
+<style>
+/* 4自治体くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share-part:#eef1f9;  /* shared by some of the municipalities that hold data */
+  --share-all:#d9e0f4;   /* shared by all of them (stronger than --share-part) */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×自治体（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh-part{background:var(--share-part);border-radius:3px;padding:0 4px}
+table.years li.sh-all{background:var(--share-all);border-radius:3px;padding:0 4px;font-weight:600}
+/* How many municipalities a shared bucket appeared in, printed as text beside the
+   bucket. The two tints alone cannot say "all" without the reader knowing how many
+   municipalities held data that year, so the number is written out - the same move
+   as design-convention 3 "read it by length *and* number". */
+table.years .shn{color:var(--ink-faint);font-size:.85em;margin-left:4px}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+/* The three kinds of empty cell (Req 3.5). They must not look alike, and the
+   difference has to survive colour blindness and a greyscale print, so all three
+   keep one colour and differ by marker glyph and rule style instead:
+     none-zero        measured zero - no marker, no rule
+     none-source      the minutes are not in the source - U+203B + dashed rule
+     none-unpublished the term is left out of the reports - U+25C7 + dotted rule
+   The wording differs as well, but that comes from the data (`notices`); the marks
+   here are a second channel, not the only one. Glyphs, never emoji (file header).
+
+   These three are keyed on the class alone, not on `table.years`, so the legend can
+   show the reader what the two marks mean by carrying the very same classes on an
+   empty span - the glyph is written once, here, and cannot drift from the table. */
+.none-zero{border-bottom:0}
+.none-source{border-bottom:1px dashed currentColor}
+.none-source::before{content:"\203B";margin-right:3px}
+.none-unpublished{border-bottom:1px dotted currentColor}
+.none-unpublished::before{content:"\25C7";margin-right:3px}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;min-width:30px;text-align:center;border-radius:3px;margin:0 4px;padding:0 6px;font-size:.8rem}
+.legend .c-part{background:var(--share-part)}
+.legend .c-all{background:var(--share-all);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">4自治体くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">4自治体くらべ</a> ／ 移住・定住とＵＩターン</nav>
+
+  <h1 class="page-title">移住・定住とＵＩターン — 当たった質問</h1>
+  <p class="page-subtitle">
+    話題の束「移住・定住とＵＩターン」に当たった質問の全件です（全334件）。
+    自治体ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">93件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・加本市郎</span>
+          <span class="ttl">まちづくり三法と中心市街地</span>
+          <span class="sum">まちづくり三法の見直しを踏まえ、都市機能の郊外化に歯止めをかける施策と、中心市街地の人口流出防止と定住対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・桂善夫</span>
+          <span class="ttl">人口減少と定住対策</span>
+          <span class="sum">国勢調査で旧松江市が初めて人口減少に転じた原因、民間保育所の整備や待機児童の解消、訪問型の子育てサポートなどの少子化対策、ものづくり支援や新産業の創出による雇用対策と若者が定住したくなるまちづくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・斎藤菊市</span>
+          <span class="ttl">人口減少と定住対策</span>
+          <span class="sum">国勢調査で判明した人口減少の分析、官民連携による定住推進本部の体制、公営住宅のあり方、低廉な宅地供給の対象地域・価格・規模、中心市街地の高齢者向け住宅を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・加藤富章</span>
+          <span class="ttl">国勢調査と定住対策</span>
+          <span class="sum">国勢調査で20万人に届かなかった人口の原因分析と、東出雲町への流出に歯止めをかける雇用・産業振興策の不足を指摘し、人口20万人を目指す今後の定住対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・森脇勇人</span>
+          <span class="ttl">定住対策と住宅地造成</span>
+          <span class="sum">旧町村地域で支所職員の減少が地域経済に影響する中での人口減少対策、過去５年間の誘致企業と撤退企業の数と国勢調査への影響、東出雲町や斐川町の実績の把握、住宅地造成への今後の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・後藤睆一</span>
+          <span class="ttl">定住施策と企業誘致の推進</span>
+          <span class="sum">松江市の人口推移の見通しと定住推進本部の取り組み、低廉な住宅用地の供給、団塊世代のUIターン受け入れ、入札制度を含む地元企業の育成とIT産業振興、企業誘致の専門部署と宅建業界との提携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・森脇勇人</span>
+          <span class="ttl">過疎地域の定住対策</span>
+          <span class="sum">中期財政見通しで先送りされた旧町村の住宅団地建設事業を踏まえ、美保関など過疎地域の定住対策を達成する市長の具体的なプランを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・加本市郎</span>
+          <span class="ttl">U・Iターンと定住対策</span>
+          <span class="sum">栃木県鹿沼市の第3子対策事業を紹介しつつ、定住人口20万人を目指すなかでのU・Iターンに関するアンケート調査の結果と、空き家活用事業の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・福田安信</span>
+          <span class="ttl">定住人口の推進策</span>
+          <span class="sum">集落の維持に向けて既存町内の隣接に低価格の宅地を確保し購入者への助成や固定資産税の低減を行う定住対策と雇用対策、斜面を生かしインフラのみ整備した2世代が住める低価格の団地の整備を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・三島良信</span>
+          <span class="ttl">定住対策と基盤整備</span>
+          <span class="sum">市長が視察した遊休地の感想と地域事情に合った土地利用、企業進出や住宅団地整備への思い切った施策を尋ね、老朽管・石綿管の取り替えや水源確保、下水道の整備状況、生活道路を含む道路整備への取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・比良幸男</span>
+          <span class="ttl">定住対策と子育て環境</span>
+          <span class="sum">若者の県外流出を踏まえた企業誘致を含む雇用の場の創出、子供を産み育てやすい環境づくり、定住推進本部の取り組みと平成19年度予算、保育所の待機児童や公営と私営の在所率、最も多い保育ニーズ、待機児童ゼロ作戦や民営化へのシフト、男性職員の育児休業取得状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中弘光</span>
+          <span class="ttl">定住対策と線引きの見直し</span>
+          <span class="sum">人口減少を受けた定住対策の取り組み状況と将来展望を問い、空き家を行政があっせんする仕組みづくりと、定住推進のための都市計画の大幅見直しや線引き廃止の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・南波巖</span>
+          <span class="ttl">定住対策と規制緩和</span>
+          <span class="sum">定住対策の検討状況と当面の事業、低廉な宅地・事業用地を確保する地価対策、市街化調整区域の線引きの影響と平成14年からの緩和策の効果、線引き廃止の功罪と緩和策の拡大を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・飯塚悌子</span>
+          <span class="ttl">定住施策の推進</span>
+          <span class="sum">長野県下條村の総合的な若者定住対策を例に、安価な住宅や中学生までの医療費無料化、雇用の場の確保などの必要性を示し、松江市の定住施策促進の現状と課題をどう考えるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・南波巖</span>
+          <span class="ttl">市営住宅の入居基準</span>
+          <span class="sum">若い2人が収入基準を超えて市営住宅に入れない現状から、定住促進・少子化対策として基準額引き上げへの見解を問い、若い世帯向けの住宅施策と旧松江市への定住促進住宅の建設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・森脇勇人</span>
+          <span class="ttl">市立女子高の進路とあり方</span>
+          <span class="sum">市立女子高校の過去6年の就職や進学の動向と進路指導の現状、国際文化観光科の卒業生の進学や観光産業への就職に対する市のサポート、定住対策も含め資格や専門技術を学べる5年制の単位制高校とする案への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・西村びん</span>
+          <span class="ttl">施政方針の重点施策</span>
+          <span class="sum">平成19年度施政方針について、都会に出た団塊世代の退職後のUターン、Iターンの見込みと受け皿、宍道湖・中海の水産振興に触れていない理由と構想、ティファニー問題による観光のイメージダウンを防ぐ情報戦略を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中豊昭</span>
+          <span class="ttl">産業振興と定住対策</span>
+          <span class="sum">域外から資金を稼ぐ産業の振興を訴え、人口増加を前提とした新市まちづくり計画への認識、島根原発３号機関連の人口動態の推定、電力料金減免による工場誘致の動向を尋ね、使用済み核燃料税の課税などを資金とした産業振興を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・福間俊夫</span>
+          <span class="ttl">ふるさと教育の推進</span>
+          <span class="sum">ＵＩターンにつながるふるさとへの愛着を育むため、大谷地区や和名佐地区の例を挙げ、地域の歴史・文化や自然体験に触れるふるさと教育の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・加本市郎</span>
+          <span class="ttl">定住人口20万人の取り組み</span>
+          <span class="sum">総合計画の定住人口20万人目標に関し、定住対策の効果、企業立地支援補助制度による企業誘致の地元雇用の成果、ＵＩターンの若者が安心して住める住宅対策について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・福田安信</span>
+          <span class="ttl">定住対策と人口増加</span>
+          <span class="sum">定住地域振興課の取り組み、人口推計が目標の20万人を下回る中での即効性のある人口増加策、親と子・孫世代の同居を促す取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・出川修治</span>
+          <span class="ttl">定住対策の成果</span>
+          <span class="sum">定住推進特別強化事業で反応や成果が現れた事業、ＵＩターン対策としての市長の手紙への反応とアンケート結果への取り組み方針、恒常的な雇用につながる施設の要望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・比良幸男</span>
+          <span class="ttl">合併後の人口と定住対策</span>
+          <span class="sum">県と市の人口及び高齢化率の中長期的推移、県都として望ましい人口規模、定住対策の現時点の評価、東出雲町からの合併協議の有無と今後の協議の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・片寄直行</span>
+          <span class="ttl">定住対策と交通システム</span>
+          <span class="sum">定住対策として、県の制度に乗った住宅リフォーム助成制度の推進、行政の支援による交通弱者の生活用品の購買システムづくり、新交通システムとまちづくり検討懇談会の検討結果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・川井弘光</span>
+          <span class="ttl">マニフェスト実現の諸課題</span>
+          <span class="sum">マニフェスト実現に向けた財源確保と中期財政見通し、松江大橋の取り扱いの検討時期と河川整備計画の日程・背後地のまちづくり・任期中の大橋川改修の到達目標、中心市街地への移住促進策と地域間バランス、まちづくり基本条例の理念と議会基本条例との関係を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・森脇敏信</span>
+          <span class="ttl">高齢者の生きがい対策</span>
+          <span class="sum">市老連の協力を得て草履やしめ縄、ちまきの注文をとり「ふるさとだんだん宅急便」として発送し、高齢者の生きがいと伝統技術の継承、Ｕターンにつなげることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・三島進</span>
+          <span class="ttl">人口減少と少子化対策</span>
+          <span class="sum">世界の人口増と日本の急激な人口減への市長の認識、少子化対策の切り札と子育て日本一の今後の進め方、高齢者が働き続けられる環境整備、社会増を図る定住対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇勇人</span>
+          <span class="ttl">企業立地と定住促進</span>
+          <span class="sum">震災を機に企業が製造拠点の東西分散を考える情勢をとらえ、松江の魅力をアピールして企業立地と若者の雇用拡大、定住対策を進め県の人口減少の歯止めとする考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・比良幸男</span>
+          <span class="ttl">企業誘致と地元雇用</span>
+          <span class="sum">定住施策としての企業誘致が人口増に結びついているか、IターンとUターンの推移、地元住民を地元で採用するための方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇勇人</span>
+          <span class="ttl">Ｒｕｂｙによる産業育成</span>
+          <span class="sum">震災後に拠点分散やクラウドコンピューティングへの移行が進むなか、Ｒｕｂｙを活用したオープン・ソース・ソフトウエア方式を最大限支援し、産業育成と若年者の雇用拡大、定住促進に結びつける考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・三島進</span>
+          <span class="ttl">東川津地区の地区計画</span>
+          <span class="sum">美保関や島根町など拠点形成が難しい地域のため、八束や本庄・持田などを集約した中間的拠点で雇用創出と定住促進を図る観点から、東川津地区の地区計画についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・加本市郎</span>
+          <span class="ttl">農業後継者と担い手対策</span>
+          <span class="sum">農業後継者が育たなかった原因と育成の手段、中山間地域等直接支払制度と戸別所得補償制度への見解、農山漁村地域活性化基本条例の具体的な取り組みときめ細かな支援、農業参入企業支援事業、UIターン者を含む担い手支援・耕作放棄地対策事業を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森脇勇人</span>
+          <span class="ttl">高校生の定住と雇用</span>
+          <span class="sum">高校の進路指導が機能していないとの認識から、市内各高校の進学・就職の状況と、若者向けの仕事や商業環境の不足を踏まえた高校生の雇用と定住対策への市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・畑尾幸生</span>
+          <span class="ttl">中期財政見通しの政策的意義</span>
+          <span class="sum">数値の羅列で夢がないとして、ものづくりアクションプランや平成の開府元年まちづくり構想、定住対策、子育て、観光振興など5年間の主要施策に照らした中期財政見通しの政策的な意義を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・貴谷麻以</span>
+          <span class="ttl">新産業の創出と起業支援</span>
+          <span class="sum">平成の開府元年まちづくり構想の実現に向け、創業・起業に挑戦しやすい地域とするためのオフィス支援やネットワーク支援と担当課、周辺地域の核となる地域にIターン・Uターン者が住宅をつくれる区域の指定や地域おこし協力隊の活用など、すぐにできることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">ＵＩターン者の減少</span>
+          <span class="sum">ＵＩターン者が過去最多となる中で松江市は2011年度の107人から75％減の27人となった原因と、改善に向けた対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・松蔭嘉夫</span>
+          <span class="ttl">人口減少と定住対策</span>
+          <span class="sum">合併時からの年齢階層別人口の推移と自然減・社会減の要因、周辺地域の減少状況、企業誘致など定住対策を踏まえた現況の分析評価、住みやすさ日本一に向け最重点で取り組む施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・南波巖</span>
+          <span class="ttl">地方創生と人口対策</span>
+          <span class="sum">生まれる子供の数をふやすにはどういう社会になればよいかの考え、雇用確保に向けた市の産業振興の方向性、周辺地域からの流入対策と都会地からのＵＩターン対策の戦略を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・長谷川修二</span>
+          <span class="ttl">地方版総合戦略への提案</span>
+          <span class="sum">木質バイオマス発電の課題と展望、ＣＬＴ建築の可能性、公共施設での木質ペレット暖房・給湯、植物工場の課題と展望、子育て世代と高齢者の移住受け入れ、デマンド型コミュニティーバスの普及を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・畑尾幸生</span>
+          <span class="ttl">定住促進策の成果検証</span>
+          <span class="sum">地方創生に向けてこれまでの定住促進策を検証すべきとして、縁結び市長の手紙の成果、Ｕ・Ｉターンフェアの具体的な成果、就職支援と卒業予定者の希望職種、ＵＩターンへの住宅支援の本市での実績と今後工夫すべき点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・長谷川修二</span>
+          <span class="ttl">農林水産業の担い手育成</span>
+          <span class="sum">農林水産業の業態別の就労人口や年齢構成など担い手の現状と、若いＵＩターン者なども見据えた担い手の今後の展望と育成対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・貴谷麻以</span>
+          <span class="ttl">農業と地産地消の推進</span>
+          <span class="sum">米価下落に対する市単独の所得補償の考え、地産地消の成果と今後の方針、前橋市を例にした学校給食の地産地消の拡大、Ｉ・Ｕターン者が農地つき空き家を取得できる仕組み、地域おこし協力隊の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・長谷川修二</span>
+          <span class="ttl">アクティブシニアの移住策</span>
+          <span class="sum">日本創成会議の提言や国の日本版ＣＣＲＣを踏まえ、地方版総合戦略の一環として若年高齢者の移住策を取り入れること、農林漁業への就業希望者への情報発信、空き家を利用した移住の推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・長谷川修二</span>
+          <span class="ttl">シティーセールス</span>
+          <span class="sum">兵庫県川西市の取り組みや島根県が移住先ランキングで全国3位となったことを踏まえ、シティーセールス・プロモーションの現状と課題、移住ツアー等を含む今後の施策と展望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島進</span>
+          <span class="ttl">人口減少対策</span>
+          <span class="sum">合併後の人口減少の原因、総合戦略の年270人の社会増の達成見込みと手法、誘致企業78社の雇用人数と税収・経済波及効果、本社機能の誘致、地元企業支援の軸と商工会議所との連携、移住定住のワンストップ窓口の人材、人材確保の対象業種と助成制度のルール、介護士・保育士・看護師の子の保育所優先入所、「新しい人の流れ」の意味を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">人口減少対策と地方創生</span>
+          <span class="sum">人口減少・地方創生に向けた市長のリーダーシップ、人口減少を前提とした政策の考え方、日本創成会議の高齢者移住提言への考えの変化と日本版ＣＣＲＣの提案、地方版総合戦略が拙速や自治体間のサービス競争に陥る懸念を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">地方創生と松江版総合戦略</span>
+          <span class="sum">松江版総合戦略の進捗状況と基本となる柱、新市まちづくり計画や総合計画との関係、日本創成会議の高齢者地方移住案への受けとめと施設・人材や財政面での対応、規制を外す特区の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・岩本雅之</span>
+          <span class="ttl">福祉職の人材確保と定住</span>
+          <span class="sum">介護職に対する松江UIターン応援事業の概略、福祉職全体の人材確保・育成・定住に向けた関係者の定期的な意見交換の場の開催、福祉系大学のサテライト校誘致による戦略的な定住対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・南波巖</span>
+          <span class="ttl">地方創生と移住推進</span>
+          <span class="sum">社会増の要因分析と若者流出を防ぐ雇用戦略、県や圏域と連携した移住推進策、松江暮らしモデルの提示、松江版ＣＣＲＣによる高齢者移住の状況、職員が同じ方向を向く体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・畑尾幸生</span>
+          <span class="ttl">総合戦略と農業政策</span>
+          <span class="sum">松江市の新規就農者が12人にとどまる原因、米の生産を中心とする農業法人14組織の現状の評価と育成策や法人化の取り組み、新規就農者のうちUIターン者の減少の評価と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・長谷川修二</span>
+          <span class="ttl">ふるさと教育とＰＲ</span>
+          <span class="sum">都市部からのＵＩターンを促すため東京と松江の暮らしを対比させた市独自のチラシを作成してＰＲすること、そうした情報を用いて小中学生にふるさとのよさを教育活動で伝えることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津直嗣</span>
+          <span class="ttl">シティプロモーション</span>
+          <span class="sum">定住対策や人口増に向けて他地域との違いを伝える情報発信と提供手段の現状を問い、魅力の発掘から発信、還流までを円として描くシティプロモーションに積極的に取り組むべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・石倉徳章</span>
+          <span class="ttl">人口減少防止とＣＣＲＣ</span>
+          <span class="sum">人口を18万人台にとどめるとする総合戦略への自信と総合戦略事業の目的達成見込み、東京圏の元気な高齢者の移住を図る日本版ＣＣＲＣ構想への早期の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・貴谷麻以</span>
+          <span class="ttl">人材育成と暮らしの支援</span>
+          <span class="sum">若者の人材育成とＵＩターンでの県との連携、年配者の経済状況の把握、ひとり親家庭支援と保育園の待機児童への取り組み状況、４月１日時点で定員100％での待機児童解消や保育士の待遇改善の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野々内誠</span>
+          <span class="ttl">危険空き家と空き家活用</span>
+          <span class="sum">特定空家とそれに該当しない危険な空き家の数と具体的事例の解決方法を問い、空き家バンクの充実や仏壇・家財の処分制度など、空き家を定住対策の資源として活用する具体的な展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津直嗣</span>
+          <span class="ttl">地域おこし協力隊の支援</span>
+          <span class="sum">八束町のまちづくりや移住相談支援など松江の地域おこし協力隊の活動を挙げ、現在の評価と来年度の支援や方向性、来年度予算での制度の活用について市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野々内誠</span>
+          <span class="ttl">地域振興を担う人づくり</span>
+          <span class="sum">共創のまちづくり補助金が団体のみを対象としていることから、移住者や「風の人」など地域のキーパーソンとなる個人のスキルアップや研さんへの支援を含め、人づくりを先行させるべきと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・長谷川修二</span>
+          <span class="ttl">学力向上の取り組み</span>
+          <span class="sum">転勤や移住を考える家庭が学力の低さを懸念しているとの声や高校教員の指摘を挙げ、教育でも選ばれるまちとなるよう小中学校の学力を向上させる具体的な取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田中肇</span>
+          <span class="ttl">学校統廃合と地域振興</span>
+          <span class="sum">古江小・秋鹿小・大野小の統合計画を受け、市長部局の地域振興や定住対策を将来児童数の予測に加味して統廃合計画を検討する仕組みの必要性と、当該地域での振興・定住施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津直嗣</span>
+          <span class="ttl">定住対策とＵＩターン</span>
+          <span class="sum">ＵＩターンを地域活性化型とふるさと回帰型に分けた事業化、定住財団や県、ハローワークと連携したモデル事業、地域のキーマンと契約する相談体制、女子高や県立大学の卒業生を観光まちづくり人材として創出する取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津直嗣</span>
+          <span class="ttl">小学校を守る取り組み</span>
+          <span class="sum">鹿児島県伊仙町の例を挙げ、学校の適正化の前に教育委員会だけでなく歴史まちづくり部や産業経済部も含めた定住・移住策を優先して講じ、地域の宝である小学校を守るべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・貴谷麻以</span>
+          <span class="ttl">少子高齢社会の希望</span>
+          <span class="sum">少子高齢化をマイナスではなくプラスに捉える観点から、若者、女性、高齢者、ＵＩターン者の活用をどう考え、そのための方策は何かを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・南波巖</span>
+          <span class="ttl">総合戦略の進捗と展開</span>
+          <span class="sum">第１次総合戦略の中間時点での進捗と計画修正の有無を問い、観光業の強化、建設業等の担い手確保と経営多角化・住宅助成の事業メニュー、地方移住の推進、若い世代の経済的安定と子育て支援、観光の経済波及効果を高める取り組みや地ビール館の活用、産業観光部分離の機構改革の検証を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・細木明美</span>
+          <span class="ttl">農山漁村の定住対策</span>
+          <span class="sum">農山漁村への人口移動と定住対策の考え、地域版まちづくり総合戦略への市長の意気込み、宅地や空き家の情報を集め発信する仕組みづくり、指定地域での土地取得への補助や若い世帯向け賃貸住宅の整備の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・長谷川修二</span>
+          <span class="ttl">ＵＩターン若者の優遇策</span>
+          <span class="sum">都市部からＵＩターンしてきた、またはする希望のある若者の生活再建や安定のための優遇策の現状とその効果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・南波巖</span>
+          <span class="ttl">外国人の観光・雇用・交流</span>
+          <span class="sum">訪日外国人観光客の現状とインバウンド対策の課題・今後の対応策、入管制度改定の受け止め、国際的認知度の向上策、外国人労働者の招請活動と定住対策、アジア諸都市との都市間協定の締結を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉徳章</span>
+          <span class="ttl">人口減少対策と若者定着</span>
+          <span class="sum">若者・若い女性の流出防止に向けた第２次総合戦略の意気込み、県内学生枠の拡大や県内就職の働きかけとＵＩターンの状況、就職氷河期世代の専用窓口、関係人口、石見部や山間部の活性化への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・篠原栄</span>
+          <span class="ttl">移住・定住の取り組み</span>
+          <span class="sum">若者の転出超過を踏まえ、都会地から移住者を増やすため、ふるさと回帰支援センターなど都会の最前線に市の拠点をつくることについて所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・柳原治</span>
+          <span class="ttl">移住定住のプラットフォーム</span>
+          <span class="sum">ＵＩターン者の相談先やつなぎ役がなく人事異動で関係が蓄積されない現状を踏まえ、移住者・定住者や地元のＵＩターン者をつなぐ新たなプラットフォームの検証にスピード感を持って挑戦することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岩本雅之</span>
+          <span class="ttl">ＵＩターンの促進</span>
+          <span class="sum">にほんばし島根館の移転に伴うふるさと定住・雇用情報センターの今後と市の期待やアプローチ、県外のＰＲ拠点と情報窓口の場所と人数、これまでの成果と今後の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・新井昌禎</span>
+          <span class="ttl">社会増270人への挑戦</span>
+          <span class="sum">コロナ禍で就職環境が悪化する中、市内企業に就職する高校生・大学生等とＵＩターン者の目標に対する実績と来春の見込み、新卒者やＵＩターン者の採用拡大への市独自の支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・細木明美</span>
+          <span class="ttl">移住推進と空き家対策</span>
+          <span class="sum">総合戦略策定後の移住者数と全国・県内他市との比較、移住施策の内容と評価、空き家バンクの登録が少ない理由、市街化区域の空き家増加と調整区域の住宅開発、都市計画区域外の空き家のバンク掲載、住みたい田舎ランキングに回答しなかったことへの見解、家財処分費用の支援を含む戦略的な空き家対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・畑尾幸生</span>
+          <span class="ttl">第1次総合戦略の検証</span>
+          <span class="sum">第1次総合戦略について令和元年・2年の人口増減と目標との乖離の要因、出産適齢期女性の減少への対応、減少傾向にあるUIターン者を増やす特色ある施策のアイデアを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岩本雅之</span>
+          <span class="ttl">ＵＩターンに向けた取組</span>
+          <span class="sum">首都圏の非正規労働者の６割が地方移住に興味があるとの報道を踏まえ、官民の総合力で定住者対策に取り組むため、希望者にとって魅力的なコンテンツと力強いメッセージとして何が適切かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">過疎地域の振興</span>
+          <span class="sum">過疎法改正による不均一課税や交付金・起債の変更点、過疎地域の集落再編整備事業等の募集内容、美保関・島根・鹿島町の過疎計画策定の日程、担当部局の強化、定住対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・長谷川修二</span>
+          <span class="ttl">都市部からの移住促進</span>
+          <span class="sum">リモートワークやワーケーションを生かした移住促進策として、移住者へのアンケート調査、首都圏や関西圏を往来する交通費の補助、移住者向けの住居の用意の３点について見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・小澤一竜</span>
+          <span class="ttl">関係人口と都市の発信</span>
+          <span class="sum">コロナ禍以降のＵＩターン者数の推移、関係人口創出の手段としてのマッチングサイト「おてつたび」との連携、テレビやネット配信番組、映画のロケ地、ＳＮＳのインフルエンサーとのコラボなどへの依頼や営業の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・海徳邦彦</span>
+          <span class="ttl">ＵＩＪターンの定住促進</span>
+          <span class="sum">定住促進対策の現状と、日本学生支援機構の企業による奨学金返還支援制度を導入する企業を認定して入札の加点や合同就職フェア、企業版ふるさと納税による基金などで官民挙げて支援する体制の構築を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・長谷川修二</span>
+          <span class="ttl">ワーケーションと移住促進</span>
+          <span class="sum">松江市のワーケーションの現状と移住者の意見、今後の対応策、松江市の知名度や施策をもっと知ってもらう対策と、テレビ出演時の中村雅俊さんの意見や感想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・川島光雅</span>
+          <span class="ttl">人口減少と子育て支援</span>
+          <span class="sum">新成人や出生数の減少傾向と岡山県奈義町の手厚い子育て支援を踏まえ、若い人の定住や移住につながる的を絞った魅力的な子育て支援策の必要性と、松江市の特筆すべき支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島進</span>
+          <span class="ttl">企業用団地の計画</span>
+          <span class="sum">企業に売却できる土地の箇所数・面積・場所、企業向けの造成計画の有無を問い、雇用・定住対策として市民に安価な土地を造成する区画整理事業の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・河内大輔</span>
+          <span class="ttl">奨学金返済支援と定住対策</span>
+          <span class="sum">定住対策として、物価高騰の中で収入の少ない若い世代に重くのしかかる奨学金の返済を支援する制度のさらなる導入を検討すべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・長谷川修二</span>
+          <span class="ttl">教育・子ども施策の推進</span>
+          <span class="sum">移住促進や人口減少の抑止のため、教育や子ども施策に大胆に予算と人員を割き、国にも要望して明石市のように選ばれる全国の先進地となるべきではないかと市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・森脇勇人</span>
+          <span class="ttl">社会人スポーツへの支援</span>
+          <span class="sum">社会人野球チームMJGのための東出雲中央公園野球場整備の10年間の検討状況、U・Iターンに貢献するチームへの支援、スポーツ推進計画に沿った地域スポーツチームへの支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川島光雅</span>
+          <span class="ttl">国の少子化対策と市の独自策</span>
+          <span class="sum">国のこども未来戦略の財源確保が地方財政や住民負担にしわ寄せを及ぼし定住対策や福祉施策に影響する懸念と、合計特殊出生率が低下傾向にある中で本気度のある松江市独自の子育て支援策を打ち出す考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・岩本雅之</span>
+          <span class="ttl">外国人労働者の受入れ環境</span>
+          <span class="sum">人口減少で多くの業種が人材確保に苦慮する中、ＵＩターンの取組に合わせ、外国人労働者が地域の暮らしに溶け込み働きやすい環境を構築するプラットフォームづくりと支援策を検討すべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石倉徳章</span>
+          <span class="ttl">少子化と人口減少対策</span>
+          <span class="sum">松江市独自の異次元的な少子化対策として返済不要の奨学金の拡充や若夫婦への家賃助成を、人口減少対策として新卒者の地元就職促進やＵ・Ｉターン支援、ＣＣＲＣ制度、半島部・山間部での島留学のような取組を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・津森良治</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">空き家の地域別の特徴と発生原因の分析、周辺地域での定住対策の現状、水洗化など初期投資費用への助成制度の創設、部局横断のプロジェクトチームによる公民館区ごとの実態調査と活用策・補助制度の整備への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・小澤一竜</span>
+          <span class="ttl">30代の社会増とＵＩターン</span>
+          <span class="sum">30代の社会増について、コロナ禍前後のＵターン・Ｉターン者の推移と増加要因の分析、ＵＩターン支援事業の周知方法と活用割合を尋ね、ふるさとへの帰属意識を育むため小中学校の校歌を懐かしい風景とともにミュージックビデオ化してアーカイブする案への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・山根宏</span>
+          <span class="ttl">バス運転手の確保策</span>
+          <span class="sum">市が運転手確保に取り組んだ施策と行政ならではの強みを生かした策を尋ね、空いた市営住宅や改修した町家を運転手として移住する人に貸与する案を示し、市長自ら公共交通で通勤する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・長谷川修二</span>
+          <span class="ttl">人口減少への対応方針</span>
+          <span class="sum">人口減少を受け入れるのか増やすのか、減少に対応したコンパクトなまちの必要性、増加を自然増と社会増のどちらで達成するか、こども中心の施策やＵＩターン環境の整備、今すぐ実行する決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島進</span>
+          <span class="ttl">少子化対策と保育料</span>
+          <span class="sum">総合計画に掲げた合計特殊出生率2.22や子育て支援策の満足度60％の目標に対する成果と状況、保育料の無償化やＵＩターン家族への家賃・就労支援など松江独自の思い切った施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長谷川浩司</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">７月に新設された空き家の専用相談窓口の開設後の相談状況と効果、定住促進や地域コミュニティー向上のため空き家を地域資源として生かす施策を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">88件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H18・田淵秀喜</span>
+          <span class="ttl">中山間地域の活性化施策</span>
+          <span class="sum">中山間地域の多面的機能と活性化の重要性の認識を尋ね、県の中山間地域活性化基本条例に基づく本市での取り組みと県との連携、水と緑の森づくり税の活用、自然環境保全・河川整備・Ｉ・Ｕ・Ｊターンを含む定住対策・雇用創出の現状と今後、推進組織やリーダー育成の考え、支線の小河川の管理を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・嶋田豊昭</span>
+          <span class="ttl">団塊世代への対応</span>
+          <span class="sum">地域社会の重要な担い手と位置づける団塊世代について、市内勤労者の退職に伴う税収減少の見通しと、人口増に向けた住宅団地の販売促進や各事業所での定年後の再雇用などの施策を尋ね、定住対策の具体的な方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田淵秀喜</span>
+          <span class="ttl">子育て応援パスポート事業</span>
+          <span class="sum">県内全市町村参加で始まったしまね子育て応援パスポート事業について、安来市の協賛企業・店舗の数とパスポートの交付・利用の実態を尋ね、定住対策につながる子育て支援としてＰＲと事業の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・足立喜信</span>
+          <span class="ttl">宅地開発への支援</span>
+          <span class="sum">Ｕターン・Ｉターン促進のため、旧市町に何カ所かを限定した民間宅地開発への一定の支援の可否と、今後の市の宅地開発の考えを尋ね、市外に居住する公務員や通勤者への市内居住の呼びかけを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・足立喜信</span>
+          <span class="ttl">定住対策の専門組織</span>
+          <span class="sum">松江市の定住振興課や江津市の定住推進協議会の例を挙げ、結論を早く出して対応できるよう、市に定住対策課あるいは協議会などを立ち上げる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・中村健二</span>
+          <span class="ttl">汐彩団地の販売促進</span>
+          <span class="sum">定住対策としての住宅施策について、ハーモニータウン汐彩団地の販売実績の推移と販売促進に結びつかない要因を尋ね、分譲残地の買い取り負担を見据えた今までと違う発想の対応策、専任職員の人数、風評被害への対応、校区の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中武夫</span>
+          <span class="ttl">空き家のＩ・Ｕターン活用</span>
+          <span class="sum">農地を持つ農家の空き家が増える中、団塊の世代などのＩターン・Ｕターンの受け皿として空き家を活用できないかと市全体の空き家状況を尋ね、空き家になった段階で早く住める体制づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・中島隆夫</span>
+          <span class="ttl">人口構造の変化への対応</span>
+          <span class="sum">高齢化率28.4％・年少人口13.1％の受け止めと見通し、高齢化と少子化が進む中山間地域で安心して暮らすための取り組み、閉校校舎の再利用と維持管理、定住促進条例の制定、山間地での共同アンテナの設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・上廻芳和</span>
+          <span class="ttl">中山間地農業の担い手</span>
+          <span class="sum">農業従事者の高齢化と後継者不足を背景に、集落営農の進捗状況と促進の取り組み、退職者や離職者など新たに農業につく人への支援、緊急雇用対策を活用したふるさと公社の充実と担い手育成の考え方を尋ね、21年度のＵ・Ｊ・Ｉターン者の受け入れ見込みも質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田淵秀喜</span>
+          <span class="ttl">景気悪化下の経済と雇用</span>
+          <span class="sum">農林水産業や商業・サービス業、医療福祉など産業別の経済状況と新規進出事業者の状況、雇用状況と有効求人倍率、市職員の臨時的採用、中小企業金融対策事業、医療福祉分野の雇用、メンタルヘルス対策、盆や正月のお迎えバスなどＵＩターンの取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・嘉本祐一</span>
+          <span class="ttl">雇用・定住対策と産業振興</span>
+          <span class="sum">経済危機による雇用不安を背景に、自己破産や企業倒産件数と中小企業への金融対策費の推移、市民相談室の目的と相談実績、産業サポートネットやすぎや就農支援事業の内容と実績、人材あっせんや求職・求人、定住化の生活相談を行う場を市独自に設ける考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・上廻芳和</span>
+          <span class="ttl">Ｉターン者等の住宅確保</span>
+          <span class="sum">市営住宅があき待ちとなる中で、Ｉターン者や農業従事者のために旧教員住宅を最小限の予算で整備して使えるようにすることや県の住宅を借りられる体制づくりなど、安価な住宅を緊急に確保する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・嘉本祐一</span>
+          <span class="ttl">古民家を活用した定住対策</span>
+          <span class="sum">汐彩住宅団地へのＵＩＪターンを促す体験バスツアーに加え、田舎暮らしにあこがれるＩターン者向けに空き家の優良な古民家を利用する定住対策の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田淵秀喜</span>
+          <span class="ttl">定住対策の取り組み</span>
+          <span class="sum">人口減少が続く中での定住対策の現状認識、中山間地域での具体的な取り組み、地域センターによる地域特性を生かした活動と支援制度の必要性を尋ね、定住対策を一元的に担う部署や組織を設ける考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・上廻芳和</span>
+          <span class="ttl">市長が描く安来像</span>
+          <span class="sum">庁舎が建てば中心市街地の空洞化に歯止めがかかるのか、現庁舎の場所を人の集まる健康の場とする発想、広瀬を市営住宅建設によるベッドタウンとして人口を増やす策、住宅問題を含めたＵＩターン者を人口増につなげる取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田淵秀喜</span>
+          <span class="ttl">雇用状況と今後の取り組み</span>
+          <span class="sum">定住の拡大には雇用の場の確保が重要との視点から、市全体と産業別の雇用状況、新卒者やＵＩターン希望者、障害者、高齢者の雇用状況、課題を抱えた若者への就職支援を尋ね、地元人材を活用した就労指導の仕組みづくりや東部職業訓練センターの活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・樋野智之</span>
+          <span class="ttl">まちづくりと空き家の定住対策</span>
+          <span class="sum">人口減少と無人化エリアの拡大を見据え、まちづくりで重視する施策と横断的組織、地域センター長を実践部隊の長とする提言への考え、安来・広瀬・伯太の空き家の状況把握と空き家を活用した定住施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉刻夷</span>
+          <span class="ttl">国勢調査結果と定住対策</span>
+          <span class="sum">国勢調査の速報値で安来市が5.1％減となったことを踏まえ、定住支援連絡会議の実働状況と定住希望者の実態、施政方針が掲げる人口流出の抑制と少子化対策を具体化する平成23年度の方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉刻夷</span>
+          <span class="ttl">国有地・県有地の実態と活用</span>
+          <span class="sum">市内の宅地として認められる国有地・県有地とそれに附帯する未活用・休止中の建造物の実態と課税状況を尋ね、病院横の旧保健所跡の駐車場化や、川本町の例に倣った県の空き官舎の定住対策への有効活用の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・嘉本祐一</span>
+          <span class="ttl">定住対策</span>
+          <span class="sum">安来市と両県・旧市町ごとの人口推移、総合計画での定住対策の位置づけ、人口減少の原因と定住に必要な要素、これまでの施策の実績と評価、新年度の取り組み、推進部署と定住支援連絡会議、県の定住支援員を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉刻夷</span>
+          <span class="ttl">花嫁花婿対策の推進</span>
+          <span class="sum">中海市長会の少子化・定住対策の課題として検討するとした前回答弁から半年の進捗を尋ね、佐賀県伊万里市の婚活応援課の設置例を挙げて市の機構への取り入れと中海圏域での発言の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・丸山征司</span>
+          <span class="ttl">若者の定住化対策</span>
+          <span class="sum">周辺市町村への若者の流出を踏まえてベッドタウンに特化した定住対策を求める中で、汐彩団地の残地について定期借地権制度による土地の長期貸し付けの導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中島隆夫</span>
+          <span class="ttl">中山間地域対策</span>
+          <span class="sum">担い手育成支援や農林畜産業支援、買い物・移動手段確保支援、定住対策などを総合的に進める中山間地域対策と、ＵＩターンの受け皿づくりを今後どう進めるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">住みよいまちづくり</span>
+          <span class="sum">消防団員の報酬・出動手当・訓練手当の検討状況、イエローバス停留所の上屋の整備、定住に向けた中山間地への農業企業やＵＩターン者の誘致、中山間地の住宅確保、定住促進の専門課の設置と中山間地域プロジェクトチームの構成と活動を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・丸山征司</span>
+          <span class="ttl">子育て支援と教育と定住促進</span>
+          <span class="sum">乳幼児・児童医療費助成の市独自の継続・拡充、小児科診療の充実と産科の復活、小中学校単位の国際交流への援助、給食センター建設計画の進捗、幼保一体化と次の認定こども園、放課後児童クラブの状況と学校から離れたクラブの安全、児童へのイベント観賞・観戦の働きかけ、高校までの通学費補助の拡充、進路指導とふるさと教育、専門学校の誘致について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・河津清</span>
+          <span class="ttl">定住対策としての子育て支援</span>
+          <span class="sum">邑南町の日本一の子育て構想の例や市長のマニフェストを挙げ、乳幼児医療費助成の拡充、準要保護へのクラブ活動費・生徒会費・ＰＴＡ会費を含めた就学援助の拡充、福祉医療への市独自の上乗せ、定住を図るための住宅対策について、他市町村に先行する市長のビジョンを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">快適環境のまちづくり</span>
+          <span class="sum">Ｉターン・Ｕターン希望者に対応する空き家の状況把握と所有者との協定に至る市の窓口、県の職員官舎等の有効活用、凍結している切川バイパスについての県との協議と今後の進め方、安来道路西地区へのスマートインター設置に向けた国との協議状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・作野幸憲</span>
+          <span class="ttl">活力発揮のまちづくり</span>
+          <span class="sum">10年先を見据えた幼児教育と子育て支援、社会教育担当部局に置く地域コーディネーターの人選と家庭支援の進め方、盆野球の帰省者へのＵターン働きかけ、たたら製鉄を題材とする映画とのタイアップを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・樋野智之</span>
+          <span class="ttl">ＵＩターンと空き家対策</span>
+          <span class="sum">合併以降のＵＩターン誘致の施策と実績、ふるさとモニターツアーの効果、定住支援の体制や窓口の一本化、定住希望者に向けたホームページの改善、空き家の実態調査と空き家バンク、所管の一元化、空き家適正管理条例の制定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・上廻芳和</span>
+          <span class="ttl">中山間地域対策と定住対策</span>
+          <span class="sum">中山間地対策と定住対策が緊急の課題だとして、3月議会で求めた専門課の設置状況、空き家調査の状況と今後の定住への結びつけ方、花嫁花婿対策の現況、地元木材を使った木質チップ利用による山林整備と雇用、25年度の50余りの中山間地対策施策の主なもの、集落ビジョン推進事業の取組集落数と担当職員が抱える課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">住みたくなるまちづくり</span>
+          <span class="sum">人口減少の推計を踏まえ安来・広瀬・伯太の均衡ある発展に向けたまちづくりの方針を尋ね、あらエッサくんの活用と各地域のゆるキャラ、空き家・商店街調査を安来町内に限った理由、定住計画とＵターン支援の助成、ふるさと読本の活用、広瀬の古民家とイエローバス広瀬駅舎・広瀬図書館・広瀬庁舎の方針、尼子の史跡の誘導サインとスマートフォンを使った観光案内を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・作野幸憲</span>
+          <span class="ttl">参加と交流のまちづくり</span>
+          <span class="sum">新安来市発足10周年を機に市の木（竹）の再考と記念式典までの結論、なかうみマラソンを有名ゲスト頼みから市民のための大会へ移行する検討、印刷物に頼らないＩＣＴを活用した情報発信、空き家登録物件をふやす方策と情報発信、専属の定住支援コーディネーター配置など定住促進の体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・樋野智之</span>
+          <span class="ttl">均衡あるまちづくり</span>
+          <span class="sum">均衡あるまちづくりの課題として、旧市町別の空き家の現状と家主の意思確認、空き家解消策やＵＩターン者への支援策、目標人口と将来推計の乖離を踏まえた人口流入策を尋ね、図書館3館の格差への対応と開館日・時間の拡大、広瀬図書館の整備時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・作野幸憲</span>
+          <span class="ttl">子育て支援を柱にした定住促進</span>
+          <span class="sum">人口の現状と将来推計、人口減少の歯止めに必要なもの、次世代育成支援行動計画の庁舎内総合推進体制と点検評価、全国学力テストの結果と独自の学力向上策、農林業の担い手や就学困難者向け奨学金制度の創設、市外向けホームページの改善、定住企画課の役割を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中武夫</span>
+          <span class="ttl">定住企画課の役割</span>
+          <span class="sum">機構改革で新設された定住企画課の基本的な考え方と従来の企画課との違い、長年調査中が続く空き家対策、雇用やＢＣＰを取り入れた全市的な定住促進への市長の意気込み、商業施設など人が集まる場への窓口の出張を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・井上峯雄</span>
+          <span class="ttl">定住対策と人口減少</span>
+          <span class="sum">総合計画の目標人口4万5,000人に対し国勢調査で2,003人減少し社会減が続く現状をまちづくりのリーダーとしてどう見るかを尋ね、現在の人口と将来人口予測、今後の定住施策の展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・田中明美</span>
+          <span class="ttl">人口対策本部の戦略と施策</span>
+          <span class="sum">人口対策本部が決定した４つの基本戦略の説明と県への要望、今後のスケジュールを尋ね、出生率アップ戦略として出生人数と合計特殊出生率、不妊治療助成の内容と実績、住みたい町なか戦略として定住促進の住宅補助を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・澤田秀夫</span>
+          <span class="ttl">人口減少問題への取り組み</span>
+          <span class="sum">人口対策本部の論議内容と具体的目標・開示時期、結婚相談はぴこの部屋の実績と評価、第3子以降就学前保育料無料事業の対象の考え方と対象世帯数・事業費・全面無料化した場合の増額と見直しの考え、UIターン者の実績と支援の方向性、工業団地適地選定調査の結果と今後の方向性、市民への情報発信の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・上廻芳和</span>
+          <span class="ttl">可燃ごみの処理方法</span>
+          <span class="sum">清瀬で処理できなくなり境港市の業者で処理している可燃ごみについて、処理方法に関するこれまでの調査研究の実態と、雇用や定住対策にもつながる市内での民間委託による処理への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・上廻芳和</span>
+          <span class="ttl">地方創生と人口対策</span>
+          <span class="sum">ＵＩターン者の定住には住む所と職場が大切との観点から、トップセールスの今後の考え方、市内事業所への企業訪問による事業拡大と雇用増、企業誘致に向けた工業団地の考え方、空き家調査の分析結果と平成27年度に確保する空き家の目標、市外からの通勤者の意見把握、卒業生が地元に残った場合の特典制度、人口対策の考え方と目標数値を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・樋野智之</span>
+          <span class="ttl">地方創生交付金の活用</span>
+          <span class="sum">地域住民生活等緊急支援のための交付金について、あらえっさ振興券の反省点を踏まえたプレミアム付商品券の計画と、定住サポート事業での積極的な情報発信や関係機関との連携、介護福祉士応援事業などと結びつけたシングルマザーの移住促進策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・永田巳好</span>
+          <span class="ttl">大型施設整備と財政負担</span>
+          <span class="sum">議決された市民会館・庁舎・給食センターの3事業について、今後ランニングコストが増える中で少数意見を反映できなかったことへの市長の見解を尋ね、人口減少を踏まえ子育て支援など人への投資で定住促進につなげる大胆な政策転換を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・田中武夫</span>
+          <span class="ttl">定住促進施策</span>
+          <span class="sum">市外から通勤する約4,500人の就労者に市内へ移り住んでもらう施策と重点的な取り組み、民間借家の少なさを踏まえ防音やゆとりのある住宅に絞り家賃の上限を設ける補助の提案、女性のひとり親家庭の受け入れによる人手不足の解消、ＳＮＳでの安来の魅力発信を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・岩田拓郎</span>
+          <span class="ttl">中山間地域の農業と定住</span>
+          <span class="sum">給食センター稼働を見据えた関係機関と連携した新しい視点での産地化や基盤整備、中山間地域総合整備事業の概況と見通し、獣害の被害状況と防止の取り組みと成果、中山間地域における拠点集落の整備、Ｉターン・Ｕターン・市内の移住への対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・澤田秀夫</span>
+          <span class="ttl">人口対策と市職員</span>
+          <span class="sum">人口対策の観点から、安来市・松江市・米子市に住む市職員の人数、職員の空き家改修事業補助金や定住促進支援事業補助金の利用実績、地域消防団への入団状況、平成26年度の研修実績と27年度の研修計画を尋ね、再質問で住居に関する補助金制度への担当部局の考えと職員の市外転出等への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・中島隆夫</span>
+          <span class="ttl">人口減少への対策</span>
+          <span class="sum">幼児等医療費助成や結婚活動支援などに重点的に予算措置してきた人口対策を踏まえ、人口減少に対処するため今後どのような対策を立て施策を展開するのか、出産・子育て・教育環境の整備と定住促進策を含めて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">安来版CCRCの検討</span>
+          <span class="sum">総合戦略と人口ビジョンで18歳未満、20代後半から30代前半、50代半ばから60代前半に年代を絞った人口対策を問い、東京圏や関西圏の50代半ばから60代前半のUIターンを促す日本版CCRCの安来独自版の仕組みを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田中武夫</span>
+          <span class="ttl">次世代の担い手育成</span>
+          <span class="sum">ひとり親のＩターン受け入れなど第２次総合計画での次世代の担い手育成について、鳥取県と比べた小児医療費助成の水準と米子市の取り組み、第３子以降保育料無料化の０歳からへの拡充、病児・病後保育の現状、老朽化したつどいの広場の施設整備、認定こども園移行のメリットと私立が含まれない理由、指定管理保育所の民営化の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・丸山征司</span>
+          <span class="ttl">移住定住とシティセールス</span>
+          <span class="sum">移住定住支援に向け、地方版総合戦略と総合計画の概要と進捗、人口動態の経年資料の作成と転出入者の追跡・意向調査、ＵＪＩターン別の施策、シングルマザーやクリエーターの誘致策、移住交流情報ガーデンでのＰＲ、ふるさと納税の改定への対応、転出者減少策、市外を意識したホームページ、シティプロモーション、山中鹿介の大河ドラマ化や渡部お糸の朝ドラ化、フィルムコミッションを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐伯直行</span>
+          <span class="ttl">空き家対策と空き家条例</span>
+          <span class="sum">定住促進事業の対象とならない特定空き家等への見解、市内の空き家の推移、全国と県内の空き家条例の制定状況と制定自治体で起きていること、安来市として空き家条例を制定する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田淵秀喜</span>
+          <span class="ttl">第２次総合計画と財政見通し</span>
+          <span class="sum">第２次総合計画と人口ビジョン・総合戦略の整合の整理と総合計画の決定が戦略に後れた議会審議の運びへの見解、３大事業の人口・定住対策への活用、切川バイパスの完成遅れによる市民会館の指定管理への影響と市の取り組み、中期財政見通しと収支均衡の目標時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・嶋田豊昭</span>
+          <span class="ttl">総合計画と総合戦略の策定</span>
+          <span class="sum">総合計画を上位計画として策定スケジュールを前倒しするか総合戦略と同時策定できないか、企業誘致・Uターン対策・観光振興の方針、限界集落の現状把握と対応、空家対策特別措置法など新たな課題の計画への勘案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田中武夫</span>
+          <span class="ttl">職員の市外居住と定住対策</span>
+          <span class="sum">人口減少が地方交付税に響く中、安来で育ち市役所に就職しながら市外に住む職員の理由を把握しているかを尋ね、身近な職員への聞き取りで原因を調べることを定住化の近道として求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">花嫁花婿対策</span>
+          <span class="sum">花嫁花婿対策に特化した平成26年度施策の検証結果と実績、平成27年度の施策・計画と今後の方針を尋ね、再質問で出雲市の縁結び定住課を例に定住対策も含めた婚活推進室を設置する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">農林業と地方創生</span>
+          <span class="sum">安来版総合戦略における農林業の位置づけと新たな施策、木材ストックヤードの整備と林業の方針、地域おこし協力隊の応募状況と現状、安来独自の受け入れ要件、市内全域・多職種での受け入れ、退任後の定住対策、県の半農半Ｘの活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">ＵＩターンと半農半Ｘ</span>
+          <span class="sum">アグリ体験セミナーｉｎやすぎの過去の参加者数と、農業関係のＵＩターン者の過去５年間の出身地域・年代・栽培品目・就農形態の内訳を尋ね、市内３病院での半農半介護の現状、世帯全体の所得確保に向けた兼業と雇用情報提供の方針、安来市雇用情報連絡会議の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・遠藤孝</span>
+          <span class="ttl">定住対策と子育て支援</span>
+          <span class="sum">子育て支援の財源と効果・実負担の軽減、給食費の無料化の決断、トレッキングルート整備や植樹祭の２市１町開催の働きかけなどのシティプロモーション、集落単位の総合的なビジョン策定、出先事務所への職員常駐、地域おこし協力隊の定住への評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・丸山征司</span>
+          <span class="ttl">水道料金の改定</span>
+          <span class="sum">水道料金改定の議案上程に至る経緯と改定の理由・必要性、議員懇談会での意見の反映、根拠人口が100名増減した場合の影響を尋ね、移住定住への影響から総合戦略の検証まで改定を見合わせる考えや住民説明会など市民への周知の状況、マンホールカードとダムカードの活用や水道水のペットボトル販売による水道事業のＰＲを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">若者の社会移動とＵターン</span>
+          <span class="sum">総合戦略の基本目標２の数値目標である20代の社会移動の現状を尋ね、住民票を移さず市外へ進学した者の実態、10代後半の市外就学者との差し引きでの比較、女性のＵターンが少ない原因と女性が働きたい産業の拡大、市外の学生への就職フェア等の支援、平成17年に社会増減がほぼ無かったことへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・丸山征司</span>
+          <span class="ttl">雇用の場と企業誘致</span>
+          <span class="sum">定住促進に向けた職住近接と中山間地域の雇用の場の確保、オーダーメード貸工場の今後の展望、新工業団地の造成計画との関係、都会の若者などの起業誘致についての見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐伯直行</span>
+          <span class="ttl">30代の定住促進</span>
+          <span class="sum">総合戦略策定後の近隣市を含めた30代の社会移動の進捗、県の助成を活用した民間賃貸住宅建設助成事業を平成30年度以降も継続する考え、新規受け付けを終了した定住推進支援事業補助金を復活させない判断に変わりはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・丸山征司</span>
+          <span class="ttl">シングルマザー移住施策</span>
+          <span class="sum">ひとり親世帯の移住を促進し再婚支援も行うシングルマザーさんいらっしゃい施策の提案後の状況と、今から本格的に取り組む考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島静夫</span>
+          <span class="ttl">人口対策への市民の協力</span>
+          <span class="sum">安来高校と情報科学高校の県外留学生が暮らしやすい環境づくりを要望したうえで、通告外ながら、ＵＩターンなどの人口対策で市民にどのような協力を求めたいか、市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・遠藤孝</span>
+          <span class="ttl">人口減少対策の取り組み</span>
+          <span class="sum">人口減少対策として、市の人口動向と生産労働人口、居住実態の把握、成婚数50組の目標の実現性、企業進出を妨げる市街化調整区域の線引きの廃止や緩和区域の開発・市街化区域の拡大、中海架橋の知事への要望、定住・移住の成果とマンパワーによる移住支援、農家住宅事業の継続、給食費の無料化、子育て施策と放課後児童クラブの支援員確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐伯直行</span>
+          <span class="ttl">健康寿命の把握と発信</span>
+          <span class="sum">長野県の栄養調査や信州ＡＣＥプロジェクトの導入、島根県女性の健康寿命が減退する中での市の健康寿命の推移の把握、独自に算出した健康寿命を公表し移住・定住促進につなげる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・丸山征司</span>
+          <span class="ttl">婚活支援の拡充</span>
+          <span class="sum">はぴこ及び市の婚活支援の活動内容・成果・検証と展望、目標成婚数や予算の拡充余地、体験型婚活やオープンデータ・ＡＩの活用、民間婚活との連携と会員情報の共有、山陰・大阪・東京在住者のＵターン型婚活、婚姻で離職する公務員等のキャリアを生かす圏域連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島静夫</span>
+          <span class="ttl">子育ておでかけＭＡＰの情報</span>
+          <span class="sum">移住ガイドに載る子育て支援サイトの子育ておでかけＭＡＰで買い物・飲食店・体験の３項目の情報が極端に少ない理由と、子連れで利用しやすい店舗へ市から掲載を働きかける考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島静夫</span>
+          <span class="ttl">市立病院の看護師募集</span>
+          <span class="sum">移住パンフレットに載る安来市立病院の項目について、平成30年度採用の看護師の募集人数と応募者数、看護師の募集を毎年行っているか、院内保育の運営形態と利用状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・丸山征司</span>
+          <span class="ttl">市立病院会計と市財政</span>
+          <span class="sum">一般会計から病院会計への繰入金を１億円減額した根拠と病院会計の現状、資金不足比率の早期改善に向けた繰り入れ、当初予算で減額した１億7,000万円と定住促進補助の今後の方針、予算・決算と中期財政計画の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・金山満輝</span>
+          <span class="ttl">市長公約の実現</span>
+          <span class="sum">市長が掲げた人口減少対策・定住対策の公約の実現に向け、公共施設管理計画を初めとするスクラップ・アンド・ビルドを実行し、市長のリーダーシップのもとで各種施策が実効あるものとなるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島静夫</span>
+          <span class="ttl">放課後児童クラブの運営</span>
+          <span class="sum">移住ガイドにある放課後児童クラブについて、市内13施設で利用できる学年が異なる理由と預けられない家庭への考え、長期休業中に短期で学童保育を望む家庭への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島静夫</span>
+          <span class="ttl">移住ガイドとお試し住宅</span>
+          <span class="sum">ふるさと回帰支援センターの調査を踏まえ、移住者向けパンフレットの配布先と発行回数、平成29年度のお試し住宅の利用者数と地域住民との交流、利用目的と達成度、利用者の交通手段、町なかへのお試し住宅の設置と候補地を、運転免許取得への助成の提案も交えて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・作野幸憲</span>
+          <span class="ttl">農業と他業種の連携</span>
+          <span class="sum">中山間地域の草刈りや防護柵の設置・撤去を建設業者など外部へ委託できるよう中山間地域等直接支払制度で対応できないかを尋ね、農福連携の作業実績と市の考え、新規就農者の過去５年の推移とＵＩターン者・雇用就農と自営就農の比率、半農半Ｘの現状、市長の農業ビジョンを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・丸山征司</span>
+          <span class="ttl">雇用拡大と定住促進</span>
+          <span class="sum">大手特殊鋼工場の製造ライン増設を機にした雇用拡大と市外からの転入・定住の支援、三世代世帯定住補助金の新婚期間を１年から３年とすること、定員に達した定住促進補助金の補正予算による復活を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島静夫</span>
+          <span class="ttl">ＵＩターン者の就農支援</span>
+          <span class="sum">移住パンフレットに県の制度しか載っていない就農助成について、市独自のＵＩターン者向け就農助成金や給付金の有無、研修生が研修中に収入を得る仕事のあっせん、半農半Ｘの兼業となる職業のあっせんを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島静夫</span>
+          <span class="ttl">移住・定住化対策</span>
+          <span class="sum">ハーモニータウン汐彩の新築支援などの成果と目標との比較、購入者の属性、汐彩以外の新築戸数とその要因分析、移住希望者の情報収集手段、ＵＩターンの対象地域・年齢層と他自治体との差別化、ウェブ検索で上位に出る工夫と大阪への絞り込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岩崎勉</span>
+          <span class="ttl">安来市の農業振興</span>
+          <span class="sum">令和元年度の農業政策の考え方と将来像、高収益作物振興の現状と課題、機械やパイプハウス導入への支援、鳥獣被害防止対策、ＵＩターン新規就農者と農家後継者の確保策を尋ね、産地化と販路確保の主体的な取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岩崎勉</span>
+          <span class="ttl">行財政改革と分庁方式</span>
+          <span class="sum">分庁方式のメリット・デメリットとテレビ会議等の稼働状況、全国の分庁方式の市の数、市長の執行体制、富田山荘と憩いの家の方向性、婚活支援と移住者受け入れの実績、行革大綱と市立病院経営整備検討事業の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・葉田茂美</span>
+          <span class="ttl">要望書の扱いと分庁舎方式</span>
+          <span class="sum">市民から提出される要望書の件数と処理・対応の方法、伯太と広瀬の地域センターが果たすべき役割を尋ね、伯太地域の振興策や定住対策、厳しい財政状況の中での分庁舎方式に対する市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・中村健二</span>
+          <span class="ttl">農業振興の基本方針</span>
+          <span class="sum">米の生産調整や直接支払制度の廃止を踏まえた農業振興の基本方針と、職員の育成を含む市の生産普及活動の考え、ＵＩターン者が生活できる農業施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・原瀬清正</span>
+          <span class="ttl">定住施策</span>
+          <span class="sum">現在の定住促進の助成金制度、民間賃貸住宅家賃助成事業の検証と定住の成果、令和元年度の新築家屋の軒数と傾向、近隣自治体の助成制度を尋ね、市内事業者での新築等へのマイホーム取得補助や固定資産税減免の創設を含む今後の定住施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・清水保生</span>
+          <span class="ttl">空き家の活用と定住対策</span>
+          <span class="sum">市内の空き家の把握方法と空き家バンクの登録件数、登録が増えない現状と把握済み空き家の状態、ホームページ以外の情報提供や定住希望者の引込み戦略、定住世帯への市独自の優遇措置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三原哲郎</span>
+          <span class="ttl">農業の担い手支援対策</span>
+          <span class="sum">圃場整備を控えた飯梨地区などで若い担い手やＩターン者が未経験でも農業に取り組める支援策、情報や人材を共有する各法人の連携の取組、インボイス制度が農家や法人に及ぼす影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・福井加代子</span>
+          <span class="ttl">高校魅力化事業の展開</span>
+          <span class="sum">安来高校と情報科学高校に高校魅力化推進員が配置されたことを受け、令和４年度の事業展開の内容と、Ｉターン者の講演など生徒が地元に誇りを持てる取組についての市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・清水保生</span>
+          <span class="ttl">少子高齢化下の地域づくり</span>
+          <span class="sum">人口定住対策の個別評価と実績の乖離の分析と評価の観点、地域ビジョンの策定状況と支援、地域運営組織の説明、交流センターの部会制移行と職員の増員・処遇、職員の地域活動への関与、政策推進部・地域センターの関わり、小学校再編後の学校と地域の関わりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・清水保生</span>
+          <span class="ttl">地域を守る取組</span>
+          <span class="sum">空き家を移住・定住策として活用するための組織体制を尋ね、廃校舎の利活用や交流センターを核とした地域づくりにも触れ、オールやすぎの意味と地域の存続・成長に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原瀬清正</span>
+          <span class="ttl">市長が描く本市の未来予想図</span>
+          <span class="sum">地域医療提供体制と市立病院の５年後・10年後の姿と老朽化対策、2025年問題に向けた介護の支え方、少子化対策と産科病院の設置、学校再編後の交流センターの在り方、地域消防と防災活動、農林水産業の課題と将来像、定住対策と住宅地開発、渋滞緩和と道路整備・維持管理、公共交通、公共施設の在り方、廃棄物処理と災害廃棄物処理について市長の未来予想図を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐々木厚子</span>
+          <span class="ttl">婚活支援</span>
+          <span class="sum">少子化対策と定住促進の観点から市の結婚支援事業の取組と実績を尋ね、しまね縁結びサポートセンターのしまコをめぐる県との連携、市独自のマッチングアプリ運営の考え、婚活支援情報のさらなる周知を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">88件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・珍部全吾</span>
+          <span class="ttl">出身地会との連携</span>
+          <span class="sum">関東で７４１名、近畿で2,３６６名を数える旧２市４町ごとの出身地会を新市の大きな財産だとして、産物の売り込みやＵターン、Ｉターンに向けた今後のアプローチ、新出雲市として一本化した出身地会をつくる考え、多伎の５０万円から佐田の１０万円までばらつきのある補助金の是正、市長自らが各会へ出向くのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・宮本享</span>
+          <span class="ttl">行財政改革と組織改革</span>
+          <span class="sum">行財政改革を断行するにあたり最初に行うべき重要な取り組み事項は何かを尋ね、地域活性化や定住促進により歳入を増やす来年度の代表的な施策、外郭団体の見直しの具体的な方法、新市主要プロジェクトの推進体制として新設されるプロジェクト事業担当課の名称を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・勝部順子</span>
+          <span class="ttl">市営住宅の現状と建設</span>
+          <span class="sum">市営住宅への入居希望者と待機者の状況及び今後の建設予定、高齢者向け優良賃貸住宅家賃減額補助制度の利用状況と内容と対象住宅の拡充、定住対策として新出雲市にふさわしい若者向け住宅の提供についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・高野成俊</span>
+          <span class="ttl">中山間地の定住対策</span>
+          <span class="sum">半世紀前から人口が半減した地区が多い中山間地域をはじめとする過疎少子高齢化地域への定住対策をどのように考えているのか、子育て世代を対象とした一戸建て公営住宅をニーズを調べたうえで建設できないか、寺田橋での接続を例に他の路線や交通機関と接続させる地域循環型の乗り合いバス方式についての所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・勝部順子</span>
+          <span class="ttl">子どもの医療費無料化</span>
+          <span class="sum">中学生までの医療費無料化や若者定住促進住宅で出生率を上げた長野県下條村の視察を踏まえ、子育て世代への最大の支援となる子どもの医療費無料化の年齢拡大について、市長が県へ強く働きかけ少しでも早く実施することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・多久和康司</span>
+          <span class="ttl">小中一貫教育と定住支援</span>
+          <span class="sum">全学校へ広げる出雲式小中一貫教育の取り組みと、習熟度を見極めたきめ細かな指導による学力向上対策を尋ね、本年度予定する全国トップレベルの大会と一流選手や監督との交流会の開催、UターンとIターン者および市内に在住する人への定住支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・遠藤力一</span>
+          <span class="ttl">限界集落と過疎の対策</span>
+          <span class="sum">限界集落3カ所と準限界集落28集落を抱える出雲市に対応する専門部署があるのかと集落維持や活性化の計画、不在地主による耕作放棄地と管理放棄林への対策、最近10年のU・Iターン者の数と定住支援策の有効性、コミュニティセンターで証明書を発行するなどの機能強化、奈良のシカ視察の成果と共生の森づくり基本方針、事業名称からの有害の2字の削除、鷺浦の町並みを伝統的建造物群として保存することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・高野成俊</span>
+          <span class="ttl">中山間地の過疎化対策</span>
+          <span class="sum">人口増がほとんど旧出雲市に集中し佐田町や多伎町、大社町の高齢化率が3割を超える現状を挙げ、人口減少地区の問題と課題、コミュニティの将来像、定住対策の考えとこれまで講じた策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・高野成俊</span>
+          <span class="ttl">臨時職員の雇用と就職</span>
+          <span class="sum">市が確保を決めた133名の臨時職員の雇用が6カ月の期限付であることを挙げ、その後の就職先への情報提供やあっせんを尋ね、都会地に勤務する出雲市出身者の募集や40歳以上とUターン者への雇用期間の延長を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・川上幸博</span>
+          <span class="ttl">長浜工業団地の完売後</span>
+          <span class="sum">昨年の完売を受け、人材育成や定住促進のための雇用創出と地元ベンチャー企業の育成へ貸工場や貸事務所をつくる考え、用地を取得しながら未操業の企業への働きかけ、災害物資の基地として企業と災害協定を結ぶ考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・板垣成二</span>
+          <span class="ttl">定住促進の空き家活用</span>
+          <span class="sum">過疎法で規定された佐田や多伎以外の地域に対する空き家対策の支援策、今年度限りとなる過疎法のもとでこの事業を続けられる見通し、空き家バンクのほかに職の確保を含めどのような定住対策の支援策を考えているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・松村豪人</span>
+          <span class="ttl">看護系専門学校の誘致</span>
+          <span class="sum">看護師不足の解消と若者の定住促進を目指す本市への看護系専門学校の誘致について現在の検討状況はどうなっているのかと、本市唯一の市立病院で地域医療の拠点である総合医療センターとの連携をどう考えるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・多々納剛人</span>
+          <span class="ttl">ＵＩターン就農支援</span>
+          <span class="sum">5年間で250人以上が移住した隠岐の海士町で脱サラのＩターン者が岩ガキを築地市場へ出荷し漁業者の所得向上に貢献した例を挙げ、施政方針のＵＩターン者の就農支援に併せたさらなる定住支援とＵＩターン者の人材活用の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・遠藤力一</span>
+          <span class="ttl">定住対策の三十路式</span>
+          <span class="sum">若手島根県職員が定住対策として提案した満３０歳を対象とする公式三十路式について、３０歳はＵＩターンを最初に考える世代であるとして、就職フェアや産業支援プログラムの紹介と併せた当市での開催を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・直良昌幸</span>
+          <span class="ttl">震災の教訓と防災の備え</span>
+          <span class="sum">東日本大震災から何を学び何を研修して平素の日常業務に反映しているのかを尋ね、斐川を含めた地域防災計画の拡充と自治協会長らへの情報の伝達、消防の救援隊の派遣報告、学校での防災教育と教職員の履物、二百人以上が集まる催しでの主催者の腕章と非常口の案内、定住促進空き家活用と耐震化の整合性を挙げ、今この場で震度６の地震が発生したらどう対応するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・川上幸博</span>
+          <span class="ttl">人・農地プランの推進</span>
+          <span class="sum">地域農業マスタープランの具体的な内容と農業者への周知、申請しやすい体制づくり、新規就農総合支援事業１，８００万円と青年就農給付金の対象要件や県の青年農業者等早期安定化資金との違い、農地集積協力金による集落機能への影響、定住促進ビジョンを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・井上惠夫</span>
+          <span class="ttl">就農者のＵＩターン支援</span>
+          <span class="sum">就農者のＩターン・Ｊターン・Ｕターンの支援サポートの実情と就農者の状況を尋ね、５年で５０人の就農者を得た山口県岩国市の例を挙げ、より積極的な支援の構成を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・木佐宏</span>
+          <span class="ttl">退職職員の再採用</span>
+          <span class="sum">岩國市長や西尾市長のときと比べ長岡市政は天国だと職員が語っていたとして職務の弛緩を指摘し、支所の部課長職経歴者が退職金を得た数か月後に外郭団体の天下りポストへ就く扱いを地位利用の事前運動だとして、Ｕターン者からの公募採用へ改めるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大場利信</span>
+          <span class="ttl">定住人口キープの施策</span>
+          <span class="sum">結婚支援者の育成・輩出の人数と役割、３０歳代の男女に行われた結婚に関する市民意識調査の感想と今後の活用、支所とコミュニティセンターの役割の見直しの状況と今後の整備計画、地域自治区と地域協議会の見直しの意図と内容、子育て世代等の定住促進のための未利用市有地の有効活用、定住促進住まいづくり助成金制度の優先順位と優先枠を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・勝部順子</span>
+          <span class="ttl">定住促進と交流人口</span>
+          <span class="sum">平成３３年の目標人口を１７万人台とする中で出雲市に住んでいただける取り組みの具体的な考え、人口減少が続く中山間地域の魅力をどう発信するのか、遷宮後の観光客の動向をどう考えるか、賑わう神門通り周辺で以前から大社の町に住む方の出店が少ないことへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・井原優</span>
+          <span class="ttl">暮らし最優先の市政</span>
+          <span class="sum">暮らしの魅力や出雲暮らしの良さという言葉で全国に情報発信するとともに定住対策を進めるとされたことについて、定住対策を進めようとすれば市政の基本を市民の暮らし・福祉最優先の市政へ転換するしかないとして市長の認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岸道三</span>
+          <span class="ttl">Ｕターン就職の支援</span>
+          <span class="sum">出雲にＵターン就職や再就職を希望する方をどれだけ実際の雇用に結びつけられるかが産業を支え定住化にもつながるとして、学生へのＵターン就職支援とＵターン再就職希望者への就職支援の現状を尋ね、成人式や出身者会、高校のＯＢ会などあらゆる機会を通じた積極的な情報提供についての考え方、ジョブ・ナビ出雲の検索システムの充実と市のホームページから情報が得られる対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・板倉一郎</span>
+          <span class="ttl">出雲市の雇用状況</span>
+          <span class="sum">出雲市における雇用状況の現状と業種別の景気の状況、来春の学校卒業者の求人状況、学生や未就労者に対する就職支援の取り組みを尋ね、事業閉鎖される出雲アパレル有限会社の再就職支援の取り組み、Ｉターン・Ｕターンの若い女性を対象とした雇用の支援制度を創設する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・伊藤繁満</span>
+          <span class="ttl">定住施策と築地松景観</span>
+          <span class="sum">４年間で１２世帯５６人が移住した広島県安芸太田町を視察し最後は安定した職と雇用の場が要ると感じたとして、出雲のよさが定住につながるとすればどんなことなのかを尋ね、全国にも世界にもない出雲平野の築地松景観を将来にわたり保存すべき価値あるものとする認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・伊藤繁満</span>
+          <span class="ttl">新たな工業団地の必要性</span>
+          <span class="sum">造成には文化財調査や用地買収で数年を要し海外の拠点を日本に変えていく企業も増えているとして、定住促進や雇用確保、商工業振興の観点から完成が近い（仮称）出雲斐川中央工業団地に次ぐ新たな工業団地が必要ではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・川上幸博</span>
+          <span class="ttl">新規就農者支援と３Ｆ事業</span>
+          <span class="sum">アグリビジネススクールを開設した時期と比べた新規就農者の現状の変化、国と県と出雲市の支援体制、ぶどうのリースハウスへの助成の利用状況とその他の特産品への就農やハウスへの助成、Ｉターン・Ｕターン就農者への農地や住宅のあっせんによる定住推進を尋ね、３Ｆ事業が出雲市農業に与えた効果の検証と今後の取り組み方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・多々納剛人</span>
+          <span class="ttl">若者定住に向けた企業誘致</span>
+          <span class="sum">若者の定住対策を促進するために今後の企業誘致はどうあるべきかの市長の所感と、これまでの誘致策の取り組みやトップセールスへのかかわり方を尋ね、平成２６年度当初予算の企業誘致促進費１億６，７７０万のうち誘致活動経費の内訳、斐川中央工業団地などへの立地希望企業と成果に至らなかった企業、出雲市企業立地成功報奨金制度の実施状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・寺本淳一</span>
+          <span class="ttl">創生総合戦略の中身</span>
+          <span class="sum">創生総合戦略推進会議で協議される総合戦略の中身と具体的な検討状況、若者や女性の転出を防ぐ仕事と家庭の両立や出産と子育ての環境整備、Ｉターン・Ｕターンを含む若者の起業への市独自の支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・伊藤繁満</span>
+          <span class="ttl">地方創生と農山村の活性化</span>
+          <span class="sum">農山村に移住しＵ・Ｉターンされている社会増の実態を尋ね、１次産業や自治体の事務系業務への人口減少に対応したロボット戦略の積極的な導入、地産地消を進めて１次産業を６次産業化しベンチャー企業へ発展させること、２０年、３０年先を見据えた総合戦略の視点と長期的なビジョン、明示されていない概算事業費と中期財政計画の発表時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・渡部勝</span>
+          <span class="ttl">定住策と結婚相談</span>
+          <span class="sum">縁結び定住課の定住策の取り組みと成果と年齢別の未婚率と出生率、Ｕ・Ｉターン者の人数と意識調査の内容、県の結婚相談員「はぴこ」と市のかかわりを尋ね、出生率の算出方法が部内で食い違う点と目標の根拠、相談員が求める日常的に使える部屋への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・勝部順子</span>
+          <span class="ttl">日本版ＣＣＲＣの現状</span>
+          <span class="sum">生涯活躍のまち、日本版ＣＣＲＣについて、民間と連携して元気な高齢者の移住促進を進めようとしている現状と課題を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・原正雄</span>
+          <span class="ttl">民間によるＣＣＲＣ創出</span>
+          <span class="sum">医療施設の充実や災害への強さ、出雲空港、温暖な気候などＣＣＲＣの考え方に照らして大いに期待が持てるとして、総合戦略の移住促進の施策として創出する場所を具体的にどこと考えているのか、民間にお願いする考えかその民間は地元の方か、行政としての支援を含めた具体的な策があるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・板垣成二</span>
+          <span class="ttl">空き家対策と条例の制定</span>
+          <span class="sum">空家対策特別措置法の要点と市の対応、空き家条例制定に向けての進捗状況及び検討内容、空き家予防対策と空き家活用策のそれぞれの現状と課題・今後の方針を尋ね、除却費用の補助制度、固定資産税の優遇措置の延長、定住促進空き家活用事業の新規整備、空き家バンクの登録、窓口の体制強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川上幸博</span>
+          <span class="ttl">農業の担い手対策</span>
+          <span class="sum">新規就農者への助成事業の内容と農業へのＩターン・Ｕターン者の定住と研修の状況、後継就農者を区別しない助成制度の要件、耕作地及び住宅のあっせん状況を尋ね、ハマボウフウや薬用植物など現在の生産作物以外の栽培可能作物の事業化と出雲ブランドの発信を含む農業者所得倍増に向けた対応策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・寺本淳一</span>
+          <span class="ttl">雇用創出と農林水産業</span>
+          <span class="sum">もうかる農林水産業の確立支援策が雇用や所得アップにどの程度つながったかの成果を尋ね、市内高校３年生やＩＵターン者への調査結果を踏まえ、安定した雇用の創出と若者の職場定着に向けた人材確保の対応策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・渡部勝</span>
+          <span class="ttl">出雲市の人口減少対策</span>
+          <span class="sum">各地域の人口の推移と合計特殊出生率、定住や結婚に関する四つの調査を踏まえた方針と対策、結婚支援の取り組みと効果や問題点を尋ね、Ｉターンを呼ぶホームページの充実や晩婚化への検証、お見合い番組の中止の経過を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・岸道三</span>
+          <span class="ttl">定住対策とＵターン就職</span>
+          <span class="sum">定住対策の取組みの現状とその評価及び課題、Ｕターン就職支援の取組みを尋ね、中山間地域や海岸部の人口減少に対する出雲市移住促進住まいづくり助成の増額と重点地域の考え方、小・中学生のキャリア教育や大学生のインターンシップの受け入れ、ジョブ・ステーションの今後のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・後藤由美</span>
+          <span class="ttl">中山間地域の定住策支援</span>
+          <span class="sum">市内の中山間地域とその他の地域とで人口の格差が生じている原因の認識と中山間地域の人口減少の状況、南部ブロック自治連絡協議会からの定住策支援の要望への市長の受けとめと手だて、移住促進住まいづくり助成事業による過疎地・辺地等への３年間の移住実績を尋ね、過疎地・辺地等の地区別の定住施策を地域住民とともに検討し実施することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大場利信</span>
+          <span class="ttl">住まい助成とふるさと寄附</span>
+          <span class="sum">定住促進住まいづくり助成事業と移住促進住まいづくり助成事業の利用人数と補助金および民間への波及効果額などの成果、返礼品の額を寄附額の３割とする総務省の指導通知への見解と今後の対応、返礼品としての総合医療センターの人間ドックや出雲の観光を組み合わせた旅行プランの提供をどうするかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・飯塚俊之</span>
+          <span class="ttl">定住促進と空き家対策</span>
+          <span class="sum">出雲大好きＩターン女性支援事業と移住・定住促進住まいづくり助成事業を見直して新たに設けられる「出雲で住まいる（スマイル）事業」の事業内容及び目指す方向性を尋ね、空き家対策を住みやすさＮｏ．１プロジェクトから定住人口キープ１７万人プロジェクトへ移した理由と意図及びとろうとする対策、新規に創設される空き家バンクへの登録を促す助成事業の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・西村亮</span>
+          <span class="ttl">少子化対策の拡充</span>
+          <span class="sum">Ｉターン女性支援と移住促進助成事業の具体的な内容と今後の取組み、未婚化・晩婚化対策の各課との連携強化と将来支援、婚活セミナー等サポートの充実、母子健康包括支援センターの開設を含む子ども・子育て支援のさらなる拡充、児童クラブの人材育成に向けた取組み、子どもの学費や医療費の現状と今後の改善点、近隣の自治体との比較を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・湯淺啓史</span>
+          <span class="ttl">移住・定住と就職支援</span>
+          <span class="sum">出雲市の人口動向を自然増・社会増の数と外国籍の方を除いた実数で尋ね、ＵＩＪターン者のニーズの把握・分析の方法と本人たちの情報収集の方法、ＰＲしている出雲の魅力や暮らしのよさ、定住コーディネーターの業務内容と実績、創業塾やビジネスプランコンテストの状況、県外での活動、空き家バンクや移住・就職支援を外部組織に委託する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">移住定住と空き家対策</span>
+          <span class="sum">出雲大好きＩターン女性支援事業と移住・定住促進住まいづくり助成事業の成果と見直しのポイント、出雲で住まいる（スマイル）事業と中山間地域の活性化がどのようにつながるのか、空き家バンクの登録を促す助成事業の具体的な内容、未婚化・晩婚化対策に関する総事業費と３年間の成果と評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・湯淺啓史</span>
+          <span class="ttl">雇用創出と人材不足</span>
+          <span class="sum">高校卒業時に市外へ流出する実数と割合および県外を就職先とする場合の主な業種、人材不足に陥っている業種の現状認識と新卒時やＩターン・Ｕターン・Ｊターンで有効な人材確保策、就職フェアしまねin出雲の開催実績と効果の検証、インターンシップ制度の現状と今後の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・岸道三</span>
+          <span class="ttl">雇用対策の連携と評価</span>
+          <span class="sum">高校・大学卒業後の地元就職やＵＩターン就職支援に欠かせないふるさと島根定住財団との連携と、今年４月にＵＩターン就職希望者への就業支援に特化したジョブ・ステーション出雲の管理運営事業の見直しによる評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">高卒者の就職と市の採用</span>
+          <span class="sum">平成３１年度に県内就職内定率８５％とする目標達成の課題と市内就職を希望する生徒への支援、ＵＩターン者への支援を含む今後の取組みの具体案、市内の高校との連携の具体案、消防吏員だけとなっている新規高卒者の採用の考え、ホームページへの採用情報の開設の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・渡部勝</span>
+          <span class="ttl">ＵＩターンと定住対策</span>
+          <span class="sum">出雲大好きＩターン支援助成金と出雲市移住促進住まいづくり助成金のこれまでの成果と課題、出雲市まち・ひと・しごと創生総合戦略による未婚化・晩婚化対策の成果と課題、新たに設置する「うみ・やま（中山間地域）応援センター」の狙いと内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・玉木満</span>
+          <span class="ttl">ＵＩターンの情報発信</span>
+          <span class="sum">昨年１２月の月間有効求人倍率が１．８１倍と労働力不足であることを考慮すれば雇用以外の情報発信強化が必要ではないかとして、ＵＩターンに必要な情報の全てを一元化して提供できる窓口の設置と、雇用・生活・地域それぞれ独立して発信しているウェブサイトの集約化についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・湯淺啓史</span>
+          <span class="ttl">多文化共生推進プランの将来像</span>
+          <span class="sum">市内に５年以上継続して滞在する外国人住民の割合を３０％台とする目標に対する計画中間地点の状況、プランの目指すものと移住促進政策との違い、プランの推進によってもたらされる地域の将来像を尋ね、永住者や定住者の子どもの教育と幼稚園・保育所の受け入れ、就労先が１社に偏る状況の今後、農業や介護現場の担い手となる可能性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・今岡真治</span>
+          <span class="ttl">定住とＵＩターンの支援</span>
+          <span class="sum">出雲市まち・ひと・しごと創生総合戦略に基づき定住と移住を促進する施策の現状と成果、現在行っている事業、工芸作家等のＵＩターンに対してどのような支援事業があるのかを尋ね、多様なＵＩターンに市役所の各部署や関係団体が連携して受入体制を確立し横断的にサポートする仕組みづくりの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・福島孝雄</span>
+          <span class="ttl">移住・定住の住まい助成</span>
+          <span class="sum">移住・定住促進住まいづくり助成事業による中山間地活性化の成果と、今後の新たな事業内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・多々納剛人</span>
+          <span class="ttl">農村の魅力と定住対策</span>
+          <span class="sum">農業・農村が持つ魅力についての市長の所感、農村で居住することへの社会的評価を高める必要、条件不利地や混住化した地域での小規模農家の支援、非農用地を含めた総合的な土地利用計画の策定、市内へのＵターンや農村への移住・田園回帰の現状、地域おこし協力隊の実績と隊員の活動内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・今岡真治</span>
+          <span class="ttl">関係人口の創出とテレワーク</span>
+          <span class="sum">移住した定住人口でも観光に来た交流人口でもない関係人口を創出する取組みと、情報通信技術を活用した柔軟な働き方であるテレワークについての市の考えを尋ね、サテライトオフィスに前向きな企業を誘致するための環境整備と廃校となった学校の活用の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・児玉俊雄</span>
+          <span class="ttl">雇用促進助成金の見直し</span>
+          <span class="sum">県の制度と市の制度による雇用促進助成金の概要と企業誘致で競合する近隣の県・市の状況を尋ね、有効求人倍率が１．９５倍となり誘致企業と地場中小企業・小規模企業の人材確保の差を広げているとして、地場企業との競合を避ける対象者の見直しやＵ・Ｉターンを促進する制度への衣替えについて所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・山内英司</span>
+          <span class="ttl">雇用創出と一次産業支援</span>
+          <span class="sum">高齢者の就業に向けた新たな取組みの内容、労働力不足の解消へ地元企業への賃金アップや副業の奨励などの働きかけ、農林水産業の新規就労支援とＵＩターン促進を一体化した支援やプロモーションの必要性、出雲の海応援隊事業の組織規模と募集方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・寺本淳一</span>
+          <span class="ttl">ふるさと納税の推進</span>
+          <span class="sum">出雲市へのふるさと納税額の推移と令和元年度の見込み、返礼品の旅行プランをきっかけに出雲を訪れた人数や移住した人数、納税額の推移の分析と拡大を目指す対策、移住のきっかけづくりとして空き家を活用した宿泊サービスを返礼品とする考え、クラウドファンディング型ふるさと納税を活用したふるさと移住交流促進プロジェクトの内容と活用の課題、返礼品以外に利用者へ送っているものを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・神門至</span>
+          <span class="ttl">出雲市の将来推計人口</span>
+          <span class="sum">人口と世帯数の推移、ＵＩターン住民及び外国人住民の世帯数の推移と定住・永住の現状と課題、自治会・町内会の数と加入世帯数及び加入率の推移と加入のメリット・デメリット並びに加入促進への対応、自治協会の役割と支援と意見反映の場、５年後・１０年後・２０年後の将来推計人口を、斐川地域との合併以降の数値で地域ごとに質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・西村亮</span>
+          <span class="ttl">少子化と定住の施策</span>
+          <span class="sum">少子化・子育て環境における出雲市の施策の充実度と重要施策として展開している事業、定住対策の現状と課題及び重点的に取り組む事業、他の自治体と比較して総合的にすぐれているかの見解、子どもを育てる環境の整備・拡充の必要性、医療や教育環境の拡充が最重要との認識、若者が魅力を感じて定住する施策の現状と今後の具体的な取組み、予算を傾斜配分してでも充実・拡大に取り組む考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岸道三</span>
+          <span class="ttl">移住支援と公共交通</span>
+          <span class="sum">東京２３区の在住者らを対象とするわくわく出雲生活実現支援事業の事業実績と課題、高校生との意見交換や定住等意識調査で不便さが挙げられた公共交通ネットワークの整備に向けた市の考えと、圏域で検討されている交通ＩＣカード導入へ向けた検討状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・伊藤繁満</span>
+          <span class="ttl">雇用の場の創出と人材確保</span>
+          <span class="sum">企業誘致活動と地場中小企業・小規模企業の支援や６次産業化による新たな雇用の場の創設と外国人雇用、誘致企業と連携した教育・研究機関の創設、ＵＩターンでの人材確保の実態、斐川町西工業団地のビジネスサポートセンターを養成機関として整備する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・伊藤繁満</span>
+          <span class="ttl">農地法第３条の別段面積</span>
+          <span class="sum">農地法第３条第２項第５号に規定する別段面積について５０アール制定以後に検討・修正された経過、近隣市と比べ地域ごとに不均衡な設定を踏まえ本気で農地を守るために何をすべきか、施行規則第１７条第２項に係る１アールの別段面積の申請件数と受理件数及び事務処理の簡素化、空き家に付随した遊休農地の売買で定住促進を行う大田市を参考に農地を生かす考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・児玉俊雄</span>
+          <span class="ttl">Ｕ・Ｉターン就職の促進</span>
+          <span class="sum">本市と都市圏の有効求人倍率の状況、今年度の企業説明会や交流会の状況、しまね学生登録といずも学生登録の取組状況を尋ね、登録者数を増やす方策も含めて今後のＵ・Ｉターン就職の促進策の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川上幸博</span>
+          <span class="ttl">人口減少と子育て支援</span>
+          <span class="sum">令和２年度国勢調査で県内唯一人口が増加した要因の分析と市内間の人口移動、中山間地域振興室の新設と地域おこし協力隊の過去の実績に基づく具体策、若者のＵＩターン促進と切れ目のない子育て政策、子ども支援制度の充実施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・大谷良治</span>
+          <span class="ttl">商業の再生と人材確保</span>
+          <span class="sum">地域商業の再生・活性化に向けた空き店舗の開業支援と中心商店街のにぎわい創出の実績と具体策、ＵＩターン者の就職支援や県外進学者への直接アプローチ、学生登録の活用による市内企業の人材確保の現状と課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・西村亮</span>
+          <span class="ttl">子育て支援と定住対策</span>
+          <span class="sum">結婚から子育てまでの支援と仕事の両立支援の具体策や婚活への取組、第２期子ども・子育て支援事業計画による子ども医療費助成の拡充と待機児童ゼロに向けた保育所の増改築、高校生までの医療費１割負担、他の施策を抑えてでも子育てに集中的に投資する姿勢を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・宮本享</span>
+          <span class="ttl">移住・定住支援策</span>
+          <span class="sum">ここ数年の出雲市の移住者の状況を尋ね、令和４年度の移住者への支援として新築に対する固定資産税等相当額の助成やリフォーム費用の助成に加えて考えている新規事業の内容と、住まいに関する支援以外に移住者を呼び込むために実施していることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・板倉一郎</span>
+          <span class="ttl">保育所の待機児童対策</span>
+          <span class="sum">国基準による待機児童が４月１日時点でゼロ人と報告されたことについて、入所未決定者から除かれた四つの理由ごとの詳しい説明と人数、市の待機児童対策、職場復帰を断念した方がいることを踏まえたさらなる取組み、市外から移住される方への入所支援、こども未来戦略方針のうち保育所に関わる部分と市の所感、保育士の確保対策を尋ね、母子健康手帳の交付時から入所希望を受け付ける仕組みと産休・育休明けの７８名への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・児玉俊雄</span>
+          <span class="ttl">出身者会とＵターン促進</span>
+          <span class="sum">近年の出身者会の動向と活動支援などの状況、旧市町単位の団体を統合する取組状況を含む今後の組織・活動の強化についての考え方を尋ね、県外で活躍する同窓生を同窓会に講師として招く際の派遣旅費の一部を補助する仕組みをＵターン促進策として提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石橋広信</span>
+          <span class="ttl">移住定住とインバウンド</span>
+          <span class="sum">東京圏等での若者を対象とした交流会など移住・定住の促進の具体的な内容と市の産業サイト「出雲人」で紹介されている方々の声の効果、エリアごとの取組の方向性を含む新たな観光基本計画の進め方、２０２５年大阪関西万博の現地で出雲へ来ていただく目的を訴える取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・鐘推義憲</span>
+          <span class="ttl">移住定住と中山間振興</span>
+          <span class="sum">移住・定住の推進と交流人口・関係人口の拡大、中山間地域振興として、観光基本計画を官民一体で策定するのかとその手順とスケジュール、周遊型観光のシェアサイクルの実施予定地域と自転車活用推進計画の目的・内容及び島根県の計画との関連、ドアツードアの定額乗合交通の実証運行の現状と佐田地域以外での実施予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・西村亮</span>
+          <span class="ttl">移住定住と観光戦略</span>
+          <span class="sum">移住・定住の推進、交流人口・関係人口の拡大と中山間地域振興として、東京圏等での若者を対象とした交流会など移住・定住の促進の課題、交流人口・関係人口の拡大の対策と所見、観光戦略の推進と観光基本計画の方針及び具体化に向けた取組、中山間地域振興で企業や団体と連携して配置する地域おこし協力隊員の現状と今後の配置の具体策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・萬代輝正</span>
+          <span class="ttl">自転車活用の推進</span>
+          <span class="sum">移住・定住の推進と交流人口・関係人口の拡大に向け、新たな観光基本計画の策定に取り組む中でのシェアサイクルの導入実験と自転車活用推進計画の策定、サイクリングロードの検討整備について、エリアなど具体的な内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・宮本享</span>
+          <span class="ttl">若年層の人口とふるさと教育</span>
+          <span class="sum">今後の人口動態、特にゼロ歳から１４歳の若年層の予想と分析、高校卒業後に県外へ進学や就職する人数と割合やＵターンして市内に就職する人数、小・中学校におけるふるさと教育の具体的な施策、市内高校でのふるさと教育の状況と県外流出防止策や今後の充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川上幸博</span>
+          <span class="ttl">若者の定住と交流</span>
+          <span class="sum">若者に定住してもらう政策と、令和元年度に市内高校生に対し実施された定住等意識調査で挙がった出雲市に住みたくない理由の解消に向けた取組及びえにしをつなぐための政策を尋ね、移住・定住の助成を中山間地域以外にも広げることや大学生との意見交換・出前講座を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・後藤由美</span>
+          <span class="ttl">中山間地域の定住促進</span>
+          <span class="sum">中山間地域とそれ以外の地域で人口の格差が広がっている原因の分析、保育所や幼稚園、小学校があってこそ地域活性化が保たれるとの認識、二つの住まいづくり助成金による移住・定住の現状、新婚・若者定住促進住宅を計画的に建設するなど特別な施策の必要、地域ごとの計画づくりへの幅広い住民参加と中山間地域振興室とともに検討し実施することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・鐘推義憲</span>
+          <span class="ttl">交流・関係・定住人口</span>
+          <span class="sum">仕事や観光で地域を訪れる交流人口、地域外から継続かつ多様な形で関わる関係人口、移住や定住をする定住人口の位置づけを示したうえで、交流人口の拡大、関係人口の創出、定住人口の増加それぞれの施策の実施状況と成果及び今後の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・川上幸博</span>
+          <span class="ttl">地域コミュニティの活性化</span>
+          <span class="sum">人口減少に悩み地域行事にも支障が出ている地域コミュニティや自治協会があると推察されるとして、地域振興の担い手となる青少年の育成につながる人づくり教育や移住者の空き家活用、農地貸出し、ふるさと会などの関係人口の拡大を挙げ、地域活性策の今後に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・湯淺啓史</span>
+          <span class="ttl">組織再編と機構改革</span>
+          <span class="sum">決算特別委員会の指摘や予算編成方針が求めるスクラップアンドビルドに対応するため行政改革部を復活させること、総合政策部に人口動態や産業・税収の現状把握と分析を専門に進める部署を置くこと、移住定住やふるさと納税、多文化共生など事業と組織の整理を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・後藤由美</span>
+          <span class="ttl">中山間地域と農業振興</span>
+          <span class="sum">中山間地域にこそ移住・定住対策支援を思い切って強化すべきとして県外から移住する新婚・子育て世帯や独身Ｉターン者への特別な家賃助成への認識を尋ね、米の価格高騰の原因は米の需給と価格の調整を３０年にわたり市場任せにしてきた国の農政にあるとの認識と、所得保障と価格保障に政府が責任を果たすよう国に要請することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・糸賀太郎</span>
+          <span class="ttl">奨学制度の拡充と定着</span>
+          <span class="sum">奨学関連事業について、制度の見直しや拡充を検討している内容の有無と若者の地元定着につながる施策との連携の可能性を尋ね、三重県の例を挙げてＵターンや地元就職と連動した返還支援制度を導入する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・坂本祐麻</span>
+          <span class="ttl">市営住宅の維持と活用</span>
+          <span class="sum">市営住宅の供給戸数や老朽化の状況、島根県住宅供給公社への管理戸数や委託金額と業務内容を尋ね、住宅ストックの適正配置・統廃合の方針、退去後の修繕や改修工事の優先順位と需要の高い団地の判断基準、修繕・改修費用が膨大にかかる住宅への今後の対応方針、空き住戸の地域おこし協力隊の住居やお試し移住施設などへの利活用、用途廃止後の他部局や地域団体、民間事業者への賃貸・譲渡、長寿命化計画の進捗と民間賃貸住宅との連携の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・坂本祐麻</span>
+          <span class="ttl">移住・定住施策の実績</span>
+          <span class="sum">直近３年度分のＵＩターン者数と助成金の実績、実際に移住・定住された方から寄せられた声とその後も市とのつながりが続いているか、市が実施している移住・定住施策とそれぞれの今年度の目標値及び現在の状況、出雲市お試し移住助成金で実際に就業に結びついた業種を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・大谷良治</span>
+          <span class="ttl">移住者への住宅支援</span>
+          <span class="sum">移住者向けの家賃助成や住宅取得に関わる支援をどう評価しているのか、今後の移住者ニーズに照らした拡充等の検討があるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・吉岡拓也</span>
+          <span class="ttl">空き家の利活用推進</span>
+          <span class="sum">島根県内各自治体との比較で見た戸数総数と空き家の増減における出雲市の特徴、空き家バンクの業務委託など官民の連携状況、移住・定住支援の所管部署と支援内容及び空き家対策との連携を尋ね、増加する空き家を遊休住宅ストックとして位置づける考えや利活用した場合の減税策、官民連携の一層の強化と空き家の掘り出しの強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・坂本祐麻</span>
+          <span class="ttl">縁結び定住課の今後の取組</span>
+          <span class="sum">今後ＵＩターン者に関してどのような数値目標を掲げどう取り組むのか、公益財団法人ふるさと島根定住財団や他市の定住促進担当課、漁業関係者や農業関係者との情報共有や協働の状況を尋ね、移住相談会の開催回数と参加者、現時点で効果的と考えられる取組と今後新たに取り組みたい施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・川上雅文</span>
+          <span class="ttl">若者の就職支援と定着</span>
+          <span class="sum">高校生の地元就職率の向上に向けた高校や関係機関との連携と高校ネットワークコーディネーター制度、学校訪問、新卒者の就職後の定着支援を尋ね、Ｕターン希望者への情報提供や就職相談体制、オンラインを活用した企業説明会など地元企業とのマッチング強化の方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・大谷良治</span>
+          <span class="ttl">雇用と移住の促進策</span>
+          <span class="sum">湖陵地域の新工業団地整備に向けた基本計画の策定時期と地場企業の生産性向上や経営基盤強化支援のこれまでの取組と成果、「高校ネットワークコーディネーター制度」の制度内容、新婚・子育て世帯及び独身Ｉターン者への家賃助成や東京圏からの移住支援、住宅リフォーム等の助成の取組の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・今岡真治</span>
+          <span class="ttl">１７万人台キープの挑戦</span>
+          <span class="sum">出雲斐川インター企業団地や湖陵地域の新工業団地への高付加価値な産業や若者が望む職種を戦略的に誘致するビジョン、県外進学者の地元就職率の推移の分析と令和８年度に目指す向上、二地域居住やふるさと住民登録制度による移住へつなぐ目標数、出生おめでとうポイントや中学生までの子ども医療費無料化と小学校給食の無償化の年間事業費と財源及び合計特殊出生率や転入増への寄与を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>奥出雲町<span class="ex-n">65件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H21・塔村俊介</span>
+          <span class="ttl">子育て支援への提案</span>
+          <span class="sum">経常収支比率が県下一よい中で生まれた財源の子育て支援への投資、子育て支援の具体的なビジョンの提示、町長と子育て世代の少人数での意見交換の場、行政主導の子育て世代の横のつながりの会、保育料等を示す住民目線のホームページとI・Uターン者への一元的な窓口の設置を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・吾郷益已</span>
+          <span class="ttl">少子化対策と子育て支援</span>
+          <span class="sum">若年層の定住促進と雇用の場の創出の進行状況、子育て支援室を総務課に設置した理由、福祉会に一任する幼稚園・保育園の就学前教育への行政の指導と組織体制、安心して子供を産み育てる環境づくりのプランと平成22年度予算での検討を尋ね、町づくりの基本構想の早急な策定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田勇</span>
+          <span class="ttl">ふるさと回帰運動</span>
+          <span class="sum">定住促進のためのふるさと回帰運動として、笠岡諸島の移住の例を挙げて団塊の世代へのUターン・Iターンの呼びかけの考えを尋ね、町内で開く同窓会への助成金の支給と、奥出雲の歴史・文化・伝統をわかりやすくまとめた本の発刊を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田正男</span>
+          <span class="ttl">定住促進の空き家購入</span>
+          <span class="sum">定住促進事業として、個人から空き家の提供の申請があった場合の町による空き家と土地の購入の考えと、Iターン者が15年以上入居した場合や家賃を一括で支払った場合の売却の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田精彦</span>
+          <span class="ttl">若者定住の奨励金拡充</span>
+          <span class="sum">若者定住対策事業の就職奨励金の近年の実施状況を尋ね、世帯者20万円の奨励金に夫婦どちらかが町外出身者の場合の上乗せをする考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・吾郷益已</span>
+          <span class="ttl">奥出雲町総合計画</span>
+          <span class="sum">総合計画策定の基本的な考え、定住対策と雇用の場の確保と新たなビジネスモデル、神話と自然を生かした観光資源の整備とストーリー性のある観光ルート、観光協会事務局長への民間人の登用、高齢者の社会参加と認知症対策、ひとり親家庭への支援、幼保一元化と幼児園の条例化、松江市のような高齢者運転免許証自主返納の支援策、実施計画の策定状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・若月忠男</span>
+          <span class="ttl">町政２期目の取り組み姿勢</span>
+          <span class="sum">財政健全化や子育て支援、Ｕ・Ｉターン対策、たたら文化の振興、新エネルギー対策など１期４年間の成果を挙げたうえで、２期目に挑む抱負と振興策で力点を置く点、町づくりの方向性と政策を鮮明に打ち出す考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・塔村俊介</span>
+          <span class="ttl">働く場所の創出</span>
+          <span class="sum">地域振興課に開設した無料職業紹介所の活動状況と今後の展開、町外に住む町出身者への求人情報の提供、企業誘致の取り組みと戦略を尋ね、外貨を獲得できる商工業者や意欲ある農業者への支援、会社ごとＵ・Ｉターンする移住者への支援、各地区の拠点的な店舗への支援、第三セクターによる雇用の創出を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・塔村俊介</span>
+          <span class="ttl">奥出雲らしい住まいの整備</span>
+          <span class="sum">空き家バンクと空き家調査の活動状況を尋ね、３世代同居住宅や子育て世代・新婚夫婦の住宅取得への支援、移住体験住宅の整備、町や土地開発公社による住宅の購入整備と貸し出しや店舗の貸し事務所化、雇用促進住宅や公社単身住宅の活用策、町内産木材を使った奥出雲のモデル住宅の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田勇</span>
+          <span class="ttl">奥出雲町のブランド化</span>
+          <span class="sum">地域資源を掘り起こし奥出雲そのものをブランドとして売り出すことへの所見、若者や中高年を呼び込むキャッチフレーズの全国募集、特区申請による農地つき空き家住宅でのＵ・Ｉターン者の呼び込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田精彦</span>
+          <span class="ttl">奥出雲町の和牛生産</span>
+          <span class="sum">飼育戸数や飼育頭数が大きく減っている和牛生産の現状と将来への町の考え、優良牛保留事業の拡充や優秀な飼育者への支援、休止中の鳥上の肥育センターの今後、Ｕ・Ｉターン者への畜産の呼びかけ、阿井小学校の牛の学習への所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・藤原充博</span>
+          <span class="ttl">定住対策と住宅の確保</span>
+          <span class="sum">定住を希望する家族が入る住宅が阿井に無いことを踏まえ、町外から通勤する人へのＩターンの働きかけ、過疎債による住宅の建設、若者定住住宅の家族向けへの改造、受け入れ基準を設けたうえでの手厚いフォローなど定住対策への集中的な取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田雅人</span>
+          <span class="ttl">小学校再編の方針</span>
+          <span class="sum">学校再編基本検討委員会の答申後の再編の動きの現状と経緯、極小規模校のメリットとデメリットを尋ね、出生数の減少を踏まえた今後の小学校の方針、Ｕターンをためらわせる学校環境への対応、審議会の設置や保護者アンケートの実施、修学旅行やキャンプ以外の合同での学びの場の拡大を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・塔村俊介</span>
+          <span class="ttl">２期目の重点政策</span>
+          <span class="sum">選挙で感じた町民の声と期待、町議選の投票率が８０．２０％に低下したことへの考えを尋ね、ショッピングセンターや病院の隣への期日前投票所の設置、働く女性の相談窓口、今後の定住対策、攻めの農林水産業に関する町の戦略を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田雅人</span>
+          <span class="ttl">Ｕ・Ｉターンの促進</span>
+          <span class="sum">平成２１年度の１４件２２人から前年度の６８件１１２人へＵ・Ｉターンが増えた理由を尋ね、移住者への情報収集・情報提供と意見集約の状況、今年度以降の強化策、Ｕ・Ｉターンフェアの内容、空き家情報の充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・藤原和範</span>
+          <span class="ttl">元気・安心・笑顔の町づくり</span>
+          <span class="sum">所信表明の３つの重点項目の具体的な事業として、Ｕ・Ｉターン者や新規学卒者等を新規雇用する町内企業への助成金の内容と考え方、地域おこし協力隊の活動計画、生活交通サポート事業の充実の考え方を尋ね、人口対策本部などの検討機関の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・若月忠男</span>
+          <span class="ttl">地域医療へのＩＴ活用</span>
+          <span class="sum">医療連携ＩＴシステムへの病院・診療所の早急な接続と、訪問看護ステーションや調剤薬局、歯科診療所、福祉介護施設等への接続拡大、地域医療連携の取り組み課題、ＩＴの活用によるＩ・Ｕターン者の定住への考えを尋ね、接続経費への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石原武志</span>
+          <span class="ttl">地方創生と人口・雇用対策</span>
+          <span class="sum">所信表明の元気なまちづくりに関し、地方創生に対して町が期待する施策や連携の基本的な考え方、バイオマス事業と水力発電の具体的な方策と三沢での水力発電の計画、出雲圏や松江圏に通勤する人への支援による定住促進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・村尾明利</span>
+          <span class="ttl">地方創生への町の取り組み</span>
+          <span class="sum">まち・ひと・しごと創生本部の施策展開への所感を尋ね、若い世代の就労の場として半農半Ｘの職場の確保、全国知事会が提言した移住センターに呼応する対策、雲南広域連合や山陽方面とのネットワークなど地域連携の新たな手だてを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・藤原和範</span>
+          <span class="ttl">定住促進の支援体制</span>
+          <span class="sum">Ｕ・Ｉターン者への定住支援・相談体制の現状と空き家バンクの登録数の増加を尋ね、相談員が欠員の中、神山町や日野町、雲南市の例を挙げて、民間組織等への業務委託や役場内の独立したセクションの設置による体制の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田雅人</span>
+          <span class="ttl">教育費の予算配分</span>
+          <span class="sum">決算の教育費の割合５．０％が県内１９市町村で最下位であることへの町長の受け止めを尋ね、古い図書やＸＰのままのパソコン、照明・暖房の不具合など教育環境の現状を挙げて、Ｕ・Ｉターンの呼び込みのためにも教育費の配分を増やすべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大垣照子</span>
+          <span class="ttl">施政方針と提案説明</span>
+          <span class="sum">施政方針及び提案説明について、上高尾・三沢・三所地区でのデマンドタクシー試行の町の財政負担と業者との協議、全町への拡大に向けた調査と昨年の横田地内での試行の検証、地域おこし協力隊や移住者への移住後のフォローと相談窓口、第三セクターの経営改善の補正予算と奥出雲椎茸の選果の遅れを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石原武志</span>
+          <span class="ttl">若者の流出防止と高校</span>
+          <span class="sum">新卒者等の都市部への流出の歯止めに向けて若者が地元で働ける環境づくりの現状と対策を尋ね、県立高校の再編基準を踏まえた横田高校のあり方と農業科・畜産科の新設やＩターン高校生の受け入れ、小中学校からの教育について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田精彦</span>
+          <span class="ttl">若者定住奨励金の拡充</span>
+          <span class="sum">若者定住対策事業の概要とＩ・Ｕターン別・移住元別の奨励金の利用状況、奨励金の返納状況と理由、転入者へのフォローを尋ね、夫婦の一方が町外出身の場合や３人以上の世帯への奨励金の上乗せと、奨励金の財源を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田雅人</span>
+          <span class="ttl">Ｕ・Ｉターン者のフォロー</span>
+          <span class="sum">日本創成会議の推計で２０４０年に総人口７，３８２人・若年女性６９．５％減とされたことを踏まえ、昨年答弁があったＵ・Ｉターン者へのフォロー体制の現状と十分にできない理由を尋ね、定住促進の人員配置の拡充と独立したセクションの設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石原武志</span>
+          <span class="ttl">Ｕ・Ｉターン者の受け入れ</span>
+          <span class="sum">移住者の困り事相談や担当課など支援の充実、Ｉターン者が知人に移住を勧めにくい現状の問題、企業技術者や新規就農者、畜産、そろばん等の新規就労者の募集を尋ね、経験豊富な担当者の配置やＮＰＯ法人等への支援、課を越えた対応と借家の敷金の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田勇</span>
+          <span class="ttl">人が生きる地方創生</span>
+          <span class="sum">40年間で30%減少した人口と高齢化の現状認識と打開策を尋ね、人口減少率の高い地区での小さな拠点の形成と地区別の地域再生計画の作成、日本版CCRC構想と田舎暮らしのPR、結婚から子育てまでのワンストップの支援センターの設置、未婚・晩婚化対策、縁結びやU・Iターンの移住を手助けした人への報償金制度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・大垣照子</span>
+          <span class="ttl">若者定住と雇用の場</span>
+          <span class="sum">雇用の場の確保に向けた企業誘致や起業家への大胆な支援策と若者定住対策のPDCAの実施状況を尋ね、若い女性に魅力ある町づくりのためのアピールの中身と、男女共同参画の推進に町長が先頭に立つ考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石原武志</span>
+          <span class="ttl">農畜産業のUターン対策</span>
+          <span class="sum">仁多米・仁多牛の生産者や生産量の推移と実情、新規就農者の拡大と後継者の育成、潜在的な跡継ぎの調査の有無を尋ね、町の情報を出身者へ知らせるなど地元出身者のUターンにつながる取り組みへの町長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・藤原和範</span>
+          <span class="ttl">まち・ひと・しごとセンター</span>
+          <span class="sum">総合戦略に位置づけた地域・住民主体の世代間交流やＵ・Ｉターンの受け入れ事業の支援体制として検討しているまち・ひと・しごとセンターについて、具体的な役割と機能、組織と運営体制、設置の時期と場所を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・景山孝志</span>
+          <span class="ttl">人口減少対策の取り組み</span>
+          <span class="sum">雇用の場の確保として古民家を改修した企業・創業支援とその雇用効果、駐車場と誘導看板の計画、Ｕ・Ｉターン者の働き場の確保、地元企業者との共生の環境整備を尋ね、少子化対策として学校再編を含む教育環境の整備と子育て支援パンフレットの作成・掲示、健康のまちづくりとして挨拶推進の町宣言と軽スポーツの振興、結婚相談所の開設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・塔村俊介</span>
+          <span class="ttl">定住対策の進捗と次の一手</span>
+          <span class="sum">総合戦略２年目の総括として、ＩＴ企業誘致の進捗と合宿で回線の切断が指摘された高速ネット環境の現状と対応、農と食をつなぐ新たな農家・食産業の育成、起業・創業への人的・組織的支援と実際に起業に至った人数、子育て世代を軸とした古民家改修と新たな住宅用地の整備、町外に出た若者へ情報を届ける仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・大垣照子</span>
+          <span class="ttl">総合戦略の評価と結婚支援</span>
+          <span class="sum">総合戦略のＰＤＣＡサイクルによる平成２７年度の評価と改善策を尋ね、出産年齢人口や結婚をふやす具体策と施策の達成度、子育て支援の町外へのアピール、他自治体との比較による施策の充実、出会いの場や婚姻数の重要業績評価指標の目標値が低過ぎないかと定住しない原因の把握、移住者を担当課へきちんとつなぐ対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・村尾明利</span>
+          <span class="ttl">農泊による観光と移住推進</span>
+          <span class="sum">三成駅前への観光文化協会の事務所移転や日本遺産の認定、都市住民の田園回帰の調査結果、みなべ町の農家民泊を示して本町の観光振興とＵ・Ｉターンの推進の方策を尋ね、農泊・民泊の町挙げての受け入れと基礎的な勉強会の開催を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・土屋武雄</span>
+          <span class="ttl">U・Iターンの住宅支援</span>
+          <span class="sum">総合戦略のU・Iターン受け入れ環境整備事業の住宅支援について、住宅整備の助成の申請件数と採用件数、不採用の件数を尋ね、両親の存否で補助の採否が分かれたとされる事例の有無と改善の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田食道弘</span>
+          <span class="ttl">公契約条例の制定</span>
+          <span class="sum">公契約に基づく業務に従事する労働者の適正な賃金を確保し、保育士や介護職員、建設業務の労働条件の改善と地場産業の活性化、若手やUターン・Iターン者の定住につなげる公契約条例の制定について町長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大垣照子</span>
+          <span class="ttl">定住対策の相談と成果</span>
+          <span class="sum">昨年8月に開設したまち・ひと・しごとセンターが約2,500人に利用されたことについて、相談内容とU・Iターンの成果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・内田勇</span>
+          <span class="ttl">現役世代の移住推進</span>
+          <span class="sum">社会増を達成した過疎自治体の先進事例を引き、Uターン・Iターン者や就農希望者に町営住宅・空き家を格安で提供する事業の創設と人口減少への危機感を尋ね、町外の児童生徒を受け入れる奥出雲留学、お試し移住による若者の転入増加を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・内田精彦</span>
+          <span class="ttl">若者の就職支援奨励金</span>
+          <span class="sum">若者雇用促進奨励金と町内企業就職支援奨励金の目的と実績、町職員や議員が事業主の場合の対象可否、情報発信事業と新卒雇用の支払いと要綱の関係を尋ね、労働者に交付する若者定住対策奨励金の復活と、規則・要綱の制定や廃止を議員へ報告することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・藤原和範</span>
+          <span class="ttl">そばどころ奥出雲の振興</span>
+          <span class="sum">農業遺産認定申請を契機に官民一体で奥出雲町をさらなるそばどころとして知名度向上とＵ・Ｉターン、観光誘客につなげる考えを尋ね、横田小そばなど町内産ソバの栽培奨励金増額や生産者組合の設置、そば店出店への支援、空き店舗や古民家の活用への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・村尾明利</span>
+          <span class="ttl">小規模農地の分譲</span>
+          <span class="sum">定住やＵＩターンの促進に向け、開パイ畑地や耕作放棄地を小規模農地化して分譲することについて、取得農地の面積要件を緩和する特例の本町での実態を尋ね、農業公社を通じた貸し出しのあっせんを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・景山利則</span>
+          <span class="ttl">総合戦略の人口減少対策</span>
+          <span class="sum">最終年度を迎えるまち・ひと・しごと創生総合戦略の評価と取り組みを尋ね、年少人口や出産可能年齢の女性が少ない中での自然減の克服、社会減が続く要因の分析と今後の対応、施策と移住者の思いが合っていないのではないかとの認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・内田勇</span>
+          <span class="ttl">農業遺産の認定</span>
+          <span class="sum">世界農業遺産・日本農業遺産の認定に向けた取り組みの町民へのわかりやすい周知を求め、両遺産の違いと一方のみ認定される可能性の有無、認定を受けた場合の移住者増加や農産物のブランド化、観光振興などの効果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・藤原和範</span>
+          <span class="ttl">ふるさと回帰の呼びかけ</span>
+          <span class="sum">奥出雲町を心のふるさとに持つ子供や親戚へ各家庭や地域から情報発信しUターンを促す取組と、夏祭りなどふるさと行事への誘いや関西奥出雲会など各地の出身者会との交流の強化を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・土屋武雄</span>
+          <span class="ttl">人口急減地域の地域づくり</span>
+          <span class="sum">地域おこし協力隊の活動状況と今後、Uターン・Iターン希望者の数と定住に踏み切れない理由、生涯定住するための経済面を含む生活の安定、地域づくり事業の人件費や社会保障費の負担に対する人材供給システム、シルバーボランティアと移住者の人材需要のバランスと財政支援、国・県・町の支援を組み合わせた人口急減対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田食道弘</span>
+          <span class="ttl">土砂災害特別警戒区域の支援</span>
+          <span class="sum">本町で1,044カ所に及ぶ土砂災害特別警戒区域の指定時期と住民への周知の計画を尋ね、建物の補強工事や移転への支援制度の導入と、転出を防ぐため災害の危険性の低い適地での宅地整備による災害対策と定住対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・糸原壽之</span>
+          <span class="ttl">島根創生計画と学校再編</span>
+          <span class="sum">県が島根創生計画でU・Iターンの促進や関係人口の拡大を掲げる中、町内の小学校を2校にする再編方針は子供の教育を判断材料とする移住の受け皿を狭め県と逆を向くとして、再編をしばらく考え直すべきとの考えへの町長と副町長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田食道弘</span>
+          <span class="ttl">町外居住者の定住対策</span>
+          <span class="sum">町内に勤務しながら町外に居住する理由をアンケート調査などで把握し、しゃれた町営住宅の不足やインターネット環境など町内で居住する障害を取り除く環境整備を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・田食道弘</span>
+          <span class="ttl">ネット通信環境と移住</span>
+          <span class="sum">コロナ禍での利用急増で通信が悪化する中、町ホームページの記述の変更、新しい移住やＩターン・Ｕターンを増やすための通信環境の早急な整備、インターネットを活用する事業者や住民との意見交換の場や組織づくりを通じた整備の検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・景山利則</span>
+          <span class="ttl">少子化による人口減少対策</span>
+          <span class="sum">若者が近隣の雲南市などに住居を求めて流出する中、鹿児島県伊仙町に倣い町有地に世帯用住宅を建設してUターン・Iターンの子育て世代を優遇して入居させることと、一律10万円の出産祝い金を2人目20万円、3人目30万円のように段階的に高くすることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・景山利則</span>
+          <span class="ttl">人口ビジョンと人口減少対策</span>
+          <span class="sum">第２次総合計画の人口ビジョンについて、魅力あるまちのイメージ、若者世帯のＵ・Ｉターン促進策と若者や女性の転出抑制の条件設定、２０年後９，０００人・５０年後約７，０００人とする目標数値の根拠と達成への決意、企業誘致を含む魅力的な職場づくりと賃金、町職員の町外転出、世帯用住宅の建設見通しと子育て世帯用住宅用地の確保、子育て世帯の新築への固定資産税の減免、若者世代が住みたくなるまちづくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・景山利則</span>
+          <span class="ttl">少子化の改善策</span>
+          <span class="sum">若者の地元定着とＵ・Ｉターンに向けた魅力ある働き場の確保と、町外への流出を防ぐ子育て世代向け住宅用地の造成を尋ね、一律１０万円の出産祝い金の２人目以降の増額支給と、１８歳までの医療費無料化をいつからどのような形で実施するかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・内田雅人</span>
+          <span class="ttl">林業振興と森林管理</span>
+          <span class="sum">森林環境譲与税によるレーザー航測の路網整備や森林資源把握への活用、西粟倉村を例にした新たな森林管理システムの進め方と分収造林が生かせない理由、オロチの深山きこりプロジェクトの会員数とUIターン者向け新制度、林業振興のネックと体制の在り方、キャンプ場など森林レクリエーション施設の再整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・糸原文昭</span>
+          <span class="ttl">移住対策の推進</span>
+          <span class="sum">移住に興味があっても仕事面や経済面の不安を抱える人が多い調査結果を挙げてその不安解消への所見を尋ね、定住支援サイト以外での奥出雲町の魅力の発信、行政や町民が広報役となる移住施策の推進、関係人口についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・高橋恵美子</span>
+          <span class="ttl">空き家対策と移住定住</span>
+          <span class="sum">空き家数と空き家バンク登録数、登録が進まない理由、空き家バンクによる移住定住者とのマッチングの成果と就労状況、管理が不十分な危険な空き家への対策を尋ね、飯南町のお試し滞在や農業支援を例に長く移住してもらうための相談支援の在り方と奥出雲ファンを増やす活動を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・糸原文昭</span>
+          <span class="ttl">地震災害への対応</span>
+          <span class="sum">能登半島地震を受け、災害の大きさや深刻度の捉え方、近年の地震を踏まえた町の対応の見直し、冬期対策の資機材の確保と自治体間での資機材・物資の備蓄、要配慮者の1.5次・2次避難所への移動、奥出雲病院の災害への体制、自治会未加入者や移住者を含む行方不明者の把握方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・小田川謙一</span>
+          <span class="ttl">奥出雲創生の取組</span>
+          <span class="sum">奥出雲創生として、県外で就職した人や移住希望者から意見を聞く20代から40代に絞った懇談会の開催、専門的知識のある講師を招き職員と施策を考える場の設定、そば屋と連携してできた商品の町全体での販売、山形県遊佐町に倣った少年議会の設置を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・高橋恵美子</span>
+          <span class="ttl">新しい観光誘客</span>
+          <span class="sum">「おてつたび」や大田市の保育園留学を例にした暮らしと体験をつなげた新しい旅の提案と取組状況、農泊をきっかけにした移住の実例、移住者への片道交通費の支援、インバウンドマーケティングの取組状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・高橋恵美子</span>
+          <span class="ttl">持続可能なまちづくり</span>
+          <span class="sum">人口戦略会議の公表を受けた少子化・人口減少対策としてのまちづくりへの町長の思い、特定地域づくり事業組合の取組状況と今後の在り方や移住支援のマネジメントの担当課、若者未来会議のブランドメッセージの発信と将来の方向性、お試し移住など移住定住の受入れ状況、Ｕ・Ｉターン住宅整備支援事業の年齢要件の緩和と加算額の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・内田雅人</span>
+          <span class="ttl">現代にマッチした結婚支援</span>
+          <span class="sum">非婚化が少子化の大きな原因との認識から、町の結婚支援事業の費用対効果と行政が結婚支援を行うことへの考えを尋ね、しまねコンピューターマッチングシステムの周知や入会登録料の補助、出会いと帰郷のきっかけとなる３０歳の集いの創設、定住促進策への副町長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・小田川謙一</span>
+          <span class="ttl">町産材の利用促進</span>
+          <span class="sum">町産材利用促進事業費補助金について町民や移住検討者、関係業者への周知方法と申請実績・今後の見込みを尋ね、新統合小学校校舎建設での町産材の利用見込み量を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・落合孝行</span>
+          <span class="ttl">人口減少の要因</span>
+          <span class="sum">町が人口減少の要因をどう認識して政策を行っているかとこれまでの手応え、１０年間の出生数の減少と要因、結婚前の若者への経済的支援、子育てサービスの利用者の声を知る関係づくりの場、直近５年間の転出者数と理由、Ｕ・Ｉターン者数と移住の決め手、Ｕ・Ｉターンフェア以外の接点づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・落合孝行</span>
+          <span class="ttl">暮らしサポートセンター</span>
+          <span class="sum">おくいずも暮らしサポートセンターへの移住定住に関する年間の問合せ件数と内容、無料職業紹介所の利用状況と仕事の支援の内容、名称変更を機に変更した点やこれから力を入れる点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・落合孝行</span>
+          <span class="ttl">空き物件の利活用</span>
+          <span class="sum">空き家バンクなどから受入れ可能な人数と複数人世帯向けの物件数、その充足の認識を尋ね、民間の賃貸住宅の建設やリフォームへの一部助成、小さな拠点づくりの会などと連動した空き家バンクの登録増加と飯南町の例、中古住宅の解体費の一部補助、智頭町を参考にした災害支援と移住対策の掛け合わせを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・落合孝行</span>
+          <span class="ttl">若者のＵターン促進</span>
+          <span class="sum">高校卒業後に転出した若者への情報提供やキャリア支援の手だて、公式ＬＩＮＥの登録を促す奨学金などの情報提供、おくいずも登録の登録者数と効果・課題、町民が送るタイミングの検討を尋ね、民間とも連携した若者が町内の中高生や企業に関わる関係人口施策と、高校生の長期休暇中の町内企業などでのアルバイトの後押しを質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 4自治体くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

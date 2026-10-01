@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>庁舎の整備 — 当たった質問の全件 | 4自治体くらべ</title>
+<style>
+/* 4自治体くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share-part:#eef1f9;  /* shared by some of the municipalities that hold data */
+  --share-all:#d9e0f4;   /* shared by all of them (stronger than --share-part) */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×自治体（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh-part{background:var(--share-part);border-radius:3px;padding:0 4px}
+table.years li.sh-all{background:var(--share-all);border-radius:3px;padding:0 4px;font-weight:600}
+/* How many municipalities a shared bucket appeared in, printed as text beside the
+   bucket. The two tints alone cannot say "all" without the reader knowing how many
+   municipalities held data that year, so the number is written out - the same move
+   as design-convention 3 "read it by length *and* number". */
+table.years .shn{color:var(--ink-faint);font-size:.85em;margin-left:4px}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+/* The three kinds of empty cell (Req 3.5). They must not look alike, and the
+   difference has to survive colour blindness and a greyscale print, so all three
+   keep one colour and differ by marker glyph and rule style instead:
+     none-zero        measured zero - no marker, no rule
+     none-source      the minutes are not in the source - U+203B + dashed rule
+     none-unpublished the term is left out of the reports - U+25C7 + dotted rule
+   The wording differs as well, but that comes from the data (`notices`); the marks
+   here are a second channel, not the only one. Glyphs, never emoji (file header).
+
+   These three are keyed on the class alone, not on `table.years`, so the legend can
+   show the reader what the two marks mean by carrying the very same classes on an
+   empty span - the glyph is written once, here, and cannot drift from the table. */
+.none-zero{border-bottom:0}
+.none-source{border-bottom:1px dashed currentColor}
+.none-source::before{content:"\203B";margin-right:3px}
+.none-unpublished{border-bottom:1px dotted currentColor}
+.none-unpublished::before{content:"\25C7";margin-right:3px}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;min-width:30px;text-align:center;border-radius:3px;margin:0 4px;padding:0 6px;font-size:.8rem}
+.legend .c-part{background:var(--share-part)}
+.legend .c-all{background:var(--share-all);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">4自治体くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">4自治体くらべ</a> ／ 庁舎の整備</nav>
+
+  <h1 class="page-title">庁舎の整備 — 当たった質問</h1>
+  <p class="page-subtitle">
+    話題の束「庁舎の整備」に当たった質問の全件です（全337件）。
+    自治体ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">95件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H18・津森良治</span>
+          <span class="ttl">自然エネルギーの普及</span>
+          <span class="sum">ガソリン高騰や資源の有限性を背景に、県に倣い市庁舎などへペレットストーブを試験的に設置するよう求め、森林資源を活用した自然エネルギーの普及と温泉施設など観光施設での活用を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・太田薫</span>
+          <span class="ttl">ＤＶ防止対策</span>
+          <span class="sum">策定中のＤＶ対策基本計画を踏まえ、本庁舎内に人目を気にせず相談できるワンストップ窓口を兼ねた相談室を設けることと、相談員による同行支援の体制、市としてのＤＶ防止センターの設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・津森良治</span>
+          <span class="ttl">新庁舎の建設</span>
+          <span class="sum">建設から50年近い現庁舎の問題点を問い、人口や職員数の増加を踏まえた新庁舎建設の検討、合併で広がった市の中心への建設、総合体育館や県立プール跡地周辺の構想、福祉相談窓口の手狭さへの対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・立脇通也</span>
+          <span class="ttl">市庁舎の改修</span>
+          <span class="sum">築50年で耐震性に欠ける本庁舎について、埋立地である末次の地盤の危険も踏まえた改修の内容と、別館・別棟を統合新築するのか耐震改修するのか、暗い北棟を全面改修する考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・貴谷麻以</span>
+          <span class="ttl">庁内の男女共同参画体制</span>
+          <span class="sum">市庁舎内での女性の係長や課長の必要性と、市民が行きやすい男女共同参画センターとするためのセンターと男女共同参画課の分離を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・加本市郎</span>
+          <span class="ttl">防災・減災への取り組み</span>
+          <span class="sum">防災・減災ニューディールへの見解、市庁舎の耐震診断結果と工事の時期・費用、木造住宅の耐震診断・改修補助の実績と県事業との併用、学校の非構造部材、災害情報の伝達、津波対策、防災教育を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中明子</span>
+          <span class="ttl">がん検診の受診率向上</span>
+          <span class="sum">ピンクリボン月間に市庁舎からピンクリボンを垂らす啓発、無料クーポンによる乳がん・子宮頸がん検診の受診率の変化と未受診者への再勧奨、ピロリ菌胃がんリスク判定の周知方法と中学生への無料検査の実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・片寄直行</span>
+          <span class="ttl">原発・エネルギーと防災計画</span>
+          <span class="sum">福島事故の現状と教訓の総括、島根原発2号機の審査状況の感想、最終処分場の候補地を求められた場合の対応、広域避難計画の策定時期と課題、10キロメートル圏内にある市庁舎の防災拠点としての適否、複合災害の想定、原発の地域経済へのメリット・デメリットの比較、みどりのエネルギー条例署名の受けとめ、市の消費電力と再生可能エネルギー比率、省エネ計画の進捗、バイオマス発電のあり方、自然エネルギーのポテンシャル調査を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・野津照雄</span>
+          <span class="ttl">市庁舎の建てかえ検討</span>
+          <span class="sum">現在地での耐震改修を基本とする庁舎について、建設後70年から80年以上使用することの老朽化による安全面、市民を守る安心面、公共施設の更新経費が集中する時期と重なる財政面の問題を挙げ、建てかえも検討すべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩本雅之</span>
+          <span class="ttl">市庁舎の現地建てかえ</span>
+          <span class="sum">老朽化した本庁舎の現地建てかえを推進すべきとし、建てかえる場合は長岡市の例のように市民が集いさまざまな情報を発信できる付加価値を持った松江らしい庁舎を検討すべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・桂善夫</span>
+          <span class="ttl">市庁舎建てかえと施設適正化</span>
+          <span class="sum">築51年を超え劣化が進む市庁舎について、公共施設適正化基本方針策定委員会が現地建てかえの方向や今後30年で市有施設をほぼ半減させる必要性を確認したことを踏まえ、庁舎建てかえと公共施設の適正化に対する市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・芦原康江</span>
+          <span class="ttl">市庁舎建てかえと財政</span>
+          <span class="sum">人口減少と高齢化で税収減と扶助費増が避けられない中、市長が前向きな市庁舎の建てかえが将来の財政見通しに与える影響と、その具体的な見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・林干城</span>
+          <span class="ttl">市庁舎の改修</span>
+          <span class="sum">築50年以上の本館を初め5棟の庁舎について、コンサルの調査で長い目で見れば建てかえのほうが安いとされた結果を踏まえ、市庁舎の改修に関する市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・桂善夫</span>
+          <span class="ttl">市庁舎の耐震問題</span>
+          <span class="sum">昭和37年建設の庁舎について、庁舎総合評価報告書で改修より建てかえのほうがよいとの結論になったことを市長がどう考えるかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・宅野賢治</span>
+          <span class="ttl">庁舎整備事業の進め方</span>
+          <span class="sum">庁舎整備の根拠や経緯の市民への説明、実施計画の重点課題と建設物価変動への対応、ＰＦＩ導入など発注方法と整備予定時期、総事業費の限度目標額の設定と予算財源計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・野々内誠</span>
+          <span class="ttl">市庁舎の業務継続計画</span>
+          <span class="sum">鳥取県中部地震で倉吉市役所に災害対策本部を設置できなかった事例を踏まえ、災害時の業務継続計画（ＢＣＰ）の策定状況と、災害に備えた代替庁舎をどこに考えているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・野々内誠</span>
+          <span class="ttl">新庁舎建設への市民意見</span>
+          <span class="sum">甲府市と長野市の視察を踏まえ、市民説明会やアンケート、市民会議などを通じた市庁舎建設に対する市民の声の聴取の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・畑尾幸生</span>
+          <span class="ttl">熊本地震を踏まえた防災</span>
+          <span class="sum">本庁舎被災時の災害対策本部の代替施設の確保、救援物資の輸送と避難路の具体策やマップによる市民周知、3万食の食料備蓄の充足と備蓄品目の見直し、木造住宅の耐震診断と補強、松江城の修復の年次計画と財源、他の文化財建造物の対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・南波巖</span>
+          <span class="ttl">再生可能エネルギーの導入</span>
+          <span class="sum">再生可能エネルギー導入の基本的考え方と今後の展開、地球温暖化対策実行計画との関連、玉湯町の地熱の活用方法、市内の発電施設を生かした地域新電力会社の設立、新庁舎への再エネ・省エネ設備の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津直嗣</span>
+          <span class="ttl">庁舎改築と末次公園</span>
+          <span class="sum">市庁舎の建てかえに当たり、末次公園を玄関口やアプローチとして宍道湖の水辺景観と一体的に再整備すること、検討委員会への子育て世代の参加、城西地区やしんじ湖温泉駅と一体となった開かれた庁舎とすることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・太田哲</span>
+          <span class="ttl">新庁舎の建設</span>
+          <span class="sum">浦安市や習志野市の視察を踏まえ、現地建てかえとした根拠と他の候補地の検討、地元企業の採用のあり方、新庁舎建設の今後のスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島良信</span>
+          <span class="ttl">新庁舎建設の位置と機能</span>
+          <span class="sum">築50年以上の本庁舎の建て替えについて、末次町以外の候補地との比較検討の有無、市民サービスや交流機能を備え市民に開放する場の必要性、今後のスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・比良幸男</span>
+          <span class="ttl">新庁舎建設の留意点</span>
+          <span class="sum">現地建てかえが表明された新庁舎について、熊本地震で庁舎が使用不能となった例も踏まえ早期完成を望み、基本構想・基本計画の策定に当たり留意する点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津照雄</span>
+          <span class="ttl">２月補正事業の進捗</span>
+          <span class="sum">平成28年度２月補正事業のうち、水上飛行機推進事業のフライト実績と評価、今後の計画、消防本部庁舎整備事業の内容と契約状況、完了時期、保育所施設整備事業費補助の内容と現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・津森良治</span>
+          <span class="ttl">公共施設適正化と新庁舎</span>
+          <span class="sum">中核市市長会総会の感想を問うたうえで、合意形成が難しい施設に向かう公共施設適正化への決意と、新市庁舎建設に必要な大規模な資金調達の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・出川桃子</span>
+          <span class="ttl">市立図書館のあり方</span>
+          <span class="sum">県内外と比べ延べ床面積や貸出冊数が低位な市立図書館の現状認識と原因、駐車場の２時間無料化、レファレンス機能の充実、青少年のサードプレイス確保、新庁舎への図書館機能の付加、市民参加で将来構想を検討する場の立ち上げを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・吉儀敬子</span>
+          <span class="ttl">文書管理と公文書館</span>
+          <span class="sum">松江市史編さん事業の終了後も文書を管理する部署の必要性、柳多邸の調査報告書の存在をめぐる文書管理のずさんさ、新庁舎建設に当たり専任職員を置く文書館の設置構想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・出川桃子</span>
+          <span class="ttl">新庁舎と周辺のまちづくり</span>
+          <span class="sum">都市マスタープランの活力ある景観形成をめぐる担当課との議論を尋ね、千鳥町周辺などと面的に連携したエリアマネジメントへの取り組みと、この地で建て替える将来のまちづくり上の意味を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・出川桃子</span>
+          <span class="ttl">新庁舎の目的外使用</span>
+          <span class="sum">建設前から余裕部分を見込む目的外使用の貸し付けの可否、コンビニやカフェ設置の法的整理、用途の類型化と許可基準のルールやガイドラインづくり、目的内施設の転用への考え、収益性の確保と統一的な運用方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・出川桃子</span>
+          <span class="ttl">新庁舎の適正な規模</span>
+          <span class="sum">分散する本庁機能の集約や合理的分散の検討、中核市移行による組織再編を踏まえた検証、IT化を見据えた次世代型市民サービスのあり方を尋ね、機能を整理したうえで建設費を示す説明責任を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・出川桃子</span>
+          <span class="ttl">新庁舎建設の基本理念</span>
+          <span class="sum">新庁舎建設がハード面に偏りソフト面の議論が不十分だとして、京都市の市民を巻き込んだ理念づくりの例を挙げ、市長の新庁舎にかける思いや思い描く未来像を含む基本理念を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・出川桃子</span>
+          <span class="ttl">本館西棟のあり方</span>
+          <span class="sum">新庁舎完成時に築20年となる本館西棟を残す方針について、防災センターを最新の耐震性能の新庁舎に置く合理性や二重投資の懸念を挙げ、西棟を残す案と解体する案の試算と柔軟な判断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・吉儀敬子</span>
+          <span class="ttl">東出雲町の公民館問題</span>
+          <span class="sum">東出雲町の公民館検討委員会の中間報告を受け、市が庁舎建設までに結論を出すようなスケジュールを提示したのかを尋ね、地区ごとに十分話し合う時間の保障を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・森脇勇人</span>
+          <span class="ttl">中期財政見通しの方針</span>
+          <span class="sum">合併算定がえによる交付税の縮減、新庁舎建設費の資材高騰による増加や施設修繕、会計年度任用職員制度の経費19億5,000万円を踏まえ、令和元年度の中期財政見通しの策定方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・貴谷麻以</span>
+          <span class="ttl">女性の働く環境と登用</span>
+          <span class="sum">女性が働きやすい環境を市としてどう整えるかを問い、市庁舎の課長級・部長級の女性の割合と、今後の女性登用の推進について市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・吉儀敬子</span>
+          <span class="ttl">文化を核とするまちづくり</span>
+          <span class="sum">菅田庵の国宝化に向けた取り組み、原料のミツマタ栽培から取り組む出雲民芸紙への支援と幹部職員の名刺への活用、新庁舎での工芸作品の展示と工芸品の販路拡大の支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・貴谷麻以</span>
+          <span class="ttl">新庁舎の働きやすさ</span>
+          <span class="sum">新庁舎で男女職員の働きやすさをどう確保するか、子育て日本一を目指した市民への対応や20代女性の転出超過への対応を新庁舎でどう表現していくかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・森本秀歳</span>
+          <span class="ttl">新庁舎の環境配慮型整備</span>
+          <span class="sum">ダイキン工業の研究開発拠点の太陽光追尾型発電やクールヒートトレンチなどの例を挙げ、新庁舎整備に当たり最新の省エネ建築技術を調査研究し、効果が見込めれば採用することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・出川桃子</span>
+          <span class="ttl">新庁舎の目的外使用</span>
+          <span class="sum">基本設計の図面に文書庫棟２階の特定の目的外使用者が明記されている点について、行政事務開始前に許可判断ができるのか、許可の反復が恒久的使用と同じになりルールを形骸化させないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・出川桃子</span>
+          <span class="ttl">新庁舎の総工費と財政影響</span>
+          <span class="sum">150億円からの増額の可能性と上限、100億円の起債による市民生活と財政運営への影響、文書庫棟・車庫棟や眺望テラスの見直し、カフェ・レストランの費用対効果など事業費の削減策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・出川桃子</span>
+          <span class="ttl">新庁舎事業費増額の要因</span>
+          <span class="sum">新庁舎の概算事業費が120億円から150億円に増えた要因、呉市の平成25年の単価を用いた当初算出の妥当性、平米単価が１年で27％上昇した理由、基本設計の単価の根拠と第三者評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中肇</span>
+          <span class="ttl">水害時の災害対策本部</span>
+          <span class="sum">ハザードマップ想定の水害時の市庁舎と周辺道路の状況、災害対策本部の設置場所と移転判断のタイムライン、新庁舎や地下駐車場の浸水予測、新庁舎を災害対策本部として活用する体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・出川桃子</span>
+          <span class="ttl">第三者による再評価</span>
+          <span class="sum">建設費が30億円増額する見込み違いが生じた今、公共事業の再評価制度の趣旨を生かして第三者の評価を仰ぐことを提起し、新庁舎は誰のためのものかを市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・吉金隆</span>
+          <span class="ttl">観光推進体制と宿泊税</span>
+          <span class="sum">観光推進体制の再構築に向けて庁内に置いた担当組織の進捗とタイムスケジュール、宿泊税を財源とするＤＭＯやＴＩＤへの展開、観光名所となる市庁舎の建設について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岩本雅之</span>
+          <span class="ttl">フェーズフリーなまちづくり</span>
+          <span class="sum">平常時も非常時も地域社会が持続的に機能するよう、フェーズフリーな発想を基にまちづくり計画を推進すべきとの考えへの所見と、フェーズフリーな視点で市庁舎に求められる役割を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・比良幸男</span>
+          <span class="ttl">今後の市政運営</span>
+          <span class="sum">市長や部長級職員、多数の議員が一度に退く中での今後の市政運営への所見と、かわまちづくりや新大橋架け替え、松江北道路、新庁舎建設などを控え新しく市政を託す人に託したいことを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・河内大輔</span>
+          <span class="ttl">市の情報発信の強化</span>
+          <span class="sum">新庁舎建設をめぐり情報発信力の弱さが表れたとして、ホームページのリニューアルと、スマホアプリやツイッター、フェイスブック、ユーチューブの利用者・フォロワーを増やす取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・比良幸男</span>
+          <span class="ttl">市民への周知と事業報告</span>
+          <span class="sum">新庁舎建設で住民投票条例の請求が起きた経緯を踏まえ、新大橋架け替えやかわまちづくり、白潟地区の都市再生整備計画などの計画段階からの周知と、下水道普及や公債費削減、財源構成を含めて事業を市民に分かってもらう努力の必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・橘祥朗</span>
+          <span class="ttl">市長の住民運動への対応</span>
+          <span class="sum">新庁舎建設の住民投票を求めた住民団体との対話を拒み続けた市長の対応が市民の不信と分断を残すとして、市民団体への対応や発言への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・篠原栄</span>
+          <span class="ttl">庁舎建設費縮減分の活用</span>
+          <span class="sum">新庁舎の建設費縮減に取り組み縮減分を市民サービスに振り替えるよう求め、深谷市などの書かない窓口やＲＰＡの導入事例の研究を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・柳原治</span>
+          <span class="ttl">新庁舎建設</span>
+          <span class="sum">起工式を終えた新庁舎建設について、市長の心情、駐車場確保の方針、末次公園の仮設駐車場化の経過と再整備への市民の声の反映、完成後の魅力と市の主体的な情報発信、職員の資質向上、事業を見直した場合の工事契約や計画への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・吉儀敬子</span>
+          <span class="ttl">新庁舎建設と住民投票</span>
+          <span class="sum">住民投票条例案を前向きに受け止めて議会に提案すべきではないか、署名を集めた求める会の意見を直接聞くべきではないか、議会の承認を得ているとの記者会見での発言の真意、感染症対策を踏まえた新庁舎の在り方や規模縮小の論議の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・橘祥朗</span>
+          <span class="ttl">新庁舎建設と市民合意</span>
+          <span class="sum">市民の合意、納得、信頼のもとで新庁舎建設を進めること、コロナを踏まえた行政機能の分散やレイアウトの再検討と支所の維持・活用、新庁舎より市民生活と経済の再開を優先すべきとの声について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・石倉徳章</span>
+          <span class="ttl">新庁舎建設の市民周知</span>
+          <span class="sum">建設場所・建設金額・市民周知が論点となり反対の動きも残る新庁舎建設について、過剰なまでに周知・広報を進めるべきとの考えへの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・畑尾幸生</span>
+          <span class="ttl">新庁舎建設の市民説明</span>
+          <span class="sum">条例制定署名が短期間で多く集まったのは正確な情報が行き渡っていない証左ではないかとして、スケジュールを柔軟に考え、市長が副市長と手分けして事業の意義や財政計画、中心市街地や水辺空間の姿を市民に説明し、批判的な意見にも耳を傾けるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・貴谷麻以</span>
+          <span class="ttl">新庁舎建設の懸念と周知</span>
+          <span class="sum">国の防災・減災方針による新たな課題や公適債の活用、低地の地下駐車場、資材費高騰など新庁舎建設の懸念、パターン化した市民への周知方法の見直し、全庁的な避難訓練の毎年実施と全庁を指揮する人材の登用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・河内大輔</span>
+          <span class="ttl">新庁舎建設への市長の考え</span>
+          <span class="sum">コロナ禍での150億円の新庁舎建設に懸念の声や市民団体の対案がある中、建設費の将来負担や対案、コロナ禍での着工を踏まえた市長の思いと、住民投票条例制定への動きに対する考え、これまでの情報発信が必要十分であったかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・川島光雅</span>
+          <span class="ttl">新庁舎建設問題の検証</span>
+          <span class="sum">公民館区での住民説明会の感触と市長自ら出向いて理解を得る努力、旧県立プール跡地やホテル宍道湖跡地の活用と現地建て替えにこだわる理由、120億円から150億円に増えた建設費と地方交付税措置や建設基金の確保、事業を一時停止して市民と話し合うことの可否と影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・森脇勇人</span>
+          <span class="ttl">来年度予算編成と市長の思い</span>
+          <span class="sum">新型コロナ対策と新庁舎建設や松江北道路など大型事業を控え、市長・議員の改選期を迎える来年度の予算編成方針と、５期20年を務めた市長の来年度に向けた思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・太田哲</span>
+          <span class="ttl">職員の残業と働き方改革</span>
+          <span class="sum">2019年度に年720時間を超えて残業した市職員の勤務状態と体調、新庁舎を見据えた業務の時間管理と効率化、コロナ禍で好調な企業の働き方への指導を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・篠原栄</span>
+          <span class="ttl">脱炭素社会の実現</span>
+          <span class="sum">玉湯町の地熱利用事業の現状と展望、再生可能エネルギー活用ビジョンの進捗、次期環境基本計画での脱炭素化、市内の二酸化炭素排出量の推移、食品ロス対策、環境産業への注力、新庁舎建設の考え方、排出実質ゼロの宣言を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・新井昌禎</span>
+          <span class="ttl">脱炭素社会の実現</span>
+          <span class="sum">ゼロカーボンシティ宣言を受けた取組と市民への周知、公用車の電動化計画と新庁舎での対応、市周辺の風力発電の適地、上下水道局・ガス局・交通局のカーボンニュートラルの取組、堀川遊覧船の電動化の検討に加え、原子力発電への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・新井昌禎</span>
+          <span class="ttl">行政サービスのデジタル化</span>
+          <span class="sum">地方制度調査会の答申を踏まえ、行政サービスのデジタル化の対応方針と推進体制、プラットフォームの標準化やインフラ整備、専門人材の確保、セキュリティー確保と高齢者への配慮、新庁舎建設でのデジタル・ガバメントの実現と自治体クラウド、ＡＩ、オープンデータの方針、マイナンバーカード専用窓口の実績と通知カード廃止の影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・宅野賢治</span>
+          <span class="ttl">財政見通しと財源確保</span>
+          <span class="sum">法人市民税を中心とした市税収入の減収見込みと財政運営の見通し、イベント中止等による不用額の流用や予備費、基金の活用によるコロナ対策財源の確保、新庁舎など大型工事への影響と新しい生活様式の視点の反映を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・吉儀敬子</span>
+          <span class="ttl">難聴者の社会参加促進</span>
+          <span class="sum">加齢性難聴者の補聴器購入助成への取組と難聴者数の把握、高齢者健診への聴覚検査の導入、新庁舎やプラバホールなど公共施設へのヒアリングループ整備と移動式の無料貸出し、言語聴覚士を置いた聞こえの相談窓口の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">エリアビジョンと都市再編</span>
+          <span class="sum">中心市街地のエリアビジョンについて、新庁舎周辺での都市構造再編集中支援事業の活用と末次公園・河川の交渉状況、議員へのたたき台の提示、策定後に重点的に取り組むエリアを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・原田守</span>
+          <span class="ttl">デジタル市役所計画</span>
+          <span class="sum">松江市みんなにやさしいデジタル市役所計画の内容と今後の進め方、進捗状況を尋ね、計画期間中に完成する新庁舎へのＩＣＴ機器導入の道筋を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・原田守</span>
+          <span class="ttl">庁内ＯＡ機器と業務効率化</span>
+          <span class="sum">職員の負担軽減に向けた業務の効率化、新庁舎の供用開始を控えたＯＡ機器の更新、パソコンのツインモニター化の導入、グループウエアの運用状況と改善点について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・中村ひかり</span>
+          <span class="ttl">新庁舎と市民の意見</span>
+          <span class="sum">新庁舎建設について、市長が選挙期間中に表明した用途変更や利活用に関し市民の意見を聞く取組を今後どのように実施するかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岩本雅之</span>
+          <span class="ttl">新庁舎の活用</span>
+          <span class="sum">市民が誇れる拠点としての新庁舎の活用について市の検討状況を問い、オープンデッキなど共有部分を観光やまちあるき、ＭａａＳ、福祉、地域振興の視点から公民連携のおもてなし拠点として活用するよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・錦織伸行</span>
+          <span class="ttl">新庁舎整備計画</span>
+          <span class="sum">現行計画をそのまま進めることへの疑問の有無と市民の意見聴取の日程・工事への反映、浸水が想定され原発10キロ圏内にある新庁舎の防災拠点としての適格性、プロポーザル資料の議員への全面公開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">末次公園と千鳥南公園の整備</span>
+          <span class="sum">市庁舎と一体となった末次公園の整備で噴水など子どもが憩える公園やＰａｒｋ－ＰＦＩの活用を提起し、末次公園の整備スケジュールと、千鳥南公園を含む公園整備の財源の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・中村ひかり</span>
+          <span class="ttl">災害時の避難計画</span>
+          <span class="sum">公民館で避難者が受け入れられなかった事例を挙げた避難所設置基準の見直し、浸水想定区域にある市庁舎の空からの緊急対応などリスク管理、原子力災害時の避難車両の想定台数と30キロ圏外への避難シミュレーションを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・田中明子</span>
+          <span class="ttl">行政のデジタル化</span>
+          <span class="sum">デジタル改革関連法の成立を受け、高齢者向けの官民による講習会、デジタルインフラ整備の担当部署と人材・スケジュール、押印見直しと個人情報保護、庁舎内のリモート会議接続の統一、新庁舎のデジタル化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・田中明子</span>
+          <span class="ttl">アスベスト被害対策</span>
+          <span class="sum">現市庁舎や学校など公共建物のアスベスト使用の調査、市内の健康被害者の有無、解体工事の発注者・受注者への飛散防止の普及啓発、事前調査から解体処分までの追跡調査の実施主体を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・海徳邦彦</span>
+          <span class="ttl">サニタリーボックス設置</span>
+          <span class="sum">市役所本庁舎や支所、公共施設の男子トイレへのサニタリーボックスの設置状況を質し、尿漏れパッドを使う人のため早急に設置し環境を整えることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・中村ひかり</span>
+          <span class="ttl">入札制度と公文書公開</span>
+          <span class="sum">令和３年度の公共工事の不調率・不落率と他自治体との比較、入札時積算数量書活用方式を見送った判断と新庁舎整備事業での契約変更対象額の差を尋ね、公文書公開の電磁的記録による交付への移行を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・たちばなふみ</span>
+          <span class="ttl">女性への暴力と相談体制</span>
+          <span class="sum">女性への暴力撤廃に向け、DVのワンストップ窓口の役割、こども家庭センター設置で相談窓口が3か所に分かれるのか、新庁舎でのワンストップ体制と相談員の複数配置や増員を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・山根宏</span>
+          <span class="ttl">市役所屋上の天文台</span>
+          <span class="sum">新庁舎に移設されない現市役所屋上の天文台について、庁舎の建て替えとともに撤去するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・岩本雅之</span>
+          <span class="ttl">新庁舎の利活用</span>
+          <span class="sum">新庁舎の利活用について、日常的に市民が利活用できる公共スペースと今後の準備、市の拠点としての機能、立地場所を生かしたまちづくり、福祉的な視点で計画・配慮すべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・錦織伸行</span>
+          <span class="ttl">新庁舎の地元作家作品展示</span>
+          <span class="sum">県内市や中核市の例を示し、新庁舎に地元出身の美術家・芸術家のシンボリックな作品を展示する予定の有無とその理由、現庁舎にある地元ゆかりの作品を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・錦織伸行</span>
+          <span class="ttl">新庁舎工事完了の遅れ</span>
+          <span class="sum">四十間堀の整備に伴う新庁舎整備工事の完了の遅れについて、市民への広報の現状と今後、期間延長に伴い島根県へ求める費用負担と新庁舎整備課の人件費の扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・柳原治</span>
+          <span class="ttl">新庁舎整備の進捗と価格変動</span>
+          <span class="sum">第1期工事完了まで約7か月となった新庁舎建設工事の進捗状況、労務単価や建設資材価格の上昇に伴う受注者の負担増への対応、第2期工事完了までの価格変動の見込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・中村ひかり</span>
+          <span class="ttl">新庁舎整備事業の状況</span>
+          <span class="sum">新庁舎の工事現場見学会の参加者の声と当日の様子、公共工事設計労務単価の引上げによる新庁舎整備事業費の増額見込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・原田守</span>
+          <span class="ttl">現庁舎の備品と有価物</span>
+          <span class="sum">新庁舎の供用開始と現庁舎の解体時期、有価物や不要となる什器備品のSDGsの観点からの取扱い、解体までの議場を含めたイベント開催と、その詳細や物品譲渡の公表時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・村松りえ</span>
+          <span class="ttl">竹島資料室の認知度向上</span>
+          <span class="sum">竹島資料室の年間平均入場者数と来館者の傾向、市民の認知度調査の有無を尋ね、市庁舎や観光案内所へのパンフレット設置、市報での特別展示の案内、学校での研修など県と連携した取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・長谷川修二</span>
+          <span class="ttl">財政の在り方</span>
+          <span class="sum">将来負担と受益者負担を踏まえた財政の在り方と公共施設の再配置、物価高騰で増収する地方消費税交付金の見込みと消費者への還元、新庁舎建設の財源の今後の見込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・長谷川修二</span>
+          <span class="ttl">ランドマークとしての市役所</span>
+          <span class="sum">新庁舎の１期工事完了を受け、市役所の利活用の取組状況と今後の課題や展望と、来訪者に分かりやすいよう屋上に松江市と表示する電光掲示板を設置する提案への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・森本秀歳</span>
+          <span class="ttl">市役所庁舎の将来像</span>
+          <span class="sum">行政サービスのデジタル化の１年の取組の評価、書かなくて済む窓口から行かなくて済む窓口への移行、新庁舎がにぎわいの拠点となりつつある中での市役所庁舎の将来像を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・太田哲</span>
+          <span class="ttl">ＳＤＧｓ未来都市の取組</span>
+          <span class="sum">ＳＤＧｓ未来都市と自治体ＳＤＧｓモデル事業に選定された理由と他自治体と比べた市の特徴、任命された２名のアドバイザーの役割、市民を巻き込んだ取組の考え、新庁舎にＳＤＧｓを取り入れた工夫を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原田守</span>
+          <span class="ttl">市庁舎用地の成り立ち</span>
+          <span class="sum">市庁舎の土地の成り立ちと、岸博士や市民の寄附で建設された末次プールの建設費用、競輪場設置までの経緯、寄附の経緯を残す対応、岸公園の石碑と岸運動場の売却益の使途を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・田中明子</span>
+          <span class="ttl">市長の４年間の評価</span>
+          <span class="sum">コロナ禍や新庁舎建設、大雨災害への対応などに取り組んだ市長の４年間について、政策の実現状況や印象に残る出来事、よかった点と悪かった点など率直な評価と感想を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉茂美</span>
+          <span class="ttl">新庁舎の気圧室</span>
+          <span class="sum">原発事故時に指令を出す人が入る新庁舎4階の気圧室について、市民に分かるよう詳しい説明を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・小澤一竜</span>
+          <span class="ttl">新庁舎周辺の立地適正化</span>
+          <span class="sum">新庁舎周辺の立地適正化計画に関し、四十間堀川の放水路整備をめぐる島根県との協議の進捗と、都市再生整備計画などの国の制度を積極的に活用して市の負担を減らす考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・海徳邦彦</span>
+          <span class="ttl">新庁舎整備事業</span>
+          <span class="sum">新庁舎整備事業の最終盤に向け、進捗と全館供用開始のスケジュール、物価高騰への対応を含む事業費の受け止め、庁舎利活用のトライアル事業の実績と展望・課題、第３期工事以降の事業実施の認識を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">176件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・中島隆夫</span>
+          <span class="ttl">公共施設の震災対策</span>
+          <span class="sum">災害時の指令本部となる本庁舎や避難場所となる公共施設について、現在の耐震基準への適合状況と補強工事や改修工事の実施計画を尋ね、本庁舎がどの程度の地震まで耐えられるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・河津清</span>
+          <span class="ttl">新市庁舎の建設計画</span>
+          <span class="sum">建設場所の選定を含め市民を交えた諮問機関の設置、職員用を含む駐車場台数と1台当たり27平方メートルの算定根拠や公園など敷地面積の妥当性、広瀬・伯太庁舎と支所の規模や機能、事業費と基金の積み増し・繰り入れの見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・嘉本祐一</span>
+          <span class="ttl">新庁舎建設の用地検討</span>
+          <span class="sum">新庁舎を商工会議所とにぎわい交流館の土地も使って現在地に建てた場合に１階へ市民サービス機能を集約するのに必要な階数と約440台分の駐車場の階数を尋ね、19自治会の要望書を踏まえた敷地外の駐車場確保を含むシミュレーションの検討と客観的な調査を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・岩田拓郎</span>
+          <span class="ttl">新庁舎建設の進め方</span>
+          <span class="sum">合併後２年を経た分庁舎方式の評価と市民への伝え方、安来らしさを踏まえた新庁舎のコンセプト、建設のスケジュールと目標年度、担当部署の新設を含む検討の視点と組織、市民や関係団体・事業所の意見の取り入れ方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田淵秀喜</span>
+          <span class="ttl">財政健全化と大型事業の整合</span>
+          <span class="sum">実質公債費比率が高い中で市庁舎建設や駅舎整備、佐久保の工業団地造成など大型ハード事業が進むことを踏まえ、財政健全化の進捗とピークの時期・改善の見通し、それらを織り込んだ計画かを尋ね、市民との情報交換の場の拡大を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嶋田豊昭</span>
+          <span class="ttl">交付税特例後の財政見通し</span>
+          <span class="sum">普通交付税の算定の特例と経過措置が終わると地方交付税が約10億円減額となることを踏まえ、現段階の検討状況と、庁舎建設後に財政赤字が見込まれるか、その時期や実質公債費比率が20％を超える時期が来ないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・岡田麻里</span>
+          <span class="ttl">市の地球温暖化対策</span>
+          <span class="sum">新庁舎建設における温暖化対策、沖縄の庁舎視察や地球温暖化防止市民条例・屋上緑化・緑のカーテンの例を挙げた市の今後の取り組み、荒廃する民有の竹林への啓発活動を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・遠藤孝</span>
+          <span class="ttl">平成20年度予算と財政運営</span>
+          <span class="sum">平成20年度予算について、18年度決算審査の結果の反映、市債発行の上限、職員削減など義務的経費の節減と投資的経費への振り向け、新庁舎開庁に向けた適正職員数、行政評価の進捗と他課による評価体制や施策評価への早期移行を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嘉本祐一</span>
+          <span class="ttl">新庁舎建設の進め方</span>
+          <span class="sum">プロポーザル方式で行う新庁舎建設の今後のプロセスと事業者選定の流れを尋ね、審査会の市民への公開や傍聴の可否、設計者決定の前後に庁舎のあり方について市民の意見を募り反映する方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嘉本祐一</span>
+          <span class="ttl">観光交流拠点の行政サービス</span>
+          <span class="sum">（仮称）観光・交流拠点施設で提供する住民票等証明業務や市立図書館の蔵書検索申請など行政サービスの具体的内容と時間帯を尋ね、新庁舎移転も踏まえた行政サービス拠点としての位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・金山満輝</span>
+          <span class="ttl">コンパクトシティーと新庁舎</span>
+          <span class="sum">地区計画の決定は仮契約に値するのに地権者へ契約に至っていないと説明した責任、合併協議会の新庁舎建設５条件の評価と分庁舎を継続するとした経緯を尋ね、市長の唱えるコンパクトシティーと庁舎移転が空洞化に結びつく理由、現在地建て替えで活性化した事例を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田中武夫</span>
+          <span class="ttl">中心市街地の活性化</span>
+          <span class="sum">現在地への新庁舎建設が活性化に一番とする市長に、中心市街地の範囲、人の流れか居住人口かという活性化の捉え方、米子へ流れる買い物客を市内へ引き寄せる策、切川バイパス周辺を新市街地とするマスタープランとの関係を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岡田麻里</span>
+          <span class="ttl">中心市街地の活性化</span>
+          <span class="sum">市長が主張する中心市街地活性化の施策と町のイメージ、ＴＭＯの認定数と活用、具体的な計画の有無、活性化に庁舎が必要な理由と12月答弁との整合性、新庁舎建設計画のホームページ更新を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・嶋田豊昭</span>
+          <span class="ttl">中長期財政計画と医療</span>
+          <span class="sum">安来市中・長期財政計画の中で医療制度の財政負担がどう位置づけられているか、市立病院への財政支援を含めた財源確保の考え方と見通しを尋ね、新庁舎に合わせた高齢者対策の組織の統一を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・井上峯雄</span>
+          <span class="ttl">伯太庁舎の利活用</span>
+          <span class="sum">新庁舎完成後の伯太庁舎について、耐震性に優れ旧伯太町の復興の象徴でもある庁舎を行政の施設として積極的に利活用する考えと、広瀬庁舎を含めた検討委員会のメンバーを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・上廻芳和</span>
+          <span class="ttl">分庁方式と本庁方式</span>
+          <span class="sum">築40年の広瀬庁舎を改修するのか新築するのか、支所機能を持つ地域センターの充実で文化は継承できるのではないか、たらい回しや職員・文書の移動の費用から本庁方式がよいのではないか、採用抑制による人件費削減との整合、職員の意思疎通や縦割りの懸念を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・内藤美雄</span>
+          <span class="ttl">切川バイパスの凍結</span>
+          <span class="sum">切川バイパスの凍結で今村地区・切川地区の地権者が行政への信頼を失いかねないとして地元へ出向き理解を得る努力を求め、議会に誠意を持って対応する考えを現在地での庁舎建設を含めて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岩田拓郎</span>
+          <span class="ttl">合併特例債の活用</span>
+          <span class="sum">財政計画中５億円以上の主な事業の事業費と計画期間、合併特例債の見込み額を尋ね、新庁舎建設などが遅れて特例債の適用期間内に実施できず大きな損失とならないか、消防防災センターやセントラルキッチンなどが重なった場合に財政健全化と矛盾しないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・上廻芳和</span>
+          <span class="ttl">安来一中の建て替え時期</span>
+          <span class="sum">庁舎建設の時期が大幅に遅れて財政計画に大きな影響が出た場合に、安来第一中学校の建て替え時期への影響はないかを教育長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田淵秀喜</span>
+          <span class="ttl">市庁舎の現在地建て替え問題</span>
+          <span class="sum">市庁舎移転で中心市街地が空洞化するとの考えの具体的な中身と、現在地の建て替えでどう活性化するのかを尋ね、議員時代に移転へ反対して具体的に何をしたのか、請願や地区計画の公告縦覧で意見を出さなかった理由、議会が議決した移転は正しかったかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・嘉本祐一</span>
+          <span class="ttl">市長選で支持された主張</span>
+          <span class="sum">市長選でどのような主張が市民の多数の支持を得たと考えるかを尋ね、市民との対話を重視する姿勢や分庁舎方式の妥当性に触れつつ、議員を辞して市長選に出た心境と、新庁舎の定性的・定量的なメリットとデメリットの早期提示を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岩田拓郎</span>
+          <span class="ttl">庁舎建設の凍結見直しの影響</span>
+          <span class="sum">予算や決算に賛成しながら一貫して反対してきたと言えるのか、現在地の建設で中心市街地が活性化するのかを尋ね、これまでの支出額とその他の負担、用地買収の約束を破った場合の責任、20年度予算５億6,800万円と地区計画の扱い、切川バイパス関連交付金や福井工業団地の盛り土材への影響、無駄となる金額と財源、その責任の所在を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・永田巳好</span>
+          <span class="ttl">庁舎移転反対の一貫性</span>
+          <span class="sum">特別委員会で行動をともにしながら当初予算に賛成し議会で質疑や討論もしなかった市長が、出馬表明で一貫して移転に反対してきたと述べ分庁方式を掲げたことについて、議会人としての姿勢を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・梶谷厚</span>
+          <span class="ttl">所信表明と新庁舎建設計画</span>
+          <span class="sum">所信表明が現在地での庁舎建設に偏り主要施策に触れなかったことへの市民の評価、合併協議会の建設地の条件、特別委員会の議決、地権者と地元説明会の意見、切川バイパス予算の凍結報道と県との信頼関係、現在地建て替えでの活性化策、ロスタイムと経費による財政計画や安来一中改修への影響、移転計画との比較検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・内藤美雄</span>
+          <span class="ttl">新庁舎と分庁方式</span>
+          <span class="sum">庁舎問題は白紙か凍結か、方向転換で失われる計画とその分類の時期、分庁方式が合併の原則や合併協議に反しないか、民意の見解と秋の議会選挙で過半数の民意が示された場合に考えを改めるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・上廻芳和</span>
+          <span class="ttl">新庁舎の位置と住民投票</span>
+          <span class="sum">切川地区と現在地を比較する調査費約500万円でそろえた資料を議会と市民に示したうえで住民投票を行う考え、切川地区での建設を求める多くの陳情の受けとめと説明、4年間の分庁舎方式で生じた弊害の受けとめと比較対象への算入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・梅林守</span>
+          <span class="ttl">新庁舎の建設位置</span>
+          <span class="sum">合併協議で県道安来木次線周辺と位置づけた経過と対等合併の認識、新しい場所に建てることが合併のシンボルではないか、要望書を重視するなら南部からの要望も同様に扱うか、予算に大枠で賛成した意味、方向転換による影響への対処、得票の解釈と報道された系列、選挙ポスターに貼った庁舎存続のシール、分庁方式での広瀬庁舎の改修費とバリアフリーを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・中村健二</span>
+          <span class="ttl">新庁舎の施設と周辺の安全</span>
+          <span class="sum">新庁舎の施設について、健康管理室と売店の考え方、喫煙室の設置、屋上緑化、労働組合・職員団体事務所の設置と他市の状況を尋ね、切川バイパスの自転車専用道と信号機、庁舎敷地を分断する道路の横断歩道や防護さくの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田中武夫</span>
+          <span class="ttl">新庁舎の緑化事業</span>
+          <span class="sum">建設中の新庁舎の緑化事業に子供たちがドングリから育てた広葉樹の苗木を使えないかを尋ね、掛川市役所の危機管理のための植樹や斐伊川放水路での多種の広葉樹の植林を参考にする考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石倉刻夷</span>
+          <span class="ttl">新庁舎建設と切川バイパス</span>
+          <span class="sum">新庁舎建設について、第３回ワークショップで特筆できる内容、今年度予算の８月末の執行状況、切川バイパスの道路計画の概要とＪＲとの協議、建設事業費を絞り込んで発表する時期、補助事業の導入計画、旧３庁舎の検討時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石倉刻夷</span>
+          <span class="ttl">新庁舎建設の経過と地権者</span>
+          <span class="sum">市報「どげなかね」やかわら版での新庁舎に関する周知の回数と配布範囲、商工会議所の検討委員会や自治会代表者会・安来地区自治会長会での意見を確認し、地権者25名のうち欠席者への説明と市長の面談での課題の整理、経費のロスを公表して理解を得る考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石倉刻夷</span>
+          <span class="ttl">新庁舎建設の諸問題</span>
+          <span class="sum">現庁舎跡地検討委員会が解散した経緯、下の原・今村町内の地権者への説明状況、切川バイパス凍結後の県との協議状況、農振除外や都市計画一部決定の今後の扱い、現在地調査費499万1,000円の積算根拠と執行計画、新庁舎建設を求める陳情への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・嶋田豊昭</span>
+          <span class="ttl">新庁舎建設問題</span>
+          <span class="sum">切川地区における市と地元関係者との話し合いの状況と解決に向けた考え、着地点の時期と作業の目標、数値目標や時期を具体的に示して見通しをつける決断について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・梅林守</span>
+          <span class="ttl">新庁舎建設問題</span>
+          <span class="sum">切川を求める地権者や自治会の陳情への対処、地権者との交渉内容と出た意見、要望書と陳情の重みの違い、分庁方式とした場合の広瀬庁舎の傷みの調査結果、10月の市議会選挙の結果を直近の民意と受け止めるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・永田巳好</span>
+          <span class="ttl">新庁舎建設問題</span>
+          <span class="sum">現在地で建て替える民意の根拠や構想とメリットが示されないこと、中心市街地活性化の予算措置、補正予算取り下げによる一般財源8,338万5,000円の負担、都市計画マスタープランの扱いと費用、地権者への誠意ある対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・嘉本祐一</span>
+          <span class="ttl">新庁舎移転後の跡地利用</span>
+          <span class="sum">新庁舎移転後の跡地利用について、検討委員会の構成と進め方、来年６月の結論の時期、移転後の跡地周辺の安全・安心や災害対応の確保策、検討の進捗の市民への知らせ方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・山本敏熙</span>
+          <span class="ttl">新庁舎見直しの財源</span>
+          <span class="sum">移転先の予算や決算に賛成してきた経緯を踏まえ、建設場所の変更に伴うおおよそ２億円と人件費１億円程度の損失の財源をどうするのかを尋ね、市民や議会への説明と、無駄な支出が膨らむ前に具体的な案を早く示すよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・井上峯雄</span>
+          <span class="ttl">職員の喫煙場所</span>
+          <span class="sum">本庁舎と広瀬・伯太の各庁舎で職員の喫煙場所が定められているかを尋ね、市民から見苦しいとの苦情が出ないよう建物の中などに喫煙場所を設ける対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岩田拓郎</span>
+          <span class="ttl">財政健全化の方策</span>
+          <span class="sum">現行の中・長期財政計画では不足との認識か、一時的に悪化した18年度の数値を強調した理由、実質公債費比率や地方債・基金残高をいつまでにどの水準にするか、計画の見直しと歳入増・歳出削減策、市債発行と事業の優先順位、交付税措置を除く実負担額、１戸600万円の借金という説明の妥当性、分庁方式と定員適正化計画の整合性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・梅林守</span>
+          <span class="ttl">選挙公約と住民の意見聴取</span>
+          <span class="sum">公約の住民投票条例でいう大きな問題とは何か、新庁舎の位置は当てはまらないのかを尋ね、広瀬・伯太の中心市街地の活性化、住民アンケートや自治会長会での意見聴取とこんにちは市長室の実施時期、推進室の人的体制、県への説明の時期と相手を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・岩田拓郎</span>
+          <span class="ttl">選挙結果と民意</span>
+          <span class="sum">住民に十分な情報を提供して判断を仰いだのか、市民に誤った認識を与えなかったかを尋ね、有権者の40.6％の信任を得た市長選挙の結果が議決した市庁舎建設を覆すほどの民意と言えるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・嘉本祐一</span>
+          <span class="ttl">3地域の中心市街地活性化</span>
+          <span class="sum">過去5年間で約2,000人の人口減少や庁舎建設等検討協議会の設置を踏まえ、旧安来・広瀬・伯太の中心市街地活性化に向けた対策の方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・岡田麻里</span>
+          <span class="ttl">中学校給食と給食センター</span>
+          <span class="sum">保護者の9割近くが学校給食を望む中で弁当給食では食育ができないとして給食センター建設の必要性を示し、庁舎建設と給食センター建設のどちらを先にするかを検討する考えがあるかを市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・葉田茂美</span>
+          <span class="ttl">中心市街地の活性化</span>
+          <span class="sum">市庁舎の現在地建て替えと関連づけられた中心市街地の活性化について、交流プラザや一風亭の活用、任期中の具体的な方策、住民や商店街とのかかわり、地域活性化経済危機対策の予算に活用できるメニューがあるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・勝部幸治</span>
+          <span class="ttl">切川バイパスの事業再開</span>
+          <span class="sum">事業の必要性の共通認識を確認し、庁舎建設に代わる事業の目的、県の言う環境整備の意味、2工区周辺の都市計画マスタープラン素案を白紙に戻すのか、3工区の都市計画決定、ＪＲとの協議を見据えた方針決定の時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・上廻芳和</span>
+          <span class="ttl">切川バイパスの延伸</span>
+          <span class="sum">切川バイパスの延伸について、県への訪問が要望か確認か、県が優先順位を落としていないのか、新庁舎建設と連動しないのか、地元の合意形成がなれば県はすぐ着工する見込みかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・石倉刻夷</span>
+          <span class="ttl">合併後の課題と市政の方向性</span>
+          <span class="sum">合併から丸５年を迎え周辺地域の疲弊の声もある中、新庁舎建設や財政健全化などの公約を踏まえた合併による課題と方向性、市民の一体感につながる施策への所見を尋ね、公約の達成状況の市民への伝達、ブロードバンドインフラ整備42億8,000万円の市民への説明と負担の明確化、難視聴地域や共聴テレビ組合への情報提供を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中明美</span>
+          <span class="ttl">地域振興と中心市街地活性化</span>
+          <span class="sum">来年度事業に織り込まれた地域振興と中心市街地活性化の施策、核となるものの中身、中山間地域元気いきいき補助事業の位置づけ、地域力による振興と分庁方式・現在地建て替えとの矛盾、行財政改革との矛盾、安来市の将来像を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・遠藤孝</span>
+          <span class="ttl">太陽光発電の補助と設置</span>
+          <span class="sum">新年度50基・1,050万円の太陽光発電装置補助の要望に応じた増基・増額と、図書館・広瀬中学校以外に安来第一中学校や市庁舎、消防署など公共施設への設置の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・内藤美雄</span>
+          <span class="ttl">市庁舎建設と切川バイパス</span>
+          <span class="sum">庁舎建設・切川バイパス促進の検討協議会設置の評価、地区計画を変更せず庁舎予定地とバイパスは一体とする地権者代表の意見への対応、当初予算の1,000万円余の調査内容、旧市街地の活性化策を尋ね、地権者の理解を得る市長の覚悟と空洞化対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・遠藤孝</span>
+          <span class="ttl">市庁舎建設の推進</span>
+          <span class="sum">現在地建てかえを公約とした市庁舎建設の停滞を反省し、議会の庁舎建設等検討協議会と十分に協議し市民に情報を提供しながらスピード感を持って進めるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・作野幸憲</span>
+          <span class="ttl">市財政と予算の優先順位</span>
+          <span class="sum">人口減少と地方債残高623億5,000万円を踏まえ、実質公債費比率をどこまで下げるべきと考えるかを尋ね、マニフェストに掲げた予算見直しの進捗と優先分野、庁舎建設や一中建てかえ、中学校給食などの事業の優先順位と、重複回避や予算抑制の基本的考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・嶋田豊昭</span>
+          <span class="ttl">平成22年度の予算編成</span>
+          <span class="sum">自治体を取り巻く現状認識と基本的な編成方針、庁舎建設やブロードバンド・インフラ整備など重点施策と事業仕分けの検討、厳しい財政見通しの中で特に留意した事項を尋ね、予算編成に市長自らの意思がどう反映されたかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・梅林守</span>
+          <span class="ttl">庁舎問題と直近の民意</span>
+          <span class="sum">10月の市議会選挙で切川での庁舎建設を掲げる議員が過半数を占めた場合に直近の民意として尊重するかを市長に尋ね、県への要望後の地権者・議会との合意形成の進め方、副市長の調整役としての所感、21年度の作付補償と来年以降の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・金山満輝</span>
+          <span class="ttl">庁舎建設予定地と地権者対応</span>
+          <span class="sum">庁舎建設の凍結の中で市の建設予定地がどこかを確かめ、何の落ち度もない地権者への市長の説明努力と副市長による協議の現状、凍結の責任の所在、補償が長期化するおそれを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・永田巳好</span>
+          <span class="ttl">庁舎移転と切川バイパス</span>
+          <span class="sum">切川バイパスの開通がずれるとする比較の表現、公共事業の用地買収手法、地区計画の成立が仮契約に当たるか、地権者への対応、都市計画審議会の出席者、地区計画廃止への心境、庁舎建設等検討協議会の要綱と市長の思いの違い、分庁方式の比較のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・石倉刻夷</span>
+          <span class="ttl">新庁舎と切川バイパス</span>
+          <span class="sum">凍結から白紙とされた新庁舎建設について分庁方式への直近の民意の受け止めと考え方、切川バイパス促進に向けた広瀬土木事業所との意見交換や予定用地への対処を尋ね、住民投票や協議の場による打開、山佐・能義駐在所の廃止構想を市が承知していたかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・内藤美雄</span>
+          <span class="ttl">新庁舎建設と切川地区</span>
+          <span class="sum">合併協議と議会議決で決めた切川から現在地へ変更した新庁舎建設について、地元が訴訟の意向を示していることへの認識と地区計画変更への障害、地元への誠意と地元要望への未回答、マニフェストの解釈や分庁方式の民意、議会への相談の無さを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・永田巳好</span>
+          <span class="ttl">新庁舎建設の地元調整</span>
+          <span class="sum">新庁舎建設をめぐり、今村・切川地区の田の作付の現状と地権者への説明のあり方を尋ね、県から求められた都市計画決定に向けた手続の意味と副市長・部長の見解の食い違いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・石倉刻夷</span>
+          <span class="ttl">新庁舎建設の現状と見通し</span>
+          <span class="sum">新庁舎建設について、平成21年度に予算化された499万1,000円の執行状況と今後の計画・見通し、下の原・今村地区との話し合いの状況、切川バイパスの県への要望活動の考え方とＪＲとの協議の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・内藤美雄</span>
+          <span class="ttl">財政状況と行財政改革</span>
+          <span class="sum">合併特例期間の終了や平成26年度以降の交付税の減少、繰出金の増加が見込まれる中での行財政改革と、最大の課題である庁舎建設が市長の言う財政規模で可能かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・中村健二</span>
+          <span class="ttl">ファシリティマネジメント</span>
+          <span class="sum">佐倉市長を招いた職員研修の目的と参加人数、職員の評価、ＩＳＯ14001や省エネ法とのつながり、ＦＭという名称のわかりにくさを尋ね、分庁方式を含む推進の基本的な考え方と専門組織の体制、導入時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉刻夷</span>
+          <span class="ttl">分庁方式と施設マネジメント</span>
+          <span class="sum">第２次安来市行政改革の実施計画にある公共施設マネジメントの推進について、分庁方式との関係をどう位置づけるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・嶋田豊昭</span>
+          <span class="ttl">市政運営と主要施策</span>
+          <span class="sum">国勢調査で人口が5.1％減少したことの認識と財政計画や少子・高齢化対策への影響、人口流出抑制・雇用拡大の具体策、庁舎建設事業の12月議会以降の進展、安全・安心確保施策と大雪を教訓にした災害マニュアル、分庁舎方式での意思決定体制、開発公社の解散に向けた対応と結論の時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田中武夫</span>
+          <span class="ttl">市長が目指す市政の方向</span>
+          <span class="sum">就任2年を経た市長の目標と年次計画、将来像が市民に伝わったかを尋ね、中長期財政見通しで収支が悪化する中、庁舎建設など集中する事業の優先順位と財政健全化への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・上廻芳和</span>
+          <span class="ttl">市長の市政報告会</span>
+          <span class="sum">市長が各地域で行う市政報告の回数と市民の受け止め、庁舎問題で分庁方式の不便さを説明しているかとその反響、市民から寄せられた意見の内容を尋ね、市民の声を踏まえた事業の優先順位づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田中明美</span>
+          <span class="ttl">市長の描く安来市の将来像</span>
+          <span class="sum">前市長と市長の考えの異同と総合計画後期基本計画を審議会へ諮問しなかった理由、分庁舎方式の改善策、赤字が見込まれる中・長期財政見通しと健全な財政の考え方、庁舎建設など大型事業の取捨選択を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・井上峯雄</span>
+          <span class="ttl">庁舎建設と切川バイパス</span>
+          <span class="sum">切川・今村地区の地権者への作付補償が予算化されない中での和解の見通しと市長自身の説得回数、バイパス建設の見通しと県・ＪＲとの関係、23年度設計業務の設計者選定の費用・方法・期間とスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・遠藤孝</span>
+          <span class="ttl">庁舎建設と切川バイパス</span>
+          <span class="sum">議会と執行部が交わらない庁舎建設について、市民の声を聞き相互理解から始め、地質調査を急ぎ人口規模や職員数に見合う耐震庁舎を建設するよう求め、現在地建て替えと切川バイパスを一体的に政治決着させる考えを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・樋野智之</span>
+          <span class="ttl">情報公開と文書管理</span>
+          <span class="sum">情報公開請求の受理から決定までの日数とその理由、文書の公開・非公開を明確にする時点、文書の保管基準やファイル基準表の有無を尋ね、ファイリングシステムの導入による執務スペースの有効活用と新庁舎のコンパクト化について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・中村健二</span>
+          <span class="ttl">消防行政の諸課題</span>
+          <span class="sum">消防本部庁舎建設整備事業の進捗と今後の予定、救急自動車の利用状況と不適切利用に対する市民への周知、住宅用火災警報器の普及率の調査内容と豪雪による設置の遅れ、消防行政全般への消防長の所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">主要施策と新庁舎建設</span>
+          <span class="sum">議会への事前説明なく出雲市を加えた中海市長会、３市長連名の県への要求書と原子力防災訓練・広域避難計画、高速バスストップ整備の調査検討状況、スサノオマジック公式戦の日曜日開催、市立病院の改革プラン後の状況と課題、学校のエアコン設置、給食センター、小学校の統廃合、新庁舎建設の予算化と庁内の意思疎通を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・丸山征司</span>
+          <span class="ttl">代替えエネルギーの取り組み</span>
+          <span class="sum">原発事故後の市の取り組みとして、公共施設の節電内容と震災前後の消費電力や金額の差、年間電気使用量、ＬＥＤの導入、家庭用太陽光発電補助の金額と件数のバランス、一中・消防庁舎・市庁舎や既存公共施設への太陽光発電の検討、遊休地のメガソーラーと条例制定、小水力発電の候補地調査と風力発電の実績、再生可能エネルギーの新法への申請、廃棄物のエネルギー化の情報収集を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中武夫</span>
+          <span class="ttl">合併特例債と庁舎建設費</span>
+          <span class="sum">合併特例債の期限を理由に大型事業が集中したことに触れ、19億円を地域振興基金に積めることを挙げて、不況下で多額の費用をかけて庁舎を建てることの是非を指摘し、軽量鉄骨３階建てなど安価な庁舎の検討を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中武夫</span>
+          <span class="ttl">安来分庁舎の周辺環境</span>
+          <span class="sum">安来分庁舎の周辺の道路環境を挙げて、現在地での庁舎建設と市民会館の改修に四億数千万円を使うことを考え直すかを尋ね、市長の方針のホームページでの発信や、市道修繕・下水道・公営住宅の予算削減の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・佐伯直行</span>
+          <span class="ttl">市庁舎建設の概要と予定</span>
+          <span class="sum">切川・今村地区の地権者との合意形成が進まない中、防災拠点としての重要性と合併特例債の期限である平成26年度までの建設を踏まえ、市庁舎建設の概要と今後の予定の説明を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田淵秀喜</span>
+          <span class="ttl">市政運営の諸課題</span>
+          <span class="sum">庁舎建設に伴う切川の地権者問題を任期中に解決する時期と切川バイパス実現への意気込み、市立病院改革プランの成果と経営改革の検討、中山間地農業の仕組みづくり、分庁方式での行政機能と人員計画、平成32年以降の財政赤字の見通しと方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・永田巳好</span>
+          <span class="ttl">市長公約の進捗状況</span>
+          <span class="sum">任期終盤を迎えた市長の選挙公約の進捗状況として、新庁舎建設の事業費と前議長との取り決め、中心市街地活性化と一風亭のビジョン、高速路線バスの安来停車、住民投票条例の未制定、外部監査と行政評価の導入、市長・副市長の伯太・広瀬庁舎への出向回数と分庁方式によるコスト削減、職員採用抑制と臨時職員の増加、安来節演芸館の見直し、市独自の融資・助成制度と企業誘致の課題分析、赤字の稲作農家の数、県内で中学校給食を実施していない学校数と給食検討の遅れ、市立病院改革の検討内容と入院・外来患者単価の高さを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中村健二</span>
+          <span class="ttl">平成24年度の予算編成</span>
+          <span class="sum">平成24年度当初予算を骨格予算とするか通年予算とするかと、過去3年間の市政運営の総括を含む予算編成の基本的な考え方、中期財政見通しの作成の考え方と財政運営への反映、新庁舎・市立第一中学校・新消防庁舎の建設に伴う起債の後年度負担、合併特例債の実績と今後の計画、発行期限が5年延長された場合の事業計画の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・葉田茂美</span>
+          <span class="ttl">庁舎建設と切川地区計画</span>
+          <span class="sum">現在地建てかえに当たり市民会館を含むゾーン一体の将来像を議論すべきとして、切川地区計画を廃止する考えとその手続き、切川バイパスの建設に関する具体的な取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・葉田茂美</span>
+          <span class="ttl">庁舎建設と地権者への対応</span>
+          <span class="sum">市長が所信表明で述べた庁舎建設場所の方針転換の時期と、土地未確定のまま現在地での基本設計を進める際の設計者と予算、切川地区の地権者との11月４日以降の協議の有無と回数、抗議文を踏まえた市長の誠意の中身を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部幸治</span>
+          <span class="ttl">庁舎建設の交渉と計画</span>
+          <span class="sum">庁舎建設予算の可決時に交わした地区計画廃止と切川バイパス建設に向けた地元合意の期限が過ぎたとして、切川・今村地区との交渉と議会との約束の状況、900万円をかけて集める基本計画の資料の中身、分庁方式と広瀬庁舎の建てかえの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉刻夷</span>
+          <span class="ttl">庁舎建設の取り組み状況</span>
+          <span class="sum">予算委員会の報告で安来庁舎の現在地での建て替えが承認されたことを受け、切川・今村地区の地区計画廃止などの課題解決に向けた合意形成を含め、庁舎建設の取り組み状況全般を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・嶋田豊昭</span>
+          <span class="ttl">庁舎建設の現状認識と方針</span>
+          <span class="sum">庁舎建設が混迷し着手が遅れている要因の認識、市長としての努力や庁内・県との連携、市民への説明、地権者との交渉の積み重ねの不足を問い、９月２日の全員協議会で示した方針を部分的に転換する余地の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田淵秀喜</span>
+          <span class="ttl">庁舎建設の課題克服</span>
+          <span class="sum">地元地権者と地区計画の議論のテーブルに着く前提条件が水稲の作付補償の問題であるかを確認し、設計に入る時期が切迫する中での地元の理解を得る努力と、切川バイパスとあわせた市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田淵秀喜</span>
+          <span class="ttl">庁舎建設を軸とした市政運営</span>
+          <span class="sum">切川の地権者問題を市長の任期中に解決する決意と時期、分庁方式での広瀬庁舎の考え方、中心市街地活性化の具体策、切川バイパスの交渉と落としどころ、財政見通しと各種事業の整合性や優先順位の明確化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・嶋田豊昭</span>
+          <span class="ttl">庁舎建設事業の推進</span>
+          <span class="sum">作付けがなされていない状況を含む地元対応のこれまでの状況、都市計画法に基づく地区計画廃止の見通し、大震災を受けた市役所機能確保の観点から庁舎建設への所見を尋ね、作付補償を含む地元調整を進める市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中武夫</span>
+          <span class="ttl">庁舎建設計画の進捗</span>
+          <span class="sum">庁舎建設計画の現在の進捗状況と地元への謝罪の経緯を尋ね、安来一中や消防署の整備と重なる集中投資の影響を踏まえて安来庁舎を優先する理由、新庁舎の防災拠点としての機能、庁舎建設が中心市街地の活性化につながるとする見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中武夫</span>
+          <span class="ttl">消防庁舎の浸水対策</span>
+          <span class="sum">佐渡沖地震の津波予測などを踏まえ、浸水想定地域にある消防庁舎建設予定地でどのような対策をとるのかを尋ね、新庁舎・分庁舎の建設や木戸川の改修を含む周辺整備でも浸水を想定するよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・中島隆夫</span>
+          <span class="ttl">現在地での市庁舎建設</span>
+          <span class="sum">３月議会で認められた設計予算が未執行である理由と切川地区の地権者への提案内容、地権者の了解を予算執行の前提とする考え方、地区計画を廃止せずに建設できるかと残る地区計画の処理、弁護士を立てた話し合いの意図、建設費の見込みと近隣市の庁舎面積を尋ね、合併特例債の期限が迫る中で公約をどう果たすかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉刻夷</span>
+          <span class="ttl">現在地での庁舎建設</span>
+          <span class="sum">切川地区の地権者から抗議文が出た経過と市議会だよりで公開された総務企画委員長報告をどう捉えるか市長の所見を尋ね、９月定例会で示した設計等に係る予算執行方針のその後の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・上廻芳和</span>
+          <span class="ttl">近藤市長の公約の検証</span>
+          <span class="sum">任期最後の年度を迎える市長の公約について、庁舎建設以外の中心市街地活性化策、高速バスの安来停車の進展と利用実態の調査、住民投票条例の制定、南部地区の荒廃田や廃校跡を生かした企業誘致、地域自主制度の組織づくりと活動、介護予防の生涯スポーツと交流センターの役割、市長独自の農業振興策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・嶋田豊昭</span>
+          <span class="ttl">2期目の市政課題</span>
+          <span class="sum">庁舎建設に向けた地権者との協議や切川バイパスとの関係、平成25年度予算への計上の考え、ハーモニータウン汐彩の分譲促進と価格引き下げ、開発公社の清算と11月解散の見通し、自治基本条例の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">4年間の市政運営の評価</span>
+          <span class="sum">近藤市長の4年間の市政運営への所見、新庁舎の現在地建設・財政健全化・安来節演芸館の3大公約の評価、次の選挙に向けたマニフェストの考え方、職員の意識高揚と一体感の醸成、女性職員の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉刻夷</span>
+          <span class="ttl">プロジェクトチームの進捗</span>
+          <span class="sum">原子力災害対策検討、養護老人ホーム施設検討、中心市街地活性化の３つのプロジェクトチームの進捗状況を尋ね、新たな横断的プロジェクトチームの設置状況や庁舎建設・市民会館移転新築・切川バイパス・給食センター建設に向けた体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中武夫</span>
+          <span class="ttl">分庁方式の弊害解消</span>
+          <span class="sum">分庁方式を前提に、基盤整備部と産業振興部など関連部署の配置見直し、ウエブカメラによる会議システムの活用、上下水道部の１カ所への集約と技術職の大型事業への振り向け、民営化の検討を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・葉田茂美</span>
+          <span class="ttl">分庁方式の見直し</span>
+          <span class="sum">合併後も各庁舎を維持する分庁方式は管理業務の重複や職員の移動時間、広瀬庁舎の将来の経費など無駄を次の世代に負わせるとして、分庁方式をやめ現在地建てかえの方針を見直すよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・永田巳好</span>
+          <span class="ttl">切川バイパスの早期実現</span>
+          <span class="sum">切川バイパスの進捗を尋ね、地権者の同意が得られず庁舎の現在地建てかえ・分庁方式も進まない現状や、市側だけが公費で弁護士を立てる対応を指摘し、地権者と弁護士を交えた話し合いによる解決の道筋を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">参加と交流のまちづくり</span>
+          <span class="sum">3月議会で求めた小規模交流センターの勤務体制充実のその後の検討状況、ブロードバンドの告知端末設置率やどじょっこテレビ加入率の現状と向上の方策、市民との情報共有の取り組み、密陽市との国際交流の今後と職員派遣の効果、切川地区地権者の理解を得る見通しや仲介者による解決、分庁方式の計画、市民会館の移転新築の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中島隆夫</span>
+          <span class="ttl">安来の将来像と公約の理念</span>
+          <span class="sum">国内外の不透明な情勢と庁舎建設や人口減少、原子力防災など山積する課題を踏まえた２期目の安来の将来像と、選挙公約の最初に掲げた魅力ある安来をあなたとつくりましょうという言葉に込めた心を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・作野幸憲</span>
+          <span class="ttl">安来市財政の見通し</span>
+          <span class="sum">安倍政権の下で地方財政が今後どうなり安来市にどのような影響があるかを尋ね、消防新庁舎、一中、新庁舎、給食センター、市民会館と大型事業が続く中で市の財政は大丈夫かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">市政運営の諸課題</span>
+          <span class="sum">再選の要因と事業見直しの考え、民意の把握の具体策、平成24年度決算見込みでの実質公債費比率、公共施設マネジメントシステムの構築と部署新設や施設統廃合、人材育成と職場環境整備、切川地区地権者との仲介者を介した和解、庁舎建設計画の３案と説明会後の状況、市民会館の改修計画や移転新築の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉刻夷</span>
+          <span class="ttl">平成25年度の予算編成方針</span>
+          <span class="sum">平成25年度の予算編成に当たっての市の基本方針と新規に始動させる主要施策を尋ね、庁舎建設の早期解決、切川バイパスの全線開通、高速道路バス停の建設や飯島工業団地の緑地整備計画への姿勢を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中武夫</span>
+          <span class="ttl">庁舎周辺の環境整備</span>
+          <span class="sum">現在地での庁舎建設に伴う防災面からの周辺環境整備と、庁舎建設予定地として地区計画がかかる切川バイパスの重要性を尋ね、県との関係強化や分庁方式の下での教育・子育て部門などの部署配置の見直しを含めて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉刻夷</span>
+          <span class="ttl">庁舎建設と分庁方式</span>
+          <span class="sum">十分な議会説明がないまま市民会館の移転新築や給食センター建設が新聞報道されたことへの市長の本意、基本設計に入る庁舎が総合庁舎を含むのか安来庁舎なのかを尋ね、分庁方式を検証する庁舎建設検討委員会の設置についての市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中明美</span>
+          <span class="ttl">庁舎建設と切川バイパス</span>
+          <span class="sum">庁舎建設説明会の参加者が少なかった理由と意見書の件数・精査状況、手順を踏んで計画を進めるとした市長の新聞での発言、総合庁舎方式や合併特例債などの意見が多い場合の再検討、議会が分庁舎方式を了承した時期を問い、切川バイパスが県への重点要望15項目に入っていない理由と要望の経過、市長選までの沿線地権者との合意形成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">庁舎建設と切川地区開発</span>
+          <span class="sum">分庁方式の弊害を減らす新庁舎計画案の見直し、市民会館の建設スケジュールと現会館解体の前倒し、給食センターの規模と自校方式の食育や職員の処遇、切川バイパスの地権者やＪＲとの交渉の進展を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・河津清</span>
+          <span class="ttl">庁舎建設と市民の意向</span>
+          <span class="sum">４年前の市長選の結果を現在地建て替えへの支持と捉える市長の認識を問い、住民説明会の低調さや一中・消防庁舎・中学校給食・市民会館などハード事業が重なる状況を踏まえた市民意向調査の必要性、本庁舎の耐震性、切川地区の地権者との補償問題に市長自らが当たる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">庁舎建設の住民説明会</span>
+          <span class="sum">本庁舎の基本計画3案と周辺整備の住民説明会について、参加人数と少なかった要因、周知方法の適切さ、基本的な問題への質問が多かったことの受け止め、会場を増やしての説明会の計画、今後の庁舎のスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉刻夷</span>
+          <span class="ttl">庁舎建設の説明会と進め方</span>
+          <span class="sum">庁舎の現在地建てかえと分庁方式の説明会を開く前に議会へ再度説明しなかった市の考え方、7会場の出席状況と発言内容への市長の所見、資料にある維持管理費が割高となる具体的な数値、今後の手順を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・勝部幸治</span>
+          <span class="ttl">庁舎建設の進め方</span>
+          <span class="sum">市民説明会の意義と出席者が少ないのに計画どおり進めるとした市長の認識、合併特例債延長後も予定どおり進める理由、全員協議会での意見への対処、分庁方式による中心市街地活性化の成果、合併協定書に基づく分庁評価の手続を踏まない理由、切川・今村地区の地権者交渉を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中島隆夫</span>
+          <span class="ttl">庁舎建設への意見集約</span>
+          <span class="sum">８月の説明会と９月までの庁舎建設に関するアンケート結果の分析と、議員や市民の意見を集約して庁舎建設へ反映する方法、切川地区の当初計画と同じ3.9ヘクタールで公共施設などを建設する協議を地権者や県と続ける考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">庁舎建設等の事業</span>
+          <span class="sum">市民会館の切川地区への移転で面積が大きく変わることを踏まえ、分庁方式と総合庁舎方式のメリット・デメリットを改めて検討し直すよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・葉田茂美</span>
+          <span class="ttl">新庁舎建設問題</span>
+          <span class="sum">地権者への具体的な解決策と４年間進展しなかった責任、作付補償の陳情への対応、仲介者による解決の是非、周辺の都市計画マスタープラン、切川バイパスの着工に向けた対応、広瀬庁舎の整備費負担など分庁方式のリスクを問い、分庁方式の早急な見直しを要望したうえで２期目の庁舎建設の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・丸山征司</span>
+          <span class="ttl">減額修正3事業の予算化</span>
+          <span class="sum">３月定例議会で減額修正された庁舎建設事業費・市民会館改修費・高速バスストップ整備事業費の３事業について、来年３月議会の当初予算で議会の理解を得て可決されるためにどのような努力をするのかを、アンケートや議会への事前説明の必要性も挙げて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・岩田拓郎</span>
+          <span class="ttl">災害想定と消防庁舎の立地</span>
+          <span class="sum">洪水・土砂崩れ・内水・海面上昇や地震・津波の想定と対策、浸水想定区域での公共施設建設の検討を尋ね、ハザードマップで2〜5メートルの浸水が想定される消防庁舎予定地の洪水時の機能と分庁方式での危機管理を、さらなるかさ上げや避難場所の周知啓発も含めて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・丸山征司</span>
+          <span class="ttl">特例債延長と消費税の影響</span>
+          <span class="sum">合併特例債の延長と消費税増税による中長期財政計画への影響で事業計画のスケジュールが変わるかを尋ね、安来庁舎建設の先送りで増税分の負担が膨らまないよう期限を意識した判断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・永田巳好</span>
+          <span class="ttl">簡素で効率的な行政機構</span>
+          <span class="sum">分庁方式で将来にわたり市民サービスを維持できるか、普通会計保有資産の老朽化比率、窓口の一元化が難しい中で市民に不便をかけない工夫と対策を尋ね、持続可能な行財政改革を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中武夫</span>
+          <span class="ttl">近藤市政４年間の評価</span>
+          <span class="sum">近藤市政の４年間が市民の期待に応えたかを大題目に、現在地での庁舎建設の開発許可と県の許可の見通し、地元業者への発注を求める陳情と一般財源の関係、市の負担が少ない切川バイパスを重点要望に挙げなかったこと、県外委託が続くごみ処理を市内の民間施設で行う提案への市長の方針、松江市のエスコ事業と比べた子育て施策、市独自の農業政策、市民会館の改修予算とリニューアル計画の整合を取り上げ、市民の要望にどれだけ応えたと考えるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中武夫</span>
+          <span class="ttl">バイオマスタウン構想</span>
+          <span class="sum">県内第一号として公表したバイオマスタウン構想の理念を踏まえた今後の取り組みと、新庁舎・市民会館・給食センターや既存の温泉施設などへの木質バイオマスボイラーの導入を検討する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩田拓郎</span>
+          <span class="ttl">バイオマスタウン構想</span>
+          <span class="sum">バイオマスタウン構想について、バイオマスリサイクルセンターのふん尿搬入量と堆肥生産量の実績、地域資源を利活用するその他の事業、新庁舎・市民会館・給食センターへの木質バイオマスボイラー導入、市施設への蓄電池導入の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・永田巳好</span>
+          <span class="ttl">中期財政見通しと財政運営</span>
+          <span class="sum">市民会館と給食センターの建設を加えた中期財政見通しで財政運営に問題がないか、実質収支がマイナスになる時期、建設に出せる金額、投資的経費を10億円から13億円の枠内に収める対応、道路整備の見通し、老朽施設の維持管理と施設の整理統合、広瀬庁舎の分庁方式と財政計画、財政指標が高くなる時期、行政改革大綱の目標の達成状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・河津清</span>
+          <span class="ttl">住民サービス本位の行政組織</span>
+          <span class="sum">新庁舎建設に関わり合併後の行政体制の分類、出雲市や鳥取市を分庁方式の例に挙げた市長答弁の是非と両市の分類、分庁方式のメリットとされたものは総合支所方式のメリットではないかを尋ね、住民サービスの観点から意見を聞く市政運営を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・永田巳好</span>
+          <span class="ttl">分庁方式による庁舎整備</span>
+          <span class="sum">分庁方式での本格的な庁舎整備は行政の効率化や公の施設の適正配置の観点から無駄であり総合支所方式が評価されているとして、分庁方式を押し通す考えに変わりはないのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・作野幸憲</span>
+          <span class="ttl">切川地区開発事業と財政</span>
+          <span class="sum">市民会館・給食センター・市庁舎で93億7,000万円余りに膨らむ事業費が将来の維持管理費で後世にツケを残さないか市長の見解を問い、大田市より約600平米広い給食センターの延べ床面積の根拠と縮小時の事業費減、消費税８％への引き上げが市財政に与える影響、平成33年度ごろ財政調整基金が尽きた際の対応と特定目的基金の活用の是非を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・澤田秀夫</span>
+          <span class="ttl">勤労者福祉の拠点と支援</span>
+          <span class="sum">勤労青少年ホーム閉館以降の勤労者の拠点の考え方と勤労者福祉活動への市の支援の現状と今後、勤労者福祉会館の建設や新庁舎への交流スペース確保、勤労感謝祭行事のＰＲ支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田淵秀喜</span>
+          <span class="ttl">大型ハード事業の推進</span>
+          <span class="sum">現地建てかえの新庁舎と切川の市民会館・給食センターについて、市長の決意、庁舎の目的と建物・ソフト面の考え方、中心市街地活性化とのつながり、市民会館の目的と特徴・管理運営、給食センターの目的と特徴、防災面の配置、財政計画の見通し、基金条例改正の進め方、施設間の導線を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・葉田茂美</span>
+          <span class="ttl">大型事業の職員体制</span>
+          <span class="sum">来年度以降の職員体制について、市民会館・市庁舎・給食センターの各建設事業を担当する職員数を尋ね、市民に親しまれる市民会館の実現に向けて増員を含めた体制の見直しを早急に検討するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・中島隆夫</span>
+          <span class="ttl">市庁舎等の大型施設建設</span>
+          <span class="sum">ワンストップの市庁舎や1,000席以上の市民会館、米飯設備を備えた給食センターを求める市民の声を挙げて各施設の進捗状況と今後の計画を尋ね、建設業の人手不足や建設費高騰の影響を受けないよう早期の事業開始を求める考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田淵秀喜</span>
+          <span class="ttl">市政運営とまちづくり</span>
+          <span class="sum">都市計画マスタープランの進捗状況、定住人口増に向けた施策と土地のリースなど住宅の土地政策、クラスター型による３地域の活性化と分庁方式の意味、多くのハード事業と中長期財政計画との整合性と見直しの時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・永田巳好</span>
+          <span class="ttl">市長の政治姿勢</span>
+          <span class="sum">庁舎建設の位置が二転三転し切川に市民会館・給食センターを計画したことへの市長の気持ちと市民の理解、説明責任を尋ね、分庁方式で持続可能な財政運営ができるか、広瀬庁舎をやめて新安来市庁舎へ組み入れるべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・石倉刻夷</span>
+          <span class="ttl">平成26年度予算編成と主要施策</span>
+          <span class="sum">大型事業が集中する中での平成26年度予算編成の基本方針と中期財政計画の概要、新庁舎建設計画、切川地区開発事業、市民会館、給食センター、安来木次線、切川バイパス２工区の進捗状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・永田巳好</span>
+          <span class="ttl">庁舎・市民会館建設</span>
+          <span class="sum">新庁舎の職員１人当たり面積が他市より多いとして将来人口を考慮した面積とするよう述べ、市民会館の利用度、人件費を除くランニングコストの見積もり、人口推計に基づかない施設が市民生活と財政に及ぼす影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・永田巳好</span>
+          <span class="ttl">庁舎建設と分庁方式</span>
+          <span class="sum">庁舎建設の計画変更による平成24年度までの人件費を含む費用総額と市民への公表、分庁方式のもとで市長が広瀬・伯太地区で行った特色ある事業、地域センター長の予算と権限、中期財政計画に広瀬庁舎の整備費が無い理由と財政見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・中村健二</span>
+          <span class="ttl">庁舎建設の考え方</span>
+          <span class="sum">昨年の案の部分修正ではなく新たな計画をつくり直して建設すべきとして3月議会以降の庁舎建設の考え方を尋ね、商工会議所の扱いを含めた考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・葉田茂美</span>
+          <span class="ttl">庁舎建設事業の進め方</span>
+          <span class="sum">確定した計画のないまま見込みで予算計上していると指摘し、総合的な計画の決定経過、商工会議所との用地協議、基本設計の有無と実施設計の予算計上、川尻３号線の扱い、市民会館の突然の解体理由、中央交流センターの活用、分庁舎方式が正しい選択かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・嶋田豊昭</span>
+          <span class="ttl">重点事業の推進と市政運営</span>
+          <span class="sum">市長の残り任期の重点事業の優先順位、切川バイパスの開通見通しや給食センターと食育、市民会館の規模、新市庁舎と分庁舎方式など進行中の事業の課題、市立病院や広瀬庁舎、教育施設、伯太川の防災など今後の事業、副市長２人体制の検討、財政運営と将来負担の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐々木厚子</span>
+          <span class="ttl">ピンク・オレンジリボン運動</span>
+          <span class="sum">乳がんの啓発のピンクリボン運動と児童虐待防止のオレンジリボン運動を市として推進し、職員や議員のリボン着用と市庁舎への懸垂幕の掲示をことし10月から実現するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・作野幸憲</span>
+          <span class="ttl">ペーパーレス会議の導入</span>
+          <span class="sum">行政改革の視点から安来庁舎建設に合わせたペーパーレス会議導入の検討状況、議会資料の年間枚数と経費、議会へのタブレット端末導入に要する概算経費を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・原田貴与子</span>
+          <span class="ttl">主要3事業と中長期財政見通し</span>
+          <span class="sum">事業費が膨らむ給食センター・市民会館・市庁舎の主要3事業と財政計画の見直しの必要性を尋ね、赤字財政の計画、合併特例債・過疎債の上限枠、投資的経費13億円の根拠、職員給与カット継続、民間委託の有無、庁舎の市民交流スペースや防災棟、市民会館の席数と規模、給食センター3,300食の過大さを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・葉田茂美</span>
+          <span class="ttl">主要３事業と財政課題</span>
+          <span class="sum">市庁舎、市民会館、給食センターの主要３事業の進捗状況と、庁舎建設に伴う商工会議所の土地買収や建物の取り壊し・建てかえの主体、その間の会議所機能を尋ね、消防庁舎や一中改築を含めた借入金総額と交付税算入額、新規・拡充事業と廃止・縮小事業の差、国保や下水道会計への対応を挙げて、将来の赤字に責任を持って対処する方策と情報開示を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・永田巳好</span>
+          <span class="ttl">主要３事業の市民への情報提供</span>
+          <span class="sum">庁舎・市民会館・給食センターの主要３事業について、市民への情報提供と今後の展開、安来庁舎の事業費増と分庁方式、市民交流スペースの周知、条例に基づく審議会の設置、市民会館の座席数と活用構想、給食センターの１カ所化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・永田巳好</span>
+          <span class="ttl">商工会議所会館の移転</span>
+          <span class="sum">安来商工会議所の会館を移転する必要性について、市長からの依頼によるものかを尋ねるとともに、市民会館を移転するなら会議所にその土地が必要なのかを問い、選挙戦で示したＡ、Ｂ、Ｃ案の分庁方式から方針が変わった経緯を市民へ丁寧に説明するよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐々木厚子</span>
+          <span class="ttl">大型事業と市政運営</span>
+          <span class="sum">新庁舎・給食センター・市民会館の大型事業について、市民の財政への不安を踏まえ、何のために今一気に進めるのかを分かりやすく説明するよう求め、合併10周年に当たり不安や不満を払拭する市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・永田巳好</span>
+          <span class="ttl">広瀬・伯太地域の課題</span>
+          <span class="sum">合併10周年を迎え、広瀬・伯太地域の課題の認識と分庁方式の成果、老朽化した広瀬の中央交流センターの考え、市民会館など旧安来市への大型施設の集中と一体感の醸成、合併の満足度を問う市民アンケートの実施について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・丸山征司</span>
+          <span class="ttl">救急体制の充実</span>
+          <span class="sum">緊急通報電話の貸与対象の拡充とレクチャー・複数貸与・警備会社からの119番通報への見直し、不測の事態を想定した訓練、市立病院の救急受け入れ態勢、ドクターヘリの活用、搬送先確認の時間短縮策、ＡＥＤの配備とＡＥＤマップ、救急車を呼ぶ判断基準の啓発と消防新庁舎での市民開放イベントを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・永田巳好</span>
+          <span class="ttl">新庁舎の建設事業費</span>
+          <span class="sum">新庁舎を現在地に建てたことで建設事業費は安くついたのかを尋ね、市民会館の維持管理費が1,500万円から6,700万円〜１億1,000万円に増えるなど将来の経費が基金の取り崩しや国頼みになるのではないかと指摘し、平成32年までの過疎債の期限を踏まえた建設時期の再考を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・田淵秀喜</span>
+          <span class="ttl">新消防庁舎と安心・安全</span>
+          <span class="sum">新消防庁舎の整備による到着時間などの明確な効果、分署の全員出動時に救急要請が重なった場合の対応、消防業務と危機管理部局の役割のすみ分けを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐伯直行</span>
+          <span class="ttl">くい施工データ改ざん問題</span>
+          <span class="sum">旭化成建材のくい施工データ改ざん問題の本質を尋ね、下水道埋設管の検査方法と経年劣化・漏水処理、くい長・くい径の決定者と関連工事の対応、くい工法の変遷、業者・設計者・市職員の管理の立ち位置と職員のデータ読み込み、民間工事への確認申請時の指導、新庁舎と旧商工会議所のくい・地盤データを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・金山満輝</span>
+          <span class="ttl">三大事業の進捗と運営方針</span>
+          <span class="sum">三大事業の進捗と完成後の運営について、給食センターの地元食材の調達目標と確保・検証の方法及び他校のセンター移行計画、総合文化ホールの運営の考え方と開館に向けた機運醸成、新安来庁舎の工事スケジュールと本庁舎の役割、県道安来木次線切川バイパスの早期全線開通に向けた取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐伯直行</span>
+          <span class="ttl">公園への健康器具の設置</span>
+          <span class="sum">新庁舎南側の木戸川沿いに整備される防災公園に、交流と健康維持のための健康器具を子供の遊具と分けて設置することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・澤田秀夫</span>
+          <span class="ttl">各庁舎の部署再配置</span>
+          <span class="sum">各庁舎の部署再配置について、健康福祉部移転後１カ月の課題と案内標識、健康福祉センターの駐車場の広さと出入り口の安全対策、伯太庁舎の駐車場、広瀬庁舎の空きスペース活用と今後の方向性、新庁舎建設中の安来庁舎の来庁者安全対策と駐車場・導線に加え、健康福祉センターへの証明書自動交付機の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">各産業での地産地消</span>
+          <span class="sum">地域経済の自立の観点から、学校給食の食材の地産地消に向けたハウスや保存倉庫への支援、ＩＣＴを使ったハウス栽培など新たな農業施策、可燃ごみ処理の事業提案の審査での実績への配慮、新庁舎や総合文化ホールでの地元産品の使用と地元産木材による道路資材の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田中武夫</span>
+          <span class="ttl">大型事業の償還と財政</span>
+          <span class="sum">給食センター・市民会館・新庁舎など大型事業の起債償還と維持管理費で一般財源の負担が増す見通しについて償還計画を尋ね、地方交付税が前年比２億2,749万円減となった主な算定基準を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">押印見直しと電子申請・決裁</span>
+          <span class="sum">第3次行政改革大綱でのICT活用の検討と新規の取り組み、新安来庁舎の窓口サービス、千葉市の例を挙げた押印の見直し、島根電子申請サービスの利用状況と周知、電子申請できる手続数、決裁件数と文書保管、押印の数を尋ね、新安来庁舎建設時までの電子決裁の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">市政運営と財政の見通し</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略の１年間の経過と分析、新庁舎と総合文化ホールをまちづくりの道具としてどう使うか、公共施設等総合管理計画でめり張りをつけた財政運営と単年度収支を一定の時期にプラス・マイナス・ゼロへ戻す計画への市長の見解、交流センターを核とする地域の取り組み状況と支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐々木厚子</span>
+          <span class="ttl">市政運営の諸課題</span>
+          <span class="sum">市政運営について、分庁方式を決断した思いと総合庁舎化の考え、老朽化し耐震化されていない広瀬庁舎の今後、複式学級の現状認識と赤江小学校の進学先の分散を含む小・中学校の統廃合、安来高校と情報科学高校の統合を求める声への見解、健全な財政運営の根拠と決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・永田巳好</span>
+          <span class="ttl">庁舎の事業計画と財政健全化</span>
+          <span class="sum">市長が検討するとした広瀬の図書館や分庁方式の庁舎の事業を任期中に５カ年の中期財政計画へ入れる考え、中期財政計画の投資的経費の使途、実質公債費比率や将来負担比率など財政健全化指標の目標設定、市民への情報開示を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・永田巳好</span>
+          <span class="ttl">広瀬庁舎の整備予算</span>
+          <span class="sum">分庁方式を公約としながら８回の当初予算で古くなった広瀬庁舎の整備予算が計上されない理由を尋ね、マニフェストを予算に反映させるべきだと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">新庁舎移転時の備品の扱い</span>
+          <span class="sum">旧市民会館解体時に備品を地域の指定管理施設等へ配分した例を挙げ、現庁舎の椅子や机等の処分・再利用の考え方と新庁舎への移動計画、備品の扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐々木厚子</span>
+          <span class="ttl">防災拠点の耐震化</span>
+          <span class="sum">熊本地震を受け、新庁舎の安全性の説明、耐震化されていない広瀬庁舎の今後、伯太庁舎の現状、市立病院の耐震強度不足箇所の検討状況、避難所として開設できない交流センターの耐震化、業務継続計画の策定と専門家を入れた危機管理体制の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・金山満輝</span>
+          <span class="ttl">ソフト事業の展開</span>
+          <span class="sum">新庁舎や総合文化ホール、給食センターのハード事業が完了し当初予算が減となる中で、市長の言うソフト事業のさらなる充実はこれからは内容だということで理解してよいのかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・飯橋由久</span>
+          <span class="ttl">住環境の向上</span>
+          <span class="sum">結婚する人がふえるような少子化対策についての見解と支援、民生委員だけに頼らない独居老人への行政の協力体制、安来市空家等対策計画に基づく空き家の活用法など主な取り組み、安来庁舎建設と木戸川東線道路改良事業の完了後に道路より東側の中心市街地を活性化する計画の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">公共交通の課題と今後</span>
+          <span class="sum">中山間地域の買い物や通院の足の確保について、社会実験を踏まえた状況と課題、イエローバス以外の手段を含む今後の方向性と具体的な対策、支線の交通体系づくり、新庁舎と総合文化ホールへの公共交通の導線の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐々木厚子</span>
+          <span class="ttl">市議選の投票率向上</span>
+          <span class="sum">衆議院選挙と1週間違いとなった市議選を同日選挙にしなかった理由と同日実施での経費削減額や投票率への影響、18歳・19歳の投票率と若い世代への働きかけ、合併後の期日前投票率を尋ね、期日前投票所の中央交流センターから新庁舎への変更、デイサービス利用者の施設内投票、入場券への宣誓書の添付、投票終了時間の繰り上げを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・嶋田豊昭</span>
+          <span class="ttl">新庁舎周辺と中心市街地</span>
+          <span class="sum">新庁舎完成に合わせた中心市街地を含む都市デザインの方針について、旧安来町の人口減少の状況と人口集積の方策、市街化区域内の空閑地と周辺地域の土地利用促進、魅力ある中心市街地の形成の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・石倉刻夷</span>
+          <span class="ttl">新庁舎完成後の市長の施策</span>
+          <span class="sum">新庁舎完成とアルテピア竣工で大型3事業がおおむね完工し費用対効果が求められる中、行財政改革を筆頭に掲げた市長マニフェストを踏まえ、当面市民が求める具体的な施策と市長の思いを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・向田聡</span>
+          <span class="ttl">核兵器廃絶と非核平和宣言</span>
+          <span class="sum">核兵器禁止条約の国連採択やＩＣＡＮのノーベル賞受賞を受けた市長の受け止め、平和市長会議の一員として日本政府に核兵器廃絶を求める考え、新市庁舎に非核平和都市宣言の標柱など目に見える形のものを設置する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐伯直行</span>
+          <span class="ttl">歩いて暮らせるまちづくり</span>
+          <span class="sum">新庁舎完成を契機とした中心市街地活性化のビジョンと空洞化の要因・解決策、木戸橋を通るイエローバスの循環とフリー乗降、連携計画終了後の交通計画、高齢者の事故と免許自主返納の推移、公共交通を活用して歩く動機づけや歩道整備、生活拠点・小さな拠点づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・永田巳好</span>
+          <span class="ttl">広瀬分庁舎と中央交流センター</span>
+          <span class="sum">分庁方式を公約とした市長に未整備の広瀬庁舎の構想と分庁方式を維持する考え、整備の原資と過疎債の活用、広瀬中央交流センターの耐震補強・改修の状況と複合施設化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・永田巳好</span>
+          <span class="ttl">広瀬庁舎の改善</span>
+          <span class="sum">令和２年度当初予算に広瀬庁舎改善の予算措置がない理由を尋ね、分庁方式とクラスター型コンパクトシティーにおける各地域の核、市長退任後の方向性、合併特例債の使途が旧安来市に偏り対等合併と言いがたい点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岩崎勉</span>
+          <span class="ttl">行財政改革と分庁方式</span>
+          <span class="sum">分庁方式のメリット・デメリットとテレビ会議等の稼働状況、全国の分庁方式の市の数、市長の執行体制、富田山荘と憩いの家の方向性、婚活支援と移住者受け入れの実績、行革大綱と市立病院経営整備検討事業の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・佐々木厚子</span>
+          <span class="ttl">庁舎の分庁方式</span>
+          <span class="sum">広瀬庁舎の今後の方針、市民との接点が多い部署の配置を含む分庁方式の評価と総合庁舎への転換、公共施設等総合管理計画に基づく経費削減を踏まえた今後の庁舎運営の考えを市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・永田巳好</span>
+          <span class="ttl">新年度予算と中期財政計画</span>
+          <span class="sum">分庁方式の広瀬庁舎の予算と中央交流センターへの移転の是非、合併特例債の組替えによる安来庁舎への集約、市立病院の方針と予算、公共施設総合管理計画の方向と進捗、決算剰余金の２分の１を積み立てる財政規律を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三原哲郎</span>
+          <span class="ttl">スマートシティやすぎ</span>
+          <span class="sum">自治体ＤＸの基本的な考え方と今後の予定、部署間連携とマイナンバーカードの利用状況、市庁舎のシステム形態、ノートパソコンやタブレットによるテレワーク、中山間地域の交流センターへのキオスク端末配置、移動診療車によるオンライン診療の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・岩崎勉</span>
+          <span class="ttl">分庁方式の是非</span>
+          <span class="sum">合併20年を迎えて分庁方式のメリット・デメリット、テレビ会議や電子決裁の実施状況、全国と県内他市の状況、職員・市民の時間と経費のロスへの考え、分庁方式でないと周辺部の発展は望めないのかを尋ね、現執行部の分庁方式への見解を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">52件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・勝部順子</span>
+          <span class="ttl">住民主役の市政運営</span>
+          <span class="sum">住民一人一人が真に住民主役を実感できるまちづくりの進め方と１５万市民との対話と交流の実施方法を尋ね、市長との懇談の機会が少ない人や若者、女性が気軽に参加できる仕組み、旧市町の地域の位置づけとまちづくりの考え、市民の声を聞く機会を持ちながらの本庁舎改築の調査検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・曽田盛雄</span>
+          <span class="ttl">公共施設の耐震と防災</span>
+          <span class="sum">本庁舎と同様に老朽化が激しい平田支所庁舎と消防庁舎の早急な整備への所見、公民館等の耐震強度の状況、平田小学校と旭丘中学校の改築と耐震補強の計画および調査で不適格となった場合の対処、災害情報の伝達方法と避難場所と防災無線の導入時期、防災ネットワークの年次計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・今岡一朗</span>
+          <span class="ttl">分権時代の行財政運営</span>
+          <span class="sum">新市建設計画の整備方針をできるだけ早く示すべきだとして総合振興計画の策定スケジュールを尋ね、簡素で効率的な運営に向けた行財政改革大綱及び実施計画の策定スケジュール、狭隘で機能が分散している市役所本庁舎の改築の現状と今後の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・原隆利</span>
+          <span class="ttl">合併特例債と財政計画</span>
+          <span class="sum">全国１７８合併市町村の調査で満額を使うと答えたのは２０％にとどまる中での出雲市の満額活用の理由と将来の財政悪化への見解、平成１７年度予算の特例債活用総額、庁舎建設に係る特例債の交付税充当率、２１世紀出雲の國づくり計画の財政計画より市債が１0.６％増えた乖離を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・高野成俊</span>
+          <span class="ttl">大型施設と合併特例債</span>
+          <span class="sum">新庁舎や出雲弥生博物館、大社の阿國座といった大型施設は建設費に加えて必ず維持管理経費が伴うとして将来にツケを回すことなく建設が可能なのかを尋ね、老朽化が著しい学校や幼稚園、公民館の建替えと修繕の年次計画、合併特例債はどのような事業に充てることができるものなのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・宮本享</span>
+          <span class="ttl">市役所本庁舎の建設</span>
+          <span class="sum">昨年１２月に議決された庁舎建設促進の決議の要望事項に施政方針が触れていないとして、建設用地の候補地と複数ある場合の選定手続、平成２０年１２月を目途とする竣工時期を目標にスケジュールを組み立てているのか、中期財政計画に建設費が明確に盛り込まれているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・板倉明弘</span>
+          <span class="ttl">市役所本庁舎の建設場所</span>
+          <span class="sum">農政会議やＪＡいずもからの現在地への建設要望はどちらから持ちかけたのか不透明であったと述べ、２０１５年に２０万人の特例市を目指す人口に対応できる施設と場所であるべきだとして、庁舎建設への理念と建設場所の考え、今後の具体的なスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・宮本享</span>
+          <span class="ttl">市役所本庁舎の改築</span>
+          <span class="sum">合併から２カ月余りで市役所が分散して不便だという声が多く寄せられているとして、現用地や中央病院跡地、駅の西側のＪＲ用地なども候補に挙げ、まちづくりの核となる庁舎の検討組織を早急に立ち上げるべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・今岡一朗</span>
+          <span class="ttl">庁舎二案の比較数値</span>
+          <span class="sum">庁舎建設特別委員会で検討している二つの案について、施政方針への質問で市長が数字を示し思いを述べたことを踏まえ、取得面積と取得価格、移転補償費などの比較数値を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・板倉一郎</span>
+          <span class="ttl">庁舎建設と遊休土地の利用</span>
+          <span class="sum">市庁舎の建設整備の方針を示す時期と現時点における市長の考えを尋ね、県立中央病院跡地や出雲市駅周辺の空き土地などたくさんある遊休土地について総合的に土地利用の促進を検討する必要があると質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・今岡一朗</span>
+          <span class="ttl">庁舎建設促進の決議</span>
+          <span class="sum">建設用地を現在地もしくは元県立中央病院跡地を含む近接地とし速やかに選定すること、中期財政計画に明確に位置づけ財源の確保に努めること、平成２０年１２月竣工を目途とすることを求めた庁舎建設促進に関する決議について、市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・高野成俊</span>
+          <span class="ttl">公債費の許容水準</span>
+          <span class="sum">新庁舎や阿國座、出雲弥生博物館、大社門前町整備といった投資的事業に加えて老朽化した学校の改修など急がれる事業も山積する中で、厳しい時期を乗り切れるのはいつなのか、今後の事業を策定するうえで公債費をどの程度まで許容できると考えているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・川上幸博</span>
+          <span class="ttl">公共工事での木材利用</span>
+          <span class="sum">島根県木質資源活用維新計画を踏まえ、観光地での木材を使ったガードレールや休憩所と新庁舎への木材利用を挙げ、現在の出雲市の公共工事で木材がどれほど利用されているのかと今後積極的に利用していく方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・原隆利</span>
+          <span class="ttl">地方財政の見通しと特例債</span>
+          <span class="sum">新型交付税の導入で島根県の減少額が最大三五八億円に上るとされる中で今後の地方財政全般の見通しを尋ね、枠の限度いっぱいを活用するという約五百億円の合併特例債への考えと交付税措置を額面どおり受けとめてよいのか、新庁舎建設を織り込んだ中期財政計画の改訂版の提示を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・直良昌幸</span>
+          <span class="ttl">弥生博物館の縮小と延期</span>
+          <span class="sum">約十五億円の施設整備費を見込む出雲弥生博物館について、七月災害を受けた財政状況と実質公債費比率が一八％台に上がった現況を挙げ、新庁舎や道路や下水道など今必要な事業を優先すべきだとして計画規模の縮小と事業の延期を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・山代裕始</span>
+          <span class="ttl">新庁舎と河下港岸壁</span>
+          <span class="sum">平成２０年度中の完成を目指す市役所新庁舎の規模や費用などの概要と（仮称）中央広場の概要、現在の庁舎および跡地の活用策を尋ね、港振興交付金を活用した河下港５千トン級岸壁の利用促進策について策定に当たっての検討の方向性など基本的な考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・板倉一郎</span>
+          <span class="ttl">新庁舎と現庁舎の跡地</span>
+          <span class="sum">多くの市民が興味を抱く新庁舎の建設は設計段階でも逐次情報を提供する必要があるとして市民への情報提供の考えを尋ね、中心市街地の活性化を左右する現庁舎用地について将来の跡地利用をどう検討していくのか、結論が出るまでの当面の使い方として新規に事業を立ち上げる人へ事務所として提供する案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・長岡幸江</span>
+          <span class="ttl">新庁舎の基本計画と設計</span>
+          <span class="sum">中央病院跡地が適当とされた背景と新庁舎のあるべき姿及び将来の人口規模や職員数を見据えた基本構想を尋ね、敷地の特性の生かし方や防災センターを含む敷地利用計画、人と車の動線、部門構成、市民開放スペース、外観、維持管理、省エネルギー、防災避難計画など基本設計の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・高野成俊</span>
+          <span class="ttl">新庁舎の工期と道路整備</span>
+          <span class="sum">平成２０年１２月完成という新庁舎の工期が短納期で資材発注や人件費などのコスト面に影響しないかを尋ね、主要地方道出雲三刀屋線の線形について堤防道路ではなく地区内での整備をとの地元提案を踏まえた市の考えと県との協議状況、市道の管理や河川の浚渫、除草を担うボランティア活動への支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・高野成俊</span>
+          <span class="ttl">新庁舎の建設と跡地</span>
+          <span class="sum">現庁舎北側から旧中央病院跡地へ建設方針を転換した経緯と理由、現庁舎跡地の将来の活用、県が保有する中央病院跡地を購入することが財政面から適切かと取得の時期や金額、市内業者の共同企業体や分割発注により建設効果を広く市内業者が受けられる仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・牛尾尚義</span>
+          <span class="ttl">新庁舎完成後の現庁舎</span>
+          <span class="sum">平成２０年末までに完成する新庁舎の後に残る現庁舎について、新庁舎建設調査検討委員会の提言を念頭に市民活動のニーズが満たされるよう有効活用するとされていることを踏まえ、どのようなものを想定しているのか現段階での構想を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・牛尾尚義</span>
+          <span class="ttl">行財政改革と財政見通し</span>
+          <span class="sum">夕張市の事例で市民の関心が高まる財政について中期財政計画に照らした現在の状態を尋ね、新庁舎や総合医療センター、東部体育館、阿國座の建設計画が今後の財政にどう反映されるか、負担のピークの時期とそのときの財政構造数値や起債残高、人件費の縮減と組織のスリム化の進捗と数値目標を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・萬代弘美</span>
+          <span class="ttl">貧困と格差と市政運営</span>
+          <span class="sum">国保料の滞納世帯や就学援助を受ける児童生徒の増加を挙げて市民の厳しい暮らしの実態をどう受けとめているかを尋ね、限られた財源のもとで出雲阿国座や弥生博物館などの大型施設の建設は見直し、市民の合意なく庁舎建設を急ぐべきではないとして所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石川寿樹</span>
+          <span class="ttl">実質公債費比率と財政運営</span>
+          <span class="sum">実質公債費比率がどのような内容でどのような意味を持つのかと本市の水準、今後十年の推移と平成24年度がピークとなる理由、自治体財政健全化法の早期健全化の指標と指定された場合の制約を尋ね、新庁舎や出雲阿國座など大型プロジェクトの時期調整や見直しの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石川寿樹</span>
+          <span class="ttl">寄贈された美術品の管理</span>
+          <span class="sum">市民から寄贈を受けた書画骨董などの美術品が２市４町の合併を経てどれだけあり評価額はどの程度になるのか、どこの部署でどのような形で管理し保管しているのか、今後寄贈の申し出があった場合の窓口と受け入れの基準、新庁舎の完成も見据えた市民への展示・公開の方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石川寿樹</span>
+          <span class="ttl">市有施設の文化的活用</span>
+          <span class="sum">新庁舎の多目的ホールやギャラリーの一角に市民の文化作品を展示発表する場を設け市民ボランティアに運用をゆだねることと、旧宍道邸の検討委員会が答申した活用方策を踏まえ、俳人原石鼎の記念館として明治期の母屋や蔵を生かすことを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・米山広志</span>
+          <span class="ttl">新庁舎建設の工程</span>
+          <span class="sum">入札結果が出た出雲市新庁舎について平成20年12月末の竣工までの具体的なスケジュールと、全国的な鋼材不足や建築基準法の改正が本市の新庁舎に及ぼす影響の有無、工期完了と引き渡しの時期の関係を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・遠藤力一</span>
+          <span class="ttl">新指標で見る市の財政</span>
+          <span class="sum">新庁舎や出雲阿國座、弥生の森博物館の建設が本格化する中で出雲市は大丈夫かとの声が市民から多数寄せられているとして、夕張市の破綻の原因となった一時借入金の有無を尋ね、実質収支比率、連結実質収支比率、実質公債費比率、将来負担率という４つの財政指標に基づいて改めて出雲市の財政の実態を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・川上幸博</span>
+          <span class="ttl">景観計画とまちなみ保存</span>
+          <span class="sum">出雲市としてまちなみを保存していく地域と住民との合意形成、長浜海岸や西浜海岸の侵食状況の把握と今後の対応および国と県への活動、松くい虫で枯れた防風林の再生を含む森林と樹木の景観、生垣設置奨励金や築地松の助成に加えたまちなみ保全の補助制度、新庁舎周辺の景観への配慮と既存の施設の色彩の変更を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・多久和康司</span>
+          <span class="ttl">生活道路と公共交通</span>
+          <span class="sum">3カ年計画でA判定分が整備される生活道路と排水路についてB判定やC判定として漏れた部分への考え方と、老朽化が進む道路橋の点検を含めた改良整備の方針、9号バイパスの開通や新庁舎とゆめタウンの開業を踏まえた公共交通ネットワークの構築を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・牛尾尚義</span>
+          <span class="ttl">神西のマツ枯れ対策</span>
+          <span class="sum">神西地区の２００ヘクタールの市有林で長年続けてきた空中散布を今年中止した理由と判断、中止は今年だけのことかこのままやめるのか、中止によって進むマツ枯れに対して空散のほかにマツを守る対策はあるのか、枯れる前に新庁舎や総合医療センターなど今後の公共施設へ地元産のマツ材を活用することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・荒木孝</span>
+          <span class="ttl">組織と機構の再編強化</span>
+          <span class="sum">この3年で組織や機構が目まぐるしく変わることを市民がどう理解するのかと問い、新庁舎の完成時には大きい組織ほど簡略で親しみのわくネーミングを含む分かりやすくスマートでスリムな組織機構とすることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・直良昌幸</span>
+          <span class="ttl">遊休資産の売却処分</span>
+          <span class="sum">出雲市土地開発公社と市が所有する未処分の遊休地の現況を尋ね、売却処分と利活用の促進の方針と取り組みについて地価の下落が続く中で期限を切って進める決意と、新庁舎への移転後の現庁舎の取扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・遠藤力一</span>
+          <span class="ttl">クールアースデーの参加</span>
+          <span class="sum">福田首相が7月7日をクールアースデーとする考えを示したことを受け、本庁舎と支所の残業をやめ出雲ドームも消灯して星空を眺める一夜とするなど、市もこの一斉消灯の運動に賛同し協力することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・直良昌幸</span>
+          <span class="ttl">新庁舎の開庁と接客</span>
+          <span class="sum">竣工した新庁舎の開庁に当たって来訪者の対応で留意している点を尋ね、延床面積が広くなり増額となる管理費の節減対策と、職員の接客対応についてどのような共通認識を持っているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・長廻利行</span>
+          <span class="ttl">新庁舎への路線バス乗入</span>
+          <span class="sum">新庁舎へ路線バスを利用して来庁する市民の見込みとＪＲや電車との接続時間など利便性を高める方策を尋ね、高崎市の例を挙げてバス停の検討経緯と市民の要望、停留所の変更予定、庁舎構内へ乗り入れる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・山根貞守</span>
+          <span class="ttl">新庁舎完成後の支所体制</span>
+          <span class="sum">新庁舎への移転時期と移転計画、完成後の本庁と各支所の機構と事務事業の基本的な考え方を尋ね、毎年の機構改革と職員の減員を繰り返さず当分は定まった体制で臨むことと支所への丁寧な説明を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・山代裕始</span>
+          <span class="ttl">新庁舎移転と支所見直し</span>
+          <span class="sum">新庁舎の完成時期と業務開始、旧庁舎や分庁舎からの移転計画、部や課の配置の考え方、移転後は組織変更を控える考えを尋ね、支所見直しの基本的な考えと組織や職員体制、将来の姿、空室の有効活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・山代裕始</span>
+          <span class="ttl">消防受委託と消防団</span>
+          <span class="sum">契約の無期限延長を求める斐川町からの要望を踏まえた救急消防業務の受委託への考え、老朽化した平田と大社の消防署の庁舎整備計画、小型ポンプへの積載車配備による機動化と消防コミュニティセンターの設置計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・多久和康司</span>
+          <span class="ttl">神話まつりの開催場所</span>
+          <span class="sum">神話まつりが目指す基本的な考え方を尋ね、平成21年度は新庁舎のイベント広場を主会場に駅前から国道9号までを歩行者天国とすること、22年度以降も中心部で開催することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・松村豪人</span>
+          <span class="ttl">鳥取市の住民投票の否決</span>
+          <span class="sum">鳥取市の新庁舎建設をめぐり有権者の３分の１を超える署名が集まりながら住民投票条例案が市議会で否決された問題について市長の所感を尋ね、手続に問題があったとすればどこにあったのか、本市の自治基本条例の制定にあたり参考とすべき点があったのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・遠藤力一</span>
+          <span class="ttl">図書館の活用と課題解決</span>
+          <span class="sum">市内七つの図書館の今後の基本計画を尋ね、ビジネス支援など課題解決型への１年間の変化、移動図書館と宅配サービスとハンディキャップサービスの実施状況、レファレンスサービスの状況、佐賀県武雄市の図書館への市長の感想、旧本庁舎跡地への中央図書館の移転の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大場利信</span>
+          <span class="ttl">市施設への太陽光発電</span>
+          <span class="sum">太陽光発電システムを導入している市の建物と、本庁舎の設置費や平成２４年度・平成２５年の年間使用電力量に占める太陽光発電の電力量、売電収入と相殺した電気料金、初期投資額の回収時期を尋ね、学校を含む建物への計画的な導入と既設への導入の意向、国・県の有利な補助制度、財政上の制約を含む導入の障害を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・湯淺啓史</span>
+          <span class="ttl">公共施設の再配置と整備</span>
+          <span class="sum">人口と財政がともに右肩下がりとなる中で、市街地が無秩序に拡散するスプロール化の把握と言葉の整理、コンパクトシティや小さな拠点という考え方の整理を尋ね、道路や橋梁、トンネル等の維持管理費・補修・かけ替え等の費用の検討、複合化や多機能化と官民の協働に対応する体制、廃止・統合の方針が示された施設や旧市庁舎跡などの遊休地への民間からの提案の募集、出雲体育館と平田体育館の統合の検討状況と過程の透明性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・珍部全吾</span>
+          <span class="ttl">市庁舎の喫煙所の場所</span>
+          <span class="sum">厚生労働省の検討会ががんや脳卒中、糖尿病など２２種類の病気の発症とたばこの関係、受動喫煙と子どものぜんそくや乳幼児突然死症候群との関係を確実と判定したことを挙げ、玄関の隣と南の出入り口にある市庁舎の喫煙所の場所を見直す考えと、市民から意見が寄せられた際の受付窓口の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・山代裕始</span>
+          <span class="ttl">旧市役所跡地の利活用</span>
+          <span class="sum">旧出雲市庁舎跡地の利活用についてどのような検討がなされどういう案が出されてきたかと今後の利活用の考え方、公用車の数は適正か、跡地を売却した場合にだんだん広場を新たな駐車場にしてはどうかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・今岡真治</span>
+          <span class="ttl">生活困窮者の自立支援</span>
+          <span class="sum">出雲市における生活困窮者自立支援制度の実施状況と、生活困窮者等への就労支援をどのように行っているのかを尋ね、松江市が島根労働局と連携して本庁舎に福祉就労支援コーナーを設置している例を挙げ、同様の就労支援策を行う考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・福島孝雄</span>
+          <span class="ttl">防災と子育てと健康づくり</span>
+          <span class="sum">災害対策拠点となる市役所本庁舎の電源対策と避難所の確保及び備蓄品の状況、高齢者の免許自主返納支援策に対する返納者からの意見・要望、斐川地域の消防団再編で変更となる拠点施設の老朽化や手狭さの改善、県の発表を受けた新たな子ども医療費助成制度の考え、保育所等の周囲に設けるキッズゾーンの設置、通いの場への男性を含めた参加を促す健康づくりの対策、社会教育計画の内容と幅広い社会教育事業における実効性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・高橋扶治夫</span>
+          <span class="ttl">公共施設のＷｉ－Ｆｉ環境</span>
+          <span class="sum">出雲市の公共施設全般についてＷｉ－Ｆｉ環境整備の現状と課題を尋ね、国が目指す「書かない窓口」に伴い担当者がタブレットで説明する本庁舎窓口や、調べ物に使う図書館など未設置箇所への今後の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・木佐宏</span>
+          <span class="ttl">本庁舎南側の立体駐車場</span>
+          <span class="sum">旧出雲市役所跡地は絶対に手放してはならないとしたうえで、周辺２５か所に点在する職員の７５９台分の駐車場を本庁舎南側公園敷地８，４００平米に立体駐車場を建設して集約し、南側緑地帯の代替地には旧市役所跡地を充てること、あわせて耐震設計の強靱な避難施設を兼ねることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・錦織稔</span>
+          <span class="ttl">蛍光灯の水銀規制対応</span>
+          <span class="sum">水俣条約を踏まえ一般照明用蛍光灯の製造輸出入が２０２７年度末までに段階的に禁止されることを挙げ、水銀を含む蛍光灯が現在どのように処理されているか、本庁舎や行政センターなどのＬＥＤ照明への切替えの現状、市民への周知についての市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・三島好弘</span>
+          <span class="ttl">書かない窓口と窓口業務</span>
+          <span class="sum">本年１月２６日から市民課で運用が開始された「書かない窓口」の運用の状況、本庁舎１階の市民課窓口に他の課の手続を集約するワンストップの検討状況、他の課における同様の手続の導入に向けた検討、オンライン申請による窓口に行かなくてよいという取組の現状と今後の方針を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>奥出雲町<span class="ex-n">14件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H21・岩田明人</span>
+          <span class="ttl">庁舎建設の方向づけ</span>
+          <span class="sum">合併により叫ばれた庁舎建設について、合併特例債の期限・残額・補助率を尋ね、特別委員会や議員提案など一歩ずつ進めるための経費節減を含めた方向づけの考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・藤原充博</span>
+          <span class="ttl">新庁舎の建設</span>
+          <span class="sum">災害に強くランニングコストのかからない庁舎が必要だとして、合併債やソーラー発電などの補助金を活用した庁舎の一元化と、光ケーブルを使い公民館やコミセンにテレビ電話を置いて役場と対話・相談できるシステムの実験的な導入を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・村尾明利</span>
+          <span class="ttl">来年度新施策と中期ビジョン</span>
+          <span class="sum">合併特例による起債の残り期間が5年であることと庁舎建設などの課題を挙げ、行政改革を含む平成22年度実施の新たな計画と、財政計画を伴う中期的な行政ビジョンの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・藤原充博</span>
+          <span class="ttl">庁舎建設の工程表</span>
+          <span class="sum">合併特例債が利用できる期間が本年を除きあと4年となる中、庁舎建設に向けた工程表や予算規模、住民説明会の予定を尋ね、9月補正予算での庁舎建設の予算計上を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田精彦</span>
+          <span class="ttl">総合計画の策定体制</span>
+          <span class="sum">総合計画審議会の委員の選考と委嘱先、審議会・専門委員会の立ち上げと答申の時期、町長の関与、専門委員会の結論の扱いと人数超過時の制限・手当・氏名の公表を尋ね、新たな庁舎建設を行わないとした新町建設計画や合併時の庁舎問題の確認文書との接合、合併特例債の期間延長の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・村尾明利</span>
+          <span class="ttl">平成24年度予算計画</span>
+          <span class="sum">平成24年度予算で東日本大震災の教訓を生かしたもの、バイオマス利活用等の研究開発の23年度の成果と期待目標、森林資源の総合活用事業の内容と目標、仁多庁舎整備事業2億8,000万円の進捗状況と建設計画のキーワードを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・大垣照子</span>
+          <span class="ttl">三成小学校の改修改築</span>
+          <span class="sum">昭和４１年建設の校舎を含みＩｓ値が０．２６の三成小学校を補強工事で済ませるのか改修・改築するのか、旧仁多地域の中心にある同校の位置づけ、庁舎建設と教育施設整備の優先性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・大垣照子</span>
+          <span class="ttl">小学校の学びの場の環境整備</span>
+          <span class="sum">老朽化し危険家屋化した三成・布勢・八川小学校など教育施設の環境整備について、庁舎建設と同様に早期解決を図る考えと、危険な箇所から計画性を持って進める時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・内田精彦</span>
+          <span class="ttl">新仁多庁舎の建設</span>
+          <span class="sum">本年度予算２億８，０００万円の進捗状況、分庁方式の継続を基本とする総合計画の方針に変わりはないか、合併特例債の利用期間が５年延長されても平成２６年度中の完成予定かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・岩田明人</span>
+          <span class="ttl">有利な起債と財政見込み</span>
+          <span class="sum">地方交付税の減額方針を踏まえ、合併特例債の枠と合併のメリット、交付税の段階的な減額後の見込み額と減少額、庁舎建設の財源の負担割合、繰上償還した起債に係る合併後の年度別の交付税算入額、健全財政への町長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・藤原充博</span>
+          <span class="ttl">これからの財政</span>
+          <span class="sum">合併特例債や庁舎建設の終了などで縮小していく予算の状況と影響、創意工夫による対応を尋ね、類似団体４４団体中で下位の将来負担比率と実質公債費比率、人件費の増加傾向、仁多庁舎の改築による財政の圧迫への懸念を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田精彦</span>
+          <span class="ttl">合併特例債の活用計画</span>
+          <span class="sum">仁多庁舎建設が消費税の引き上げや資材高騰の中で当初計画の２５億円に変動がないか、合併特例債の発行状況と今後の計画、限度額５８億円余りを全て使うのか、全額使った場合の交付税算入額と町負担、町負担分の償還計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田精彦</span>
+          <span class="ttl">仁多庁舎の建設</span>
+          <span class="sum">仁多庁舎建設事業に対する町長の思いと入札・契約の進捗、繰り越しを含む今年度予算で建設工事費が賄えるか、実施設計の内容やスケジュールと、合併特例債や交付税算入額など財源と実質負担額の町広報での公表を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・川西明徳</span>
+          <span class="ttl">新庁舎を核にしたまちづくり</span>
+          <span class="sum">活気に欠ける三成連担地について、個店への直接補助を含む地域・まちなか商業活性化支援事業の導入、内発型の地域振興と地域循環型の公共事業、三成小学校の改築を新築事業として負担を軽減し教育センター設置を具体化すること、商業用地や駐車場用地の提供、リハ学園の大学化と各課の連携を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 4自治体くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
