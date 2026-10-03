@@ -1,0 +1,3355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>子育てと少子化 — 安来市議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">安来市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../financial/index.html" class="cross-nav-link">財政レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_childcare.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">待機児童と保育所整備</a></li>
+                            
+                            <li><a href="#topic-02">放課後児童クラブ</a></li>
+                            
+                            <li><a href="#topic-03">少子化対策と出生率</a></li>
+                            
+                            <li><a href="#topic-04">子育ての経済的支援</a></li>
+                            
+                            <li><a href="#topic-05">子育て世代の相談支援</a></li>
+                            
+                            <li><a href="#topic-06">子どもの貧困とヤングケアラー</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 市長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">安来市 · 議会レポート / <b>子育てと少子化</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">子育てと少子化</h1>
+  <p class="page-subtitle">
+    安来市議会の一般質問・代表質問について、区分「子育てと少子化」に属する6の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">待機児童と保育所整備</a></th>
+            <td class="lt25">18</td><td class="lt25">16</td><td class="ge25">27</td><td class="lt10">9</td><td class="lt25">15</td><td class="lt25">16</td><td class="ge25">35</td><td class="ge25">30</td><td class="ge25">25</td><td class="ge25">35</td><td class="ge25">29</td><td class="ge25">35</td><td class="ge25">26</td><td class="lt25">24</td><td class="lt25">19</td><td class="h0">0</td><td class="lt10">5</td><td class="lt25">12</td><td class="lt25">19</td><td class="lt25">13</td><td class="lt25">11</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">放課後児童クラブ</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">11</td><td class="h0">0</td><td class="lt25">15</td><td class="lt10">8</td><td class="lt25">18</td><td class="lt10">6</td><td class="lt25">12</td><td class="lt25">13</td><td class="ge25">29</td><td class="lt10">6</td><td class="lt10">5</td><td class="lt10">5</td><td class="h0">0</td><td class="lt10">6</td><td class="lt25">20</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">少子化対策と出生率</a></th>
+            <td class="lt10">6</td><td class="lt10">5</td><td class="lt25">20</td><td class="lt10">4</td><td class="lt10">8</td><td class="lt25">21</td><td class="lt25">12</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">18</td><td class="lt25">24</td><td class="lt25">12</td><td class="lt10">9</td><td class="lt25">12</td><td class="lt10">6</td><td class="lt10">5</td><td class="lt10">5</td><td class="lt25">12</td><td class="lt25">12</td><td class="lt25">13</td><td class="lt10">6</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">子育ての経済的支援</a></th>
+            <td class="h0">0</td><td class="lt10">5</td><td class="lt10">7</td><td class="lt10">4</td><td class="lt10">8</td><td class="lt25">11</td><td class="lt25">12</td><td class="ge25">30</td><td class="lt25">17</td><td class="ge25">47</td><td class="lt25">12</td><td class="lt25">12</td><td class="lt25">22</td><td class="lt10">6</td><td class="ge25">31</td><td class="h0">0</td><td class="lt10">5</td><td class="lt10">6</td><td class="lt25">12</td><td class="lt25">20</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">子育て世代の相談支援</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">5</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">13</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">子どもの貧困とヤングケアラー</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">9</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">6</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>17</td><td>19</td><td>15</td><td>23</td><td>26</td><td>19</td><td>17</td><td>20</td><td>24</td><td>17</td><td>17</td><td>17</td><td>23</td><td>17</td><td>16</td><td>19</td><td>22</td><td>16</td><td>16</td><td>15</td><td>18</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>待機児童と保育所整備</h3>
+    <p class="terms">語: 待機児童と保育所整備・待機児童・保育所・認定こども園・保育施設・幼稚園・こども誰でも通園制度・幼児園</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt25" data-year="H17"><b>3</b><span class="of">/17人</span><span class="q">3件</span></td><td class="lt25" data-year="H18"><b>3</b><span class="of">/19人</span><span class="q">3件</span></td><td class="ge25" data-year="H19"><b>4</b><span class="of">/15人</span><span class="q">4件</span></td><td class="lt10" data-year="H20"><b>2</b><span class="of">/23人</span><span class="q">2件</span></td><td class="lt25" data-year="H21"><b>4</b><span class="of">/26人</span><span class="q">5件</span></td><td class="lt25" data-year="H22"><b>3</b><span class="of">/19人</span><span class="q">4件</span></td><td class="ge25" data-year="H23"><b>6</b><span class="of">/17人</span><span class="q">7件</span></td><td class="ge25" data-year="H24"><b>6</b><span class="of">/20人</span><span class="q">9件</span></td><td class="ge25" data-year="H25"><b>6</b><span class="of">/24人</span><span class="q">7件</span></td><td class="ge25" data-year="H26"><b>6</b><span class="of">/17人</span><span class="q">7件</span></td><td class="ge25" data-year="H27"><b>5</b><span class="of">/17人</span><span class="q">9件</span></td><td class="ge25" data-year="H28"><b>6</b><span class="of">/17人</span><span class="q">9件</span></td><td class="ge25" data-year="H29"><b>6</b><span class="of">/23人</span><span class="q">7件</span></td><td class="lt25" data-year="H30"><b>4</b><span class="of">/17人</span><span class="q">5件</span></td><td class="lt25" data-year="R01"><b>3</b><span class="of">/16人</span><span class="q">5件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/22人</span><span class="q">1件</span></td><td class="lt25" data-year="R04"><b>2</b><span class="of">/16人</span><span class="q">2件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/16人</span><span class="q">3件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/15人</span><span class="q">2件</span></td><td class="lt25" data-year="R07"><b>2</b><span class="of">/18人</span><span class="q">3件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・石倉刻夷</span><span class="ttl">米価高騰への市の対応</span><span class="sum">米価の高騰を受けて、妊婦や幼稚園・保育所に提供する米と学校給食用米の数量・価格、ふるさと納税返礼品の米の見通し、米不足の状況と令和7年度の作付・調査状況、市の今後の考え方を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・石倉刻夷</span><span class="ttl">小・中学校の適正配置</span><span class="sum">小・中学校の適正配置について、小学校入学前の幼稚園・保育所の見通しと対応、適正配置計画の進捗状況、統廃合前の学校の老朽化対策、統廃合後の利活用の状況と今後の対策を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・向田聡</span><span class="ttl">こども誰でも通園制度</span><span class="sum">来年度本格実施のこども誰でも通園制度について、目的と概要、試行自治体での実施状況と課題、保育士の増員など園や保育所の実情に合わせた進め方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">学校再編と子育て支援</span><span class="sum">小中学校の再編に伴う保育施設や放課後児童クラブの在り方、保育・教育の質の確保と遠距離通学となる家庭の負担軽減をどう調整し、諸課題に向き合うかを質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・作野幸憲</span><span class="ttl">施政方針と市政全般</span><span class="sum">国政の影響と総合計画（年収の壁引上げの市財政への影響、新たな交付金の使途、人口ビジョンの見直し）、保健・医療・福祉（市立病院の建て替え方針、医師の働き方改革の影響、健康増進アプリ、介護のデジタル化、交通弱者・買物弱者支援）、子育て・教育・スポーツ（公立保育施設の定員減、小中学校適正配置、高校魅力化、スポーツ拠点とスケートボード場の整備）、防災の情報共有、産業・観光（スマート農業、鳥獣害対策、中山間地農業、林業人材育成拠点、安来節演芸館とネオ安来節）、都市計画・土地利用（切川地区とスマートインターチェンジ、線引き制度、空き家対策、中海ふれあい公園の利活用）、ＤＸ推進リーダーの研修と推進会議への民間・外部有識者の参画を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・湯浅正志</span><span class="ttl">保育所の手ぶら登園</span><span class="sum">子育てしやすいまちづくりとして、保育所等における使用済み紙おむつ処分の現状を尋ね、紙おむつの定額使い放題サービスを市で導入する考えを質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・葉田茂美</span><span class="ttl">学校・こども園の安全</span><span class="sum">小・中学校と認定こども園施設の安全点検の方法を尋ね、点検結果や老朽化への対策、強風に備えた敷地内の危険樹木の対策を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・代表質問・清水保生</span><span class="ttl">高齢者支援と子育て・教育</span><span class="sum">買物や通院など高齢者の外出支援の取組、小中学校適正配置基礎調査の結果を示す時期と地域協議会との関わり、休園が続く保育所・こども園の今後、学校給食費の無料化と保護者負担についての考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・向田聡</span><span class="ttl">コロナの検査体制と困窮者支援</span><span class="sum">医療・介護・障がい・保育所など福祉施設での職員や入所者の定期的な検査など検査体制の強化と、生活福祉資金の特例貸付けの返済について生活実態を考慮した免除や猶予の拡充、相談体制の強化を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・代表質問・三島静夫</span><span class="ttl">中山間地域の公共施設の在り方</span><span class="sum">認定こども園の休園への懸念や小規模な交流センターの悩みを踏まえた中山間地域の地域づくりにおける公共施設の在り方と、指定管理施設の運営費を圧迫する光熱費の値上がりへの対応を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・向田聡</span><span class="ttl">PCR検査の費用助成</span><span class="sum">県内でPCR検査費用を補助する自治体と補助内容、希望する市民への助成例を尋ね、事業所や高齢者・障がい者施設、教育・保育施設の職員への検査補助を検討する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・向田聡</span><span class="ttl">幼児教育・保育の無償化</span><span class="sum">無償化の意義と制度の変更点・対象範囲、公立保育所の市負担、副食費の実費徴収による保護者負担と委託費、説明会と施設の事務負担、減免財源の活用と地方負担の見通しを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・向田聡</span><span class="ttl">認可外保育施設の無償化</span><span class="sum">市内の認可外保育施設の数と形態、無償化の申請状況を尋ね、基準を満たさない施設も対象とする5年間の経過措置を踏まえた指導監督の必要性と条例化の考えを質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・石倉刻夷</span><span class="ttl">防犯カメラの設置</span><span class="sum">市が管理する防犯カメラの台数や警察・企業による設置状況の把握、交流センターや学校、保育所等への設置状況と今後の設置の考えを尋ね、防犯カメラの設置運用に関する条例化と公用車へのドライブレコーダー設置の検討を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの施策</span><span class="sum">国の処遇改善策の成果と内容、委託先職員の賃金や手当、年休のあり方と正規職員配置の検討を尋ね、待機児童のあるクラブへの対応と解消の時間的な計画、市の提案の有無を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・向田聡</span><span class="ttl">未就学児の交通安全</span><span class="sum">大津市の事故を受けた緊急安全点検の結果と対策を尋ね、親子交流センターと城谷保育所付近の県道での具体的な対策、キッズゾーンの設置、国の未就学児等の交通安全緊急対策費の活用を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９６回　９月定例会  09月05日－02号・一般質問・原田貴与子</span><span class="ttl">幼児教育と保育の課題</span><span class="sum">中途入所希望の年齢別人数と見通し、待機児童を出さない体制整備、出産予定時点での入所見込みの把握、年度途中に募集する保育士の雇用条件と保育士不足の背景、正規雇用率の引き上げ、フリー保育士の増員、臨時職員の処遇の抜本改善、私立施設への中途入所見込みの雇用補助や給食調理員・特別支援の配置への支援、市独自の配置基準、認定こども園母里の建てかえ時期、無償化対象の拡大と給食費の無料化を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９６回　９月定例会  09月06日－03号・一般質問・作野幸憲</span><span class="ttl">児童虐待防止対策</span><span class="sum">児童虐待防止に向けた市の方針、過去3年間の養護相談と児童虐待相談の件数、相談窓口の専門職・専任職の配置、要保護児童対策協議会の登録件数、学校・保育所からの情報提供の指針と情報交換、支援の必要な妊婦の情報提供への対応、乳幼児健診未受診者や予防接種未接種者と未就園児の把握、乳児家庭全戸訪問の状況、学校での通告と進学・転学時の情報共有、性教育の実施状況を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの拡充</span><span class="sum">入所希望調査の対象学年、クラブごとの受け入れ学年と待機児童数、校区内の受け入れ態勢の整備、支援員の労働条件と処遇改善・確保、認定資格研修の受講状況、国の配置基準緩和への見解、保護者負担の軽減、運営支援と希望者全員が入所できるクラブのあり方を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・原瀬清正</span><span class="ttl">幼児教育の充実</span><span class="sum">教育・保育施設の利用定員の現状と入所・入園の傾向、新教育保育要領・新保育指針に基づく実施状況と課題、職員の研修、幼児教育推進体制の充実・活用強化事業への考え、公立施設の老朽度・耐震性と遊具の使用禁止の状況と更新計画、職員の働き方改革の推進状況を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・中村健二</span><span class="ttl">新天皇即位の10連休への対応</span><span class="sum">10連休に伴う小・中学校の対応と夏休み短縮の考え、学校行事への影響、保育所・認定こども園・幼稚園の開園の対応、放課後児童クラブの状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月02日－02号・一般質問・石倉刻夷</span><span class="ttl">新任部長らへの所管課題</span><span class="sum">新任の部長らに、マイナンバーカードの地域別実績と平成29年度の目標・施策、認定こども園の構想と幼稚園の今後のあり方、病院新改革プランを実行する心意気、消防団の広報活動の実態と団員の欠員状況・確保策、下水道料金に対する考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月02日－02号・一般質問・澤田秀夫</span><span class="ttl">教育活動における地域活性化</span><span class="sum">公立保育所・認定こども園で竣工後30年以上の施設数と耐震対策・改修計画、男性保育士のトイレや更衣室など就労環境の整備計画、城谷保育所以外の今後の方向性、ふるさと教育推進への教育委員会の意気込み、高校魅力化事業への所見を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月05日－03号・一般質問・向田聡</span><span class="ttl">私立保育所等への助成</span><span class="sum">私立の保育所（園）・認定こども園で配置基準を超えて必要な給食調理員の増員に向けた市独自の助成、食物アレルギー反応が出た場合の対応と職員研修の毎年の計画、障がい児保育加算の現状と個別の支援を要する子がいる園への市独自の補助を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月05日－03号・一般質問・丸山征司</span><span class="ttl">待機児童と放課後児童クラブ</span><span class="sum">市の待機児童の現況と展望、放課後児童クラブ支援員のなり手不足による待機の懸念を含む学童保育の現状と今後の展望を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月05日－02号・一般質問・石倉刻夷</span><span class="ttl">30年度予算編成の基本方針</span><span class="sum">底上げの4年間と位置づける市長3期目の2年目として、平成30年度予算編成の基本方針と病院事業会計など特別会計への繰出金の考え方を尋ね、再質問で公共施設等総合管理計画に伴う認定こども園移行など予算化を検討している内容、南部地域のヘリポートの現状と周知の考え、全国山城サミット開催決定を受けたマスコミ支援についての市長のコメントと月山登山者を数える赤外線カウンターの稼働状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月05日－02号・代表質問・佐伯直行</span><span class="ttl">英語教育と教員の負担</span><span class="sum">市内の幼稚園や保育園をALTが巡回する事業の評価、学習指導要領の改訂による小学校英語科導入への対応の進捗、授業や部活動の指導などで負担がふえる教員へのさらなる負担増の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月07日－04号・一般質問・中村健二</span><span class="ttl">部活動と外国語教育・給食</span><span class="sum">部活動指導員の活用と休養日の考え方・人材選考、小学校英語の年70時間への移行と授業時間の確保やＡＬＴ増員、給食センターからの配食計画と配送時間・雪対策、給食職員の配置、認定こども園の給食を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８３回　６月定例会  06月02日－02号・一般質問・澤田秀夫</span><span class="ttl">認定こども園と保育士の確保</span><span class="sum">新たに認定こども園となった9園の問題点や課題、公立の保育所及び認定こども園の保育士の正規・非正規職員の現状と確保の方法、潜在保育士の活用に向けた考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８３回　６月定例会  06月02日－02号・一般質問・原田貴与子</span><span class="ttl">保育士の処遇改善と保育の質</span><span class="sum">無認可施設に預けざるを得なかった待機児童数や入所未決定者の把握、認定こども園の1号認定児のお迎え時間の保育状況、子ども未来課の保育士確保対策、臨時保育士の育児休業制度の整備を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８３回　６月定例会  06月03日－03号・一般質問・丸山征司</span><span class="ttl">人口減少対策の諸施策</span><span class="sum">人口減少問題の解消をテーマに、グラフで見る統計やすぎの作成、転出者の把握、未婚者やひとり親の婚活支援、ダブルケアによる離職と両立支援、子育てお出かけマップの利便性、保育所の空き状況の表示、認定こども園への移行、プログラミング教育、新工業団地と企業誘致のビジョン、女性の起業支援、地域おこし協力隊の募集、中心市街地の集合住宅、刃物まつりの再協議、圏域連携の修学旅行誘致、スマホやＡＲの観光活用、ドローンの活用、訪日外国人への対応、中海マラソンのコース細分化、ホテル誘致、山陰新幹線、ＰＲ動画などの情報発信を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・佐々木厚子</span><span class="ttl">学力向上の取り組み</span><span class="sum">島根県の全国学力テスト結果への受け止めと市として力を入れる学力向上の取り組みを尋ね、ＡＬＴの幼稚園・認定こども園への巡回指導の状況と子供の反応、中学生の英検検定料を1回に限り全額助成する制度、秋田県潟上市の取り組みへの感想と教育長の思いを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・原田貴与子</span><span class="ttl">子育て支援の施策</span><span class="sum">認定こども園移行後の1号認定の子供の受け入れ状況と保育体制、公立保育所をなくす方針の撤回、子供の貧困の現状把握と対策本部体制、子供の医療費助成の高校卒業までの拡大、就学援助の生活保護基準1.5倍への拡充と受給率の低さ、学校給食費の無償化、柔道着など教材の負担軽減、学習意欲の低い児童・生徒への学習支援、放課後児童クラブの受け入れ体制と支援員養成を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８６回１２月定例会  12月05日－02号・代表質問・中島隆夫</span><span class="ttl">市長マニフェストの主要施策</span><span class="sum">マニフェストの主な施策について、職員が働きやすい環境整備、事業の再点検と行政コスト削減・民間活力導入、公共施設等総合管理計画の最終決断の権限と人の手当て・個別行動計画、こども自然公園（仮称）の整備、幼稚園からの英語教育、認知症の予防対策と優しいまちづくり、民間の力を活用した保健・医療・福祉、若者が夢を持って農業に携われる環境と支援、統一的なテーマによる観光誘客、中山間地域の交通手段の確保、スマートインターチェンジ設置の見通しを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月03日－02号・代表質問・澤田秀夫</span><span class="ttl">第2次総合計画の進捗</span><span class="sum">第2次総合計画の1年目の成果と目標達成の見込み、分野ごとに地域包括支援センターの体制、認定こども園の課題や男性保育士の対応、放課後児童クラブの支援員確保、城谷保育所の譲渡、広瀬図書館とクラスター型のまちづくり、原子力発電事業への市長の考え、工業団地造成後の財政シミュレーション、空家等対策計画とお試し住宅、可燃ごみ処理の方向性、公共施設の個別行動計画のスケジュールを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・原田貴与子</span><span class="ttl">保育政策のあり方</span><span class="sum">保育所で担任を持つ正規職員の数と割合、臨時職員や保育士の処遇改善、上の子の保育継続と兄弟別々の入所、市独自の手厚い保育士配置、第3子の3歳未満児無料化、保育所の地域での役割、赤江・城谷保育所の民営化の目的、保育施策への住民意見の反映を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月07日－04号・一般質問・三島静夫</span><span class="ttl">就学前教育の推進</span><span class="sum">幼児教育で市が特に伸ばしたい資質とその理由、認定こども園で一部の児童が登園しない長期休暇の時間差の解決策、非認知能力を育む就学前教育への取り組みを尋ね、ペリー幼稚園プログラムを例に就学前教育への投資と、教育委員会による幼児期からの一括管理を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７６回　６月定例会  06月04日－03号・一般質問・田中武夫</span><span class="ttl">次世代の担い手育成</span><span class="sum">ひとり親のＩターン受け入れなど第2次総合計画での次世代の担い手育成について、鳥取県と比べた小児医療費助成の水準と米子市の取り組み、第3子以降保育料無料化の0歳からへの拡充、病児・病後保育の現状、老朽化したつどいの広場の施設整備、認定こども園移行のメリットと私立が含まれない理由、指定管理保育所の民営化の方針を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７６回　６月定例会  06月04日－03号・一般質問・原田貴与子</span><span class="ttl">公立施設の認定こども園移行</span><span class="sum">公立幼稚園・保育所の認定こども園への移行について、直接契約制度の下での市の利用調整や保育料徴収の責任、民営化方針と民間法人・地域への説明不足、保護者ニーズとの整合性、教育の学校化への懸念、第3子以降保育料無料の拡充、保育士の増員と非正規率の改善、施設改善の要望の聴取を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月04日－03号・一般質問・田淵秀喜</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">認定こども園への移行について、全市統一で質の高い教育・保育を目指す考え方、荒島の認定こども園で教育・保育の何が具体的に変わったか、保護者への説明会の状況、保育時間やゼロ歳児など多様化する保護者ニーズへの対応を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月07日－04号・一般質問・原田貴与子</span><span class="ttl">公立保育所・幼稚園の存続</span><span class="sum">公立保育所と幼稚園を廃止し認定こども園へ移行する市の計画について、市町村の保育実施責任の法的根拠、直接契約・給付制度の運営上の考え方、使途制限や保育料滞納者の扱い、受け入れ施設の条件整備、公立保育所の役割と民営化の懸念を挙げ、公立保育所・幼稚園の存続を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　８１回１２月定例会  12月03日－02号・一般質問・石倉刻夷</span><span class="ttl">安来市の人口ビジョン</span><span class="sum">総合戦略と重なる安来市の人口ビジョンについて、骨格と市民への周知方法を尋ね、成婚数や認定こども園への移行数など具体的に示された目標の最初の検証時期を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　８１回１２月定例会  12月03日－02号・一般質問・石倉刻夷</span><span class="ttl">公共インフラの老朽対策</span><span class="sum">統廃合となった旧小・中学校の校舎などの維持管理と利活用の状況、再利用に至る検討の足跡を尋ね、認定こども園化で未使用となる施設の活用方法と、廃校・廃園時に地元の声を聞いて合意を図る考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　８１回１２月定例会  12月03日－02号・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの安定運営</span><span class="sum">放課後児童クラブの現況、待機児童と未設置校の希望調査、小規模クラブの支援員2人体制と送迎支援事業の該当数と市の財政支出、支援員認定資格の研修支援と受講目標、支援員の待遇改善、利用料減免の取り組みを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　８１回１２月定例会  12月04日－03号・一般質問・田淵秀喜</span><span class="ttl">子ども・子育て支援策</span><span class="sum">公立・指定管理・私立の保育所や認定こども園の現状と課題・今後の方向性、米子・松江より優れた点、認定こども園化で質の高い教育・保育を提供するための保育士の質の向上とＫＰＩの中身、予防接種や検診の予約をスマホで行える情報サービスの強化を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月07日－05号・一般質問・岩田拓郎</span><span class="ttl">給食センターの栄養教諭配置</span><span class="sum">幼稚園や中学校で給食センターが開設されるのに伴い、県の栄養教諭の配置基準と、安来市の給食センターへの配置の予定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・作野幸憲</span><span class="ttl">正しい日本地図と領土教育</span><span class="sum">領土教育の一環として、日本の領海全体を表記した正しい日本地図を市内の中学校・小学校・幼稚園・保育所に配付し掲示することを求めた。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・原田貴与子</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">新制度の大枠と子ども・子育て会議の進捗、幼保一元化や企業参入、待機児童、保育所の老朽化、正規・臨時職員の給与格差、指定管理保育所の処遇、保育の認定基準、放課後児童クラブの基準と市の責任を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７０回　９月定例会  09月04日－03号・一般質問・原田貴与子</span><span class="ttl">子ども・子育て新制度と保育水準</span><span class="sum">保育所と認定こども園の違いの捉え方、保護者への説明と関係者の意見聴取、公立保育所の維持、地域型保育の条例への有資格者配置、11時間保育と延長保育料の扱い、放課後児童クラブの全員受け入れと有資格の専任職員配置を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月03日－02号・一般質問・石倉刻夷</span><span class="ttl">公共インフラの老朽化対策</span><span class="sum">平成27年から31年の5カ年で老朽化対策が必要な事業のうち、1件500万円以上のものとして、上水道・簡易水道の管路等、下水道・集落排水の施設と管路等、保育所・児童館・幼稚園の改修や環境整備の内容と金額を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月04日－03号・一般質問・田中武夫</span><span class="ttl">子育て支援施策</span><span class="sum">市の子育て世帯への取り組みを尋ね、集いの広場と広瀬の子育て支援センターの土日開設の有無を確かめたうえで、旧十神幼稚園跡で手狭な集いの広場に代わる広く快適な施設の整備を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月04日－03号・代表質問・嶋田豊昭</span><span class="ttl">主要施策の取り組み</span><span class="sum">主要施策のうち、マイナンバー制度導入に向けた事前準備と適正な取り扱いや制度の周知、1県１ＪＡへの統合や農協改革を受けた市の農業に対する基本的姿勢、幼稚園・保育所等の利用者負担軽減と幼児教育の段階的無償化に他の自治体に先行して取り組む考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月05日－04号・一般質問・澤田秀夫</span><span class="ttl">子育て支援新制度への対応</span><span class="sum">子ども・子育て支援新制度で重点的に取り組む事業、認定こども園拡充の全体経費と施設面の対応、小規模な保育所・幼稚園の方向性、保育士確保に向けた処遇改善策を尋ね、放課後児童クラブの現状と実施施設数・利用児童数・今後の方向性を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・原田貴与子</span><span class="ttl">学校給食センター構想</span><span class="sum">自校方式の存続を求める立場から最大3,500食の給食センター構想について規模の適否と児童減少による過大化、幼稚園児の給食を同じセンターで作ることの無理、災害時の分散配置の利点、直営か民間委託かの運営方式、保護者の意見を聞く場の必要性を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月05日－03号・代表質問・作野幸憲</span><span class="ttl">ひとが輝くまちづくり</span><span class="sum">首長に権限を移す教育委員会制度改革案への市長の見解、幼稚園の入園希望者減を踏まえた保育所から中学校までの総合的な教育指針の提示、教員の負担軽減に向けた校務管理システムの導入、広瀬地区の地域コーディネーター配置の成果と新年度の取り組みを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月06日－04号・一般質問・樋野智之</span><span class="ttl">幼保一体化と認定こども園</span><span class="sum">幼稚園・保育所の数と園児数、今後の入園・入所見込み、中学校区単位での幼保一体化の計画と実施年度を尋ね、荒島認定こども園の総括と所管部署、この2年間の協議の回数と方向性を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・田中明美</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">平成26年度に策定する子ども・子育て支援事業計画の内容と幼稚園・保育所の再編成との関係、システム改修の中身、認定こども園の新設を含む再編の検討状況と市の体制づくり、私立認可保育園の認定こども園移行の見込み、27年4月の新制度移行の可否、城谷・赤江保育所の27年度以降の指定管理、放課後児童クラブの条例制定を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・田中明美</span><span class="ttl">民間保育園の運営への支援</span><span class="sum">指定管理の保育所勤務の保育士が保育士等処遇改善臨時特例事業の対象外となっていることへの市の考えと、江津市などに倣った独自補助の検討を尋ね、私立保育園の運営費3％の補助金を恒久的に交付する考えかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・丸山征司</span><span class="ttl">長期的視点に立った財政改善</span><span class="sum">合併算定替えの特例終了による歳入減を見据え、税収増に向けたふるさと教育の充実、公共施設のイルミネーション、芸能などの専門学校誘致、動画やポータルサイトを使った市のPR、保育所広域入所の周知、汐彩団地の販売目標と3割引きの宣伝や定期借地権、市外在住者の市内転居の働きかけ、新たな工業団地の場所と規模、国道9号の渋滞緩和、安来伯太日南線の改良と国道昇格、ふるさと納税の工夫、10キロワット以上の太陽光発電への補助、公共施設の屋根貸し、スマートシティー構想、歳出削減に向けた人員適正化、公共施設更新問題への取り組みを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・田中武夫</span><span class="ttl">小・中学校と幼稚園の教育</span><span class="sum">小学校の学級編制と教員数の基準、複式学級の状況と教員減少が児童に与える影響、県の加配の状況と市独自の加配教員の必要性、司書教諭の配置、中学校の生徒数・学級編制・教員数・司書教諭の配置、学校リフレッシュ事業の順番と地元要望の扱い、宇賀荘幼稚園の跡地利用を尋ね、先を見据えた教育方針の策定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５４回　６月定例会  06月04日－02号・一般質問・石倉刻夷</span><span class="ttl">放課後児童クラブの運営</span><span class="sum">条例制定の要否と県内状況、委託運営で事故時の最終責任者、指導員の配置と1人当たり面積の確保、健康管理や安全確保の主体、今後の見通しと施設整備、広瀬幼稚園への開設の経緯、広瀬小の多目的教室棟の活用、児童厚生員の資格を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５４回　６月定例会  06月07日－03号・一般質問・中村健二</span><span class="ttl">交流センターの駐車場</span><span class="sum">安来・広瀬・伯太地区ごとの交流センター駐車場の現状と台数への認識、今後の確保の基本的な考え方、舗装など整備の考えを質し、保育所駐車場なども含めた検討を要望しつつ質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月07日－04号・一般質問・田中明美</span><span class="ttl">熱中症対策</span><span class="sum">市内の熱中症による救急搬送者数の前年との比較、いきいき健康課と高齢者安心課の対策、保育所での発症事例とエアコン設置状況、幼稚園・小中学校での部活動を含む発症事例と教室などの施設状況を尋ね、エアコンのない普通教室や給食調理室の温度把握と各現場での予防の徹底を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月07日－04号・一般質問・田中明美</span><span class="ttl">保育所の体制と今後の方向性</span><span class="sum">城谷・赤江保育所の指定管理期間を2年間とした理由、定員割れの保育所の有無と入所を断っている実態、特にゼロ歳から2歳児の入所希望への対応、認定こども園荒島がこれまでの合同保育からどう変わったかを尋ね、保育所・幼稚園・認定こども園の体制の方向性を市独自に示す考えと検討会の状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月07日－04号・一般質問・丸山征司</span><span class="ttl">子育て支援と教育と定住促進</span><span class="sum">乳幼児・児童医療費助成の市独自の継続・拡充、小児科診療の充実と産科の復活、小中学校単位の国際交流への援助、給食センター建設計画の進捗、幼保一体化と次の認定こども園、放課後児童クラブの状況と学校から離れたクラブの安全、児童へのイベント観賞・観戦の働きかけ、高校までの通学費補助の拡充、進路指導とふるさと教育、専門学校の誘致について質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月06日－03号・一般質問・石倉刻夷</span><span class="ttl">教育の諸課題への考え</span><span class="sum">教育長に、小・中学校の通学費補助の基準の均一化の検討状況、平成27年度建設に向けた学校給食センターへの意気込み、園児が減少する幼稚園の存続への所見、小・中学校の食育推進の状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月07日－04号・一般質問・田中武夫</span><span class="ttl">市独自の農林業政策</span><span class="sum">人・農地プラン作成への市独自の助成や、花卉・イチゴなど特産品のビニールハウス資材高騰に対する独自支援を求め、後継者育成の観点から地元幼稚園の4名以下での廃止方針が議会への説明なく進められたことへの市長の所見を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月07日－04号・一般質問・河津清</span><span class="ttl">幼稚園の入園受入れ方針</span><span class="sum">来年度の入園が一定数未満なら受け入れないとの方針が文教福祉委員会への説明もなく示されたことを議会軽視と指摘し、住民の意見を聞いたうえでの就学前教育・保育行政の検討を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月08日－05号・一般質問・田中明美</span><span class="ttl">幼稚園・保育所の今後</span><span class="sum">少子化の中での幼稚園・保育所の今後について、教育長の幼児教育の考え方、4人以上を前提とした幼稚園運営の方向性と宇賀荘幼稚園3歳児学級の2人でのスタート、定員割れと年度途中入所を抱える保育所運営の方向性、総合的な検討会の立ち上げを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２３年第　４７回　６月定例会  06月09日－04号・一般質問・勝部幸治</span><span class="ttl">幼保一体化と幼児教育</span><span class="sum">市長公約の幼保一元化への思いと荒島での進捗、認定こども園の中身と利点、国の子ども・子育て新システムの動向を尋ね、幼児教育の考え方やふるまい向上プロジェクトの取り入れ方、教育と保育のどちらを主体とするか、小1プロブレムの実態と対策、幼保小中の連携を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　５１回１２月定例会  12月05日－02号・一般質問・石倉刻夷</span><span class="ttl">幼保一元化の基本方針</span><span class="sum">市としての幼保一元化の基本的な考え方と、監査委員から検討を求める意見があった児童数が減少傾向の幼稚園について、今後の方針をどのように定めるかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月05日－03号・一般質問・佐伯直行</span><span class="ttl">幼保一体化と学校給食</span><span class="sum">荒島での公立幼稚園と保育所の一体化の評価と今後の具体的な計画、中学校の給食センターの建設計画、小・中学校給食の地産地消など食育の取り組み状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月05日－03号・代表質問・勝部幸治</span><span class="ttl">幼保と小中学校の再編</span><span class="sum">認定こども園荒島で具体的に何が変わり新たにどのような親のニーズに対応できるのか、教育で人集めができる町にしたいとした市長発言の具体的な考え、少子化を受けた幼稚園・保育所・小中学校の再編と学校区の見直しを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月07日－05号・一般質問・田中明美</span><span class="ttl">福祉施設の生活環境</span><span class="sum">保育所や市立病院、交流センター、養護老人ホーム、富田山荘など市所有の古い施設の耐震診断と耐震状況、福祉施設の生活環境のあるべき姿を尋ね、耐震性が無く国の基準に合致しない養護老人ホーム鴨来荘の役割と入所者・待機者数、生活環境の認識、現建物での運営期間と耐震工事の費用、スプリンクラー設置のみで建てかえとしなかった理由を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月08日－06号・一般質問・田中武夫</span><span class="ttl">子供たちへの支援策</span><span class="sum">24年度当初予算に関連して未来を担う子供たちへの支援策として、小さい子供のインフルエンザ予防接種への助成、小学6年生程度までの医療費の上限1,000円程度の支援、保育所や学校の壊れた遊具・器具の整備要望への対応と教育現場への予算の考え方、子供たちに夢を与える市長の考え、フッ素塗布事業の実施状況、安来高校美術部の実績を踏まえた芸術文化の推奨を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月08日－06号・一般質問・岡田麻里</span><span class="ttl">アレルギー疾患対策</span><span class="sum">学校のアレルギー疾患に対する取り組みガイドラインなどを踏まえ、学校での授業・給食・年間行事と保育所での対応、アナフィラキシーショック時のエピペンの扱い、市や県の研修会の実施状況、今後の市の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４２回　９月定例会  09月03日－03号・一般質問・石倉刻夷</span><span class="ttl">後期基本計画での位置づけ</span><span class="sum">総合計画後期基本計画で中海干拓中止後の干拓営農団地への支援、大河ドラマ放映実現、花嫁花婿対策、小学校・幼稚園の統廃合と校区見直し、小・中学校の通学支援見直しの5点をどう位置づけるか、パブリックコメントの予定とあわせて質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　４２回　９月定例会  09月06日－04号・一般質問・河津清</span><span class="ttl">子ども・子育て新システム</span><span class="sum">政府が公表した子ども・子育て新システムの内容を尋ね、定員を超えて保育する保育所がある中で保育所の最低基準が条例化された場合に現行より低くしないことへの市長の所感を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　４２回　９月定例会  09月07日－05号・一般質問・嘉本祐一</span><span class="ttl">子ども読書活動推進計画</span><span class="sum">策定中の子ども読書活動推進計画の目的・基本的な柱・期間・対象者、達成目標や評価目標の設定、幼稚園・保育所の絵本コーナーと小・中学校の蔵書の充実、中古書店からの図書調達によるコスト削減、ふるさと教育の視点と河井寛次郎に関する小冊子の作成、計画の市民への周知方法を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４６回　３月定例会  03月08日－05号・一般質問・河津清</span><span class="ttl">学校・幼稚園の暑さ対策</span><span class="sum">昨夏の猛暑による小・中学校や幼稚園の熱中症の状況と教育委員会の指導、文部科学省の環境衛生基準、図書室以降のエアコン設置計画と国の補助内容を尋ね、低学年や中学3年生から普通教室へ計画的に設置することや一中改築での導入を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３４回　９月定例会  09月03日－03号・一般質問・嶋田豊昭</span><span class="ttl">食育の推進と施設改善</span><span class="sum">食育基本法を踏まえた市の食育推進の取り組み状況と基本的な考え方、学校給食での教育委員会の方針と特徴的な取り組み、食の安全と冷房設備未設置校の施設改善、幼稚園・保育所での食育の現状と課題、冷房のない保育所調理室の改善を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３４回　９月定例会  09月07日－05号・一般質問・中村健二</span><span class="ttl">新型インフルエンザ対策</span><span class="sum">新型インフルエンザへの市の経過と現状、市民への周知、市内事業所への対応、備蓄物品、相談件数の動向、公表基準、ワクチン配布の考え、学校・幼稚園と保育所での発生時の対応、市役所内の対策、10月の市議選での感染予防、市長の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３８回１２月定例会  12月08日－04号・一般質問・葉田茂美</span><span class="ttl">発達障害のある子供の支援</span><span class="sum">アスペルガー症候群の認識を確かめたうえで、就学前の保護者への相談窓口と周知方法、保育所等の人的な支援体制、小中学校の児童生徒の現況と療育への対応、専任指導員の人数、保護者と学校の連携を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３８回１２月定例会  12月08日－04号・一般質問・嘉本祐一</span><span class="ttl">幼保一元化の進捗</span><span class="sum">市長の公約である幼保一元化の進捗と今後の計画、夕方6時まで預かる宇賀荘・能義の幼稚園での保護者負担の額とその考え方、市が考える課題を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３８回１２月定例会  12月09日－05号・一般質問・中村健二</span><span class="ttl">新型インフルエンザの現状と対策</span><span class="sum">県内で警報基準を超えた新型インフルエンザについて市内の発生状況と対策を尋ね、ワクチン助成を妊婦に限る理由や基礎疾患のある人・20歳未満への拡大、医師会との救急協力体制、小中学校と保育所の状況、消防本部の業務継続計画と救急搬送事例を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月06日－04号・一般質問・上廻芳和</span><span class="ttl">中学校給食と施設の給食</span><span class="sum">安来一中・二中・三中で給食が行われていない現状を踏まえ、給食センター方式や一中の建てかえにあわせた自校給食も含め、学校給食と幼稚園・保育所・介護施設等の共同の給食をどう考えるかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月09日－05号・一般質問・田淵秀喜</span><span class="ttl">防災・防犯の取り組み</span><span class="sum">保育所や公共建物の耐震の実態と考え方、平成23年までに既存住宅にも求められる火災警報器の設置と周知、高齢者をねらった悪徳業者や振り込め詐欺の防止に向けた警察との連携を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２１回　６月定例会  06月04日－02号・一般質問・中島隆夫</span><span class="ttl">滞納と徴収の取り組み</span><span class="sum">18年度分の市民税・固定資産税・軽自動車税・国民健康保険税・保育料・市営住宅使用料・上下水道料・学校給食費・幼稚園費等の滞納額と滞納者の状況把握、徴収の取り組み、一般市税のコンビニ収納の導入を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月10日－04号・一般質問・中村健二</span><span class="ttl">保育所の指定管理の状況</span><span class="sum">赤江・城谷保育所への指定管理者制度の導入から約1年の、保護者の要望に対する考え方と現状、新たな要望の有無を尋ね、再質問で法人・保護者・行政の三者協議の場、引き継ぎのための職員派遣の処遇、施設の老朽化改修の考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月10日－04号・一般質問・上廻芳和</span><span class="ttl">給食の安全確保と地産地消</span><span class="sum">中国産ギョーザなどの農薬混入問題を受け、該当商品が市内や学校給食で使われていなかったか、委託の弁当給食を含めた安全のチェック体制、幼稚園・保育所・小中学校の給食での地元農産物の使用に対する考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月11日－05号・一般質問・岡田麻里</span><span class="ttl">幼稚園ヘルパーの導入</span><span class="sum">多動傾向の幼児がいる幼稚園に担任をサポートするヘルパーを派遣する出雲市や浜田市の例を挙げて市での導入の考えを尋ね、5歳児健診の必要性、幼保一元化や荒島での保育所と幼稚園の一体的な取り組みの成果を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１８年第　１５回　６月定例会  06月02日－02号・一般質問・中村健二</span><span class="ttl">保育所への指定管理者導入</span><span class="sum">城谷・赤江の両保育所に平成19年4月から指定管理者制度を導入する方針に対し保護者会から署名を添えた要望書が出されたことを受け、市の対応と移行後の職員配置、保育の質やサービスの低下への対応、職員への周知策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１５回　６月定例会  06月02日－02号・一般質問・勝部幸治</span><span class="ttl">認定こども園の幼児教育</span><span class="sum">総合施設である認定こども園で幼稚園と保育所の縦割りの弊害にどの程度対応し自治体の裁量や独自性が認められるのかを尋ね、礼儀作法などのしつけを基本とした幼児教育を徹底する施設とするよう質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１６回　９月定例会  09月05日－02号・一般質問・中島隆夫</span><span class="ttl">小学校と幼稚園の今後</span><span class="sum">出生率の低下が続く中で、17校の小学校と6園の幼稚園をどう維持管理していくのかを尋ね、地域や保護者と統合等の話し合いを行う考えがあるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１７年第　１１回１２月定例会  12月06日－03号・一般質問・岡田麻里</span><span class="ttl">フッ素洗口による虫歯予防</span><span class="sum">8020運動の入り口として小児期からの虫歯予防が必要だとして、有効性と安全性が認められ医療費の軽減にも寄与するフッ素洗口を各小学校や保育所などでさらに推進してはどうかと、今後の取り組みを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１３回　３月定例会  03月06日－04号・一般質問・河津清</span><span class="ttl">保育所の指定管理者制度導入</span><span class="sum">財政効率のみを理由にした公立保育所の切り捨ては保育水準の低下を招くとして、保育の質の確保への考えを尋ね、対象の5法人と公募の方法、サービス向上の内容、引き継ぎ期間、職員の処遇、対象の2カ所と赤江の学童クラブの扱いを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１３回　３月定例会  03月06日－04号・一般質問・中島隆夫</span><span class="ttl">幼稚園制度の今後の方向性</span><span class="sum">保育所運営を平成19年度に指定管理者制度などへ移行するとした一方で幼稚園と保育所の一体化を掲げる中、幼稚園制度の現状と今後の方向性、施設検討プロジェクト委員会での検討内容を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>子育て支援ソフト事業（幼保一体化・放課後児童健全育成・乳幼児等医療費助成）</summary><p>年少人口の減少を受け、幼稚園・保育所の一体化、放課後児童健全育成事業、乳幼児等医療費助成など多数のソフト事業を用意する。女性の社会進出や安心して子育てができる環境づくりの充実に努める。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成19年度</td>
+            <td><details class="it"><summary>公立保育所の指定管理者委託</summary><p>赤江保育所と城谷保育所の運営を平成19年度から指定管理者に委託して実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>第3子以降4歳児以上の保育料無料化</summary><p>少子化対策の充実に向け子育て支援・母子保健・休日保育などの事業を新設・拡充する中で、特に第3子以降の4歳児以上の保育料を新たに無料とする。保育所・幼稚園の入所等に伴う保護者の経済的負担を軽減し、安心して子どもを産み育てる環境をつくる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>荒島幼稚園・荒島保育所の認定こども園化</summary><p>既に合同保育を実施している荒島幼稚園と荒島保育所について、新年度は認定こども園として県の認定を受ける手続を行う予定である。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>保育施設の耐震補強・改築助成</summary><p>市立城谷保育所の耐震補強を行うとともに、私立安来保育園の改築整備に助成する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>認定こども園荒島の開設</summary><p>本年4月1日から、島根県内の公立保育所・幼稚園で初となる幼保連携型の「認定こども園荒島」を開設し、保護者の多様なニーズに対応する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>幼保一体化事業（認定こども園への移行）</summary><p>多様化する保育ニーズに対応し、すべての就学前児童に質の高い教育・保育を提供できるよう、今後認定こども園への移行を進める。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>公立保育所の認定こども園移行と放課後児童クラブの充実</summary><p>同一文で述べられた2要素を統合: (1)9カ所の公立保育所を認定こども園に移行し教育・保育を総合的に提供する仕組みをつくる、(2)放課後児童クラブの質の向上と安定・継続的な運営を進める。子どもが健やかに育つ地域づくりを目指す。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">16</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>給食センターを拠点とした給食提供と食育</summary><p>先月竣工した給食センターを拠点に、安来幼稚園と中学校4校へ安全・安心な給食を提供し、食育活動を展開する。心身の健康を大切にした教育の推進が目的。</p></details></td>
+            <td class="c">6</td>
+            <td class="c">29</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>赤江保育所の民間譲渡とあかえこども園改修助成</summary><p>指定管理で運営してきた安来市立赤江保育所を民間法人に譲渡し、譲渡先法人が認可申請中のあかえこども園の大規模改修事業に対して助成を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>島田幼稚園・能義幼稚園の認定こども園移行</summary><p>子育て世帯の保育ニーズに応えるため、島田幼稚園と能義幼稚園をそれぞれ幼稚園型認定こども園へ移行する。3歳以上の幼児の教育・保育の提供の場を確保する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>市立城谷保育所の新築工事への補助</summary><p>指定管理者制度で運営している市立城谷保育所について、現在の指定管理者への業務移譲に向け、指定管理者が平成31年4月開所予定で行う新築工事に補助金を交付する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>保育施設給食への地元産金芽米の無償提供</summary><p>令和6年度から市内の保育施設の給食の米を地元産の金芽米に切り替え、御飯を無償で提供する。子供の健やかな成長の支援と保護者負担の軽減を図り、妊娠・出産期から中学校3年生まで全ての子供たちに金芽米を提供する全国初の試みとなる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>私立保育施設の保育士確保支援</summary><p>保育士不足の解消のため、私立保育施設の保育士確保や雇用に係る支援を新たに実施し、質の高い安定した保育環境の提供につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>病児等の保育支援</summary><p>子どもの罹患等で集団保育が困難な期間に家庭での保育が難しい場合、病院や保育施設で一時的に保育し、子育て世帯の負担軽減を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>医療的ケア児の保育施設での受入れ</summary><p>日常生活で医療的なケアを必要とする医療的ケア児を保育施設で受け入れる。医療的ケア児の健やかな成長を図るとともに家族の離職を防止する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>金芽米を活用した子育て支援</summary><p>妊産婦に金芽米を無償提供するマタニティ応援プロジェクト事業と、保育施設の御飯給食を金芽米に切り替え3歳児から5歳児に無償提供する主食費無償提供事業を継続し、学校給食での金芽米提供も継続する（統合前の要素: マタニティ応援プロジェクト、主食費無償提供、学校給食）。妊産婦と幼児の健康増進と子育て世帯の負担軽減を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>保育人材の確保（保育支援者配置補助の拡充・保育士派遣事業）</summary><p>私立保育施設で清掃・消毒・給食の配膳・寝具の用意などの保育周辺業務を行う保育支援者の配置補助を拡充して保育士の業務負担を軽減する。また島根県と共同で保育士派遣事業を実施し、安定的な保育体制を構築する（統合前の要素: 保育支援者配置補助、保育士派遣事業）。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>医療的ケア児の保育施設での受入れ</summary><p>日常生活で医療的なケアを必要とする医療的ケア児を保育施設で受け入れ、ケア児の健やかな成長を図るとともに家族の離職を防止し、育児と仕事の両立を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>放課後児童クラブの受入れ体制拡充</summary><p>放課後児童クラブの利用ニーズが年々増加していることから、待機児童の解消のため民設の1クラブを追加し受入れ体制を拡充する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>比田分駐所移転に伴う旧庁舎解体と周辺整備</summary><p>比田分駐所の移転に伴い旧庁舎を解体するとともに、比田交流センターの駐車場整備と認定こども園比田の門柱改修など周辺の整備を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>放課後児童クラブ</h3>
+    <p class="terms">語: 放課後児童クラブ・児童クラブ・学童保育</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt25" data-year="H22"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt25" data-year="H24"><b>3</b><span class="of">/20人</span><span class="q">5件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/24人</span><span class="q">3件</span></td><td class="lt25" data-year="H26"><b>3</b><span class="of">/17人</span><span class="q">5件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/17人</span><span class="q">2件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/17人</span><span class="q">3件</span></td><td class="lt25" data-year="H29"><b>3</b><span class="of">/23人</span><span class="q">3件</span></td><td class="ge25" data-year="H30"><b>5</b><span class="of">/17人</span><span class="q">6件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/16人</span><span class="q">2件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/22人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="lt25" data-year="R06"><b>3</b><span class="of">/15人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/18人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・三原哲郎</span><span class="ttl">公共施設マネジメント</span><span class="sum">公共建築物の施設数と棟数、延べ床面積25％削減目標の根拠と引上げの考え、借地料と面積の変化、耐震化未実施の建物と予定、旧奧野邸と広瀬町民会館の経緯・活用・維持コスト、民俗資料収蔵庫の保管物と公開・移転計画、休園中のこども園を使った学童保育、広瀬バスターミナルの借地料と移転整備を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">学校再編と子育て支援</span><span class="sum">小中学校の再編に伴う保育施設や放課後児童クラブの在り方、保育・教育の質の確保と遠距離通学となる家庭の負担軽減をどう調整し、諸課題に向き合うかを質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・石倉刻夷</span><span class="ttl">放課後児童クラブの支援</span><span class="sum">市内の放課後児童クラブから必要とされる要望と備品等の整備への対処を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・原瀬清正</span><span class="ttl">放課後児童クラブの昼食</span><span class="sum">市内放課後児童クラブの希望者数と受入れ児童数、学校長期休業時の利用状況と公設民営クラブの昼食の準備、保護者ニーズの把握と給食センター活用や弁当注文など昼食提供の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・内田卓実</span><span class="ttl">放課後児童クラブの開設</span><span class="sum">能義小学校校区に放課後児童クラブが無いことを踏まえ、市内の開設状況と開設場所・施設、開設に必要な条件、放課後児童クラブの課題を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９８回安来市議会定例会・一般質問・原田貴与子</span><span class="ttl">コロナ禍の子どもと学生の支援</span><span class="sum">コロナ禍による収入減を就学援助の認定基準に加えるなどの運用、放課後児童クラブの運営費の保障と登録児童全員が通える密接を防ぐ環境整備、外国人留学生を含む学生の学業維持や奨学金返済への支援を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの施策</span><span class="sum">国の処遇改善策の成果と内容、委託先職員の賃金や手当、年休のあり方と正規職員配置の検討を尋ね、待機児童のあるクラブへの対応と解消の時間的な計画、市の提案の有無を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・原田貴与子</span><span class="ttl">低所得者の生活支援強化</span><span class="sum">国民健康保険の短期保険証や資格証明書をやめて正規の保険証を発行すべきではないかと尋ね、子供の均等割の廃止、医療費の一部負担金減免制度の内容と利用状況、生活保護基準の1.4倍以下の世帯への適用と周知、放課後児童クラブ利用料の減免制度の導入を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９６回　９月定例会  09月05日－02号・一般質問・石倉刻夷</span><span class="ttl">放課後児童クラブの充実</span><span class="sum">市内の小学校区での設置状況、未設置校の理由の分析、指導員の人材確保の実態、県への重点要望である放課後児童支援員認定資格研修の拡充の内容と見通し、定員超過で増設が求められるクラブへの対策、小規模校で他市町の事例を参考にする考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９６回　９月定例会  09月05日－02号・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの運営</span><span class="sum">1年から6年まで入所できる制度となった中で、運営委員会任せにせず希望者全員を受け入れる体制への市の助言・支援の責任を尋ね、市による減免制度の基準設定とその決定の目標時期を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・三島静夫</span><span class="ttl">学童保育の受け入れ</span><span class="sum">募集定員を大きく超えた学童保育への担当部署の対応と、学校区を越えて入所できるようにするための保育者の待遇・利用料の統一や送迎の考えを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの拡充</span><span class="sum">入所希望調査の対象学年、クラブごとの受け入れ学年と待機児童数、校区内の受け入れ態勢の整備、支援員の労働条件と処遇改善・確保、認定資格研修の受講状況、国の配置基準緩和への見解、保護者負担の軽減、運営支援と希望者全員が入所できるクラブのあり方を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・原瀬清正</span><span class="ttl">放課後児童クラブの支援</span><span class="sum">放課後児童クラブの利用対象年齢と各クラブの定数・利用者数・学年、申込者数の増減傾向、申し込み事由と受け入れの優先順位の把握、クラブの増設を含む今後の支援の考えを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・中村健二</span><span class="ttl">新天皇即位の10連休への対応</span><span class="sum">10連休に伴う小・中学校の対応と夏休み短縮の考え、学校行事への影響、保育所・認定こども園・幼稚園の開園の対応、放課後児童クラブの状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月05日－03号・一般質問・丸山征司</span><span class="ttl">待機児童と放課後児童クラブ</span><span class="sum">市の待機児童の現況と展望、放課後児童クラブ支援員のなり手不足による待機の懸念を含む学童保育の現状と今後の展望を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月06日－03号・一般質問・遠藤孝</span><span class="ttl">人口減少対策の取り組み</span><span class="sum">人口減少対策として、市の人口動向と生産労働人口、居住実態の把握、成婚数50組の目標の実現性、企業進出を妨げる市街化調整区域の線引きの廃止や緩和区域の開発・市街化区域の拡大、中海架橋の知事への要望、定住・移住の成果とマンパワーによる移住支援、農家住宅事業の継続、給食費の無料化、子育て施策と放課後児童クラブの支援員確保を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月06日－03号・一般質問・三島静夫</span><span class="ttl">放課後児童クラブの運営</span><span class="sum">移住ガイドにある放課後児童クラブについて、市内13施設で利用できる学年が異なる理由と預けられない家庭への考え、長期休業中に短期で学童保育を望む家庭への対応を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８３回　６月定例会  06月02日－02号・一般質問・原田貴与子</span><span class="ttl">児童クラブの運営と待遇改善</span><span class="sum">浜田市・米子市の例を挙げ、市が支援員の雇用と人件費を保障する安定的運営と待遇改善、支援員の資格取得の応募状況と受講予定の割合、保育料の減免制度の整備を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・原田貴与子</span><span class="ttl">子育て支援の施策</span><span class="sum">認定こども園移行後の1号認定の子供の受け入れ状況と保育体制、公立保育所をなくす方針の撤回、子供の貧困の現状把握と対策本部体制、子供の医療費助成の高校卒業までの拡大、就学援助の生活保護基準1.5倍への拡充と受給率の低さ、学校給食費の無償化、柔道着など教材の負担軽減、学習意欲の低い児童・生徒への学習支援、放課後児童クラブの受け入れ体制と支援員養成を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月03日－02号・代表質問・澤田秀夫</span><span class="ttl">第2次総合計画の進捗</span><span class="sum">第2次総合計画の1年目の成果と目標達成の見込み、分野ごとに地域包括支援センターの体制、認定こども園の課題や男性保育士の対応、放課後児童クラブの支援員確保、城谷保育所の譲渡、広瀬図書館とクラスター型のまちづくり、原子力発電事業への市長の考え、工業団地造成後の財政シミュレーション、空家等対策計画とお試し住宅、可燃ごみ処理の方向性、公共施設の個別行動計画のスケジュールを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月07日－04号・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの整備充実</span><span class="sum">新制度下の放課後児童クラブについて、施設要件の充足状況と課題、今後の整備計画、放課後児童支援員の県認定資格研修の受講への不安と指導員の確保、補助員の研修と安定的に働ける環境整備を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　８１回１２月定例会  12月03日－02号・一般質問・原田貴与子</span><span class="ttl">放課後児童クラブの安定運営</span><span class="sum">放課後児童クラブの現況、待機児童と未設置校の希望調査、小規模クラブの支援員2人体制と送迎支援事業の該当数と市の財政支出、支援員認定資格の研修支援と受講目標、支援員の待遇改善、利用料減免の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・原田貴与子</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">新制度の大枠と子ども・子育て会議の進捗、幼保一元化や企業参入、待機児童、保育所の老朽化、正規・臨時職員の給与格差、指定管理保育所の処遇、保育の認定基準、放課後児童クラブの基準と市の責任を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７０回　９月定例会  09月04日－03号・一般質問・原田貴与子</span><span class="ttl">子ども・子育て新制度と保育水準</span><span class="sum">保育所と認定こども園の違いの捉え方、保護者への説明と関係者の意見聴取、公立保育所の維持、地域型保育の条例への有資格者配置、11時間保育と延長保育料の扱い、放課後児童クラブの全員受け入れと有資格の専任職員配置を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７０回　９月定例会  09月05日－04号・一般質問・田中武夫</span><span class="ttl">放課後子ども総合プラン</span><span class="sum">厚生労働省の放課後子ども総合プランが学校施設を活用した放課後児童クラブ等の実施を促す中で、母里の学童クラブの整備が遅れた経過を挙げ、早期の対応を求めた。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月05日－04号・一般質問・澤田秀夫</span><span class="ttl">子育て支援新制度への対応</span><span class="sum">子ども・子育て支援新制度で重点的に取り組む事業、認定こども園拡充の全体経費と施設面の対応、小規模な保育所・幼稚園の方向性、保育士確保に向けた処遇改善策を尋ね、放課後児童クラブの現状と実施施設数・利用児童数・今後の方向性を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月06日－05号・一般質問・原田貴与子</span><span class="ttl">地方創生と地域再生</span><span class="sum">地方衰退の原因の認識、高齢化率50％を超える集落数と民生児童委員の待遇改善、就学援助の認定基準の明示と要件拡充や給食費の全額助成、放課後児童クラブの保育料減免、中小企業振興条例と住宅リフォーム助成制度、家族経営農家への支援と米価対策、わかさ会館の整備、給食センターの地産地消を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月06日－04号・一般質問・田中明美</span><span class="ttl">放課後児童クラブの運営</span><span class="sum">繰越金を理由に国の基準額から委託料を減額した考え方と各クラブへの指導の内容、備品費を子ども未来課が持つべきではないかとの点と国の備品購入費補助の活用、交流センターとの備品や光熱水費の負担、広瀬地区の地域コーディネーターの活動、市直営化の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６５回１２月定例会  12月04日－02号・一般質問・原田貴与子</span><span class="ttl">子育て支援と教育環境の充実</span><span class="sum">中学卒業までの子どもの医療費無料化を新年度から実施すること、耐震化されていない母里児童クラブの施設保障、熱中症予防対策と教室の温湿度管理、全小中学校へのエアコン設置を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・田中明美</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">平成26年度に策定する子ども・子育て支援事業計画の内容と幼稚園・保育所の再編成との関係、システム改修の中身、認定こども園の新設を含む再編の検討状況と市の体制づくり、私立認可保育園の認定こども園移行の見込み、27年4月の新制度移行の可否、城谷・赤江保育所の27年度以降の指定管理、放課後児童クラブの条例制定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５４回　６月定例会  06月04日－02号・一般質問・石倉刻夷</span><span class="ttl">放課後児童クラブの運営</span><span class="sum">条例制定の要否と県内状況、委託運営で事故時の最終責任者、指導員の配置と1人当たり面積の確保、健康管理や安全確保の主体、今後の見通しと施設整備、広瀬幼稚園への開設の経緯、広瀬小の多目的教室棟の活用、児童厚生員の資格を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月06日－03号・一般質問・石倉刻夷</span><span class="ttl">放課後児童クラブの運営</span><span class="sum">規則で対処し条例化しないことの是非、開設後の事件・事故への対応、11クラブとの協定で特別な事項を加えたものの有無、指導員の制服支給、施設への電話設置を尋ね、一律の委託契約でよいかの検証も含めて質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月07日－04号・一般質問・丸山征司</span><span class="ttl">子育て支援と教育と定住促進</span><span class="sum">乳幼児・児童医療費助成の市独自の継続・拡充、小児科診療の充実と産科の復活、小中学校単位の国際交流への援助、給食センター建設計画の進捗、幼保一体化と次の認定こども園、放課後児童クラブの状況と学校から離れたクラブの安全、児童へのイベント観賞・観戦の働きかけ、高校までの通学費補助の拡充、進路指導とふるさと教育、専門学校の誘致について質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月07日－04号・一般質問・丸山征司</span><span class="ttl">育児と教育の支援</span><span class="sum">病児・病後児保育の拡充とＰＲ、学童保育の指導員の質と事故時の責任、赤ちゃん登校日、共働き家庭の子育て支援とイクメンの啓発、第3子以降の保育料等の減免拡大、高校の校区のフリー化、地理的理由での中学校の校区外入学、矢田の渡し船の活用を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月08日－05号・一般質問・田中明美</span><span class="ttl">子育て協働プロジェクト</span><span class="sum">「結集！しまねの子育て協働プロジェクト事業」について、3課合同の24年度の取り組み、地域コーディネーターの考え方と役割、広瀬地区をモデル地区とした理由と家庭との連携、放課後児童クラブとの関わりと運営方針、未実施校の児童の受け入れを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４１回　６月定例会  06月04日－03号・一般質問・田中明美</span><span class="ttl">子育て支援の後期行動計画</span><span class="sum">やすぎ子育て・子育ち応援プラン後期行動計画を受け、子育て中心世代の市外転出超過を食い止める住宅事情の検討と働く環境の整備、放課後児童クラブへの市独自の基準・補助や指導員の一括募集・登録制、公園整備と中心市街地の公園整備との整合性を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　４１回　６月定例会  06月04日－03号・一般質問・嘉本祐一</span><span class="ttl">学童保育の支援と整備</span><span class="sum">学童保育を担う児童クラブの整備状況と保護者のニーズ、周辺市町村との運営体制・補助の比較、要支援児童への補助、保護者負担、指導員の待遇と保険、指導員の確保と研修への支援、整備方針と目標、定員超過による入所断りへの考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２１回　６月定例会  06月07日－03号・一般質問・岡田麻里</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">少子化対策と子育て支援の基本姿勢を尋ね、マタニティマークの活用による妊産婦に優しい環境づくり、妊婦無料健診の拡大、放課後子どもプランの取り組みと放課後児童クラブ・子ども教室の実施箇所やニーズ調査の方法、市長会が要望した財政支援を踏まえた市長の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>公立保育所の認定こども園移行と放課後児童クラブの充実</summary><p>同一文で述べられた2要素を統合: (1)9カ所の公立保育所を認定こども園に移行し教育・保育を総合的に提供する仕組みをつくる、(2)放課後児童クラブの質の向上と安定・継続的な運営を進める。子どもが健やかに育つ地域づくりを目指す。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">16</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>放課後児童クラブの運営委託先の拡大</summary><p>保護者が安心して就労できる環境を整備するため、放課後健全育成事業として、放課後児童クラブの運営委託先を社会福祉法人等へも拡大するなど充実に努める。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>新型コロナウイルス感染症対策</summary><p>警戒本部を対策本部へ引き上げ、感染防止への協力を市民に求めている。今後臨時休業を判断する場合に備え、学校や放課後児童クラブ等と連携し、保護者の不安や負担が最小限となるよう支援策を講じる。</p></details></td>
+            <td class="c">7</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>放課後児童クラブの施設整備</summary><p>放課後児童健全育成事業として放課後児童クラブの充実を図る。特に利用希望が多い十神・赤江小学校区で、安全で安心な放課後の居場所を確保するため施設整備を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>放課後児童クラブの拡充</summary><p>子育て世代が安心して働き続けられるよう、令和2年度に放課後児童クラブ3か所の施設整備を行い、令和3年度からは17か所で開設する。利用を希望する児童が放課後を安全・安心に過ごせるよう取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>放課後児童クラブの運営と職員の処遇改善</summary><p>子育て世代が安心して働き続けられるよう、利用を希望する児童が放課後に安心・安全に過ごせるよう取り組み、市内17か所の放課後児童クラブで働く職員の処遇を改善する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>放課後児童健全育成事業の運営方法見直し</summary><p>公設民営の放課後児童クラブの基本部分の利用料を統一し、入所決定事務と利用料徴収事務をクラブから市へ移管するなど運営方法を見直す。放課後の適切な生活・遊びの場を提供し、子育て世代の仕事と育児の両立を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>放課後児童クラブの受入れ体制拡充</summary><p>放課後児童クラブの利用ニーズが年々増加していることから、待機児童の解消のため民設の1クラブを追加し受入れ体制を拡充する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">8</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>少子化対策と出生率</h3>
+    <p class="terms">語: 少子化対策と出生率・少子化対策・合計特殊出生率・出生率・婚活・不妊治療</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt25" data-year="H19"><b>3</b><span class="of">/15人</span><span class="q">3件</span></td><td class="lt10" data-year="H20"><b>1</b><span class="of">/23人</span><span class="q">1件</span></td><td class="lt10" data-year="H21"><b>2</b><span class="of">/26人</span><span class="q">2件</span></td><td class="lt25" data-year="H22"><b>4</b><span class="of">/19人</span><span class="q">5件</span></td><td class="lt25" data-year="H23"><b>2</b><span class="of">/17人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/20人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="lt25" data-year="H26"><b>3</b><span class="of">/17人</span><span class="q">3件</span></td><td class="lt25" data-year="H27"><b>4</b><span class="of">/17人</span><span class="q">4件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/17人</span><span class="q">3件</span></td><td class="lt10" data-year="H29"><b>2</b><span class="of">/23人</span><span class="q">3件</span></td><td class="lt25" data-year="H30"><b>2</b><span class="of">/17人</span><span class="q">2件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/22人</span><span class="q">1件</span></td><td class="lt25" data-year="R04"><b>2</b><span class="of">/16人</span><span class="q">3件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/16人</span><span class="q">2件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/15人</span><span class="q">2件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/18人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・一般質問・佐々木厚子</span><span class="ttl">婚活支援</span><span class="sum">少子化対策と定住促進の観点から市の結婚支援事業の取組と実績を尋ね、しまね縁結びサポートセンターのしまコをめぐる県との連携、市独自のマッチングアプリ運営の考え、婚活支援情報のさらなる周知を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・岩崎勉</span><span class="ttl">人口ビジョンと人口対策</span><span class="sum">地方創生2.0を市に落とし込んだ施策、人口減少の影響と要因の整理、合計特殊出生率の動向と低い要因、婚活を担う組織の設置、市立病院の役割と経営方針・地域医療提供体制、転入・転出の推移と県外転出の先と理由、目標人口と出生数の目標、人口減少を緩やかにする市長の決意を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・原瀬清正</span><span class="ttl">市長が描く本市の未来予想図</span><span class="sum">地域医療提供体制と市立病院の5年後・10年後の姿と老朽化対策、2025年問題に向けた介護の支え方、少子化対策と産科病院の設置、学校再編後の交流センターの在り方、地域消防と防災活動、農林水産業の課題と将来像、定住対策と住宅地開発、渋滞緩和と道路整備・維持管理、公共交通、公共施設の在り方、廃棄物処理と災害廃棄物処理について市長の未来予想図を問うた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・石倉刻夷</span><span class="ttl">花嫁花婿対策と婚活支援</span><span class="sum">令和4年度の婚活支援の実施状況と成果、令和5年度の施策と戦略、市独自のサポーター報奨制度の検討を尋ね、あわせて密陽アリラン祭り訪問を報告し密陽市との職員の相互交流を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・佐々木厚子</span><span class="ttl">超ソロ社会への対応</span><span class="sum">独身者の増加と出生数の低下を踏まえ、安来市の未婚率、婚活支援の主な取組と成果、結婚を希望する人へのさらなる支援の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・佐々木厚子</span><span class="ttl">婚活支援</span><span class="sum">縁結び相談やはぴこ交流サロンの活動内容とそれ以外の婚活支援の取組、これらの取組による成婚数、結婚を希望する人への今後の支援の取組を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・佐々木厚子</span><span class="ttl">リトルベビーへの支援</span><span class="sum">市の低出生体重児の数と出生率の過去3年分、低出生体重児への市の支援を尋ね、通常の母子手帳と併せたリトルベビーハンドブックの発行について市長の所見を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・代表質問・三島静夫</span><span class="ttl">関係人口の増加と少子化対策</span><span class="sum">関係人口増加の今後の取組、原子力災害の広域避難先の自治体やカイトボードの愛好者を関係人口につなげる考えを尋ね、教育・結婚・住宅・女性の就業復帰・成婚率向上の支援など市独自の大胆な少子化対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・石倉刻夷</span><span class="ttl">婚活支援の取組</span><span class="sum">花嫁・花婿対策として令和2年度の婚活支援の取組と実績、令和3年度の戦略を尋ね、あわせて聖火リレーの実施をめぐる市長の見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９８回安来市議会定例会・一般質問・石倉刻夷</span><span class="ttl">婚活支援の取り組み</span><span class="sum">令和元年度の市の婚活施策の総括と、令和2年度の取り組みや戦略の計画、第2期総合戦略における婚活支援の目標数値と目標達成に向けた取り組みの考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・岩崎勉</span><span class="ttl">行財政改革と分庁方式</span><span class="sum">分庁方式のメリット・デメリットとテレビ会議等の稼働状況、全国の分庁方式の市の数、市長の執行体制、富田山荘と憩いの家の方向性、婚活支援と移住者受け入れの実績、行革大綱と市立病院経営整備検討事業の進捗を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９５回　６月定例会  06月07日－02号・一般質問・石倉刻夷</span><span class="ttl">花嫁花婿対策</span><span class="sum">県が若手職員のプロジェクトチームで県境をまたぐ交流やアプリ開発、情報発信の統合を進める婚活支援をどう分析しているかを尋ね、市の平成29年度の取り組みの総括と成果、平成30年度の具体的な取り組み計画を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９５回　６月定例会  06月08日－03号・一般質問・佐々木厚子</span><span class="ttl">子育て支援の充実</span><span class="sum">過去5年間の出生数と出生率、出生数増加に向けた市独自の対策、鳥取県のような在宅育児支援の導入、子育て世代包括支援センターの設置と切れ目のない支援、今後力を入れる子育て支援、1歳児を受け入れる保育士の確保、公立施設の定員割れの理由、保育士確保の条件提示、入所者の少ない島田・能義こども園の今後を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月05日－03号・一般質問・丸山征司</span><span class="ttl">婚活支援の拡充</span><span class="sum">はぴこ及び市の婚活支援の活動内容・成果・検証と展望、目標成婚数や予算の拡充余地、体験型婚活やオープンデータ・ＡＩの活用、民間婚活との連携と会員情報の共有、山陰・大阪・東京在住者のＵターン型婚活、婚姻で離職する公務員等のキャリアを生かす圏域連携を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月05日－03号・一般質問・丸山征司</span><span class="ttl">晩婚・晩産化と不妊支援</span><span class="sum">未婚の団塊ジュニアを念頭に晩婚化・晩産化・高齢出産への支援と安心して出産・子育てできるサポート体制、不妊治療助成の拡充と未受精卵子凍結事業の実施、2人目・3人目不妊に悩む人への支援を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月05日－02号・代表質問・飯橋由久</span><span class="ttl">住環境の向上</span><span class="sum">結婚する人がふえるような少子化対策についての見解と支援、民生委員だけに頼らない独居老人への行政の協力体制、安来市空家等対策計画に基づく空き家の活用法など主な取り組み、安来庁舎建設と木戸川東線道路改良事業の完了後に道路より東側の中心市街地を活性化する計画の有無を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８３回　６月定例会  06月02日－02号・一般質問・石倉刻夷</span><span class="ttl">花嫁花婿対策</span><span class="sum">平成25〜27年の安来・広瀬・伯太各地区の死亡者数・出生数・成婚数、平成27年度の婚活支援活動の実績と課題の分析と今年度の取り組み計画、圏域婚活イベントでの安来市のカップル数を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８３回　６月定例会  06月03日－03号・一般質問・丸山征司</span><span class="ttl">人口減少対策の諸施策</span><span class="sum">人口減少問題の解消をテーマに、グラフで見る統計やすぎの作成、転出者の把握、未婚者やひとり親の婚活支援、ダブルケアによる離職と両立支援、子育てお出かけマップの利便性、保育所の空き状況の表示、認定こども園への移行、プログラミング教育、新工業団地と企業誘致のビジョン、女性の起業支援、地域おこし協力隊の募集、中心市街地の集合住宅、刃物まつりの再協議、圏域連携の修学旅行誘致、スマホやＡＲの観光活用、ドローンの活用、訪日外国人への対応、中海マラソンのコース細分化、ホテル誘致、山陰新幹線、ＰＲ動画などの情報発信を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８６回１２月定例会  12月06日－03号・一般質問・石倉刻夷</span><span class="ttl">新婚家庭への新生活支援</span><span class="sum">今年度の婚活支援の成果と現行の支援策を尋ね、経済的理由で結婚に踏み出せないカップルを後押しする結婚新生活支援事業の検討と、他市事例を調査したうえでの新婚支援の拡充を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７６回　６月定例会  06月03日－02号・一般質問・石倉刻夷</span><span class="ttl">花嫁花婿対策</span><span class="sum">花嫁花婿対策に特化した平成26年度施策の検証結果と実績、平成27年度の施策・計画と今後の方針を尋ね、再質問で出雲市の縁結び定住課を例に定住対策も含めた婚活推進室を設置する考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７６回　６月定例会  06月03日－02号・一般質問・佐々木厚子</span><span class="ttl">子育て包括支援と不妊治療</span><span class="sum">地方版総合戦略への反映を求めて、国の子育て世代包括支援センター（日本版ネウボラ）の設置についての考えと、拡充した一般不妊治療費助成を無料化することへの市長の所見を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・金山満輝</span><span class="ttl">総合戦略に基づく新年度施策</span><span class="sum">2060年の人口目標3万人の実現に向け、平成28年度の人口対策事業として、民間賃貸住宅建設助成と空き家対策、切れ目のない子育て支援の新規・拡充事業、工業団地の適地選定調査の結果と供用開始時期、商工業の事業承継と後継者育成、結婚活動支援の成功件数と今後の取り組み、総合戦略のＫＰＩに基づく検証体制とスケジュール、定住相談窓口の業務内容と相談実績、地域おこし協力隊の採用見込みと増員計画を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・中島隆夫</span><span class="ttl">人口減少への対策</span><span class="sum">幼児等医療費助成や結婚活動支援などに重点的に予算措置してきた人口対策を踏まえ、人口減少に対処するため今後どのような対策を立て施策を展開するのか、出産・子育て・教育環境の整備と定住促進策を含めて質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・作野幸憲</span><span class="ttl">将来像と目標人口</span><span class="sum">やすぎワールドカフェで寄せられた将来像に関する市民の意見、出生率向上や多子世帯支援、人口の社会増などの総合的な人口減少対策の現状と方針、次期総合計画での現実的な目標人口と具体的な政策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月05日－04号・一般質問・田中明美</span><span class="ttl">人口対策本部の戦略と施策</span><span class="sum">人口対策本部が決定した4つの基本戦略の説明と県への要望、今後のスケジュールを尋ね、出生率アップ戦略として出生人数と合計特殊出生率、不妊治療助成の内容と実績、住みたい町なか戦略として定住促進の住宅補助を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月05日－04号・一般質問・石倉刻夷</span><span class="ttl">少子化対策と農地制度</span><span class="sum">地方創生・地方分権改革の推進に関して、目指せ出生率アップ戦略など少子化対策の抜本的な強化を図る市の施策、農地の総量確保の実効性を確保する市の考え、農地転用の迅速化と農業委員会改革への農業委員会の所見を尋ね、小規模な転用は市の農業委員会で許可する改革を望む立場から改めて所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２３年第　４７回　６月定例会  06月03日－02号・一般質問・石倉刻夷</span><span class="ttl">小・中学校の通学対策</span><span class="sum">定住・少子化対策の一端としてのバス通学への公費支援について、ＰＴＡ連合会の要望も踏まえた市と教育委員会の基本的な考えを尋ね、近隣市町の支援策、通学対策に関連した校区再編の検討の是非を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４７回　６月定例会  06月03日－02号・一般質問・石倉刻夷</span><span class="ttl">花嫁花婿対策</span><span class="sum">昨年中止となったふるさとお見合いパーティーの反省に立った今年の取り組み状況、尼子縁結びの会など市内の民間婚活組織の実態把握と支援の考え、伊万里市や武雄市の例を挙げ市の業務に婚活支援係を明記できないかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月05日－03号・代表質問・勝部幸治</span><span class="ttl">少子対策と婚活支援</span><span class="sum">東出雲町の松江市との合併で定住化への影響が懸念される中、周辺自治体より劣ると感じる子育て支援への考えと、境港市と共同で行った婚活支援の具体的成果及びさらなる取り組みの具体策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４１回　６月定例会  06月03日－02号・一般質問・石倉刻夷</span><span class="ttl">花嫁花婿対策の推進</span><span class="sum">中海市長会の少子化・定住対策の課題として検討するとした前回答弁から半年の進捗を尋ね、佐賀県伊万里市の婚活応援課の設置例を挙げて市の機構への取り入れと中海圏域での発言の強化を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　４１回　６月定例会  06月03日－02号・一般質問・嶋田豊昭</span><span class="ttl">少子化対策の推進</span><span class="sum">少子化と人口減少の現状認識と早急な施策推進への見解を尋ね、次世代育成支援行動計画と総合計画の整合、後期計画の予算を裏づける財政計画、関係各課が連携する庁内総合推進体制の検討内容を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４６回　３月定例会  03月04日－03号・代表質問・井上峯雄</span><span class="ttl">人口流出抑制と少子化対策</span><span class="sum">人口流出の抑制と少子化対策について市の考えと進める手法を尋ね、第3子以降の保育料無料化に対し、邑南町のように第2子以降から保育料を免除する考えがあるかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４６回　３月定例会  03月07日－04号・一般質問・石倉刻夷</span><span class="ttl">国勢調査結果と定住対策</span><span class="sum">国勢調査の速報値で安来市が5.1％減となったことを踏まえ、定住支援連絡会議の実働状況と定住希望者の実態、施政方針が掲げる人口流出の抑制と少子化対策を具体化する平成23年度の方策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４６回　３月定例会  03月08日－05号・一般質問・中村健二</span><span class="ttl">中海市長会などの広域連携</span><span class="sum">中海地域振興ビジョンの内容と方向性、圏域の環境保全や安来市の環境保全の取り組み、電気自動車の導入計画、婚活支援、中海圏域4市長の座談会の内容、中海・宍道湖市長会の構想への市長の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３２回　６月定例会  06月05日－02号・一般質問・石倉刻夷</span><span class="ttl">花嫁花婿対策と婚活支援</span><span class="sum">花嫁花婿対策について、昨年6月以降に市が独自で取り組んだ内容を尋ね、婚活の検討や全国親の縁は子の縁の交流会などの情報提供による支援、民間団体の情報の広報を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３８回１２月定例会  12月09日－05号・一般質問・中村健二</span><span class="ttl">縁結び事業の実施</span><span class="sum">未婚化や晩婚化の進行を踏まえ、県のしまね出会い創出事業や雲南市の婚活支援、秋田県の少子化対策の例を挙げて、安来市でも出会いづくりの場を設ける縁結び事業に取り組む考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２０年第　３０回１２月定例会  12月11日－04号・一般質問・岡田麻里</span><span class="ttl">妊婦健診の無料化拡大</span><span class="sum">本年度に2回から5回へ拡大した妊婦健診の公費負担について、未受診による飛び込み出産のリスクを挙げて14回までの拡大を提案し、市独自の助成の考えや市内の妊婦の救急搬送件数、少子化対策への見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２１回　６月定例会  06月07日－03号・一般質問・岡田麻里</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">少子化対策と子育て支援の基本姿勢を尋ね、マタニティマークの活用による妊産婦に優しい環境づくり、妊婦無料健診の拡大、放課後子どもプランの取り組みと放課後児童クラブ・子ども教室の実施箇所やニーズ調査の方法、市長会が要望した財政支援を踏まえた市長の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月10日－04号・一般質問・内藤美雄</span><span class="ttl">平成20年度予算の特徴点</span><span class="sum">平成20年度予算について、ラムサール対策費が計上されていない理由と環境に対する基本的な考え方、少子化対策と子育て環境整備の施策、後期高齢者医療制度の評価と高齢者の新たな負担、農業情勢の認識と中心市街地の活性化、バイオマスリサイクルセンターの事業展開、道の駅の供用開始に向けた進捗を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月10日－04号・一般質問・中島隆夫</span><span class="ttl">人口減少と今後の取り組み</span><span class="sum">合併後の人口減少を受け、目標人口の有無と減少の原因・対策、自然減と社会減の内訳、不妊治療助成の条件、妊婦健診の14回までの無料化、0歳から3歳までの乳幼児医療費の無料化、転入奨励金制度の創設、学校別の児童生徒数と今後の学校の管理を尋ね、再質問で第3子からの保育料無料化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１８年第　１６回　９月定例会  09月05日－02号・一般質問・中島隆夫</span><span class="ttl">小学校と幼稚園の今後</span><span class="sum">出生率の低下が続く中で、17校の小学校と6園の幼稚園をどう維持管理していくのかを尋ね、地域や保護者と統合等の話し合いを行う考えがあるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１８年第　１３回　３月定例会  03月07日－05号・一般質問・岡田麻里</span><span class="ttl">子育てしやすい環境づくり</span><span class="sum">施政方針が掲げる女性の社会進出や安心して子育てができる環境づくりの具体策を尋ね、女性の働きやすさ指標と合計特殊出生率の相関を挙げて、男性の育児休暇の推進など市独自の働きやすい環境づくりの考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>第3子以降4歳児以上の保育料無料化</summary><p>少子化対策の充実に向け子育て支援・母子保健・休日保育などの事業を新設・拡充する中で、特に第3子以降の4歳児以上の保育料を新たに無料とする。保育所・幼稚園の入所等に伴う保護者の経済的負担を軽減し、安心して子どもを産み育てる環境をつくる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>いきいきやすぎっこ応援事業（一般不妊治療費助成制度の新設ほか）</summary><p>新年度からいきいきやすぎっこ応援事業を創設し、子育て支援センターの機能を中心に妊娠・出産・育児・乳幼児期の総合的な支援策を進める。具体的には不妊治療の自己負担額の一部を助成する一般不妊治療費助成制度を新設するほか、妊婦・乳児の健康診査の充実やパパママ教室、ほっとひといき講座などを開催する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>結婚活動支援事業</summary><p>今年度から境港市と共同開催で実施している結婚活動支援事業について、中海圏域全体を視野に入れてさらに取り組みを進める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>結婚活動支援・出会いの場創出事業</summary><p>境港市との共同開催による結婚活動支援事業に加え、独身男女の出会いの場を創出するイベントと農業の担い手を対象とした支援事業を新たに行う。未婚・晩婚化の解消、住民の交流促進と地域の担い手確保を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>結婚活動支援事業</summary><p>松江市・出雲市・米子市・境港市と連携し、中海・宍道湖圏域一体で未婚・晩婚化の解消と圏域住民の交流促進を図る。新年度からは定期的な相談窓口を設け、結婚に関するニーズ把握や悩みの解消に努める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>人口対策事業（4つの戦略）</summary><p>人口問題を喫緊の課題と捉えて昨年8月に人口対策本部を立ち上げ、女性に魅力あるまち戦略、目指せ出生率アップ戦略、住みたいまちなか戦略、中山間地域元気いきいき戦略の4つの戦略を決定した。人口対策に有効な新たな取り組みや充実を図るべき取り組みを人口対策事業としてまとめ、平成27年度当初予算と平成26年度補正予算に反映した。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>結婚活動支援事業</summary><p>結婚サポーター養成セミナーを引き続き開催して市内の結婚支援者を掘り起こし、結婚相談のための「はぴこの部屋」を月1回から週1回に増やして相談体制を充実する。企業と連携した婚活イベントや中海・宍道湖・大山圏域での広域の取り組みも続け、出会いの機会を増やして婚姻数の増加につなげる。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>不妊治療助成の拡充</summary><p>不妊治療を受けている夫婦に対する治療・検査・人工授精の自己負担額の一部助成について、助成の限度額を年5万円に拡充する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>不妊治療費助成の拡充</summary><p>少子化・子育て支援の一環として、不妊治療を受けている夫婦の自己負担金への助成を拡充し、あわせて特定不妊治療にも助成を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>婚活事業への補助金交付</summary><p>未婚化・晩婚化が少子化の大きな要因となっているため、市民団体等が行う婚活事業に新たに補助金を交付する。出会いの場を創出し、婚姻率の向上につなげる。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>不妊治療費・新生児聴覚検査費用の助成継続</summary><p>不妊治療費助成事業と新生児聴覚検査費用助成事業を引き続き実施し、出産・子育て環境の充実を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>妊娠期から子育て期にわたる切れ目ない支援</summary><p>不妊治療、子ども医療、新生児聴覚検査、予防接種の費用助成と、つどいの広場、親子交流センター事業を引き続き実施し、妊娠期から子育て期にわたる切れ目ない支援を行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>子ども医療費助成の対象年齢拡大</summary><p>少子化対策と子育て世代の負担軽減のため、医療費の無償対象年齢の上限を令和7年度から中学3年生から高校3年生に引き上げる。令和6年度は医師会等の関係機関との調整やシステム改修等の準備を行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>子育ての経済的支援</h3>
+    <p class="terms">語: 子育ての経済的支援・子育て支援・子育て支援策・子育て世帯・子ども医療費</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="lt10" data-year="H20"><b>1</b><span class="of">/23人</span><span class="q">1件</span></td><td class="lt10" data-year="H21"><b>2</b><span class="of">/26人</span><span class="q">2件</span></td><td class="lt25" data-year="H22"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="lt25" data-year="H23"><b>2</b><span class="of">/17人</span><span class="q">2件</span></td><td class="ge25" data-year="H24"><b>6</b><span class="of">/20人</span><span class="q">7件</span></td><td class="lt25" data-year="H25"><b>4</b><span class="of">/24人</span><span class="q">4件</span></td><td class="ge25" data-year="H26"><b>8</b><span class="of">/17人</span><span class="q">8件</span></td><td class="lt25" data-year="H27"><b>2</b><span class="of">/17人</span><span class="q">3件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/17人</span><span class="q">2件</span></td><td class="lt25" data-year="H29"><b>5</b><span class="of">/23人</span><span class="q">5件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="ge25" data-year="R01"><b>5</b><span class="of">/16人</span><span class="q">5件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/22人</span><span class="q">1件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/16人</span><span class="q">2件</span></td><td class="lt25" data-year="R06"><b>3</b><span class="of">/15人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/18人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・福井加代子</span><span class="ttl">人口自然増を図る取組</span><span class="sum">子ども医療費の無償対象年齢引上げの現状と対象人数、妊婦への金芽米無償提供事業の対象拡大、市内で出産できる病院がない現状、産前産後ケア事業の強化への市長の考えを質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・佐々木厚子</span><span class="ttl">子育て世帯訪問支援事業</span><span class="sum">こども家庭センターの設置と第3期子ども・子育て支援事業計画の進捗状況を尋ね、子育て世帯訪問支援事業の市の取組と県の支援、ドゥーラ協会などの養成機関や県・他市と連携した訪問支援員の養成研修を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">学校再編と子育て支援</span><span class="sum">小中学校の再編に伴う保育施設や放課後児童クラブの在り方、保育・教育の質の確保と遠距離通学となる家庭の負担軽減をどう調整し、諸課題に向き合うかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・向田聡</span><span class="ttl">学校給食費の無償化</span><span class="sum">小・中学校の年間給食費と無償化に必要な予算を確かめ、子育て支援としての無償化、半額補助や第2子以降など一部無償化による段階的拡充、国・県への無償化の要望について市の考えを質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・代表質問・飯橋由久</span><span class="ttl">子ども医療費の拡充</span><span class="sum">子ども医療費の無料化対象を中学生までから高校生まで拡充する検討について、事業の内容と考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・向田聡</span><span class="ttl">子ども・子育て支援の充実</span><span class="sum">こども基本法を受けた子ども・子育て支援事業計画の扱い、児童虐待の相談窓口と相談内容、子育て短期支援事業の周知と里親の位置づけ・橋渡し、フリースクール等を含む不登校対応の方向性と課題、不登校の親の会への支援を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・湯浅正志</span><span class="ttl">子育て支援の成果と課題</span><span class="sum">安来市の子育て支援策のうち特に成果を上げている取組、支援策の課題、今後に向けた支援策の構築や見直しの考え方の3点を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・佐々木厚子</span><span class="ttl">妊娠期からの子育て支援</span><span class="sum">母子手帳交付時に保健師が面談する淡路市のような取り組み、要支援妊婦の把握と出産後の支援・人数、ファミリーサポートセンターの会員数と利用状況、視能訓練士による3歳児健診の成果、液体ミルクの備蓄、子育て世代包括支援センターの進捗を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・原田貴与子</span><span class="ttl">就学援助と子ども医療費助成</span><span class="sum">生活保護基準の引き下げによる就学援助制度への影響の受けとめを尋ね、県の拡充で軽減される市の支出と16歳から18歳までの助成に要る財源、子ども医療費助成を18歳まで拡充する考えを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・作野幸憲</span><span class="ttl">人口ビジョンと各種計画</span><span class="sum">人口ビジョン見直しの有無と理由、総合戦略の目標達成見込みと出生数・社会移動、新総合戦略と後期基本計画の方針、財政計画への影響、Ａランク施設の建て替えの財源、子ども・子育て支援事業計画の特色を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・原瀬清正</span><span class="ttl">子ども医療費助成制度</span><span class="sum">対象年齢と助成対象の医療費、市外・県外受診や紹介の有無による扱い、支払いと払い戻しの方法や問い合わせ先を尋ね、周知方法とＱアンドＡ集の作成、インターネットやスマホからの申請による簡素化の考えを質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・代表質問・中村健二</span><span class="ttl">子育て支援の方向性</span><span class="sum">第1期子ども・子育て支援事業計画の検証と評価、成果と課題を尋ね、ニーズ調査を踏まえた第2期計画の特徴と方向性、新たに計画する事業の概要を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９５回　６月定例会  06月08日－03号・一般質問・佐々木厚子</span><span class="ttl">子育て支援の充実</span><span class="sum">過去5年間の出生数と出生率、出生数増加に向けた市独自の対策、鳥取県のような在宅育児支援の導入、子育て世代包括支援センターの設置と切れ目のない支援、今後力を入れる子育て支援、1歳児を受け入れる保育士の確保、公立施設の定員割れの理由、保育士確保の条件提示、入所者の少ない島田・能義こども園の今後を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月02日－02号・一般質問・佐々木厚子</span><span class="ttl">子育て支援の取り組み</span><span class="sum">伊万里市の例に触れ、ブックスタート事業の実施状況と読み聞かせの機会、3歳児健診での視覚検査の内容と視能訓練士による検査の実施、しまね子育て応援パスポートこっころの全国展開後の特徴的なサービスと市内の交付件数・割合を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月06日－03号・一般質問・石倉刻夷</span><span class="ttl">子育て支援センターの設置</span><span class="sum">県が子育て支援センターの開設経費を助成する制度を始めるとの報道を受け、市の子育て支援センターの設置状況と平成28年度の利用実態、今後の地域子育て支援センターの拡充計画を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月06日－03号・一般質問・三島静夫</span><span class="ttl">子育ておでかけＭＡＰの情報</span><span class="sum">移住ガイドに載る子育て支援サイトの子育ておでかけＭＡＰで買い物・飲食店・体験の3項目の情報が極端に少ない理由と、子連れで利用しやすい店舗へ市から掲載を働きかける考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月06日－03号・一般質問・向田聡</span><span class="ttl">学校給食のセンター化</span><span class="sum">小学校の一部と伯太中学校のセンター給食への移行に当たり、配膳・片付けの要員の配置と継続、セレクト給食やバイキング給食の可否、調理員や生産者とのつながりを保つ工夫、食物アレルギーへの対応、食材の入札方法と小規模農家の参入、地元産食材の比率向上、野菜高騰への対策、子育て支援としての給食費無料化を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月07日－04号・一般質問・原瀬清正</span><span class="ttl">高校生世代への子育て支援</span><span class="sum">義務教育終了後の18歳以下の高校生等を対象とした子育て支援制度を尋ね、駅前駐輪場の学生定期の無料化や大幅な割引、近隣と比べ安いとする比較対象と判断基準、6カ月定期の設定など利用期間の見直しを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・原田貴与子</span><span class="ttl">子育て支援の施策</span><span class="sum">認定こども園移行後の1号認定の子供の受け入れ状況と保育体制、公立保育所をなくす方針の撤回、子供の貧困の現状把握と対策本部体制、子供の医療費助成の高校卒業までの拡大、就学援助の生活保護基準1.5倍への拡充と受給率の低さ、学校給食費の無償化、柔道着など教材の負担軽減、学習意欲の低い児童・生徒への学習支援、放課後児童クラブの受け入れ体制と支援員養成を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８６回１２月定例会  12月05日－02号・代表質問・遠藤孝</span><span class="ttl">定住対策と子育て支援</span><span class="sum">子育て支援の財源と効果・実負担の軽減、給食費の無料化の決断、トレッキングルート整備や植樹祭の2市1町開催の働きかけなどのシティプロモーション、集落単位の総合的なビジョン策定、出先事務所への職員常駐、地域おこし協力隊の定住への評価を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月04日－03号・一般質問・田淵秀喜</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">認定こども園への移行について、全市統一で質の高い教育・保育を目指す考え方、荒島の認定こども園で教育・保育の何が具体的に変わったか、保護者への説明会の状況、保育時間やゼロ歳児など多様化する保護者ニーズへの対応を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　８１回１２月定例会  12月04日－03号・一般質問・田淵秀喜</span><span class="ttl">子ども・子育て支援策</span><span class="sum">公立・指定管理・私立の保育所や認定こども園の現状と課題・今後の方向性、米子・松江より優れた点、認定こども園化で質の高い教育・保育を提供するための保育士の質の向上とＫＰＩの中身、予防接種や検診の予約をスマホで行える情報サービスの強化を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・金山満輝</span><span class="ttl">総合戦略に基づく新年度施策</span><span class="sum">2060年の人口目標3万人の実現に向け、平成28年度の人口対策事業として、民間賃貸住宅建設助成と空き家対策、切れ目のない子育て支援の新規・拡充事業、工業団地の適地選定調査の結果と供用開始時期、商工業の事業承継と後継者育成、結婚活動支援の成功件数と今後の取り組み、総合戦略のＫＰＩに基づく検証体制とスケジュール、定住相談窓口の業務内容と相談実績、地域おこし協力隊の採用見込みと増員計画を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・作野幸憲</span><span class="ttl">子育て支援</span><span class="sum">子ども・子育て支援新制度の事業計画の策定状況、地方版子ども・子育て会議の設置予定、社会教育部局と人権担当部局を教育委員会へ移すなど推進体制の見直しの検討状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・原田貴与子</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">新制度の大枠と子ども・子育て会議の進捗、幼保一元化や企業参入、待機児童、保育所の老朽化、正規・臨時職員の給与格差、指定管理保育所の処遇、保育の認定基準、放課後児童クラブの基準と市の責任を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７０回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">子育て支援と医療費無料化</span><span class="sum">子ども未来課と子育て支援センターが所管する現行の子育て支援施策と新制度へ移行する内容を尋ね、新制度に移行するこの時期に中学生までの医療費無料化を検討する考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月03日－02号・一般質問・佐々木厚子</span><span class="ttl">子ども・子育て支援事業</span><span class="sum">乳幼児健診の対象者数と受診率及び要望、離乳食や子育て講座など子育て世代への支援事業、祖父母対象の講習会、子育てサークルの有無と内容、子育て情報紙の発行の有無を尋ね、千歳市のような子育て情報紙の発行を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月04日－03号・一般質問・田中武夫</span><span class="ttl">子育て支援施策</span><span class="sum">市の子育て世帯への取り組みを尋ね、集いの広場と広瀬の子育て支援センターの土日開設の有無を確かめたうえで、旧十神幼稚園跡で手狭な集いの広場に代わる広く快適な施設の整備を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月04日－03号・一般質問・岩田拓郎</span><span class="ttl">定住化と住宅政策</span><span class="sum">市外から通勤する4,522人に市内へ住んでもらう施策、松江や米子に比べ少ないマンションなど民間住宅への対応、古い団地のリフォームによる子育て世帯の入居と高齢者の町なかへの住みかえを支援する施策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月05日－04号・一般質問・澤田秀夫</span><span class="ttl">子育て支援新制度への対応</span><span class="sum">子ども・子育て支援新制度で重点的に取り組む事業、認定こども園拡充の全体経費と施設面の対応、小規模な保育所・幼稚園の方向性、保育士確保に向けた処遇改善策を尋ね、放課後児童クラブの現状と実施施設数・利用児童数・今後の方向性を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月09日－06号・一般質問・永田巳好</span><span class="ttl">大型施設整備と財政負担</span><span class="sum">議決された市民会館・庁舎・給食センターの3事業について、今後ランニングコストが増える中で少数意見を反映できなかったことへの市長の見解を尋ね、人口減少を踏まえ子育て支援など人への投資で定住促進につなげる大胆な政策転換を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月05日－03号・一般質問・作野幸憲</span><span class="ttl">子育て支援を柱にした定住促進</span><span class="sum">人口の現状と将来推計、人口減少の歯止めに必要なもの、次世代育成支援行動計画の庁舎内総合推進体制と点検評価、全国学力テストの結果と独自の学力向上策、農林業の担い手や就学困難者向け奨学金制度の創設、市外向けホームページの改善、定住企画課の役割を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６５回１２月定例会  12月04日－02号・一般質問・原田貴与子</span><span class="ttl">子育て支援と教育環境の充実</span><span class="sum">中学卒業までの子どもの医療費無料化を新年度から実施すること、耐震化されていない母里児童クラブの施設保障、熱中症予防対策と教室の温湿度管理、全小中学校へのエアコン設置を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月06日－04号・一般質問・佐々木厚子</span><span class="ttl">臨時給付金の支給</span><span class="sum">消費税の8％への引き上げに伴う臨時福祉給付金と子育て世帯臨時特例給付金について、支給対象者、支給金額などの制度内容、申請方法、支給時期の4点と、対象者への丁寧な周知を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・田中明美</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">平成26年度に策定する子ども・子育て支援事業計画の内容と幼稚園・保育所の再編成との関係、システム改修の中身、認定こども園の新設を含む再編の検討状況と市の体制づくり、私立認可保育園の認定こども園移行の見込み、27年4月の新制度移行の可否、城谷・赤江保育所の27年度以降の指定管理、放課後児童クラブの条例制定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月07日－04号・一般質問・河津清</span><span class="ttl">定住対策としての子育て支援</span><span class="sum">邑南町の日本一の子育て構想の例や市長のマニフェストを挙げ、乳幼児医療費助成の拡充、準要保護へのクラブ活動費・生徒会費・ＰＴＡ会費を含めた就学援助の拡充、福祉医療への市独自の上乗せ、定住を図るための住宅対策について、他市町村に先行する市長のビジョンを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月07日－04号・一般質問・丸山征司</span><span class="ttl">子育て支援と教育と定住促進</span><span class="sum">乳幼児・児童医療費助成の市独自の継続・拡充、小児科診療の充実と産科の復活、小中学校単位の国際交流への援助、給食センター建設計画の進捗、幼保一体化と次の認定こども園、放課後児童クラブの状況と学校から離れたクラブの安全、児童へのイベント観賞・観戦の働きかけ、高校までの通学費補助の拡充、進路指導とふるさと教育、専門学校の誘致について質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月06日－03号・一般質問・石倉刻夷</span><span class="ttl">子育て支援策の拡充</span><span class="sum">子供医療費助成のさらなる拡充の内容を尋ね、邑南町の「日本一の子育て村」の取り組みを例に現行の子育て支援策と今後の支援策、市民に示す具体的な数値目標の有無を質し、小学校6年生までの医療費助成を求めた。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月10日－05号・一般質問・岡田麻里</span><span class="ttl">子ども・子育て新制度への対応</span><span class="sum">子ども・子育て関連3法による新制度に向け、子育て当事者を含む地方版子ども・子育て会議の設置と経費計上、事業計画策定のためのニーズ調査経費の計上、準備組織の立ち上げ、新制度の情報提供と身近な相談体制、地域型子育て支援センターの拡充を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月05日－02号・代表質問・作野幸憲</span><span class="ttl">活力発揮のまちづくり</span><span class="sum">10年先を見据えた幼児教育と子育て支援、社会教育担当部局に置く地域コーディネーターの人選と家庭支援の進め方、盆野球の帰省者へのＵターン働きかけ、たたら製鉄を題材とする映画とのタイアップを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月06日－03号・一般質問・原田貴与子</span><span class="ttl">子育て支援の拡充</span><span class="sum">子供の医療費無料化を中学校卒業まで拡充した場合の市の財政負担と実現への考え、国・県の制度化への働きかけ、子ども・子育て新システムの問題点の認識と国への働きかけ、保育の人員配置など体制づくり、地域で育てる子育て支援体制の現況と今後を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月07日－04号・一般質問・丸山征司</span><span class="ttl">育児と教育の支援</span><span class="sum">病児・病後児保育の拡充とＰＲ、学童保育の指導員の質と事故時の責任、赤ちゃん登校日、共働き家庭の子育て支援とイクメンの啓発、第3子以降の保育料等の減免拡大、高校の校区のフリー化、地理的理由での中学校の校区外入学、矢田の渡し船の活用を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月05日－03号・代表質問・勝部幸治</span><span class="ttl">少子対策と婚活支援</span><span class="sum">東出雲町の松江市との合併で定住化への影響が懸念される中、周辺自治体より劣ると感じる子育て支援への考えと、境港市と共同で行った婚活支援の具体的成果及びさらなる取り組みの具体策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月06日－04号・一般質問・作野幸憲</span><span class="ttl">近隣に学ぶべき政策</span><span class="sum">子育て支援での安来市と松江市の施策の違いや乳幼児等医療費の予算差、邑南町の事例や旧東出雲町との人口推計の差への所感を尋ね、旧東出雲町の学校図書館活用教育に取り組む考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４１回　６月定例会  06月04日－03号・一般質問・田中明美</span><span class="ttl">子育て支援の後期行動計画</span><span class="sum">やすぎ子育て・子育ち応援プラン後期行動計画を受け、子育て中心世代の市外転出超過を食い止める住宅事情の検討と働く環境の整備、放課後児童クラブへの市独自の基準・補助や指導員の一括募集・登録制、公園整備と中心市街地の公園整備との整合性を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　４１回　６月定例会  06月07日－04号・一般質問・岡田麻里</span><span class="ttl">Ｈｉｂワクチンの公費負担</span><span class="sum">乳幼児に重い細菌性髄膜炎を引き起こすＨｉｂ菌の予防ワクチンについて、4回接種で約3万円にのぼる子育て世帯の負担を踏まえ、公費負担の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３４回　９月定例会  09月04日－04号・一般質問・河津清</span><span class="ttl">3人乗り・電動自転車の支援</span><span class="sum">子育て支援として3人乗り自転車の購入費補助やレンタル事業を、高齢者の行動範囲を広げるため松江市のような電動自転車の購入費補助を市で実施できないかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　３９回　３月定例会  03月04日－04号・代表質問・嘉本祐一</span><span class="ttl">子育て支援と高齢化福祉</span><span class="sum">世帯の平均所得の減少や中山間地・限界集落を抱える状況を踏まえ、会派が提案したイエローバスにも触れて、子育て世代支援と超高齢化社会に向けた福祉対策の方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２０年第　３０回１２月定例会  12月10日－03号・一般質問・河津清</span><span class="ttl">福祉医療と子育て支援</span><span class="sum">これまでの市政の福祉・医療への所見と新市長としての抱負を尋ね、マニフェストに沿った乳幼児医療費助成の拡大の具体化と、県制度に上乗せする重度心身障害者やひとり親家庭などの福祉医療の独自助成について、他市の例を挙げて来年度からの実施を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２１回　６月定例会  06月07日－03号・一般質問・岡田麻里</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">少子化対策と子育て支援の基本姿勢を尋ね、マタニティマークの活用による妊産婦に優しい環境づくり、妊婦無料健診の拡大、放課後子どもプランの取り組みと放課後児童クラブ・子ども教室の実施箇所やニーズ調査の方法、市長会が要望した財政支援を踏まえた市長の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２０回　３月定例会  03月08日－05号・一般質問・田淵秀喜</span><span class="ttl">子育て応援パスポート事業</span><span class="sum">県内全市町村参加で始まったしまね子育て応援パスポート事業について、安来市の協賛企業・店舗の数とパスポートの交付・利用の実態を尋ね、定住対策につながる子育て支援としてＰＲと事業の強化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>子育て支援ソフト事業（幼保一体化・放課後児童健全育成・乳幼児等医療費助成）</summary><p>年少人口の減少を受け、幼稚園・保育所の一体化、放課後児童健全育成事業、乳幼児等医療費助成など多数のソフト事業を用意する。女性の社会進出や安心して子育てができる環境づくりの充実に努める。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成19年度</td>
+            <td><details class="it"><summary>次世代育成支援対策事業</summary><p>子育て環境の充実と勤労者福祉・児童福祉の向上のため、つどいの広場事業、ファミリーサポートセンター事業、ブックスタート事業、子育て支援センター事業などを実施し、子育てを支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成19年度</td>
+            <td><details class="it"><summary>子ども未来課の創設と大規模型子育て支援センターの設置</summary><p>組織として子ども未来課を新たに創設し、その中核として大規模型の安来市子育て支援センターを設置して、子育て家庭への総合的な支援対策を講じる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>第3子以降4歳児以上の保育料無料化</summary><p>少子化対策の充実に向け子育て支援・母子保健・休日保育などの事業を新設・拡充する中で、特に第3子以降の4歳児以上の保育料を新たに無料とする。保育所・幼稚園の入所等に伴う保護者の経済的負担を軽減し、安心して子どもを産み育てる環境をつくる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>いきいきやすぎっこ応援事業（一般不妊治療費助成制度の新設ほか）</summary><p>新年度からいきいきやすぎっこ応援事業を創設し、子育て支援センターの機能を中心に妊娠・出産・育児・乳幼児期の総合的な支援策を進める。具体的には不妊治療の自己負担額の一部を助成する一般不妊治療費助成制度を新設するほか、妊婦・乳児の健康診査の充実やパパママ教室、ほっとひといき講座などを開催する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成21年度</td>
+            <td><details class="it"><summary>入院医療費助成の対象拡大</summary><p>子育て支援として、新年度から入院医療費の助成対象を就学前児童から小学校3年生まで広げる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>結集！しまね子育て協働プロジェクト事業</summary><p>青少年の健全育成のため、学校・家庭・地域が連携できるモデル地区を設け、取り組みを総合的に調整するコーディネーターを配置する。地域住民が子供の教育や子育て支援にかかわれる環境づくりを進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>安来市子ども・子育て支援事業計画の策定</summary><p>ニーズ調査の結果を踏まえ、保育等の需要見込みや提供体制等を盛り込んだ平成27〜31年度の子ども・子育て支援事業計画を、子ども・子育て推進会議の意見を伺いながら策定する。幼保一体化を喫緊の課題と位置づける。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>臨時福祉給付金・子育て世帯臨時特例給付金の支給</summary><p>4月からの消費税率引き上げに伴う低所得者と子育て世帯への影響を緩和する暫定的・臨時的措置として、両給付金を支給する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>家族ふれあい商品券の発行</summary><p>国の地域住民生活等緊急支援交付金を活用し、市内の消費喚起と経済の活性化を図る。全世帯を対象に、子育て世帯や高齢者世帯には購入限度額を加算した20%のプレミアム付き家族ふれあい商品券を発行する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>子ども医療費無料化の拡充</summary><p>子どもが安心して医療にかかれるよう、保護者の経済的負担を軽減する。これまで市独自に県の助成制度を拡充し小学校3年生までの医療費無料化と小学校6年生までの入院費助成を行ってきたが、新年度から医療費無料化の対象を小学校6年生まで拡充する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>結集！しまねの子育て協働プロジェクト事業</summary><p>地域住民が子どもの教育や子育て支援に積極的にかかわる環境づくりに取り組む。平成25年度から広瀬地区をモデル地区としてコーディネーターを配置し教育支援活動に成果が見られたことから、新年度から伯太地区でも始める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>地域コーディネーターの配置（社会教育）</summary><p>学校支援・放課後支援・家庭支援を総合的に調整する地域コーディネーターを配置し、地域全体で子育てにかかわる仕組みと意識を醸成する。子育て支援にかかわる地域の人材を育成する研修も行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>不妊治療費助成の拡充</summary><p>少子化・子育て支援の一環として、不妊治療を受けている夫婦の自己負担金への助成を拡充し、あわせて特定不妊治療にも助成を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>乳幼児等医療費の中学3年生までの無料化</summary><p>子育て世帯の経済的負担を軽減するため、市独自に小学校6年生まで無料としていた乳幼児等医療費を、4月から中学3年生まで無料化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>加算方式の住宅取得助成制度の新設</summary><p>従来の住宅関連助成を整理し、住宅取得助成100万円を基本に、UIターン者・三世代世帯・子育て世帯・地域木材使用などに加算する新たな助成制度を新設し、若い世代のUIターンと市内定住を促進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>民間賃貸住宅建設費助成</summary><p>子育て世帯やUIターン者、若者の移住定住の場を提供する目的で新築される民間賃貸住宅について、建設費の一部を助成する。民間活力による住宅建設を促し、良好な住環境の整備と定住の促進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>島田幼稚園・能義幼稚園の認定こども園移行</summary><p>子育て世帯の保育ニーズに応えるため、島田幼稚園と能義幼稚園をそれぞれ幼稚園型認定こども園へ移行する。3歳以上の幼児の教育・保育の提供の場を確保する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>第2期子ども・子育て支援事業計画の策定</summary><p>自然減の抑制につながる結婚・出産・子育て支援の充実として、安心して産み育てる環境づくりを目指し、第2期子ども・子育て支援事業計画を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>母子保健情報アプリの導入</summary><p>スマホ向けの母子保健情報アプリを導入し、妊娠期・子育て期に必要な情報を効率的かつ適時に配信する。子育て支援イベントの参加予約も可能にし、利用者の利便性を高める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>第3期子ども・子育て支援事業計画に向けたニーズ調査</summary><p>令和7年度から11年度を計画期間とする第3期安来市子ども・子育て支援事業計画の策定に向け、令和5年度に子育て世帯などへのニーズ調査を実施する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>子ども医療費助成の対象年齢拡大</summary><p>少子化対策と子育て世代の負担軽減のため、医療費の無償対象年齢の上限を令和7年度から中学3年生から高校3年生に引き上げる。令和6年度は医師会等の関係機関との調整やシステム改修等の準備を行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>第3期安来市子ども・子育て支援事業計画の策定</summary><p>令和7年度からの5か年を計画期間とする第3期安来市子ども・子育て支援事業計画を、国のこども大綱を踏まえた子ども計画と一体的に策定し、子どもや子育て世帯への支援を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>病児等の保育支援</summary><p>子どもの罹患等で集団保育が困難な期間に家庭での保育が難しい場合、病院や保育施設で一時的に保育し、子育て世帯の負担軽減を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>子育て世帯への商品券配布</summary><p>原油・物価高騰の影響を受けている子育て世帯の家計負担を軽減するため、市内の登録事業者で利用できる商品券を子育て世帯に配布する。子育て世帯の生活支援と市内経済の活性化を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>地域子育て支援センターどじょっこの発達支援体制の強化</summary><p>発達障がいの疑いや経過観察が必要な就学前の児童に対し、どじょっこで小グループの関わりを通じて発達を促し円滑な就学につなげている。令和7年度はスタッフを増員し、よりきめ細やかな対応を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>子ども医療費助成の高校3年生までの拡充</summary><p>医療費の自己負担が無料となる対象を中学3年生までから高校3年生までに拡充し、子育て世代の経済的負担の軽減と子どもの健やかな成長を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>金芽米を活用した子育て支援</summary><p>妊産婦に金芽米を無償提供するマタニティ応援プロジェクト事業と、保育施設の御飯給食を金芽米に切り替え3歳児から5歳児に無償提供する主食費無償提供事業を継続し、学校給食での金芽米提供も継続する（統合前の要素: マタニティ応援プロジェクト、主食費無償提供、学校給食）。妊産婦と幼児の健康増進と子育て世帯の負担軽減を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>子育て世代の相談支援</h3>
+    <p class="terms">語: 子育て世代の相談支援・子育て世代包括支援センター・こども家庭センター・産後ケア</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/20人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/22人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/15人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/18人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・福井加代子</span><span class="ttl">人口自然増を図る取組</span><span class="sum">子ども医療費の無償対象年齢引上げの現状と対象人数、妊婦への金芽米無償提供事業の対象拡大、市内で出産できる病院がない現状、産前産後ケア事業の強化への市長の考えを質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・佐々木厚子</span><span class="ttl">子育て世帯訪問支援事業</span><span class="sum">こども家庭センターの設置と第3期子ども・子育て支援事業計画の進捗状況を尋ね、子育て世帯訪問支援事業の市の取組と県の支援、ドゥーラ協会などの養成機関や県・他市と連携した訪問支援員の養成研修を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・佐々木厚子</span><span class="ttl">妊娠・出産包括支援事業</span><span class="sum">令和7年度に産後ケアを拡充して行う妊娠・出産包括支援事業の具体的な内容、対象となる市内事業所の数とサービス内容・利用状況、市が目指す事業の姿を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・三島静夫</span><span class="ttl">産後ケア事業</span><span class="sum">安来市の産後ケア事業の目的と内容、事業を行う上での課題、利用者の費用負担と市の負担を尋ね、ショートステイの導入を含む今後の産後ケア事業への見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・佐々木厚子</span><span class="ttl">妊娠期からの子育て支援</span><span class="sum">母子手帳交付時に保健師が面談する淡路市のような取り組み、要支援妊婦の把握と出産後の支援・人数、ファミリーサポートセンターの会員数と利用状況、視能訓練士による3歳児健診の成果、液体ミルクの備蓄、子育て世代包括支援センターの進捗を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９５回　６月定例会  06月08日－03号・一般質問・佐々木厚子</span><span class="ttl">子育て支援の充実</span><span class="sum">過去5年間の出生数と出生率、出生数増加に向けた市独自の対策、鳥取県のような在宅育児支援の導入、子育て世代包括支援センターの設置と切れ目のない支援、今後力を入れる子育て支援、1歳児を受け入れる保育士の確保、公立施設の定員割れの理由、保育士確保の条件提示、入所者の少ない島田・能義こども園の今後を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７６回　６月定例会  06月03日－02号・一般質問・佐々木厚子</span><span class="ttl">子育て包括支援と不妊治療</span><span class="sum">地方版総合戦略への反映を求めて、国の子育て世代包括支援センター（日本版ネウボラ）の設置についての考えと、拡充した一般不妊治療費助成を無料化することへの市長の所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>産婦健康診査・産後ケアの実施</summary><p>少子化・核家族化の進行を踏まえ、産後間もない産婦に健康診査や産後ケアを実施し、母子の心身の健康保持、産後うつの予防、新生児への虐待予防を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>こども家庭センターの設置</summary><p>こども家庭センターを設置して児童福祉機能と母子保健機能の連携を強化し、全ての妊産婦・子ども・保護者を対象に妊娠期から子育て期まで切れ目のない包括的な支援を提供する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>妊娠・出産の支援体制の構築（産前・産後サポート、産後ケア、施設整備）</summary><p>妊産婦の悩み等の相談支援を行う産前・産後サポート事業と、出産後の母子に心身のケアや育児支援を行う産後ケア事業を実施し、これらを行う市内施設の修繕等を行う施設整備事業を一体的に実施して、安心して出産・子育てができる支援体制を新たに構築する（統合前の要素: 産前・産後サポート事業、産後ケア事業、施設整備事業）。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>子どもの貧困とヤングケアラー</h3>
+    <p class="terms">語: 子どもの貧困とヤングケアラー・ヤングケアラー・生理用品・フードバンク</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/20人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>2</b><span class="of">/22人</span><span class="q">4件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/18人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・向田聡</span><span class="ttl">子どもの貧困対策</span><span class="sum">貧困対策について、夏休みの子どもの食生活の実態把握と手だて、市内のフードバンク支援の状況と利用実績、市や社協と学校が連携して困窮家庭に食料を届ける仕組みの強化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・福井加代子</span><span class="ttl">子ども食堂</span><span class="sum">市内の子ども食堂の現状、子どもの居場所創出支援事業費補助金の思いと交付例、フードバンク事業の状況、子ども食堂の課題を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・佐々木厚子</span><span class="ttl">ヤングケアラーへの支援</span><span class="sum">国が2022年から3年間を支援の集中取組期間と定めたことを踏まえ、安来市のヤングケアラーの現状と、集中取組期間における市の対応を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・佐々木厚子</span><span class="ttl">生理の貧困への対応</span><span class="sum">防災備蓄の生理用品の数量と交換頻度、交換した古い備蓄品の扱いを尋ね、交換時期の備蓄品の無償配布と小・中学校のトイレへの無償の生理用品設置の考えを質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・佐々木厚子</span><span class="ttl">生理用品の無償配布</span><span class="sum">6月の質問後の小・中学校トイレへの生理用品設置の進展と、生理の貧困への今後の取組の進め方を質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・福井加代子</span><span class="ttl">8050問題とヤングケアラー</span><span class="sum">80代の親と50代のひきこもりの子が困窮する8050問題とヤングケアラーについて、市の現状と取組を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・福井加代子</span><span class="ttl">子供の貧困と子ども食堂</span><span class="sum">コロナ禍で全国的に子供の貧困が増える中での安来市の現状を尋ね、平成29年に市内3か所あった子ども食堂のその後の状況と、フードバンク事業のその後の展開を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・佐々木厚子</span><span class="ttl">食品ロス削減の取り組み</span><span class="sum">食品ロス削減推進法の成立を受けた市の取り組みの考えを尋ね、社会福祉協議会のフードバンク事業の活動状況と企業・寺院からの提供内容、個人の協力方法と5年間の取扱量、市長の所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・佐々木厚子</span><span class="ttl">食品ロスの削減</span><span class="sum">長野県松本市の残さず食べよう3010運動の実施、教育施設の給食や食育を通じた啓発の現状と給食の食べ残しの現状、市民や事業者と一体となった持ち帰り運動などの展開、登録型を含むフードバンクの状況、消費期限後の災害備蓄食品の活用を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.0.0</p>
+                    
+                    <p class="project-credit">
+                        安来市議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
