@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エネルギー・環境 — 安来市議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">安来市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../financial/index.html" class="cross-nav-link">財政レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_environment.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">国のエネルギー政策</a></li>
+                            
+                            <li><a href="#topic-02">再生可能エネルギーの導入</a></li>
+                            
+                            <li><a href="#topic-03">脱炭素とカーボンニュートラル</a></li>
+                            
+                            <li><a href="#topic-04">省エネルギーと節電</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 市長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">安来市 · 議会レポート / <b>エネルギー・環境</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">エネルギー・環境</h1>
+  <p class="page-subtitle">
+    安来市議会の一般質問・代表質問について、区分「エネルギー・環境」に属する4の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">国のエネルギー政策</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">24</td><td class="lt25">10</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">再生可能エネルギーの導入</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">12</td><td class="h0">0</td><td class="ge25">35</td><td class="lt25">15</td><td class="lt25">12</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">6</td><td class="h0">0</td><td class="lt25">12</td><td class="lt25">12</td><td class="h0">0</td><td class="lt25">14</td><td class="lt10">6</td><td class="lt25">12</td><td class="lt25">20</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">脱炭素とカーボンニュートラル</a></th>
+            <td class="h0">0</td><td class="lt25">11</td><td class="lt25">13</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">5</td><td class="lt25">23</td><td class="lt10">6</td><td class="lt25">12</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">省エネルギーと節電</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">5</td><td class="lt25">12</td><td class="lt10">5</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>17</td><td>19</td><td>15</td><td>23</td><td>26</td><td>19</td><td>17</td><td>20</td><td>24</td><td>17</td><td>17</td><td>17</td><td>23</td><td>17</td><td>16</td><td>19</td><td>22</td><td>16</td><td>16</td><td>15</td><td>18</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>国のエネルギー政策</h3>
+    <p class="terms">語: 国のエネルギー政策・エネルギー政策・エネルギー基本計画</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt25" data-year="H23"><b>4</b><span class="of">/17人</span><span class="q">4件</span></td><td class="lt25" data-year="H24"><b>2</b><span class="of">/20人</span><span class="q">2件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/24人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/22人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/18人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月07日－03号・一般質問・丸山征司</span><span class="ttl">市のエネルギー政策</span><span class="sum">公共施設や未利用地での太陽光発電と小水力発電の検討結果、山佐運動広場と境谷川での発電、安来干拓地でのメガソーラー誘致の県との協議、ミドルソーラーの推進と啓蒙、布部発電所の固定買取制度に向けた改修、再生可能エネルギー政策の方針を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・原田貴与子</span><span class="ttl">原発への姿勢と避難計画</span><span class="sum">島根原発の再稼働や3号機の稼働、エネルギー政策の転換に対する市長の考えを尋ね、在宅者や就業中の人、施設入居者、要援護者それぞれの避難方法の周知と今後の方策、病院等の避難計画の策定状況、自然エネルギー導入の目標値を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５４回　６月定例会  06月08日－04号・一般質問・勝部幸治</span><span class="ttl">島根原発の再稼働への認識</span><span class="sum">大飯原発の再稼働に向けた国の動きへの認識と、再稼働の最終判断の責任が国と立地自治体のどちらにあると考えるかを尋ね、安全協定に頼らず市長自身の考えを明示すべきことやエネルギー政策の転換について見解を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月05日－02号・代表質問・作野幸憲</span><span class="ttl">快適環境のまちづくり</span><span class="sum">地域公共交通計画の範囲と策定方針、高速バスストップの切川地区活用と利用者調査、買い物代行支援の検討状況、道路・橋梁の定期検査と切川バイパスの早期開通、公共施設の再配置、ハーモニータウン汐彩の値下げの説明と分譲促進策、中海ふれあい公園とエネルギー政策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２３年第　４７回　６月定例会  06月06日－03号・一般質問・佐伯直行</span><span class="ttl">今後のエネルギー政策</span><span class="sum">原発事故を踏まえた今後のエネルギー政策の基本的な考えと現在の取り組み、メガソーラー建設と干拓地やふれあい公園用地の転用の可否、市の建築物への太陽光導入、住宅用太陽光補助の実績と継続・拡充を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４７回　６月定例会  06月09日－04号・一般質問・勝部幸治</span><span class="ttl">電力の供給バランス</span><span class="sum">原発がすべて止まった場合の産業への影響の認識を尋ね、中国電力の夏の供給見通しや他社からの融通の不確実さを挙げて今後のエネルギー政策のあり方を問い、原発は国策であるとの認識と、市長会を通じて国に方針と安全基準を早く示すよう訴えることを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４９回　９月定例会  09月06日－04号・一般質問・田中明美</span><span class="ttl">エネルギー政策の取り組み</span><span class="sum">市が取り組める再生可能エネルギー施策と木質バイオマスの利活用、ＩＳＯ14001等の省エネの成果、電気自動車と急速充電器の導入、レジ袋有料化の効果を尋ね、各事業に目標を設定して取り組む考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月06日－04号・一般質問・田淵秀喜</span><span class="ttl">太陽光発電の推進</span><span class="sum">産業振興とエネルギー政策のうち、新たに建設する一中や消防庁舎など公共施設で自前の電力を賄えるよう太陽光発電を拡大する考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>再生可能エネルギーの導入</h3>
+    <p class="terms">語: 再生可能エネルギーの導入・再生可能エネルギー・自然エネルギー・太陽光発電</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt25" data-year="H21"><b>3</b><span class="of">/26人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="ge25" data-year="H23"><b>6</b><span class="of">/17人</span><span class="q">8件</span></td><td class="lt25" data-year="H24"><b>3</b><span class="of">/20人</span><span class="q">3件</span></td><td class="lt25" data-year="H25"><b>3</b><span class="of">/24人</span><span class="q">4件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt25" data-year="H30"><b>2</b><span class="of">/17人</span><span class="q">2件</span></td><td class="lt25" data-year="R01"><b>2</b><span class="of">/16人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt25" data-year="R03"><b>3</b><span class="of">/22人</span><span class="q">3件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/16人</span><span class="q">3件</span></td><td class="lt25" data-year="R06"><b>3</b><span class="of">/15人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/18人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・澤田秀夫</span><span class="ttl">再生可能エネルギーへの対応</span><span class="sum">主眼を置く再生可能エネルギー、地産地消ビジョンの各方向の計画と取組の具体像、太陽光発電施設を規制する法律の有無、県内で条例により規制する自治体、無秩序な設置への歯止めの考えを質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・内田卓実</span><span class="ttl">遊休農地・荒廃農地</span><span class="sum">市の遊休農地・荒廃農地の近年の推移と原因、増加を抑えるための考え方、千葉県匝瑳市の事例を踏まえた市の営農型太陽光発電の状況を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・向田聡</span><span class="ttl">再エネの地産地消</span><span class="sum">再生可能エネルギー地産地消ビジョンについて、公共施設への設備導入と地域マイクロ水力発電の進捗、安来らしいビジネスモデルの創出と地域振興の好事例づくりの検討状況、制定を目指す再エネ条例の想定内容を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・清水保生</span><span class="ttl">再エネ地産地消ビジョン</span><span class="sum">安来市再生可能エネルギー地産地消ビジョンの各種取組を検討・調整する体制を尋ね、森林資源を活用した市内循環型の新たな産業を森林ビジョンや林業構想に盛り込めないかを質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・向田聡</span><span class="ttl">再エネの地産地消</span><span class="sum">再生可能エネルギー地産地消ビジョンの方向1・方向4について、公共施設への再エネ導入計画、再エネ発電量の引上げと地域マイクロ水力、市民理解の増進方法、補助制度の拡充、地域新電力の参考事例を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・代表質問・清水保生</span><span class="ttl">環境・景観</span><span class="sum">可燃ごみの全量民間委託処理を続ける中での将来の処理や不測の事態への対応策、再生可能エネルギー普及に向けた来年度以降の取組、景観行政団体移行後の本市独自の景観の取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・向田聡</span><span class="ttl">再生可能エネルギーの地産地消</span><span class="sum">安来市再生可能エネルギー地産地消ビジョン策定業務の委託先と委託内容・目的、策定の方法とスケジュール、策定委員会の構成、ソーラーシェアリング（営農型太陽光発電）を取り入れる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・向田聡</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">中電の安全協定回答までの対応の評価、立地自治体並みの協定を求めた理由、回答内容の受け止め、協定締結まで再稼働に意見を述べない姿勢、避難路の危険箇所数、再生可能エネルギーへの転換を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・足立喜信</span><span class="ttl">脱炭素先行地域への申請</span><span class="sum">国の地域脱炭素ロードマップによる全国100か所の脱炭素先行地域に安来市が入るよう国・県に申請する考えを尋ね、粉炭や太陽光発電など民間企業による脱炭素の動きへの市の認識を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・代表質問・岩崎勉</span><span class="ttl">自然環境の保全</span><span class="sum">再生可能エネルギーの普及のほかに地球温暖化対策として考えていることを尋ね、プラスチック資源循環促進法の施行による自治体の具体的対応と一般消費者の暮らしの変化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・原田貴与子</span><span class="ttl">持続可能な地域経済づくり</span><span class="sum">ローカル循環型の地域経済への見解、国の農業政策と市の農業の現状認識、地域おこし協力隊・新規就農支援・集落間連携、地産地消、種子法、小水力等の再生可能エネルギー、中小企業振興基本条例、新安来工業団地の企業誘致を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・三島静夫</span><span class="ttl">耕作放棄地の有効活用</span><span class="sum">災害時対策としての発電施設の分散設置や再生可能エネルギーの推進への見解、林業振興と支援策、伯太地域での木材チップ工場誘致とバイオマス発電を尋ね、耕作放棄地を農林業や畜産振興に使う場合や家畜排せつ物によるバイオマス発電、クルミ栽培での農地転用の可否を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９５回　６月定例会  06月08日－03号・一般質問・原田貴与子</span><span class="ttl">島根原発をめぐる諸問題</span><span class="sum">島根原発3号機の審査申請をめぐり、市内の避難者数と支援策、福島事故の検証の認識と申請受け付けへの所見、宍道断層の延長や鳥取沖西部断層との連動性とひずみ集中帯、専門担当者の増員、避難対象者と安定ヨウ素剤配布、防災教育・避難訓練・在宅要援護者を含む避難計画と30キロに限らない避難計画、立地自治体並みの安全協定、核燃料サイクル、中国電力の不正トラブルへの対処、3号機の過剰な電力、原発ゼロの決断、再生可能エネルギーの目標値と雇用創出を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・代表質問・金山満輝</span><span class="ttl">再生可能エネルギーの利用促進</span><span class="sum">赤江町福井の風力発電施設の稼働状況、水力発電とバイオマス利用施設の状況、再生可能エネルギーとバイオマスエネルギーの利用促進への取り組み、エネルギー計画の策定予定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・原田貴与子</span><span class="ttl">原発事故時の市の対応</span><span class="sum">島根原発の苛酷事故時の市役所の対策本部機能と避難命令までの時間、第2次避難先や30キロ圏の見直し、全市民への周知、安全協定に基づく専門家の配置と3市連携、再稼働を認めない権限についての考えを尋ね、再生可能エネルギーへの転換を進める考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・原田貴与子</span><span class="ttl">島根原発と再稼働</span><span class="sum">福井地裁判決を受けた原子力発電の危険性への市長の所見、宍道断層など活断層の徹底した調査の必要性、安全なエネルギーを求める声の受け止め、市の電力使用量と再生可能エネルギーで賄う目標を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月07日－03号・一般質問・丸山征司</span><span class="ttl">市のエネルギー政策</span><span class="sum">公共施設や未利用地での太陽光発電と小水力発電の検討結果、山佐運動広場と境谷川での発電、安来干拓地でのメガソーラー誘致の県との協議、ミドルソーラーの推進と啓蒙、布部発電所の固定買取制度に向けた改修、再生可能エネルギー政策の方針を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・石倉刻夷</span><span class="ttl">県への重要要望事項</span><span class="sum">県への重要要望事項のうち簡易水道事業統合期限の見直し、民生児童委員の処遇改善と定数・選任状況、企業立地促進施策の拡充、中海架橋の建設促進、切川バイパス2工区の見通しについて要望の経緯と内容を尋ね、関連して安来干拓地調整池などのメガソーラー計画と（仮称）ふれあい公園への太陽光発電所に対する市の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・原田貴与子</span><span class="ttl">原発への姿勢と避難計画</span><span class="sum">島根原発の再稼働や3号機の稼働、エネルギー政策の転換に対する市長の考えを尋ね、在宅者や就業中の人、施設入居者、要援護者それぞれの避難方法の周知と今後の方策、病院等の避難計画の策定状況、自然エネルギー導入の目標値を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・丸山征司</span><span class="ttl">長期的視点に立った財政改善</span><span class="sum">合併算定替えの特例終了による歳入減を見据え、税収増に向けたふるさと教育の充実、公共施設のイルミネーション、芸能などの専門学校誘致、動画やポータルサイトを使った市のPR、保育所広域入所の周知、汐彩団地の販売目標と3割引きの宣伝や定期借地権、市外在住者の市内転居の働きかけ、新たな工業団地の場所と規模、国道9号の渋滞緩和、安来伯太日南線の改良と国道昇格、ふるさと納税の工夫、10キロワット以上の太陽光発電への補助、公共施設の屋根貸し、スマートシティー構想、歳出削減に向けた人員適正化、公共施設更新問題への取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月07日－04号・一般質問・河津清</span><span class="ttl">原発ゼロと自然エネルギー</span><span class="sum">原発ゼロを望む声が多いパブリックコメントや討論型世論調査への市長の所感と、2030年の原発依存度についての市長の立場、脱原発をめざす首長会議への参加を尋ねたうえで、太陽光発電への補助など個人の再生可能エネルギーへの支援と市としての姿勢、小水力発電の可能性と停止したままの既存施設への対応を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月10日－05号・一般質問・丸山征司</span><span class="ttl">公共施設での地産地消</span><span class="sum">市立病院と学校給食での地元食材の割合の引き上げ、地元産木材で建てた公共施設と今後の使用予定、既存の公共施設への太陽光発電の設置に向けた試算と検討の状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月05日－02号・代表質問・佐伯直行</span><span class="ttl">市政運営と公約の検証</span><span class="sum">政権交代に伴う国の経済対策の活用、伯太発電所改修の前倒しと島田干拓地などのメガソーラー、太陽光発電補助の拡充、地方公務員人件費削減と職員採用、切川地区開発の財政影響と県道整備、いじめと体罰への対応、高速バスストップや待機高齢者ゼロ、中海短期大学、乳幼児医療費無料化、住民投票条例、行政評価と外部監査、共同職員採用、地域自治制度などマニフェストの今後のスケジュールを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２３年第　４７回　６月定例会  06月03日－02号・一般質問・中村健二</span><span class="ttl">島根原発の現状と安全対策</span><span class="sum">島根原発と安来市の位置関係と30キロ圏内の居住者数、稼働状況、3号機増設の進捗と市長の所見、津波の安全対策、地域防災計画の見直しを尋ね、老朽化した1・2号機と1号機の運転再開への所見、自然エネルギーやメガソーラーの考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４９回　９月定例会  09月05日－03号・一般質問・田淵秀喜</span><span class="ttl">太陽光発電の設置補助事業</span><span class="sum">3年目となる太陽光発電システム設置補助の2.5年分の実績と申請の内容を尋ね、早期に予算枠が埋まる状況を踏まえたニーズの分析、追加の予算措置や受け付けできなかった個人への連絡など今後の対応を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４９回　９月定例会  09月06日－04号・一般質問・河津清</span><span class="ttl">震災を教訓にした市政運営</span><span class="sum">震災後の市長の所信を尋ね、避難所となる小・中学校の貯水槽・備蓄倉庫・洋式トイレ・自家発電装置の整備、公共施設や学校への再生可能エネルギー導入と国庫補助の確認、原発副読本の使用状況と回収、学校等への沃素剤配備を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４９回　９月定例会  09月06日－04号・一般質問・田中明美</span><span class="ttl">エネルギー政策の取り組み</span><span class="sum">市が取り組める再生可能エネルギー施策と木質バイオマスの利活用、ＩＳＯ14001等の省エネの成果、電気自動車と急速充電器の導入、レジ袋有料化の効果を尋ね、各事業に目標を設定して取り組む考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　５１回１２月定例会  12月06日－03号・一般質問・田中武夫</span><span class="ttl">商工業政策と市内業者の活用</span><span class="sum">商工業政策として、太陽光発電の補助金を市外業者が多く受けている実態を挙げ、下請業者の要件を含めた補助の在り方の見直しと、鳥取県へ委託しているごみ処理を市内業者が担う動きへの協力を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月06日－04号・一般質問・田淵秀喜</span><span class="ttl">太陽光発電の推進</span><span class="sum">産業振興とエネルギー政策のうち、新たに建設する一中や消防庁舎など公共施設で自前の電力を賄えるよう太陽光発電を拡大する考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月07日－05号・一般質問・丸山征司</span><span class="ttl">代替えエネルギーの取り組み</span><span class="sum">原発事故後の市の取り組みとして、公共施設の節電内容と震災前後の消費電力や金額の差、年間電気使用量、ＬＥＤの導入、家庭用太陽光発電補助の金額と件数のバランス、一中・消防庁舎・市庁舎や既存公共施設への太陽光発電の検討、遊休地のメガソーラーと条例制定、小水力発電の候補地調査と風力発電の実績、再生可能エネルギーの新法への申請、廃棄物のエネルギー化の情報収集を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月08日－06号・一般質問・田中武夫</span><span class="ttl">バイオマスタウン構想</span><span class="sum">島根県で初めて公表したバイオマスタウン構想のその後の取り組みが見えないとして現状を尋ね、再生可能エネルギーへの関心が高まる中で、市内に無尽蔵にある竹を使った竹チップや竹パウダーの活用に市独自で真剣に取り組むべきではないかと質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３２回　６月定例会  06月08日－03号・一般質問・河津清</span><span class="ttl">太陽光発電の設置補助</span><span class="sum">国の住宅用太陽光発電の設置補助の復活にあわせ、松江市の例を挙げて地域活性化・経済危機対策臨時交付金も活用した市独自の補助制度を設ける考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３４回　９月定例会  09月04日－04号・一般質問・岡田麻里</span><span class="ttl">環境問題と学校のエコ化</span><span class="sum">政権交代が経済対策など環境問題に及ぼす影響を尋ね、学校のエコ化として市内2校の校庭芝生化の効果と評価、鳥取方式を含む今後の芝生化と維持管理への市の支援、学校への太陽光発電の導入、緑のカーテンなど学校施設のエコ施策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　３９回　３月定例会  03月04日－04号・代表質問・遠藤孝</span><span class="ttl">太陽光発電の補助と設置</span><span class="sum">新年度50基・1,050万円の太陽光発電装置補助の要望に応じた増基・増額と、図書館・広瀬中学校以外に安来第一中学校や市庁舎、消防署など公共施設への設置の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>地球温暖化対策と太陽光発電システム設置補助</summary><p>安来市地球温暖化対策の協議会と連携し、ごみ減量をはじめとする効果的かつ効率的な対策を実施するとともに、太陽光発電システム設置補助を引き続き行い、クリーンエネルギーの利用を普及促進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>地球温暖化対策の推進（地域推進計画・環境イベント・太陽光発電設置補助）</summary><p>「安来市地球温暖化対策地域推進計画」に基づき、省エネルギー、3Rの促進、環境教育などの温暖化対策を市民・事業者・行政の協働で推進する。あわせて環境イベントによる情報提供と環境意識の啓発を行い、個人住宅への太陽光発電システム設置補助を継続して温室効果ガスの抑制に努める。同一段落の3要素を統合した。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>太陽光発電設置補助と環境意識の啓発</summary><p>温室効果ガス抑制のため個人住宅への太陽光発電システム設置補助を継続する。環境イベントでは昨年の「温暖化」に「水質保全」のテーマを加え、関係団体・事業者と連携して環境意識を啓発する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>伯太小水力発電所の改修調査設計</summary><p>発電停止している伯太小水力発電所を、再生可能エネルギーの固定価格買取制度が適用になるよう改修するため、調査設計を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>事業所用太陽光発電システム設置補助の新設</summary><p>個人住宅への太陽光発電システム設置補助に加え、新たに事業所用太陽光発電システム設置補助を設け、市域から排出される温室効果ガスの抑制に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>環境意識の啓発（やすぎ環境フェア・地球温暖化対策地域協議会との連携）</summary><p>やすぎ環境フェアの開催などを通じて省エネルギーなどの環境意識啓発を行う。自然エネルギー利用の普及促進に向け、地球温暖化対策地域協議会と連携して環境に関する情報提供を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>再生可能エネルギー設備導入補助（ペレットストーブ追加）</summary><p>地球温暖化防止のため、太陽光発電システム設置への補助対象にペレットストーブ等を新たに加え、木質バイオマス資源の有効活用を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>伯太発電所の改修</summary><p>伯太発電所を改修し、再生可能エネルギーの固定価格買取制度の適用に向けた整備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの普及（バイオマスボイラー導入・設置助成）</summary><p>同一段落の2要素を統合: (1)総合文化ホールへのバイオマスボイラー導入、(2)市民の太陽光発電・ペレットストーブ等の設置への助成の継続。再生可能エネルギーの普及と温室効果ガス削減、エネルギーの地産地消を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの普及とごみのリサイクル</summary><p>太陽光やバイオマスなど再生可能エネルギーの利用普及や、ごみのリサイクルなど環境に優しい取り組みを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>脱炭素の推進（2050年ゼロ目標・再エネ普及・ごみ減量）</summary><p>統合: (1)2050年に二酸化炭素実質排出量ゼロを長期目標に掲げた温暖化対策、(2)太陽光発電・太陽熱利用など再生可能エネルギー設備の普及促進、(3)小水力発電所の施設改修、(4)分別収集によるごみの減量化・再資源化。環境負荷の少ない持続可能な地域社会を次世代につなぐために取り組む。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>再生可能エネルギー地産地消ビジョンに基づく取組</summary><p>本年3月策定の安来市再生可能エネルギー地産地消ビジョンに基づき、公共施設等への再エネ設備導入調査など市に合った活用方法を検討するとともに、中学・高校生への学習会や脱炭素社会の必要性についての情報発信・教材づくりを行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>住宅等への再生可能エネルギー設備導入補助の拡充</summary><p>市民の脱炭素の取組を支援するため、一般住宅等への再エネ設備導入補助を拡充する。再エネへの移行を促し、市民と一体でゼロカーボンシティ宣言の実現に向けた取組を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>再生可能エネルギー設備設置補助の拡充</summary><p>太陽光発電設備・太陽熱利用設備の設置補助事業に新たに木質バイオマス熱利用設備を追加し、再生可能エネルギーの普及促進を図り、2050ゼロカーボンシティの実現を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの利用推進（ペロブスカイト太陽電池の情報発信・地域共生条例の検討）</summary><p>ペロブスカイト太陽電池について市民に広く知ってもらうため情報発信を行う。また市内に設置される再生可能エネルギー設備が地域と共生して普及するよう、国の法令やガイドラインを補完する条例の令和7年度中の制定を目指して検討する（統合前の要素: ペロブスカイト太陽電池の情報発信、再エネ設備に関する条例の検討）。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>脱炭素とカーボンニュートラル</h3>
+    <p class="terms">語: 脱炭素とカーボンニュートラル・脱炭素・カーボンニュートラル・カーボンシティ・ゼロカーボン・ゼロカーボンシティ・地球温暖化・ＣＯ２削減・ＣＯ２排出量・CO2削減・CO2排出量</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt25" data-year="H18"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="lt25" data-year="H19"><b>2</b><span class="of">/15人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt10" data-year="H21"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/20人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt25" data-year="R03"><b>5</b><span class="of">/22人</span><span class="q">6件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/16人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/18人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・湯浅正志</span><span class="ttl">温室効果ガスの排出削減</span><span class="sum">第2次安来市地球温暖化対策実行計画の進捗状況、Ｊ－クレジット制度の仕組みと市・近隣市町村の活用事例、市の活用計画、水稲栽培における中干し期間の延長の内容とそれを活用したＪ－クレジットの取組方針を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・原瀬清正</span><span class="ttl">地球温暖化対策実行計画</span><span class="sum">第2次安来市地球温暖化対策実行計画の基本的な考え方、13％以上とした削減目標の考え方、昨年度の取組と実績、アンケート調査の活用、地域協議会との連携・協働、市民への協力依頼と周知、実際の削減量と目標達成・計画見直しの考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・岡本早智雄</span><span class="ttl">令和5年度地方財政計画</span><span class="sum">令和5年度地方財政計画について、地域デジタル社会推進費の増額対象か否かと事業内容、脱炭素化推進事業債の活用と公営企業の対応、リスキリングの定義と市の取組、地域おこし協力隊とローカルスタートアップ支援制度、緊急浚渫推進事業の実績と予定、県管理河川と拡充への働きかけを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・澤田秀夫</span><span class="ttl">地球温暖化対策実行計画</span><span class="sum">SDGsの気候変動対策として第1期計画の実績と第2期計画との相違点、ライフスタイル転換の予算、環境教育、脱炭素なまちづくり、循環型社会の4重点施策の具体的取組、目標未達時のペナルティーの有無を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・岡本早智雄</span><span class="ttl">地方財政計画への市の対応</span><span class="sum">令和4年度地方財政計画の新規・拡充事業のうち、公共施設等適正管理と脱炭素化事業、公立病院経営強化、ドローン整備等の消防防災力強化、緊急しゅんせつ推進事業の実績と今後の予定、県管理河川への働きかけについて市の対応を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・湯浅正志</span><span class="ttl">脱炭素社会の実現</span><span class="sum">令和3年3月に策定された第2次安来市地球温暖化対策実行計画の現時点での進捗状況と、計画を進める中での課題や財源確保が必要な状況を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・足立喜信</span><span class="ttl">脱炭素先行地域への申請</span><span class="sum">国の地域脱炭素ロードマップによる全国100か所の脱炭素先行地域に安来市が入るよう国・県に申請する考えを尋ね、粉炭や太陽光発電など民間企業による脱炭素の動きへの市の認識を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・代表質問・澤田秀夫</span><span class="ttl">脱炭素社会への取組</span><span class="sum">安来市のCO2排出量の現状、カーボンニュートラルの実現に向けた本市の今後の取組方針、CO2削減に取り組む企業への市の支援方針の3点を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・代表質問・岩崎勉</span><span class="ttl">自然環境の保全</span><span class="sum">再生可能エネルギーの普及のほかに地球温暖化対策として考えていることを尋ね、プラスチック資源循環促進法の施行による自治体の具体的対応と一般消費者の暮らしの変化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・澤田秀夫</span><span class="ttl">原子力発電事業への考え</span><span class="sum">島根原発2号機の再稼働をめぐる議論の加速が見込まれる中、前市長のベストミックスの考えや国の脱炭素社会の推進を踏まえ、田中市長の原子力発電事業に対する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３４回　９月定例会  09月07日－05号・一般質問・佐伯直行</span><span class="ttl">地球温暖化への取り組み</span><span class="sum">地域の特性に応じた温暖化対策への考え、一事業所としての市の率先的な取り組み状況、市民への情報提供と対策推進の取り組み、4月に設置された協議会の計画期間、県内の取り組み事例と成果を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２４回１２月定例会  12月06日－03号・一般質問・嘉本祐一</span><span class="ttl">エコオフィス計画</span><span class="sum">国や県の温室効果ガスの状況と県内各市のエコオフィス計画がＣＯ２削減目標を明確にしていることを挙げ、平成19年度から23年度までの安来市エコオフィス計画で二酸化炭素削減の数値に関与していく考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１９年第　２４回１２月定例会  12月06日－03号・一般質問・岡田麻里</span><span class="ttl">市の地球温暖化対策</span><span class="sum">新庁舎建設における温暖化対策、沖縄の庁舎視察や地球温暖化防止市民条例・屋上緑化・緑のカーテンの例を挙げた市の今後の取り組み、荒廃する民有の竹林への啓発活動を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１８年第　１５回　６月定例会  06月02日－02号・一般質問・田中武夫</span><span class="ttl">竹のバイオマス利活用</span><span class="sum">地球温暖化防止に向けたバイオマスの利活用が進んでいない現状を踏まえ、里山を侵す孟宗竹を再生可能な資源として竹フローリングなどの建材や農業用資材、家畜ふんの堆肥化の促進に生かし新たな雇用につなげられないかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１９年第　２０回　３月定例会  03月07日－04号・一般質問・梶谷厚</span><span class="ttl">温暖化対策とノーマイカーデー</span><span class="sum">地球温暖化対策の取り組み状況、ノーマイカーデーの看板の増設と実施日の拡大、市職員の実施状況とイエローバスの利用状況、最終便を遅らせるダイヤ改正、情報科学高校へのバス乗り入れ、食用廃油の公用車燃料化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>地球温暖化対策と太陽光発電システム設置補助</summary><p>安来市地球温暖化対策の協議会と連携し、ごみ減量をはじめとする効果的かつ効率的な対策を実施するとともに、太陽光発電システム設置補助を引き続き行い、クリーンエネルギーの利用を普及促進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>地球温暖化対策の推進（地域推進計画・環境イベント・太陽光発電設置補助）</summary><p>「安来市地球温暖化対策地域推進計画」に基づき、省エネルギー、3Rの促進、環境教育などの温暖化対策を市民・事業者・行政の協働で推進する。あわせて環境イベントによる情報提供と環境意識の啓発を行い、個人住宅への太陽光発電システム設置補助を継続して温室効果ガスの抑制に努める。同一段落の3要素を統合した。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>環境意識の啓発（やすぎ環境フェア・地球温暖化対策地域協議会との連携）</summary><p>やすぎ環境フェアの開催などを通じて省エネルギーなどの環境意識啓発を行う。自然エネルギー利用の普及促進に向け、地球温暖化対策地域協議会と連携して環境に関する情報提供を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>再生可能エネルギー設備導入補助（ペレットストーブ追加）</summary><p>地球温暖化防止のため、太陽光発電システム設置への補助対象にペレットストーブ等を新たに加え、木質バイオマス資源の有効活用を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>脱炭素の推進（2050年ゼロ目標・再エネ普及・ごみ減量）</summary><p>統合: (1)2050年に二酸化炭素実質排出量ゼロを長期目標に掲げた温暖化対策、(2)太陽光発電・太陽熱利用など再生可能エネルギー設備の普及促進、(3)小水力発電所の施設改修、(4)分別収集によるごみの減量化・再資源化。環境負荷の少ない持続可能な地域社会を次世代につなぐために取り組む。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>再生可能エネルギー地産地消ビジョンに基づく取組</summary><p>本年3月策定の安来市再生可能エネルギー地産地消ビジョンに基づき、公共施設等への再エネ設備導入調査など市に合った活用方法を検討するとともに、中学・高校生への学習会や脱炭素社会の必要性についての情報発信・教材づくりを行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>住宅等への再生可能エネルギー設備導入補助の拡充</summary><p>市民の脱炭素の取組を支援するため、一般住宅等への再エネ設備導入補助を拡充する。再エネへの移行を促し、市民と一体でゼロカーボンシティ宣言の実現に向けた取組を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>再生可能エネルギー設備設置補助の拡充</summary><p>太陽光発電設備・太陽熱利用設備の設置補助事業に新たに木質バイオマス熱利用設備を追加し、再生可能エネルギーの普及促進を図り、2050ゼロカーボンシティの実現を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>ペットボトルのボトルtoボトル水平リサイクル</summary><p>現在食品トレーなどにリサイクルしているペットボトルについて、民間企業と連携し使用済みペットボトルを新たなペットボトルに再生する水平リサイクルを開始し、地球温暖化対策と循環型社会に向けた市民意識の醸成を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>省エネルギーと節電</h3>
+    <p class="terms">語: 省エネルギーと節電・省エネ・節電</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt25" data-year="H23"><b>2</b><span class="of">/17人</span><span class="q">2件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/20人</span><span class="q">1件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/24人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/22人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/18人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・岩崎勉</span><span class="ttl">建築関係法改正への対応</span><span class="sum">改正建築基準法と改正建築物省エネ法について、法改正の背景と趣旨、新たに建築確認が必要となる地域、事業者や市民への周知、建築パトロールの状況、省エネ基準の対応範囲と在来工法の木造住宅の扱いや補助金を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月10日－04号・一般質問・田中武夫</span><span class="ttl">行政施設の節電対策</span><span class="sum">3月議会で取り上げたＰＰＳ事業への取り組み状況と他市にできて安来市にできない理由、レンタル方式も含む各施設のＬＥＤ化の対応状況と市立病院などでの導入、基本料金を下げる空調機節電システムの認識を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月06日－04号・一般質問・田中武夫</span><span class="ttl">行政施設の省エネ化</span><span class="sum">前回の議会で取り上げた行政施設の省エネ化について、その後の取り組みの状況を問うた。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６５回１２月定例会  12月05日－03号・一般質問・作野幸憲</span><span class="ttl">市の情報化計画のあり方</span><span class="sum">予算に占める情報化経費やパソコン・サーバー等の台数と更新計画、メンテナンス料と回線使用料の推移を確かめたうえで、情報化計画の見直しと市民への公開、専門人材の育成とＩＴ技術者の採用、総合計画等での位置づけ、行革の実績と自治体クラウドやペーパーレス会議・省エネ対策、学校のＩＣＴ教育やホームページと教員の指導力向上、ＩＣＴを活用した住民サービスと予算確保を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５４回　６月定例会  06月08日－04号・一般質問・岡田麻里</span><span class="ttl">防災・減災対策の充実</span><span class="sum">被災者支援システムの導入、消防バイク隊の配置、アマチュア無線技士との協力体制、遠隔地の自治体とのホームページ代理掲載、空き家対策と空き家再生等推進事業の活用、防災教育と節電教育、学校施設のマンホールトイレ・非構造部材の耐震点検・省エネルギー対策と一中の非構造部材への取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２３年第　４９回　９月定例会  09月06日－04号・一般質問・田中明美</span><span class="ttl">エネルギー政策の取り組み</span><span class="sum">市が取り組める再生可能エネルギー施策と木質バイオマスの利活用、ＩＳＯ14001等の省エネの成果、電気自動車と急速充電器の導入、レジ袋有料化の効果を尋ね、各事業に目標を設定して取り組む考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月07日－05号・一般質問・丸山征司</span><span class="ttl">代替えエネルギーの取り組み</span><span class="sum">原発事故後の市の取り組みとして、公共施設の節電内容と震災前後の消費電力や金額の差、年間電気使用量、ＬＥＤの導入、家庭用太陽光発電補助の金額と件数のバランス、一中・消防庁舎・市庁舎や既存公共施設への太陽光発電の検討、遊休地のメガソーラーと条例制定、小水力発電の候補地調査と風力発電の実績、再生可能エネルギーの新法への申請、廃棄物のエネルギー化の情報収集を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４４回１２月定例会  12月06日－03号・一般質問・中村健二</span><span class="ttl">ファシリティマネジメント</span><span class="sum">佐倉市長を招いた職員研修の目的と参加人数、職員の評価、ＩＳＯ14001や省エネ法とのつながり、ＦＭという名称のわかりにくさを尋ね、分庁方式を含む推進の基本的な考え方と専門組織の体制、導入時期を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２４回１２月定例会  12月05日－02号・一般質問・嶋田豊昭</span><span class="ttl">石油価格高騰の影響</span><span class="sum">原油価格が約2倍に高騰しバス事業に既に影響が出る中、冬期の庁舎・公共施設や指定管理者の施設の暖房など管理経費への影響見込み、平成20年度予算編成への影響、石油価格の今後の見通し、分かりやすい省エネの実践の呼びかけの考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>地球温暖化対策の推進（地域推進計画・環境イベント・太陽光発電設置補助）</summary><p>「安来市地球温暖化対策地域推進計画」に基づき、省エネルギー、3Rの促進、環境教育などの温暖化対策を市民・事業者・行政の協働で推進する。あわせて環境イベントによる情報提供と環境意識の啓発を行い、個人住宅への太陽光発電システム設置補助を継続して温室効果ガスの抑制に努める。同一段落の3要素を統合した。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>環境意識の啓発（やすぎ環境フェア・地球温暖化対策地域協議会との連携）</summary><p>やすぎ環境フェアの開催などを通じて省エネルギーなどの環境意識啓発を行う。自然エネルギー利用の普及促進に向け、地球温暖化対策地域協議会と連携して環境に関する情報提供を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.0.1</p>
+                    
+                    <p class="project-credit">
+                        安来市議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>

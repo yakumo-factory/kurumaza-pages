@@ -1,0 +1,3658 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>観光・文化・交流 — 奥出雲町議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">奥出雲町 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+                    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+                        <div class="cross-nav-inner">
+                            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+                            
+                        </div>
+                    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_tourism.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">観光振興と交流人口</a></li>
+                            
+                            <li><a href="#topic-02">インバウンド</a></li>
+                            
+                            <li><a href="#topic-03">文化財と日本遺産</a></li>
+                            
+                            <li><a href="#topic-04">スポーツ振興</a></li>
+                            
+                            <li><a href="#topic-05">図書館と生涯学習</a></li>
+                            
+                            <li><a href="#topic-06">国際交流と姉妹都市</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 町長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">奥出雲町 · 議会レポート / <b>観光・文化・交流</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">観光・文化・交流</h1>
+  <p class="page-subtitle">
+    奥出雲町議会の一般質問・代表質問について、区分「観光・文化・交流」に属する6の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">観光振興と交流人口</a></th>
+            <td class="ge25">36</td><td class="ge25">36</td><td class="lt25">18</td><td class="ge25">25</td><td class="ge25">42</td><td class="lt25">18</td><td class="ge25">33</td><td class="ge25">33</td><td class="lt25">23</td><td class="ge25">38</td><td class="ge25">33</td><td class="lt10">8</td><td class="ge25">38</td><td class="ge25">31</td><td class="lt25">23</td><td class="ge25">38</td><td class="ge25">36</td><td class="lt10">9</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">インバウンド</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">8</td><td class="lt10">9</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">文化財と日本遺産</a></th>
+            <td class="lt25">14</td><td class="ge25">27</td><td class="lt25">18</td><td class="ge25">38</td><td class="ge25">33</td><td class="ge25">27</td><td class="lt25">22</td><td class="ge25">42</td><td class="ge25">31</td><td class="ge25">38</td><td class="ge25">33</td><td class="ge25">25</td><td class="ge25">31</td><td class="ge25">31</td><td class="ge25">31</td><td class="lt10">8</td><td class="ge25">73</td><td class="lt10">9</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">スポーツ振興</a></th>
+            <td class="h0">0</td><td class="lt10">9</td><td class="h0">0</td><td class="lt25">12</td><td class="lt25">17</td><td class="lt10">9</td><td class="h0">0</td><td class="lt25">17</td><td class="h0">0</td><td class="lt25">23</td><td class="h0">0</td><td class="lt10">8</td><td class="ge25">31</td><td class="ge25">31</td><td class="lt25">23</td><td class="lt25">15</td><td class="ge25">27</td><td class="lt10">9</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">図書館と生涯学習</a></th>
+            <td class="lt25">14</td><td class="lt10">9</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="lt25">18</td><td class="lt25">11</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">15</td><td class="lt25">18</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">国際交流と姉妹都市</a></th>
+            <td class="lt10">7</td><td class="lt10">9</td><td class="lt10">9</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>14</td><td>11</td><td>11</td><td>8</td><td>12</td><td>11</td><td>9</td><td>12</td><td>13</td><td>13</td><td>12</td><td>12</td><td>13</td><td>13</td><td>13</td><td>13</td><td>11</td><td>11</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>観光振興と交流人口</h3>
+    <p class="terms">語: 観光振興と交流人口・観光振興・観光客・交流人口・観光施設・観光資源・宿泊施設・おもてなし・誘客・観光客誘致</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="ge25" data-year="H21"><b>5</b><span class="of">/14人</span><span class="q">5件</span></td><td class="ge25" data-year="H22"><b>4</b><span class="of">/11人</span><span class="q">5件</span></td><td class="lt25" data-year="H23"><b>2</b><span class="of">/11人</span><span class="q">3件</span></td><td class="ge25" data-year="H24"><b>2</b><span class="of">/8人</span><span class="q">5件</span></td><td class="ge25" data-year="H25"><b>5</b><span class="of">/12人</span><span class="q">8件</span></td><td class="lt25" data-year="H26"><b>2</b><span class="of">/11人</span><span class="q">4件</span></td><td class="ge25" data-year="H27"><b>3</b><span class="of">/9人</span><span class="q">3件</span></td><td class="ge25" data-year="H28"><b>4</b><span class="of">/12人</span><span class="q">6件</span></td><td class="lt25" data-year="H29"><b>3</b><span class="of">/13人</span><span class="q">3件</span></td><td class="ge25" data-year="H30"><b>5</b><span class="of">/13人</span><span class="q">8件</span></td><td class="ge25" data-year="R01"><b>4</b><span class="of">/12人</span><span class="q">4件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="ge25" data-year="R03"><b>5</b><span class="of">/13人</span><span class="q">7件</span></td><td class="ge25" data-year="R04"><b>4</b><span class="of">/13人</span><span class="q">5件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/13人</span><span class="q">3件</span></td><td class="ge25" data-year="R06"><b>5</b><span class="of">/13人</span><span class="q">8件</span></td><td class="ge25" data-year="R07"><b>4</b><span class="of">/11人</span><span class="q">4件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・内田隆穂</span><span class="ttl">タイル芸術品と観光資源</span><span class="sum">教育委員会がサポートしたイエッケ・ファン・ローン氏のタイル芸術品の目的と展示・活用の計画、町の施設での展示を拒否し撤去を要請した事実と理由を尋ね、地域おこし協力隊の赴任を機にタイル芸術品を観光資源として活用する考え、補助金に頼らず自治会に伴走する支援の仕組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・北村千寿</span><span class="ttl">世界農業遺産の認定</span><span class="sum">世界農業遺産の認定に向けた取組の進捗と現地調査後の認定率、認定後の取組を尋ね、旧鳥上小学校校庭のたたら体験学習施設を一般向けの研修に使う考えと校舎の活用、観光客誘致のための未整備箇所の整備を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・内田裕紀</span><span class="ttl">さらなる観光振興施策</span><span class="sum">世界農業遺産の認定を受けた視察や観光のモデルコースと料金の検討内容を尋ね、視察料の検討、斐乃上温泉や佐白温泉の再稼働を見据えた近隣市町との相場を踏まえた入湯税での経営的な優位性への配慮、観光振興やオーバーツーリズム対策の財源としての宿泊税の導入を質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・糸原壽之</span><span class="ttl">観光入り込み数と今後の観光</span><span class="sum">今年春から秋までのそば店、博物館等、自然公園等、農泊、温泉の入り込み客数と、次期の入り込み客数の目標、その達成のための具体的な手だて、観光資源を生かした誘客のコンセプトを尋ね、世界農業遺産の名称にある「再適用」の意味を質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・落合孝行</span><span class="ttl">官民による観光振興計画</span><span class="sum">世界農業遺産認定後の観光関係の民間事業者との方針や目標のすり合わせの状況を尋ね、官民で方針を見える化した観光振興計画の策定と、世界農業遺産を生かす民間の動きを補助金や地域商業重点支援事業費補助金の周知・活用で後押しすることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第2回定例会・一般質問・内田精彦</span><span class="ttl">観光列車あめつちの誘客</span><span class="sum">観光列車「あめつち」の木次線乗り入れに関し、木次線観光誘客プロジェクトチームの2024年度初会合で確認されたツアーの造成と販売促進の具体的な内容と実施状況を質した。</span></li>
+          
+          <li><span class="who">令和6年第2回定例会・一般質問・内田雅人</span><span class="ttl">仁多集合庁舎の有効活用</span><span class="sum">国道314と432が交差する仁多集合庁舎について、空きの多い1階・3階や広い敷地を道の駅など誘客に有効活用できる可能性と県への働きかけを町長と副町長に質した。</span></li>
+          
+          <li><span class="who">令和6年第2回定例会・一般質問・内田裕紀</span><span class="ttl">さらなる観光振興施策</span><span class="sum">令和5年の観光入り込み客数が過去最高となったことを踏まえ、100万人を目指す新たな観光施策、玉峰山荘の客室増室など地域資源を活用した滞在型・体験型の旅行商品の造成、「ＶＩＶＡＮＴ」や映画「砂の器」50周年にちなむ菓子や酒などの特産品開発を質した。</span></li>
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・糸原文昭</span><span class="ttl">観光振興とインバウンド誘致</span><span class="sum">町内の宿泊人数や来町した外国人の人数の推移を尋ね、境港に寄港するクルーズ船の乗客への町の対応やＰＲ、インバウンドを含めた観光誘致の考えとトワイライトエクスプレス瑞風の客を町へ招くＪＲとの調整、雲南市・飯南町と連携した広域的な観光事業の実施、町としての観光の位置づけと今後の発展を質した。</span></li>
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・北村千寿</span><span class="ttl">神話を生かした観光振興</span><span class="sum">町民一日議会で横田高校生が提案した「奥出雲ｂｏｏｋ」を観光地や飲食店に置き高校生が作ったことをメディアへ発信する考えを尋ね、ヤマタノオロチなど神話を加えた観光振興への町の考えを質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・内田精彦</span><span class="ttl">木次線の観光利用</span><span class="sum">観光列車あめつちの木次線での今期約1,800人・平均利用率約7割の捉え方と上り下りの乗車率の差、運行の増発などJR西日本への要望の考えを尋ね、三井野原駅で降りる観光客へのリーフレット作成とアンケート実施を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・内田雅人</span><span class="ttl">城山の雲海</span><span class="sum">須我非山城がある城山の山頂から見える雲海について、展望の確保や道路の整備を行い観光資源としてPRすることへの町長の考えを質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・北村千寿</span><span class="ttl">たたら体験による観光振興</span><span class="sum">鳥上小学校に隣接するたたら体験学習施設の一般向け活用の課題と検討結果を尋ね、観光資源を面的につなげて滞在期間を長くすることへの見解と、鉄文化の普及啓発を観光振興につなげる取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">新しい観光誘客</span><span class="sum">「おてつたび」や大田市の保育園留学を例にした暮らしと体験をつなげた新しい旅の提案と取組状況、農泊をきっかけにした移住の実例、移住者への片道交通費の支援、インバウンドマーケティングの取組状況を質した。</span></li>
+          
+          <li><span class="who">令和5年第3回定例会・一般質問・石原武志</span><span class="ttl">木次線の利活用</span><span class="sum">再構築協議会制度の創設を受けた国の方針への対応策、三段スイッチバックを生かし観光に特化した路線として関係人口や交流人口の増大につなげる考え、駅を住民に開放するマイレールの取組、ラストランを迎えるトロッコ列車を三井野原あたりに展示する考えを質した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・小田川謙一</span><span class="ttl">誘客増と受入れ体制</span><span class="sum">充電スタンドは来訪手段や目的、滞在時間を調査したうえで設置場所と数を明確にすべきとし、誘客増と滞在時間を延ばす受入れ体制の方策、観光庁の空間形成プランの手引きに沿った多様な主体による検討や西城エコガイドマップのような取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回定例会・一般質問・北村千寿</span><span class="ttl">行政組織改正の成果と課題</span><span class="sum">4月からの行政組織改正について、農業遺産の活用や土木人材の育成など7つの課題に対する成果と課題、今後の具体的な取組を尋ね、観光客の滞在につながる体験型企画を地域と一体で進め民主体へ移す考えと、福井県の例に倣い県が土木技術職を多く採用して市町へ派遣するよう提案、要望する考えを質した。</span></li>
+          
+          <li><span class="who">令和4年第4回定例会・一般質問・糸原壽之</span><span class="ttl">「あめつち」の受入れ体制</span><span class="sum">2024年度から米子－出雲横田間で運行する観光列車「あめつち」について、運行計画の町内周知とJRが検討する3点に対するダイヤの申入れ、2023年度上期の試験運行に併せた受入れのリハーサル、横田駅での待ち時間の二次交通としての奥出雲交通バス、木次線観光誘客プロジェクトチームの構成と町内の受入れ体制、観光協会の試乗報告と役割、芸備線協議への好影響を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・内田裕紀</span><span class="ttl">観光振興と第三セクター</span><span class="sum">日本遺産「出雲國たたら風土記」の重点支援地域指定を好機に国の補助事業を活用した構成文化財の整備や観光ガイダンス機能の強化を尋ね、債務超過の状態にある株式会社奥出雲振興への速やかな対策として無償減資と町民持ち株会による中小企業化を示し、酒蔵の改善策の早急な検討を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・北村千寿</span><span class="ttl">世界農業遺産の経済効果</span><span class="sum">世界農業遺産に認定された場合の観光客の来町を町の経済につなげるため、農泊のほかに検討している取組と、仁多米・奥出雲和牛・そばなど農産物で経済につながる具体策を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・糸原文昭</span><span class="ttl">コロナ5類移行後の対応</span><span class="sum">5類への移行後の奥出雲病院等の医療体制と院内感染の想定・対応、停滞した町の経済の立て直しと大田市・浜田市のようなプレミアム付商品券の発売、国内外の観光客の受入れ対応とSNSを生かした誘客を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・北村千寿</span><span class="ttl">たたら体験施設の一般利用</span><span class="sum">鳥上小学校に隣接するたたらの体験学習施設を一般の方向けのたたら体験研修の場として年数回利用し、宿泊を伴う滞在やできた玉鋼でのナイフ作りなど観光振興につなげることを提起した。</span></li>
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・内田雅人</span><span class="ttl">世界農業遺産と経済効果</span><span class="sum">農業遺産アクションプランにある誇りの創出・観光客の増加・農畜産物のブランド化の具体的施策を尋ね、学校でのＰＲに対する生徒の反応と、農産物認証制度の創設時期や町長任期中の実現への思いを質した。</span></li>
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">コロナ禍の観光振興</span><span class="sum">広島・岡山の緊急事態宣言で観光客が減る中、奥出雲の新しい観光の目玉となる企画を尋ね、雲海や星が見える場所でのキャンプなど選択肢を広げる検討と、仕事が減った観光業の従業員への休業補償の考えを質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・北村千寿</span><span class="ttl">独自の観光ガイド組織</span><span class="sum">世界農業遺産の認定を前提とした対応として、観光案内に加えて町のＰＲを行う奥出雲町独自のボランティアガイド組織の設立と、棚田に至った経緯など観光客に分かりやすい看板の棚田展望台等への設置を質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・糸原壽之</span><span class="ttl">列車待合時間の観光開発</span><span class="sum">出雲横田駅で約2時間の滞在時間が生じるダイヤを生かし駅周辺の観光資源を巡る新たな観光を開発するため、駅前への町内3温泉の足湯場の設置と観光案内所への貸出電動自転車の配備を提起した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・糸原壽之</span><span class="ttl">秋の観光客への対応</span><span class="sum">この秋の行楽シーズンに食堂などで3時間を超える待ち時間が出るほど観光客が多かったことへの感想と、にぎわいを続けるための具体的な施策を尋ね、政策的にそば屋を2軒つくることを質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・内田精彦</span><span class="ttl">木次線観光列車運行検討会</span><span class="sum">10月13日の第3回木次線観光列車運行検討会について、ＪＲ西日本がトロッコ列車以外の観光列車も木次線では難しいとした内容、運行可能な形態と経費負担の提示を求めたことへの回答、観光列車と沿線地域の観光振興をセットにした議論への町長の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第3回定例会・一般質問・内田雅人</span><span class="ttl">コロナ後の観光誘客戦略</span><span class="sum">新型コロナで入り込み客数が落ち込む中、誰をターゲットに何を武器にどう訴求するかの具体的な戦略、マイクロツーリズムの意味、想定する体験型観光の内容、亀嵩温泉周辺のグランピング構想を戦略に位置付けるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第2回定例会・一般質問・糸原壽之</span><span class="ttl">農業遺産認定の経済効果</span><span class="sum">日本農業遺産の認定による経済効果を何年間で幾らと試算しその内訳はどうかを尋ね、鉄穴残丘や棚田を訪れる観光客のための二次交通への配慮と計画を質した。</span></li>
+          
+          <li><span class="who">令和元年第3回定例会・一般質問・川西明徳</span><span class="ttl">町民の森構想の進捗</span><span class="sum">6月議会で用地取得費4,600万円を計上した町民の森・亀嵩団地の取得について、玉峰山の水源涵養・景観・観光資源を守り玉峰山荘と一体で取り組むとする地域振興計画の推進体制と進捗状況を質した。</span></li>
+          
+          <li><span class="who">令和元年第3回定例会・一般質問・藤原和範</span><span class="ttl">滞在型旅行と農泊の展開</span><span class="sum">滞在型旅行・農泊について、町の豊かな自然や観光資源、日本農業遺産等を絡めて新たな観光戦略としてどのように展開するのかを問うた。</span></li>
+          
+          <li><span class="who">令和元年第3回定例会・一般質問・村尾明利</span><span class="ttl">玉峰山の観光資源開発</span><span class="sum">6月議会で取得を決めた玉峰山の山林について、安来市の月山富田城址の整備を例に挙げ、遊歩道の整備や山頂付近の雑木の整理を年次的・計画的に進め山頂から亀嵩地域の眺望を実現することを求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第2回定例会・一般質問・糸原壽之</span><span class="ttl">ふるさと納税の今後の方針</span><span class="sum">ふるさと納税を財源とした看板的な事業、寄附者の県別人数と町出身者の別、使途の希望、クラウドファンディングの取組状況を尋ね、事業の趣旨や目標を明示した募集と成果の報告、寄附者との交流や意見募集、町が補助するイベントや祭りへの招待状の送付、観光施設や公民館への返礼品等を載せたパンフレットの設置を質した。</span></li>
+          
+          <li><span class="who">平成30年第3回定例会・一般質問・藤原和範</span><span class="ttl">そばどころ奥出雲の振興</span><span class="sum">農業遺産認定申請を契機に官民一体で奥出雲町をさらなるそばどころとして知名度向上とＵ・Ｉターン、観光誘客につなげる考えを尋ね、横田小そばなど町内産ソバの栽培奨励金増額や生産者組合の設置、そば店出店への支援、空き店舗や古民家の活用への支援を質した。</span></li>
+          
+          <li><span class="who">平成30年第3回定例会・一般質問・内田勇</span><span class="ttl">観光資源を生かす観光振興</span><span class="sum">三井野原駅で受けたトロッコ列車の客を観光バスで町内の観光地を巡って三成駅に送るツアー、木次線沿線や国道沿いの里山に桜などの花木を植える新たな観光スポットづくり、そばやエゴマによる奥出雲名物応援宣言でのブランド化と着地型観光の定着を質した。</span></li>
+          
+          <li><span class="who">平成30年第3回定例会・一般質問・村尾明利</span><span class="ttl">無電柱化の推進</span><span class="sum">国土交通省の無電柱化推進計画を踏まえ、農業遺産登録などを見据えて防災や景観形成、観光振興の観点から本町にふさわしい農村風景を整える施策として長期展望に立った無電柱化の推進を提起した。</span></li>
+          
+          <li><span class="who">平成30年第3回定例会・一般質問・糸原壽之</span><span class="ttl">奥出雲の味を生かす観光</span><span class="sum">所信表明の観光振興に関し、仁多米や仁多牛、そばなど奥出雲の食を観光の1ジャンルとして位置づけ、町長の言葉や行政の印刷物で施設と同等に奥出雲の味を表現し発信することを提起した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・石原武志</span><span class="ttl">インバウンドと観光振興</span><span class="sum">本町でのインバウンドの現状と課題、見通し、いなたひめやすさのおなどマスコットキャラクターの観光面での活躍状況を尋ね、奥出雲町の玄関である三成駅の和式トイレを洋式に改修する予定を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・内田勇</span><span class="ttl">農業遺産の認定</span><span class="sum">世界農業遺産・日本農業遺産の認定に向けた取り組みの町民へのわかりやすい周知を求め、両遺産の違いと一方のみ認定される可能性の有無、認定を受けた場合の移住者増加や農産物のブランド化、観光振興などの効果を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・糸原壽之</span><span class="ttl">観光に対応した交通ダイヤ</span><span class="sum">トロッコ列車と普通列車、奥出雲交通の路線バスのダイヤの接続を徹底して町内観光を便利にするため、三井野原駅で下車した観光客の交通手段や観光協会のツアーの路線バス化、ボンネットバスの復活、役場の会議での三成－横田間の鉄道利用などの事例を挙げ、町と奥出雲交通、ＪＲ、タクシー会社による検討会の開催を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回定例会・一般質問・藤原和範</span><span class="ttl">たたらを生かす観光振興</span><span class="sum">観光庁の支援事業に選ばれた、たたらをテーマに棚田や食を結びつけた着地型旅行商品づくりの概要と具体的な計画を尋ね、世界遺産登録の機運醸成に向けた仮称たたらドームの整備について関係機関との協議を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回定例会・一般質問・糸原壽之</span><span class="ttl">日本遺産関連事業の進捗</span><span class="sum">日本遺産認定関連のたたらブランドの推進、新製品の開発、刀匠の誘致事業の進捗状況と課題、今年度の目標や募集・周知方法、委託か直営かなど事業推進のプロセス、観光振興や町の活性化における位置づけを質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・内田勇</span><span class="ttl">観光施設の環境整備</span><span class="sum">路上駐車が見られるみなり遊園地の駐車場の増設と、船通山を訪れる観光客を迎えるための斐乃上荘からわくわくプールまでの町道の拡幅や樹木の伐採などの環境整備を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・藤原和範</span><span class="ttl">日本遺産認定後の取り組み</span><span class="sum">出雲國たたら風土記が日本遺産に認定されたことを受け、鉄の道文化圏推進協議会を中心とした今後の取り組み、たたら関連の登録文化財が最も多く玉鋼を生産する町としての独自性のＰＲ、日本遺産を生かした誘客戦略、世界遺産登録に向けた取り組みを質した。</span></li>
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・塔村俊介</span><span class="ttl">産業としての観光振興</span><span class="sum">奥出雲町の観光産業の概要と入り込み客数や観光関連消費額の算出を尋ね、農林漁業体験民宿などの民泊、大会や合宿の宿泊に向けた空き家や単身者住宅や高田小学校の活用、教育・研修旅行とスポーツ合宿の誘致と受け入れ環境の整備、ランチでの誘客、休業したサイクリングターミナルのレストランの今後、インバウンド観光の可能性、たたらを核とした景観整備、観光戦略の方針と鳥取との広域連携を質した。</span></li>
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・川西明徳</span><span class="ttl">歴史を断絶させない施設再編</span><span class="sum">公共施設の再編・統廃合をまちづくりと位置づける立場から、仁多サイクリングターミナルで宿泊客以外への食事提供がなくなり町民の交流と雇用の場が消えたことと、船通山研修宿泊施設の厨房や温泉浴場の老朽化への早急な対処について町長の所見を質した。</span></li>
+          
+          <li><span class="who">平成28年第4回定例会・一般質問・塔村俊介</span><span class="ttl">来年の観光客受け入れ体制</span><span class="sum">「たたら侍」公開の年に向け、たたらを体感し学ぶなら奥出雲となる体制と環境の整備、自主財源と企画力を持つ観光協会の29年秋までの法人化、二次交通の実証実験の成果と松江・出雲との接続、東京に開設する新店舗での魅力の発信、サイクリングターミナル食堂のリニューアルの具体案、出雲三成駅エリアの活性化策を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・藤原和範</span><span class="ttl">総合戦略推進の取り組み</span><span class="sum">本格実施2年目となる新年度の総合戦略の重点的推進事項を尋ね、地方創生加速化交付金で実施したたたらブランドの推進、そろばん産業の再生、たたらを活用した観光振興の現状と成果、地方創生推進交付金による観光や交流人口の拡大、地場産業への具体的な展開を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・村尾明利</span><span class="ttl">農泊による観光と移住推進</span><span class="sum">三成駅前への観光文化協会の事務所移転や日本遺産の認定、都市住民の田園回帰の調査結果、みなべ町の農家民泊を示して本町の観光振興とＵ・Ｉターンの推進の方策を尋ね、農泊・民泊の町挙げての受け入れと基礎的な勉強会の開催を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第2回定例会・一般質問・村尾明利</span><span class="ttl">やまなみ街道開通の影響</span><span class="sum">尾道松江線の全線開通後にゴールデンウイークの主要観光施設の入り込み客数が減ったことを受け、観光施設や飲食店の売り上げと店の反応、開通のメリットとデメリットへの具体的な施策を尋ね、高野町和南原へのスマートインターチェンジ設置の働きかけを質した。</span></li>
+          
+          <li><span class="who">平成27年第3回定例会・一般質問・大垣照子</span><span class="ttl">観光行政の成果と誘客</span><span class="sum">これまで取り組んできた観光行政の町にとっての成果を尋ね、県外の町出身者の会の人への観光大使の委嘱、観光地や宿泊施設、特産品売り場などを1枚の紙面で示す宣伝物の作成、2泊ほどの滞在につながる観光ルートづくりを質した。</span></li>
+          
+          <li><span class="who">平成28年第1回定例会・一般質問・内田勇</span><span class="ttl">奥出雲の観光振興</span><span class="sum">サイクリングターミナルに置く観光文化協会の5人体制の内容と会長を尋ね、映画「たたら侍」の完成を機にした観光戦略、玉鋼を活用したたたらブランドの商品開発、刀剣女子の集いの開催、2泊3日の各種体験ツアーの企画、ヘルスツーリズム認証制度を生かした健康長寿のブランド化、奥出雲サイクリングの知名度向上、仁多米や奥出雲そばなどのサイン看板の設置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第2回定例会・一般質問・内田勇</span><span class="ttl">バイオマス産業都市構想</span><span class="sum">山陰初のバイオマス産業都市構想の認定に至る経過と実施体制、総トータルでの経済波及効果の見込みを尋ね、真庭市の事例を参考にしたバイオマス発電所の建設やバイオマスツアーによる観光客誘致の構想を質した。</span></li>
+          
+          <li><span class="who">平成26年第2回定例会・一般質問・石原武志</span><span class="ttl">観光施設の案内と連携</span><span class="sum">本町の観光施設の数と代表的な案内所やパンフレットの配置・配布、観光施設間の連絡や情報交換による運営を尋ね、行政の指導のもと施設が横のつながりを持って誘客する企画やコンビニエンスストアの活用を質した。</span></li>
+          
+          <li><span class="who">平成26年第4回定例会・一般質問・石原武志</span><span class="ttl">観光客の受け入れと協調</span><span class="sum">道路事情の改善で増える観光客の実情と来町者の平均化、施設整備への考えを尋ね、あじわいロードや温泉施設同士、民間企業・商店の協調への行政のかかわりと、温泉めぐり等の新たなメニューやプロデュース役を担う組織改革を質した。</span></li>
+          
+          <li><span class="who">平成26年第4回定例会・一般質問・内田勇</span><span class="ttl">着地型観光の推進</span><span class="sum">観光資源の利活用への見解を尋ね、たたら操業やそろばんづくり等の物づくり体験、田植えや植林、炭焼き等の農林業体験、みそ・しょうゆ・豆腐等の食文化を生かした体験の活用と、観光振興ビジョンの策定と観光推進条例の制定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・若月忠男</span><span class="ttl">2期目の重点町政課題</span><span class="sum">井上町長の2期目に特に重点的に取り組む町政課題の考えを尋ね、子育て支援の対策と、入り込み客や滞在型宿泊の集客につながる観光振興の内容を質した。</span></li>
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・村尾明利</span><span class="ttl">高速道開通後の観光振興</span><span class="sum">尾道松江線の開通に伴う観光・交流人口の取り組みとして、公衆トイレの数や清潔さ、高齢者や障害者に優しいバリアフリーの整備状況を挙げ、三井野原の道の駅や仁多カルチャーセンターの進入路など施設を点検して課題を解決する考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・塔村俊介</span><span class="ttl">喫緊の好機と課題への計画</span><span class="sum">尾道松江線延伸の影響と和南原地区インターチェンジ計画の調査状況、広島や出雲大社方面との連携策、鬼の舌震のつり橋新遊歩道の完成時期と観光振興策、公共施設の耐震化・改築の優先順位、奥出雲椎茸の取締役体制と利益の従業員や農家への還元を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・若月忠男</span><span class="ttl">合宿・研修への宿泊助成</span><span class="sum">ホッケーやユニクロ女子陸上部など町内で行われる合宿や研修の団体・個人に宿泊研修費の一部を助成する制度を設ける考えを尋ね、紹介者に特産品を贈るなど合宿誘致の拡大による新規誘客の対策を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・内田精彦</span><span class="ttl">鬼の舌震遊歩道とつり橋</span><span class="sum">平成20年度から24年度の遊歩道・つり橋整備の事業費と財源の内訳、一般開放後の観光客の動向を尋ね、集客対策、10月末のセレモニーを待たないジョーホー奥出雲での町内向け情報発信、巨岩が見えにくい景観への対応、耐用年数と塗装など補修の計画を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・内田精彦</span><span class="ttl">岩屋寺山の購入後の整備</span><span class="sum">購入した岩屋寺山の売買契約と所有権移転の時期、登記名義人を尋ね、国指定天然記念物岩屋寺の切開への認識、崩壊が進む境内や水路化した参道の現状と道路の復旧、観光資源としての今後の対応と切開へ通じる道の整備を質した。</span></li>
+          
+          <li><span class="who">平成26年第1回定例会・一般質問・若月忠男</span><span class="ttl">ロケ地を生かす観光振興</span><span class="sum">映画・テレビのロケスナップ写真と撮影場所への道路地図の作成、奥出雲たたら製鉄及び棚田の文化的景観地や撮影場所を取り入れトロッコ列車と巡回バスで結ぶ日帰り・宿泊コースの観光プランによる誘客を質した。</span></li>
+          
+          <li><span class="who">平成26年第1回定例会・一般質問・藤原和範</span><span class="ttl">新年度の農業・観光振興</span><span class="sum">施政方針と提案説明による新年度事業として、奥出雲ブランド農産物の農商工連携による高付加価値化・6次産業化の具体的な推進策と、観光施設や関係団体と連携した誘客体制の整備・おもてなしの仕組みづくりを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回定例会・一般質問・内田勇</span><span class="ttl">神話博しまねと魅力発信</span><span class="sum">古事記編さん1300年の神話博しまねに向けた町の具体的な取り組みと出雲から誘客する観光バスツアー、ツイッターやフェイスブックによる奥出雲の魅力発信、アニメやコミック、映画制作へのアプローチを質した。</span></li>
+          
+          <li><span class="who">平成24年第2回定例会・一般質問・内田勇</span><span class="ttl">ＮＰＯ法人の支援</span><span class="sum">ＮＰＯ法の改正で仮認定制度や観光振興・中山間地振興の分野が加わったことを踏まえ、地域づくりのパートナーとしての対応と、行政の積極的な関与や人材育成・雇用対策につながるＮＰＯ支援策を質した。</span></li>
+          
+          <li><span class="who">平成24年第3回定例会・一般質問・塔村俊介</span><span class="ttl">尾道松江線開通と観光戦略</span><span class="sum">尾道松江線の開通による広島方面への時間短縮効果と町内交通量の変化の調査、高野町の地域活性化インターのねらいと進捗、開通のマイナスとプラスの影響、広域から人を呼び込み目的地とする戦略と観光客にお金を使ってもらう仕掛けを質した。</span></li>
+          
+          <li><span class="who">平成24年第4回定例会・一般質問・内田勇</span><span class="ttl">地域資源を生かした活性化</span><span class="sum">雲州そろばんや家具など奥出雲の物づくり文化を育成し後世に伝える取り組み、米－1グランプリのように四季の食を生かしたイベントを観光協会や商工会等と開催し観光振興につなげる考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第1回定例会・一般質問・塔村俊介</span><span class="ttl">ソフト過疎債の観光振興</span><span class="sum">ソフト過疎債を利用した観光振興の成果と課題を尋ね、観光客がどこで情報を得られるかの受け入れ体制と、雲南3市町が協力する情報発信への支援を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第3回定例会・一般質問・内田勇</span><span class="ttl">観光立町と観光振興</span><span class="sum">観光立町の宣言と観光推進条例の制定による推進体制の強化、集客目標を定めモデルコースを設定した観光マップの作成、国定公園や中国自然遊歩道を生かした森林セラピー体験の基地の設置、古事記編さん1300年を機にしたたたらシンポジウムの町内開催を質した。</span></li>
+          
+          <li><span class="who">平成24年第1回定例会・一般質問・内田勇</span><span class="ttl">奥出雲雪まつりの開催</span><span class="sum">冬期の観光客誘致とにぎわい創出のため、日刀保たたらの操業と組み合わせ、三井野原地区や横田駅前で雪だるまやかまくら、雪合戦大会などを家族で楽しめる雪祭りの開催を提起した。</span></li>
+          
+          <li><span class="who">平成24年第1回定例会・一般質問・吾郷益已</span><span class="ttl">奥出雲町総合計画</span><span class="sum">総合計画策定の基本的な考え、定住対策と雇用の場の確保と新たなビジネスモデル、神話と自然を生かした観光資源の整備とストーリー性のある観光ルート、観光協会事務局長への民間人の登用、高齢者の社会参加と認知症対策、ひとり親家庭への支援、幼保一元化と幼児園の条例化、松江市のような高齢者運転免許証自主返納の支援策、実施計画の策定状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第2回定例会・一般質問・内田勇</span><span class="ttl">中国人観光客の誘致</span><span class="sum">中国人向け個人観光ビザの発給要件の緩和を受けた中国人観光客など観光客誘致の施策と中国語の案内板を尋ね、YouTubeを利用した奥出雲町の観光PRや行政情報の発信を質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・若月康男</span><span class="ttl">神話とたたらの観光振興</span><span class="sum">古事記編さん1300年や出雲大社の大遷宮を機にした着地型観光の取り組みと集客イベント、たたら製鉄の世界遺産登録への取り組み、日刀保たたらの玉鋼を使った新作刀剣展の開催を尋ね、米などの食材を使ったA級グルメの開催や国外からの観光客誘致を質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・吾郷益已</span><span class="ttl">観光資源を生かす観光振興</span><span class="sum">積極的な観光政策への町長の考え、神話やたたら製鉄、船通山などの自然、刀剣やそろばんなどの伝統産業を生かした観光振興、観光振興室の機能と観光コーディネーター、奥出雲の名を冠するなど観光資源のデザイン化、年次的なインフラ整備計画の有無、観光施設が連携した体験型・滞在型の観光メニューの開発を尋ね、入湯税の減少が示す入り込み客の減少への考えを質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・吾郷益已</span><span class="ttl">観光協会の役割と体制</span><span class="sum">観光協会の役割と事業内容、事務局長を地域振興課長が兼任するなかでの地域振興課とのすみ分けを尋ね、民のノウハウを生かして観光協会の組織を充実させ観光振興の推進役とすることと、民間から事務局長を迎えることを質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・村尾明利</span><span class="ttl">金言寺の大イチョウ周辺整備</span><span class="sum">しまね景観賞の大賞を受けた金言寺のカヤぶき屋根と大イチョウを訪れる観光客が増えるなか、国道などの要所への案内板、狭い駐車場や参道入口、多人数に対応できないトイレの3点の整備への町の支援を求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・塔村俊介</span><span class="ttl">産業振興</span><span class="sum">産業振興課・室の新設や課横断のプロジェクトチーム、産業振興諮問会議、不況を好機とした人材確保事業、鬼の舌震吊橋計画の視察の感想と観光客数などの目標や修繕維持費、テレビ電話コールセンターの町負担と地元雇用、テレビ電話事業の課題と改善点を質した。</span></li>
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・景山孝志</span><span class="ttl">農産物産地まごころ便</span><span class="sum">群馬県の町の会員制による年4回の農産物ふるさと便を例に、JAや生産グループと一体となって全国の奥出雲町出身者へ故郷の味を届け、販路の開拓と交流人口の拡大につなげる奥出雲町版まごころ便の開設を提起した。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・内田精彦</span><span class="ttl">鬼舌振保存管理計画の周知</span><span class="sum">広報8月号の保存管理計画の記載に総事業費約10億円が載っていないことから、つり橋の設置などによる観光客数と町に落ちるお金の見込みや費用を町民へ説明するかと、遊歩道とつり橋の架設後も巨石・奇石や大峡谷が望めるのかを質した。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・内田勇</span><span class="ttl">観光振興</span><span class="sum">主な観光施設への観光客数の推移と絲原記念館・可部屋集成館の入り込み数、奥出雲町の観光PRの現状とこれからの具体的な施策を尋ね、手軽に配布できるお金のかからない観光PRのチラシの作成を質した。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・吾郷益已</span><span class="ttl">観光資源を活用した地域振興</span><span class="sum">神話やたたら製鉄、鬼の舌震、吾妻山・船通山などの観光資源が孤立している状況を挙げ、資源をリンクさせた滞在型観光地の施策と、農商工を組み合わせた観光産業プランの早急な作成を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>トロッコ列車の広域運行</summary><p>利用客が年々増え広域的な観光列車に成長したトロッコ列車は、昨年から出雲の國・斐伊川サミットの共同事業となった。4月3日から日曜日を中心に50日間は出雲市駅から運行され、出雲圏域の広域観光振興が期待される。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>韓国からの観光誘客事業</summary><p>昨年から始めた韓国からの観光誘客事業をさらに推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>神話のふるさと島根プロモーション事業への参画</summary><p>平成23年度に古事記編さん1,300年を迎えることから、島根県が計画する神話のふるさと島根プロモーション事業に参画する。観光ルートの発掘等で受け入れ体制を強化し、交流人口の拡大に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>トロッコ列車の運行（出雲の國・斐伊川サミット共同事業）</summary><p>出雲の國・斐伊川サミットの共同事業として広域的な観光列車に成長したトロッコ列車を、来年度も4月2日からの土・日曜日を中心に50日間、出雲市駅から運行する予定であり、出雲圏域の広域的な観光振興を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>古事記編さん1300年事業への参画と施設整備</summary><p>平成24年の古事記編さん1300年に向けた島根県を中心とする事業に積極的に参画し、船通山山頂休憩所、要害山交流拠点施設などの施設整備を行うとともに、観光ルートの発掘等の受け入れ体制を強化して交流人口の拡大に取り組む。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>「神々の国しまね」を機とした観光誘客体制の整備</summary><p>県の「神々の国しまね」プロジェクトで7月から11月に開催される神話しまねのイベントを絶好の機会ととらえ、観光誘客に向けた体制の整備・拡充を引き続き図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>推進協議会を活用した官民一体の誘客活動</summary><p>県、雲南広域連合、斐伊川サミット構成市町などとの連携を深め、昨年11月設立の神々の国しまね奥出雲町推進協議会などを活用し、行政・民間団体・地域住民が一体となった誘客活動を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>尾原ダム水源地域ビジョンに基づく周辺地域の活性化</summary><p>尾原ダム・さくらおろち湖の周辺では、ダム事業完成後にNPO等の住民団体が周辺環境や施設を活用した取り組みを行っている。来年度に国が策定する尾原ダム水源地域ビジョンに基づき、関係自治体等が取り組みを促進し、地域コミュニティーの活性化と交流人口の拡大を図る。佐白温泉長者の湯を地域活性化の交流拠点施設と位置づけている。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>出雲大社大遷宮等を契機とした観光誘客体制の整備</summary><p>「神々の国しまね」プロジェクトの最終年に出雲大社で平成の大遷宮が斎行され多くの観光客が見込まれることを絶好の機会ととらえる。中国横断尾道松江線の三次ジャンクションまでの開通も視野に、観光誘客に向けた体制整備とイベント等の拡充を図る。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>鬼の舌震バリアフリー遊歩道とオロチ彫刻の観光活用</summary><p>新たに完成する2つの施設を町の新しい観光資源と位置づけ、観光振興に活用する。(1)つり橋を含む鬼の舌震のバリアフリー遊歩道。(2)国道314号おろちループ周辺に設置される澄川喜一氏デザインのオロチの彫刻。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>尾原ダムさくらおろち湖周辺の地域活性化</summary><p>尾原ダムさくらおろち湖の周辺では、NPO等の住民団体が周辺環境や施設を活用した取り組みを行っている。関係自治体などでその活動を引き続き支援し、地域コミュニティーの活性化と交流人口の拡大を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>誘客体制の整備とおもてなしの仕組みづくり</summary><p>出雲大社の平成の大遷宮により本町でも玉峰山荘を中心に来訪客が増えた効果が来年度も続くよう、観光施設や関係団体と連携して、観光客の誘客に向けた体制の整備とおもてなしの仕組みづくりを充実させる。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>鬼の舌震・美肌温泉郷・おろちループを活用した誘客</summary><p>来年度は、つり橋と遊歩道が完成した鬼の舌震を中心に、佐白温泉・亀嵩温泉・斐乃上温泉の奥出雲美肌温泉郷、おろちループ周辺とトロッコ列車を活用した誘客を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>さくらおろち湖周辺地域の活性化</summary><p>尾原ダムさくらおろち湖の周辺地域活性化策として、引き続きNPOなどの住民団体の活動を支援し、地域コミュニティーの活性化と交流人口の拡大を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>ふるさと旅行券の発行</summary><p>松江尾道線の全線開通や出雲大社の人気を誘客の好機と捉え、国の交付金を活用して、亀嵩温泉などの奥出雲美肌温泉郷や絲原記念館、可部屋集成館などで利用できるふるさと旅行券を発行する。経費は補正予算に計上した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>道の駅おろちループ大規模改修</summary><p>道の駅おろちループ大規模改修事業などの観光施設の整備を引き続き推進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>観光施設・指定避難所への公共用無線LAN整備</summary><p>観光や防災情報等を配信するため、町内の主な観光施設と指定避難所に公共用無線LAN環境を整備することとし、国へ補助事業の申請を行った。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>伝統産業・観光産業の振興事業（地方創生加速化交付金）</summary><p>国の地方創生加速化交付金により、たたら製鉄を活用した観光振興と、そろばんや刃物製作等の伝統産業の振興を目指す事業の経費を今年度の補正予算に計上した。来年度に繰り越し、当初予算と一体的に人材育成・雇用創出の取り組みを進める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">10</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>観光文化協会の組織見直しと事務所の移設</summary><p>松江城の国宝指定を誘客の好機と捉え、総合戦略の歴史・文化・自然を生かした観光振興を円滑に実行するため、観光文化協会の組織を見直し、専属スタッフを配置する。事務所は観光案内所を兼ねた運営が可能なサイクリングターミナルへ設置する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>道の駅奥出雲おろちループの売店等大規模改修</summary><p>県が便所棟を整備している道の駅奥出雲おろちループについて、町も来年度に売店等の大規模改修事業を実施し、誘客に努める。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>たたら製鉄の日本遺産選定に向けた2市1町の連携</summary><p>雲南市・安来市と奥出雲町の2市1町で進めるたたら製鉄の日本遺産選定に向けた取り組みと連携し、奥出雲の文化・伝統を含めた地域振興と観光振興に努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>平成30年の全国規模観光キャンペーンに向けた誘客対策</summary><p>平成30年に島根県・鳥取県の自治体や観光事業などが連携した観光キャンペーンが全国規模で開催されることを誘客促進の機会ととらえ、今年度調査した観光客のニーズやアンケートをもとに、二次交通の検討や旅行商品の開発などを進め、歴史・文化・自然を生かした観光振興に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>観光文化協会事業所の旧ポプラ仁多三成店への移転と観光案内所の設置</summary><p>旧ポプラ仁多三成店を活用した地域活性化を図るため、昨年春にサイクリングターミナルへ開設した観光文化協会の事業所を移転させ、新たな事務所内に観光案内所も設置する。今春に売店などの大規模改修が完了する道の駅「奥出雲おろちループ」などとともに、観光情報の発信と誘客に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>山陰デスティネーションキャンペーンでの誘客促進</summary><p>本年はJRと島根県・鳥取県の自治体、観光事業者などが連携して山陰デスティネーションキャンペーンが展開される。これにあわせ、本町の魅力ある自然・歴史・文化・食を情報発信し、誘客促進を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>インバウンド観光の推進</summary><p>奥出雲町観光協会を中心にインバウンド観光を積極的に進め、玉峰山荘など町内の観光施設と連携して誘客を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>日本農業遺産認定を契機とした魅力発信と観光客誘致</summary><p>日本農業遺産の認定を契機に、たたら製鉄の歴史文化や奥出雲の農業と食などの魅力をさらに情報発信し、交流イベントや体験などを通じて観光客の誘致につなげる。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>日本農業遺産認定を活用したブランド化と誘客</summary><p>日本農業遺産の認定を活用し、農産物のさらなるブランド化と観光客の誘客につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>3温泉施設の連携強化と誘客促進</summary><p>亀嵩温泉・斐乃上温泉・佐白温泉の3温泉施設の連携をさらに強化する。斐乃上温泉では美肌温泉の効能を活用した新商品開発に着手し、亀嵩温泉ではグランピング体験イベントの開催や玉峰山遊歩道散策のガイド育成などで誘客を促進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>三井野原スキー場のリフト運営見直しと誘客対策</summary><p>雪不足やスキー人口の減少で入り込み客が減少しているため、来期は第4リフトを休止し、アシハラゲレンデの第2リフトのみを運営する。誘客対策にはリフト運営協議会を中心に引き続き取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>日本農業遺産の認定を生かした周知・誘客</summary><p>日本農業遺産の認定を生かし、農業体験や滞在型観光に向けた農泊、県立横田高校の奥出雲学や小・中学校のふるさと学習、町内でのパネル展示などの周知啓発・情報発信を推進する。認知度向上と農産物のブランド化、観光客の誘客につなげる。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>SNSを中心とした観光PR</summary><p>新型コロナウイルス感染症の影響が大きい中、本町の観光PRはSNSを中心に情報発信し、奥出雲町の魅力を観光客に感じてもらえるよう取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>日本農業遺産の認定を生かした取組</summary><p>農業体験や滞在型旅行に向けた農泊の推進、県立横田高校や小・中学校でのふるさと学習の充実、町内各所でのパネル展示などによる周知・啓発と情報発信を引き続き行う。日本農業遺産のまちとしての認知度向上、農産物のさらなるブランド化、観光客の誘客につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>舞茸奥出雲直売所隣の駐車場・場外トイレ整備</summary><p>特用林産事業として整備を進めてきた坂根の舞茸奥出雲直売所隣の駐車場及び場外トイレが完成する。直売所の誘客増大と、周辺の交通混雑解消・安全確保を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>木次線観光列車「あめつち」の受入れ</summary><p>木次線観光列車運行検討会の方針により、奥出雲おろち号は令和5年までで運行終了し、令和6年から観光列車「あめつち」が導入される。出雲横田駅以南は走らないが、県・沿線自治体とともに受入れを表明した。今後はJR側・沿線自治体・観光協会などが「あめつち」の運行を前提とした具体的な観光振興に取り組む。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>JR木次線の利活用推進（ツアー造成・販売支援）</summary><p>JR木次線は平均通過人員が133人まで落ち込み将来が心配される状況にある。木次線利活用推進協議会において島根県と連携し、木次線を活用したツアーの造成や旅行業者への販売支援により誘客を図り、利用拡大に取り組む。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>観光振興計画の策定と体験・交流商品の造成</summary><p>多様化する個人旅行のニーズに対応するため、町内の観光資源や文化的資源を有機的に活用できるよう観光振興計画を策定する。自然、文化、ものづくりなど地域の特性を生かした体験・交流商品の造成と地域ガイドの養成により高付加価値化を推進し、魅力ある観光地づくりに取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>観光列車「あめつち」導入準備と在来線ツアー造成</summary><p>令和6年から運行される観光列車「あめつち」の導入に向け、島根県、沿線自治体、関係団体と情報共有しながら準備を進める。在来線を活用したツアー造成などにより、さらなる誘客と利用拡大に取り組む。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>観光列車「あめつち」の木次線乗入れへの対応</summary><p>令和6年4月7日から、奥出雲おろち号の後継として観光列車「あめつち」が木次線に乗り入れる。運行日数が30〜40日とおろち号より少ないため、1月27日にJR西日本へ増便を要請した。乗客へのおもてなしは住民組織と連携し、様々なイベントで盛り上げる。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>日本遺産「出雲國たたら風土記」の認定更新に向けた取組</summary><p>日本遺産「出雲國たたら風土記」は平成28年の認定から10年目を迎え、本年は認定更新の時期となる。鉄の道文化圏推進協議会を中心に関係自治体でたたら関連施設や構成文化財を活用した観光振興に取り組んできた成果が評価されることから、認定更新に向け引き続き取組を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>観光施設の高付加価値化</summary><p>観光入り込み客数が令和6年に76万3,000人と大きく減少する中、令和5・6年度に観光庁の高付加価値化事業で進めた町内観光施設のグレードアップ改修に続き、令和7年度も国の補助金等を活用して観光施設の高付加価値化に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>再生可能エネルギーを活用した観光客の二次交通</summary><p>令和7年度の新規事業として、観光客の二次交通について、再生可能エネルギーを活用した手段を提供する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>日本遺産と世界農業遺産を活用したツアー造成</summary><p>令和7年の観光入り込み客数は71万5,000人で前年から減少した。昨年7月に認定更新に選定された日本遺産「出雲國たたら風土記～鉄づくり1000年が生んだ物語～」と、8月に認定された世界農業遺産を生かして新たなツアーを造成し、誘客の増加を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>インバウンド</h3>
+    <p class="terms">語: インバウンド・外国人観光客</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/8人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・糸原壽之</span><span class="ttl">世界農業遺産の現地視察</span><span class="sum">7月22日の現地視察の場所と内容、ＦＡＯからの視察者、指摘事項とその対応状況、たたら製鉄と認定の要件の関連を尋ね、以前のロゴマークの効果と認定を生かした経済効果の考え、インバウンドにつながる観光開発や振興のアイデアを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・糸原文昭</span><span class="ttl">観光振興とインバウンド誘致</span><span class="sum">町内の宿泊人数や来町した外国人の人数の推移を尋ね、境港に寄港するクルーズ船の乗客への町の対応やＰＲ、インバウンドを含めた観光誘致の考えとトワイライトエクスプレス瑞風の客を町へ招くＪＲとの調整、雲南市・飯南町と連携した広域的な観光事業の実施、町としての観光の位置づけと今後の発展を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">新しい観光誘客</span><span class="sum">「おてつたび」や大田市の保育園留学を例にした暮らしと体験をつなげた新しい旅の提案と取組状況、農泊をきっかけにした移住の実例、移住者への片道交通費の支援、インバウンドマーケティングの取組状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・石原武志</span><span class="ttl">インバウンドと観光振興</span><span class="sum">本町でのインバウンドの現状と課題、見通し、いなたひめやすさのおなどマスコットキャラクターの観光面での活躍状況を尋ね、奥出雲町の玄関である三成駅の和式トイレを洋式に改修する予定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・塔村俊介</span><span class="ttl">産業としての観光振興</span><span class="sum">奥出雲町の観光産業の概要と入り込み客数や観光関連消費額の算出を尋ね、農林漁業体験民宿などの民泊、大会や合宿の宿泊に向けた空き家や単身者住宅や高田小学校の活用、教育・研修旅行とスポーツ合宿の誘致と受け入れ環境の整備、ランチでの誘客、休業したサイクリングターミナルのレストランの今後、インバウンド観光の可能性、たたらを核とした景観整備、観光戦略の方針と鳥取との広域連携を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>インバウンド観光の推進</summary><p>奥出雲町観光協会を中心にインバウンド観光を積極的に進め、玉峰山荘など町内の観光施設と連携して誘客を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>奥出雲たたらと刀剣館の多言語化</summary><p>鉄の道文化圏推進協議会（安来市・雲南市・奥出雲町）が日本遺産の重点支援地域に指定されたことを踏まえ、今後需要の増加が見込まれるインバウンドに対応するため、たたらと刀剣館の多言語化を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>たたらと刀剣館の多言語化翻訳の活用</summary><p>日本遺産の構成要素であるたたらと刀剣館で、令和5年度観光庁事業によりインバウンド対策の多言語翻訳を実施した。翻訳成果を展示パネルでの紹介やQRコードでの通信翻訳などに活用する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>文化財と日本遺産</h3>
+    <p class="terms">語: 文化財と日本遺産・文化財・史跡・日本遺産・国宝・たたら・世界農業遺産・棚田</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt25" data-year="H21"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="ge25" data-year="H22"><b>3</b><span class="of">/11人</span><span class="q">3件</span></td><td class="lt25" data-year="H23"><b>2</b><span class="of">/11人</span><span class="q">3件</span></td><td class="ge25" data-year="H24"><b>3</b><span class="of">/8人</span><span class="q">5件</span></td><td class="ge25" data-year="H25"><b>4</b><span class="of">/12人</span><span class="q">5件</span></td><td class="ge25" data-year="H26"><b>3</b><span class="of">/11人</span><span class="q">4件</span></td><td class="lt25" data-year="H27"><b>2</b><span class="of">/9人</span><span class="q">3件</span></td><td class="ge25" data-year="H28"><b>5</b><span class="of">/12人</span><span class="q">7件</span></td><td class="ge25" data-year="H29"><b>4</b><span class="of">/13人</span><span class="q">8件</span></td><td class="ge25" data-year="H30"><b>5</b><span class="of">/13人</span><span class="q">5件</span></td><td class="ge25" data-year="R01"><b>4</b><span class="of">/12人</span><span class="q">6件</span></td><td class="ge25" data-year="R02"><b>3</b><span class="of">/12人</span><span class="q">4件</span></td><td class="ge25" data-year="R03"><b>4</b><span class="of">/13人</span><span class="q">9件</span></td><td class="ge25" data-year="R04"><b>4</b><span class="of">/13人</span><span class="q">4件</span></td><td class="ge25" data-year="R05"><b>4</b><span class="of">/13人</span><span class="q">5件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">2件</span></td><td class="ge25" data-year="R07"><b>8</b><span class="of">/11人</span><span class="q">14件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/11人</span><span class="q">2件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・内田隆穂</span><span class="ttl">令和8年度の機構改革</span><span class="sum">世界農業遺産を生かした各課横断の施策の実行が不可欠との認識から、令和8年度の役場の機構改革の狙いと期待される効果を問うた。</span></li>
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・内田隆穂</span><span class="ttl">世界農業遺産の活用戦略</span><span class="sum">令和5年・6年の観光入り込み客数の落ち込みの分析と今後の対応、認定後の施策の町内への波及、地域活性化起業人制度によるそばグラノーラなどの開発に要した費用と成果の評価、おにぎり太郎さんを招いた仁多米ＰＲで町内の飲食店などと連携しなかったことの課題認識、食材を扱う店の認定制度やブランド米制度、産学官民の横断的協議会の検討状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・北村千寿</span><span class="ttl">世界農業遺産の認定</span><span class="sum">世界農業遺産の認定に向けた取組の進捗と現地調査後の認定率、認定後の取組を尋ね、旧鳥上小学校校庭のたたら体験学習施設を一般向けの研修に使う考えと校舎の活用、観光客誘致のための未整備箇所の整備を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・内田裕紀</span><span class="ttl">さらなる観光振興施策</span><span class="sum">世界農業遺産の認定を受けた視察や観光のモデルコースと料金の検討内容を尋ね、視察料の検討、斐乃上温泉や佐白温泉の再稼働を見据えた近隣市町との相場を踏まえた入湯税での経営的な優位性への配慮、観光振興やオーバーツーリズム対策の財源としての宿泊税の導入を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・内田裕紀</span><span class="ttl">要害山三沢城跡の景観整備</span><span class="sum">県史跡指定の要害山三沢城跡の景観整備の進捗を尋ね、森林環境譲与税などの財源による伐採の拡充と、地元と一定のルールを決めて陳情を再提出すればより一層の景観整備ができるかを質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・糸原壽之</span><span class="ttl">世界農業遺産の現地視察</span><span class="sum">7月22日の現地視察の場所と内容、ＦＡＯからの視察者、指摘事項とその対応状況、たたら製鉄と認定の要件の関連を尋ね、以前のロゴマークの効果と認定を生かした経済効果の考え、インバウンドにつながる観光開発や振興のアイデアを質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・落合孝行</span><span class="ttl">世界農業遺産の波及効果</span><span class="sum">世界農業遺産の認定で想定する波及効果と国内の他の認定地域の傾向、民間のサービスや商品で認定地域のフレーズを使う際のルール、民間のブランディング商品開発に使える補助金の有無と創設の考え、保全区域の住民の保全活動への支援を質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・内田隆穂</span><span class="ttl">世界農業遺産と食と観光</span><span class="sum">世界農業遺産の認定を生かし、食をなりわいとする事業者やあじわいロードなど民間と連携した食と観光の戦術づくりに向け、行政・民間・住民が一体となった奥出雲版食と観光のブランド会議の設置への考えを質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・糸原壽之</span><span class="ttl">観光入り込み数と今後の観光</span><span class="sum">今年春から秋までのそば店、博物館等、自然公園等、農泊、温泉の入り込み客数と、次期の入り込み客数の目標、その達成のための具体的な手だて、観光資源を生かした誘客のコンセプトを尋ね、世界農業遺産の名称にある「再適用」の意味を質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・糸原文昭</span><span class="ttl">埋蔵文化財の保管と活用</span><span class="sum">旧馬木小学校に展示されていた土器や鉄剣の保管場所と町内の出土品の保管・管理・整理の状況、学校教育での埋蔵文化財の位置づけと活用、廃校や廃園を活用した展示スペースの内容と整備時期、予算の見通しを質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・北村千寿</span><span class="ttl">世界農業遺産の今後の取組</span><span class="sum">世界農業遺産の認定を契機とした農業と観光の振興で重点を置く対象を尋ね、観光協会を通じた学習目的の修学旅行の誘致、たたら体験学習施設やトレーラーハウスでの宿泊など体験を入れて滞在時間を延ばす取組と、その結論を今年度中に出すことを質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・北村千寿</span><span class="ttl">中山間地域等直接支払制度</span><span class="sum">第6期中山間地域等直接支払制度の8割・10割交付の協定数と加算の取組状況を尋ね、ネットワーク化計画や棚田加算、スマート農業加算など加算の取組の今後の進め方を質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・小田川謙一</span><span class="ttl">関係人口と地域づくり</span><span class="sum">国が掲げる関係人口と連携した地域づくりの方向性を紹介し、世界農業遺産認定を受けた関係人口のさらなる創出に向けた町の取組方針を尋ね、おくいずも未来会議の提案プレゼン会で出た提案への行政の支援を質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・田食道弘</span><span class="ttl">文化遺産と歴史資料の保存</span><span class="sum">藤原辰史教授が提案した奥出雲人文ユニバースへの町の対応、2018年に提案した故高橋一郎さんと故杉原清一さんの資料の集約・保管の進捗、故青木實三郎さんの資料を含む空き校舎活用による保管・展示・閲覧場所の確保、文化財保護への予算の拡充を質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・北村千寿</span><span class="ttl">世界農業遺産と農業振興</span><span class="sum">能登米の米袋の例を挙げて世界農業遺産認定を前面に出す取組と島根米の袋への記載を尋ね、カントリーエレベーターの集荷量の推移と集荷促進費の再導入、町外からのソバの確保に対する町内そば店舗への支援を質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・落合孝行</span><span class="ttl">官民による観光振興計画</span><span class="sum">世界農業遺産認定後の観光関係の民間事業者との方針や目標のすり合わせの状況を尋ね、官民で方針を見える化した観光振興計画の策定と、世界農業遺産を生かす民間の動きを補助金や地域商業重点支援事業費補助金の周知・活用で後押しすることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・北村千寿</span><span class="ttl">返礼品の仁多米の細分化</span><span class="sum">県外の人から福頼の棚田の米を返礼品に求められたことから、ふるさと納税返礼品の仁多米を福頼の棚田米や追谷の源流仁多米こしひかり、馬木の大峠源流米などに細分化する考えを質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・北村千寿</span><span class="ttl">たたら体験による観光振興</span><span class="sum">鳥上小学校に隣接するたたら体験学習施設の一般向け活用の課題と検討結果を尋ね、観光資源を面的につなげて滞在期間を長くすることへの見解と、鉄文化の普及啓発を観光振興につなげる取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第2回定例会・一般質問・内田精彦</span><span class="ttl">木次線の利用促進</span><span class="sum">運行開始から約5か月のラッピング列車が利用客の増員につながっているか、さくら・しんわ・たたら・たなだの愛称決定の経緯と今後の利用促進、愛称列車の運行を事前に発表するようＪＲへ働きかける考え、観光列車「あめつち」試乗会の所感と今後の考えを質した。</span></li>
+          
+          <li><span class="who">令和5年第3回定例会・一般質問・北村千寿</span><span class="ttl">中山間地域等直接支払制度</span><span class="sum">集落協定広域化加算・集落機能強化加算・生産性向上加算の3割減額交付を国が提示したことへの町長の受け止め、今年度の満額交付と5期最終年である来年度の予算確保への取組、棚田加算の取組面積が全体の30％にとどまる理由と未実施集落への推進策を質した。</span></li>
+          
+          <li><span class="who">令和5年第4回定例会・一般質問・北村千寿</span><span class="ttl">世界農業遺産の認定</span><span class="sum">3月定例会で7月末の書類審査にのるよう作業を進めると答弁のあった世界農業遺産の認定について、現在の状況と今後の予定を質した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・糸原壽之</span><span class="ttl">町農業ビジョンの策定</span><span class="sum">町の将来の農業の在り方を内外に示す計画書が見当たらないことから、世界農業遺産を目指す町として大勢の英知を集めて奥出雲町農業ビジョンを策定し、生産基盤の将来の方向性を示すよう求めた。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・石原武志</span><span class="ttl">国連家族農業10年の知見</span><span class="sum">国の持続可能な家族農業国際活動支援事業が掲げる国連「家族農業10年」の取組と、世界農業遺産地域をベースとする知見の共有について、町としての見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・小田川謙一</span><span class="ttl">奥出雲の農業遺産の発信</span><span class="sum">日本農業遺産に認定された奥出雲の資源循環型農業について島根大学の先生方の研究成果をＣＡＴＶで5回放送した内容を、世界農業遺産の認定に向けて町内外に発信するため、パンフレットの作成や一冊の本にすることを質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・内田裕紀</span><span class="ttl">観光振興と第三セクター</span><span class="sum">日本遺産「出雲國たたら風土記」の重点支援地域指定を好機に国の補助事業を活用した構成文化財の整備や観光ガイダンス機能の強化を尋ね、債務超過の状態にある株式会社奥出雲振興への速やかな対策として無償減資と町民持ち株会による中小企業化を示し、酒蔵の改善策の早急な検討を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・大垣照子</span><span class="ttl">世界農業遺産と企業誘致</span><span class="sum">施政方針から、世界農業遺産認定の状況と日本農業遺産認定後の農業者へのメリット、高齢化や人口減少の中で認定後に維持・発展できるかを尋ね、閉校となる学校施設の活用も含めた誘致企業対策と、ケーブルテレビやインターネットの強靱なシステム構築の新年度の取組を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・北村千寿</span><span class="ttl">世界農業遺産の経済効果</span><span class="sum">世界農業遺産に認定された場合の観光客の来町を町の経済につなげるため、農泊のほかに検討している取組と、仁多米・奥出雲和牛・そばなど農産物で経済につながる具体策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・糸原壽之</span><span class="ttl">世界農業遺産の申請状況</span><span class="sum">世界農業遺産認定の候補に選ばれ申請中の現在の状況と取組を尋ね、要件の中で弱い点があるかと、どのようなストーリーで認定を受けようとしているかを質した。</span></li>
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・糸原壽之</span><span class="ttl">たたらと刀剣館の整備</span><span class="sum">開館からおよそ30年の奥出雲たたらと刀剣館について、外周壁のひび割れや照明の劣化、展示パネルの色あせ、おろちモニュメントのさびなどの修繕とシアターの映像設備の更新を計画的に行うよう求めた。</span></li>
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・北村千寿</span><span class="ttl">たたら体験施設の一般利用</span><span class="sum">鳥上小学校に隣接するたたらの体験学習施設を一般の方向けのたたら体験研修の場として年数回利用し、宿泊を伴う滞在やできた玉鋼でのナイフ作りなど観光振興につなげることを提起した。</span></li>
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・内田雅人</span><span class="ttl">世界農業遺産と経済効果</span><span class="sum">農業遺産アクションプランにある誇りの創出・観光客の増加・農畜産物のブランド化の具体的施策を尋ね、学校でのＰＲに対する生徒の反応と、農産物認証制度の創設時期や町長任期中の実現への思いを質した。</span></li>
+          
+          <li><span class="who">令和3年第3回定例会・一般質問・北村千寿</span><span class="ttl">たたら体験研修の実施</span><span class="sum">日刀保に趣旨を説明し村下の協力が得られることを確認したとして、鳥上小学校に隣接するたたら体験学習施設を一般の方向けのたたら体験研修の場として年数回程度利用することを改めて提起した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・北村千寿</span><span class="ttl">全共出品と和牛振興</span><span class="sum">来年の鹿児島での全国和牛能力共進会に向けた出品への町の支援と、会場で世界農業遺産の取組や特産品など奥出雲町をアピールする考えと方法を尋ね、子牛価格が上がる前の増頭対策など令和4年度予算での和牛振興の考えを質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・北村千寿</span><span class="ttl">独自の観光ガイド組織</span><span class="sum">世界農業遺産の認定を前提とした対応として、観光案内に加えて町のＰＲを行う奥出雲町独自のボランティアガイド組織の設立と、棚田に至った経緯など観光客に分かりやすい看板の棚田展望台等への設置を質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・糸原壽之</span><span class="ttl">出雲横田駅舎の文化財化</span><span class="sum">全国でも珍しい神社様式建築の出雲横田駅舎について、旧大社駅や御来屋駅の例を挙げ、ＪＲ西日本とも協議して町の遺産や国・県の文化財に指定・登録することを提起した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・石原武志</span><span class="ttl">農業遺産の活用と啓発</span><span class="sum">日本農業遺産認定の趣旨と世界農業遺産の目指すもの、奥出雲ブランドの推進に向けた活用の具体的な進め方を尋ね、農業離れや高齢化・農業者不足の課題とのつながりと、無関心や将来の重荷を不安視する町民・農業者への啓発を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第3回定例会・一般質問・藤原和範</span><span class="ttl">世界農業遺産認定への取組</span><span class="sum">平成31年2月に日本農業遺産に認定され、たたらの奥出雲を世界農業遺産の認定に向けて再申請したことを踏まえ、今後の取組についての町長の考えを問うた。</span></li>
+          
+          <li><span class="who">令和3年第1回定例会・一般質問・村尾明利</span><span class="ttl">世界農業遺産と町民意識</span><span class="sum">「たたら製鉄が生んだ奥出雲の資源循環型農業」が世界農業遺産候補に承認されたことによる波及効果と今後の町の取組を尋ね、町民意識の醸成やPRに向けた町独自のキャッチコピーと、農泊地域高度化促進事業を活用した農泊でのワーケーション受入れ環境の整備を質した。</span></li>
+          
+          <li><span class="who">令和3年第1回定例会・一般質問・糸原壽之</span><span class="ttl">仁多米の独自ランクづけ</span><span class="sum">世界農業遺産の認定による生産者米価の違いや耕作放棄地の減少など経済効果の試算を尋ね、仁多米のブランド化に向けた等級以外の町独自のランクづけと適宜刈取りの推奨、ドローンやヘリコプターによる防除への助成を質した。</span></li>
+          
+          <li><span class="who">令和3年第1回定例会・一般質問・糸原壽之</span><span class="ttl">岩屋寺仁王像の買戻し</span><span class="sum">岩屋寺山門の仁王像の買戻しに向け、地域おこし協力隊で専任の担当者を充て、国の国宝等買戻し事業の予算を活用し、生誕地の中村地内に展示して中心市街地の活性化を図ることを提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第2回定例会・一般質問・糸原壽之</span><span class="ttl">農業遺産認定の経済効果</span><span class="sum">日本農業遺産の認定による経済効果を何年間で幾らと試算しその内訳はどうかを尋ね、鉄穴残丘や棚田を訪れる観光客のための二次交通への配慮と計画を質した。</span></li>
+          
+          <li><span class="who">令和元年第3回定例会・一般質問・藤原和範</span><span class="ttl">日本農業遺産認定後の取組</span><span class="sum">日本農業遺産の認定後の取組として、認定地域の農産品の表示シールの検討状況、ふるさと納税サイトでのPRの効果、たたら製鉄と農業に由来する観光地や文化遺産の案内看板の設置検討状況、世界農業遺産の認定申請への取組状況を質した。</span></li>
+          
+          <li><span class="who">令和元年第3回定例会・一般質問・村尾明利</span><span class="ttl">棚田地域振興法への対応</span><span class="sum">6月に成立した棚田地域振興法への町の対応方針、指定棚田地域の範囲、中山間地域等直接支払交付金や多面的機能支払交付金との違い、町長が期待する効果を質した。</span></li>
+          
+          <li><span class="who">令和元年第3回定例会・一般質問・田食道弘</span><span class="ttl">日米貿易協定と農業支援</span><span class="sum">日米貿易協定の大枠合意の撤回や批准拒否を首相や地元選出国会議員に求めるよう町長に迫り、深刻化する獣害への対策強化と集落単位での出前講座の開催、棚田の畦畔の草刈りへの新たな支援策を質した。</span></li>
+          
+          <li><span class="who">令和元年第4回定例会・一般質問・糸原壽之</span><span class="ttl">岩屋寺の仁王像と復興</span><span class="sum">別格本山岩屋寺の復興・保存・活用の意義への町長の所感、平成25年1月に周辺整備事業で取得した土地の場所・金額・目的と活用、オランダの美術館にある山門の仁王像の連れ戻しや買い戻しと文化財指定、観光協会を中心とした推進組織、国宝重要文化財等買上げ事業の活用を質した。</span></li>
+          
+          <li><span class="who">令和2年第1回定例会・一般質問・村尾明利</span><span class="ttl">棚田地域振興法の取組</span><span class="sum">棚田地域振興法に係る町の取組方針と全町的な地域指定の見通し、中山間地域等直接支払制度の第5期対策での反当1万円の加算が急傾斜地・緩傾斜地の交付金に上乗せされるのか、農家の経営メリットを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・内田勇</span><span class="ttl">農業遺産の認定</span><span class="sum">世界農業遺産・日本農業遺産の認定に向けた取り組みの町民へのわかりやすい周知を求め、両遺産の違いと一方のみ認定される可能性の有無、認定を受けた場合の移住者増加や農産物のブランド化、観光振興などの効果を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・村尾明利</span><span class="ttl">農業遺産を目指す懸垂幕</span><span class="sum">日本・世界農業遺産の登録を目指し町民の総意を促すため、町長や町の決意を示す大きな懸垂幕を庁舎前に掲げ、登録の暁にはさらに町をＰＲできる掲揚を行うことを提起した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・糸原壽之</span><span class="ttl">秋の行楽シーズンの検証</span><span class="sum">たたらの灯からトロッコ列車最終日までの行楽シーズンについて、本町への入り込み客数と経済効果、亀嵩・斐乃上・佐白の温泉施設やたたら関連施設、飲食店などの利用者数、例年にない来訪者があった理由の認識、食に関する検証と今後の展開を問うた。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・田食道弘</span><span class="ttl">文化財研究資料の保存</span><span class="sum">高橋一郎氏や杉原清一氏が遺したたたら製鉄の歴史や町内の古墳などの研究資料が空き家となった住宅に残っているとして、町の貴重な資源として一元的に集約し大切に保管するよう求めた。</span></li>
+          
+          <li><span class="who">平成31年第1回定例会・一般質問・藤原和範</span><span class="ttl">農業遺産の案内看板</span><span class="sum">日本農業遺産の認定を契機にふるさと納税の返礼品の仁多米などで全国へ発信するとともに、町内に点在する棚田など見学できる場所への案内看板の設置を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回定例会・一般質問・糸原壽之</span><span class="ttl">日本遺産たたらの展開</span><span class="sum">日本遺産「出雲の國たたら風土記」の認定を生かし、人口や入り込み客の増大に向けて、たたらに関し世界へ情報発信できる文化施設の設置や要所への表示タワーの設置など今後の展開を提起した。</span></li>
+          
+          <li><span class="who">平成29年第2回定例会・一般質問・藤原和範</span><span class="ttl">たたらを生かす観光振興</span><span class="sum">観光庁の支援事業に選ばれた、たたらをテーマに棚田や食を結びつけた着地型旅行商品づくりの概要と具体的な計画を尋ね、世界遺産登録の機運醸成に向けた仮称たたらドームの整備について関係機関との協議を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回定例会・一般質問・糸原壽之</span><span class="ttl">たたらタワーの設置</span><span class="sum">6月定例会で検討すると答弁のあった、日本遺産認定を町内外へ示し地域づくりに取り組む人たちの心の支えとなるシンボルとしてのたたらタワーの設置について、現段階での検討結果を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回定例会・一般質問・糸原壽之</span><span class="ttl">日本遺産関連事業の進捗</span><span class="sum">日本遺産認定関連のたたらブランドの推進、新製品の開発、刀匠の誘致事業の進捗状況と課題、今年度の目標や募集・周知方法、委託か直営かなど事業推進のプロセス、観光振興や町の活性化における位置づけを質した。</span></li>
+          
+          <li><span class="who">平成29年第3回定例会・一般質問・糸原壽之</span><span class="ttl">たたら文化伝承ゾーン</span><span class="sum">玉鋼を使った物づくり工房にたたらの体験・学習施設を加えて一定区域で整備する奥出雲町たたら文化伝承ゾーンを長期的に民間の協力も得て整備し、体験や学習を含む一泊の観光コースメニューを推進することを提起した。</span></li>
+          
+          <li><span class="who">平成30年第1回定例会・一般質問・糸原壽之</span><span class="ttl">退職者を呼ぶ高齢化対策</span><span class="sum">退職後を暮らすなら奥出雲でと、豊かな自然や農地、たたら製鉄などの地域資源を生かし全国から年配者を呼び込む戦略を提案し、リタイアした人へのアプローチ施策の現状認識と今後の課題を質した。</span></li>
+          
+          <li><span class="who">平成30年第1回定例会・一般質問・内田勇</span><span class="ttl">ふるさと納税の使い道</span><span class="sum">平成29年度に3億円近い寄附が寄せられたふるさと納税について、より具体的な課題を示して支援を募るため、婚活支援事業、奥出雲病院の医師・看護師確保のための返済不要の奨学金、たたら製鉄の調査研究と維持存続への活用を提起した。</span></li>
+          
+          <li><span class="who">平成30年第1回定例会・一般質問・内田雅人</span><span class="ttl">たたら製鉄のブランド化</span><span class="sum">神話とたたら製鉄の里奥出雲の仕事づくり事業の2年間の成果、玉鋼と和鉄を使った新商品の具体化、本物のたたら製鉄は奥出雲町にあることを打ち出すブランド化の取組を尋ね、見学者の鍛錬体験やたたら体験ツアーの考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・藤原和範</span><span class="ttl">日本遺産認定後の取り組み</span><span class="sum">出雲國たたら風土記が日本遺産に認定されたことを受け、鉄の道文化圏推進協議会を中心とした今後の取り組み、たたら関連の登録文化財が最も多く玉鋼を生産する町としての独自性のＰＲ、日本遺産を生かした誘客戦略、世界遺産登録に向けた取り組みを質した。</span></li>
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・内田雅人</span><span class="ttl">たたらを生かした観光戦略</span><span class="sum">日本遺産に認定されたたたらの世界遺産登録に向けたビジョンと課題を尋ね、石見銀山の例を挙げて自然と人間の共生を普遍的価値として積極的に訴えることを提案し、本物のたたらを体験できる観光の内容と実現を質した。</span></li>
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・塔村俊介</span><span class="ttl">産業としての観光振興</span><span class="sum">奥出雲町の観光産業の概要と入り込み客数や観光関連消費額の算出を尋ね、農林漁業体験民宿などの民泊、大会や合宿の宿泊に向けた空き家や単身者住宅や高田小学校の活用、教育・研修旅行とスポーツ合宿の誘致と受け入れ環境の整備、ランチでの誘客、休業したサイクリングターミナルのレストランの今後、インバウンド観光の可能性、たたらを核とした景観整備、観光戦略の方針と鳥取との広域連携を質した。</span></li>
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・内田勇</span><span class="ttl">里山を守る竹林伐採</span><span class="sum">日本遺産認定記念シンポジウムで竹やぶが景観上目立つと指摘されたことを受け、竹切りプロジェクトによる繁茂する竹林の伐採と伐採した竹の集積などの方法、竹の有効活用、竹チッパーの活用状況を質した。</span></li>
+          
+          <li><span class="who">平成28年第4回定例会・一般質問・塔村俊介</span><span class="ttl">来年の観光客受け入れ体制</span><span class="sum">「たたら侍」公開の年に向け、たたらを体感し学ぶなら奥出雲となる体制と環境の整備、自主財源と企画力を持つ観光協会の29年秋までの法人化、二次交通の実証実験の成果と松江・出雲との接続、東京に開設する新店舗での魅力の発信、サイクリングターミナル食堂のリニューアルの具体案、出雲三成駅エリアの活性化策を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・藤原和範</span><span class="ttl">総合戦略推進の取り組み</span><span class="sum">本格実施2年目となる新年度の総合戦略の重点的推進事項を尋ね、地方創生加速化交付金で実施したたたらブランドの推進、そろばん産業の再生、たたらを活用した観光振興の現状と成果、地方創生推進交付金による観光や交流人口の拡大、地場産業への具体的な展開を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・村尾明利</span><span class="ttl">農泊による観光と移住推進</span><span class="sum">三成駅前への観光文化協会の事務所移転や日本遺産の認定、都市住民の田園回帰の調査結果、みなべ町の農家民泊を示して本町の観光振興とＵ・Ｉターンの推進の方策を尋ね、農泊・民泊の町挙げての受け入れと基礎的な勉強会の開催を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第3回定例会・一般質問・藤原和範</span><span class="ttl">たたらを柱にした滞在型観光</span><span class="sum">安来市・雲南市と申請して認定されなかったたたら製鉄の日本遺産認定への今後の取り組みを尋ね、たたら製鉄を柱に地域資源をストーリーにして発信する「クール奥出雲」による滞在型観光の推進、観光スポットへ導くサイン看板の設置、高野・東城インターチェンジからの誘導看板の整備を質した。</span></li>
+          
+          <li><span class="who">平成28年第1回定例会・一般質問・藤原和範</span><span class="ttl">観光文化協会と旅行商品化</span><span class="sum">新年度から組織を見直し専属スタッフを置く観光文化協会の位置づけと役割と体制、法人化の検討の有無、出雲横田駅前の観光案内所の扱いを尋ね、映画「たたら侍」の公開を機にたたら資源等を生かした観光ツアーや体験ツアーの旅行商品化と情報発信を質した。</span></li>
+          
+          <li><span class="who">平成28年第1回定例会・一般質問・内田勇</span><span class="ttl">奥出雲の観光振興</span><span class="sum">サイクリングターミナルに置く観光文化協会の5人体制の内容と会長を尋ね、映画「たたら侍」の完成を機にした観光戦略、玉鋼を活用したたたらブランドの商品開発、刀剣女子の集いの開催、2泊3日の各種体験ツアーの企画、ヘルスツーリズム認証制度を生かした健康長寿のブランド化、奥出雲サイクリングの知名度向上、仁多米や奥出雲そばなどのサイン看板の設置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第3回定例会・一般質問・石原武志</span><span class="ttl">企業誘致と商工業の振興</span><span class="sum">地域振興課が担当する企業・商工業者の誘致、開発やサポートの具体的な実践例を尋ね、たたらや玉鋼などの財産を生かした企業・商工業のさらなる誘致と振興への所見を質した。</span></li>
+          
+          <li><span class="who">平成26年第4回定例会・一般質問・藤原和範</span><span class="ttl">観光入り込み客の目標</span><span class="sum">尾道松江線の全線開通や合併10周年、たたら製鉄と棚田の文化的景観、映画「たたら侍」の制作を機に、観光入り込み客100万人の目標を掲げて各施設や行政、商工会、観光文化協会等が連携して取り組むことを提起した。</span></li>
+          
+          <li><span class="who">平成26年第4回定例会・一般質問・内田勇</span><span class="ttl">着地型観光の推進</span><span class="sum">観光資源の利活用への見解を尋ね、たたら操業やそろばんづくり等の物づくり体験、田植えや植林、炭焼き等の農林業体験、みそ・しょうゆ・豆腐等の食文化を生かした体験の活用と、観光振興ビジョンの策定と観光推進条例の制定を質した。</span></li>
+          
+          <li><span class="who">平成27年第1回定例会・一般質問・内田勇</span><span class="ttl">たたら製鉄の世界遺産登録</span><span class="sum">たたら製鉄の世界遺産登録に向けた町長の方針と暫定リストまでの道のり、日本遺産の申請を尋ね、ものづくり心塾で提案された玉鋼の貴金属としての活用への所見と、奥出雲の自然・文化・歴史の動画を制作しインターネットで発信することを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・村尾明利</span><span class="ttl">中山間地域の農地集積</span><span class="sum">農地集積協力金や規模拡大交付金を柱とする国の農地集積の総合対策を急傾斜地の多い本町でどう受け止めるかを尋ね、人・農地プランとの整合と集積の目標、棚田景観の世界農業遺産の可能性を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・藤原和範</span><span class="ttl">たたら景観を生かす町づくり</span><span class="sum">たたら製鉄を背景とする7地区の国の重要文化的景観の選定に向けた進捗状況と展望を尋ね、たたらと刀剣館や絲原記念館、可部屋集成館と一体となった滞在型観光ルートなど、たたら景観を地域資源として活用する考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第4回定例会・一般質問・若月忠男</span><span class="ttl">文化的景観の保存整備計画</span><span class="sum">重要文化的景観の選定を見込み、棚田とたたら製鉄関連施設の保存整備計画と棚田の米の知的財産登録による価値向上、中国山地一帯のたたら製鉄跡地域との町主導の広域連携、世界遺産登録を見据えた国内外への発信、アクセス道路の整備とパンフレットの配布を質した。</span></li>
+          
+          <li><span class="who">平成26年第1回定例会・一般質問・若月忠男</span><span class="ttl">ロケ地を生かす観光振興</span><span class="sum">映画・テレビのロケスナップ写真と撮影場所への道路地図の作成、奥出雲たたら製鉄及び棚田の文化的景観地や撮影場所を取り入れトロッコ列車と巡回バスで結ぶ日帰り・宿泊コースの観光プランによる誘客を質した。</span></li>
+          
+          <li><span class="who">平成26年第1回定例会・一般質問・石原武志</span><span class="ttl">雲州そろばん産業の振興</span><span class="sum">たたら製鉄と並ぶ歴史・文化資源である伝統産業の雲州そろばんを再び奥出雲の主力産業として活躍させることへの所見を尋ね、生産地として小学校1年生から中学校まで授業にそろばんを取り入れることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回定例会・一般質問・内田精彦</span><span class="ttl">たたら吹き製鉄体験事業</span><span class="sum">一般住民向けのたたら吹き製鉄体験事業の内容と主催した奥出雲町地域活性化実行委員会の性格、参加者の県内外・町内の内訳と周知の時期、今後の継続、アンケートの感想や要望の生かし方と効果、世界遺産登録に向けた町民の理解への町長の考えを質した。</span></li>
+          
+          <li><span class="who">平成24年第3回定例会・一般質問・若月忠男</span><span class="ttl">たたらシンポジウム</span><span class="sum">東京で開くたたらシンポジウムへの地元参加者数と経費の一部負担、たたら操業体験の開催計画と地元参加の要請、鳥取・広島・岡山を含む広域圏での開催、東アジアなど鉄の道の地での開催、たたらと結びつけた仁多米のＰＲ強化を質した。</span></li>
+          
+          <li><span class="who">平成24年第3回定例会・一般質問・塔村俊介</span><span class="ttl">教育資源を生かした地域振興</span><span class="sum">ホッケー、たたら製鉄、そろばん、自然豊かな教育環境、三成遊園地を生かした地域振興の考え、横田高校への町の支援体制、ビーナス像とダビデ像の設置場所の決定者と教育的見地からの評価、住民の声が届いているかを質した。</span></li>
+          
+          <li><span class="who">平成25年第1回定例会・一般質問・若月忠男</span><span class="ttl">町政2期目の取り組み姿勢</span><span class="sum">財政健全化や子育て支援、Ｕ・Ｉターン対策、たたら文化の振興、新エネルギー対策など1期4年間の成果を挙げたうえで、2期目に挑む抱負と振興策で力点を置く点、町づくりの方向性と政策を鮮明に打ち出す考えを問うた。</span></li>
+          
+          <li><span class="who">平成25年第1回定例会・一般質問・塔村俊介</span><span class="ttl">ふるさと教育の成果</span><span class="sum">力を入れているふるさと教育の成果と課題を尋ね、たたら操業体験などを一般の人や大人にも広げる機会を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第3回定例会・一般質問・内田勇</span><span class="ttl">観光立町と観光振興</span><span class="sum">観光立町の宣言と観光推進条例の制定による推進体制の強化、集客目標を定めモデルコースを設定した観光マップの作成、国定公園や中国自然遊歩道を生かした森林セラピー体験の基地の設置、古事記編さん1300年を機にしたたたらシンポジウムの町内開催を質した。</span></li>
+          
+          <li><span class="who">平成23年第4回定例会・一般質問・若月忠男</span><span class="ttl">遺跡出土品の展示</span><span class="sum">古事記編さん1,300年を前に、町内で出土した土器や埴輪を1カ所で展示する施設の設置、展示できない出土品のレプリカの制作、古墳や遺跡への道しるべと説明表示板の設置、未発掘の史跡・古墳の今後と関係する文献の展示を質した。</span></li>
+          
+          <li><span class="who">平成24年第1回定例会・一般質問・内田勇</span><span class="ttl">奥出雲雪まつりの開催</span><span class="sum">冬期の観光客誘致とにぎわい創出のため、日刀保たたらの操業と組み合わせ、三井野原地区や横田駅前で雪だるまやかまくら、雪合戦大会などを家族で楽しめる雪祭りの開催を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・若月康男</span><span class="ttl">神話とたたらの観光振興</span><span class="sum">古事記編さん1300年や出雲大社の大遷宮を機にした着地型観光の取り組みと集客イベント、たたら製鉄の世界遺産登録への取り組み、日刀保たたらの玉鋼を使った新作刀剣展の開催を尋ね、米などの食材を使ったA級グルメの開催や国外からの観光客誘致を質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・吾郷益已</span><span class="ttl">観光資源を生かす観光振興</span><span class="sum">積極的な観光政策への町長の考え、神話やたたら製鉄、船通山などの自然、刀剣やそろばんなどの伝統産業を生かした観光振興、観光振興室の機能と観光コーディネーター、奥出雲の名を冠するなど観光資源のデザイン化、年次的なインフラ整備計画の有無、観光施設が連携した体験型・滞在型の観光メニューの開発を尋ね、入湯税の減少が示す入り込み客の減少への考えを質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・内田勇</span><span class="ttl">たたらで町おこし</span><span class="sum">識者がユネスコ無形文化遺産への登録を提言したたたらシンポジウムの今後の取り組みと成果を尋ね、大人のたたら体験学習、炭焼き体験のできる施設の各地区への整備と森林整備・グリーンツーリズムによる滞在型観光、観光スポットを載せた安価なガイドブックとスタンプラリーで仁多米などを贈る町おこしを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・吾郷益已</span><span class="ttl">観光資源を活用した地域振興</span><span class="sum">神話やたたら製鉄、鬼の舌震、吾妻山・船通山などの観光資源が孤立している状況を挙げ、資源をリンクさせた滞在型観光地の施策と、農商工を組み合わせた観光産業プランの早急な作成を質した。</span></li>
+          
+          <li><span class="who">平成22年第1回定例会・一般質問・内田勇</span><span class="ttl">たたら製鉄の世界遺産登録</span><span class="sum">日刀保たたらが町にあることや2年後の古事記編さん1300年を挙げ、たたら製鉄の世界遺産登録への運動を通じた町おこしへの所見を尋ね、関連の市町へ奥出雲町から声を上げることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>たたら体験学習</summary><p>ふるさとを愛し心豊かな子どもを育成するため、奥出雲町でしかできないたたら体験学習を継続して実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>サイン計画に基づく旧跡・文化財の案内</summary><p>町のサイン計画に基づいた看板で各所の旧跡・文化財を紹介し、町民の誇りとするとともに町外の人への情報提供を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>たたら製鉄遺構の全町的調査の準備</summary><p>たたら製鉄について、全町的な遺構の調査に向けた準備を始める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>たたら体験学習</summary><p>ふるさとを愛し心豊かな子どもを育成するため、奥出雲町でしか体験できないたたら体験学習を継続して実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>地域資源の再調査と文化財の普及啓発</summary><p>文化財の保護・保存・伝承のため、巨樹巨木や神話伝説などの地域資源を再調査して普及啓発するとともに、積極的な情報発信を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>文化的景観の学術調査と重要文化的景観の認定</summary><p>たたら製鉄のかんな流しとともにはぐくまれた本町の文化的景観について学術調査を実施し、その価値を明らかにして国の重要文化的景観の認定を目指し、町づくりに活用する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>鉄の歴史を持つ地域との連携（たたらシンポジウム等）</summary><p>県が東京国立博物館の神話博会場で予定するたたらシンポジウムの開催などに向け、鉄の道文化圏の構成市町や鳥取県日南町など鉄の歴史を持つ地域と連携して取り組みを進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>たたら操業体験学習と合同吾妻山キャンプ</summary><p>町でしか体験できないたたら操業体験学習を継続して実施するほか、小学5年生全員が参加する合同吾妻山キャンプを開催する（体験学習の2事業を統合）。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>たたら製鉄の文化的景観の重要文化的景観選定申出</summary><p>日刀保たたらや鉄穴流し水田など、たたら製鉄により形成された文化的景観の学術調査で全国的に特筆すべき価値が明らかになったため、調査結果をまとめ、中国地方初となる国の重要文化的景観の選定を文化庁に申し出る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>たたら振興（鉄の道文化圏との連携）</summary><p>これまで松江や東京でたたらシンポジウムを開催してきたたたら振興について、引き続き鉄の道文化圏の構成市町や鳥取県日南町などと連携を図りながら、さまざまな取り組みを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>たたら操業体験学習と吾妻山合同キャンプの継続</summary><p>ふるさとを愛し主体的に行動できる人づくりを目標とする学校教育の一環として、奥出雲町でしか体験できないたたら操業体験学習と、小学5年生全員参加による吾妻山合同キャンプを継続する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>たたら製鉄の文化的景観の重要文化的景観選定申し出</summary><p>平成22年度から調査事業を進めてきたたたら製鉄を背景とする文化的景観について、調査成果をもとに来年度、中国地方初となる国の重要文化的景観の選定申し出を行う。製鉄文化の価値を高め、ふるさと奥出雲のすばらしさを全国に発信することをねらう。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>映画「たたら侍」の制作協力とたたら文化のPR</summary><p>錦織良成監督による、たたらをテーマにした映画「たたら侍」の制作が県内で予定されている。県とたたらに関係する市町が連携して映画制作に協力し、本町が誇るたたらの文化を最大限にPRして全国へ情報発信する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>たたら体験学習・吾妻山合同キャンプ・ふるさと教育</summary><p>ふるさとを愛し主体的に行動できる人づくりを目標に、奥出雲町でしか体験できないたたら体験学習、小学5年生全員参加の吾妻山合同キャンプ、学校と公民館が連携したふるさと教育を継続する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>奥出雲たたら製鉄及び棚田の文化的景観の整備活用</summary><p>今月、文部科学大臣から文化財の選定を受ける予定の奥出雲たたら製鉄及び棚田の文化的景観について、来年度に整備活用計画を策定する。案内看板の設置、景観保全、棚田で生産される仁多米コシヒカリのプレミアム化を推進し、本町の誇りとして全国に情報発信する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>橋梁長寿命化修繕事業</summary><p>インフラの老朽化に対し、安全安心の確保と中長期的なコスト縮減・平準化を図るため、横田西農道のたたら大橋の塗装塗りかえ工事をはじめ、町道でも橋梁長寿命化のための修繕を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>映画「たたら侍」撮影への協力</summary><p>たたらをテーマにした映画「たたら侍」の撮影が本町でも行われており、来年度も撮影が計画されている。たたらの文化を最大限にPRし全国へ情報発信するため、引き続き協力する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>ふるさと教育（たたら総合体験学習・吾妻山合同キャンプ）</summary><p>ふるさとを愛し主体的に行動できる人づくりを目標に、町でしか体験できないたたら総合体験学習や吾妻山合同キャンプ、学校と公民館が連携したふるさと教育を継続的に進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>重要文化的景観（奥出雲たたら製鉄及び棚田）の保存整備と活用</summary><p>国の重要文化的景観に選定された「奥出雲たたら製鉄及び棚田の文化的景観」について、整備活用計画に従い保存整備を図り次世代に継承する。あわせて仁多米のブランド化や観光への活用を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>伝統産業・観光産業の振興事業（地方創生加速化交付金）</summary><p>国の地方創生加速化交付金により、たたら製鉄を活用した観光振興と、そろばんや刃物製作等の伝統産業の振興を目指す事業の経費を今年度の補正予算に計上した。来年度に繰り越し、当初予算と一体的に人材育成・雇用創出の取り組みを進める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">10</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>橋梁長寿命化修繕（たたら大橋ほか）</summary><p>道路や橋などインフラの老朽化対策として、横田西農道にかかるたたら大橋の塗装塗りかえ工事をはじめ、町道でも橋梁長寿命化のための修繕事業を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>観光文化協会の組織見直しと事務所の移設</summary><p>松江城の国宝指定を誘客の好機と捉え、総合戦略の歴史・文化・自然を生かした観光振興を円滑に実行するため、観光文化協会の組織を見直し、専属スタッフを配置する。事務所は観光案内所を兼ねた運営が可能なサイクリングターミナルへ設置する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>映画「たたら侍」公開に合わせた情報発信</summary><p>錦織良成監督の映画「たたら侍」が来年度中に公開予定であり、奥出雲たたら製鉄及び棚田の文化的景観を最大限にPRし、全国へ情報発信する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>たたら製鉄関連の歴史遺産調査と重要文化的景観の整備</summary><p>たたら製鉄の価値をさらに高めるため、関連する歴史遺産の調査を進めるとともに、国の重要文化的景観に選定されたたたら景観の整備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>たたら製鉄の日本遺産選定に向けた2市1町の連携</summary><p>雲南市・安来市と奥出雲町の2市1町で進めるたたら製鉄の日本遺産選定に向けた取り組みと連携し、奥出雲の文化・伝統を含めた地域振興と観光振興に努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>映画「たたら侍」のPR支援とたたら製鉄の情報発信</summary><p>本年5月に錦織良成監督の映画「たたら侍」が公開される。昨年4月に日本遺産に登録された「出雲の國たたら風土記」とともに、たたら製鉄を全国へ情報発信する機会として、映画のPR活動などの支援を続ける。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>玉鋼・和鉄の新商品開発とそろばん産業の再生支援</summary><p>今年度から始めた玉鋼・和鉄を活用した新商品の開発やそろばん産業の再生支援などについて、引き続き国の交付金を活用し、たたらや玉鋼のブランド価値を高める活動を展開する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>たたら製鉄ゆかりの庭園の国名勝指定・登録に向けた取り組み</summary><p>たたら製鉄の歴史的価値をさらに高めるため、重要文化財櫻井家住宅に附属する松平不昧公ゆかりの庭園が国の名勝に指定されるよう文部科学大臣に具申した。今後は、登録有形文化財・絲原家住宅に附属する庭園についても国登録名勝への登録に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>「神話とたたら製鉄の郷　奥出雲の仕事づくり」事業</summary><p>平成28年度から始まった本事業について、引き続き国の交付金を活用し、玉鋼、和鉄を活用した新商品の開発に取り組む。たたらや玉鋼のブランド価値を高めていく活動を展開する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>社会教育の推進</summary><p>小学校のたたら体験学習活動が博報賞の文部科学大臣賞を受賞したことを踏まえ、地域拠点施設としての公民館の役割はますます重要になると捉える。奥出雲町文化協会をはじめ各公民館などで活動するサークルの支援や人材育成など、社会教育の推進に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>たたら製鉄の価値の解明と情報発信</summary><p>たたら製鉄をはじめとする本町の文化遺産や歴史文化への関心の高まりを受け、たたら製鉄の価値を着実に明らかにし、本物のたたら製鉄は奥出雲町にあることを積極的に情報発信する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>日本農業遺産の保全・発信と世界農業遺産認定への取り組み</summary><p>中国地方で初めて日本農業遺産に認定された、耕畜連携に由来する循環型農業システムの保全・継続を図る。奥出雲の農業の特色を全国に向けて情報発信するとともに、引き続き世界農業遺産の認定に向けて取り組む。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>日本農業遺産認定を契機とした魅力発信と観光客誘致</summary><p>日本農業遺産の認定を契機に、たたら製鉄の歴史文化や奥出雲の農業と食などの魅力をさらに情報発信し、交流イベントや体験などを通じて観光客の誘致につなげる。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>文化財など文化的・歴史的資源の活用</summary><p>たたら文化に由来する価値ある文化財が多数ある中、昨年10月に絲原氏庭園が国の名勝となったことなども踏まえ、本町の文化的・歴史的資源の付加価値の創造と有効活用に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>文化活動の支援・たたら体験学習・異文化交流</summary><p>奥出雲町文化協会をはじめ各地区公民館やサークル活動を引き続き支援し、本町ならではのたたら体験学習や、学校と地域が連携・協働したふるさと教育を進める。あわせて、昨年8月に任用したインドからの交流員とともに異文化交流を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>世界農業遺産認定申請への再挑戦</summary><p>奥出雲町農業遺産推進協議会で世界農業遺産認定申請への取り組みの承認を得たことから、調査と認定申請書の内容を補完し、世界農業遺産認定申請の承認に向けて再度挑戦する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>指定棚田地域振興協議会の立ち上げと棚田活動加算の取得</summary><p>棚田地域振興法の制定と中山間地域等直接支払交付金の第5期対策で棚田活動加算が新設されることを受け、町で指定棚田地域振興協議会を立ち上げる。棚田地域の指定と活動計画の認定に向けて農業者と一体で取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>棚田景観の発信と農泊推進協議会による農業体験ツアー</summary><p>日本農業遺産への認定を好機と捉え、たたら製鉄とともに育まれた棚田景観を情報発信する。観光協会を母体に設立した農泊推進協議会を中心に、農業体験が楽しめるツアーの提供に引き続き取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>世界農業遺産の認定申請</summary><p>世界農業遺産認定申請に向けた国内承認を得た。専門家会議から指摘された点を修正・英訳したうえでFAO（国連食糧農業機関）に認定申請を行い、審査と現地調査を経て可否が決定される予定。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>世界農業遺産の認定申請</summary><p>世界農業遺産の認定に向け、引き続き情報収集に努め、適切に対応する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>中山間地域等直接支払交付金の棚田活動加算の推進</summary><p>中山間地域等直接支払交付金第5期対策で新設された棚田活動加算に多くの集落協定が取り組んでいる。令和4年度からは超急傾斜加算と併せて棚田活動加算に取り組むことが可能となるため、棚田を活用した地域づくりや加算交付金を活用した取組が一層進むよう推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>農業遺産を軸とした農産物PRと農泊の推進</summary><p>たたら製鉄に由来する資源循環型農業の歴史的価値を軸に、仁多米、奥出雲和牛、ソバなど高品質な農産物生産の持続化とPRに努める。田舎・農業体験やマイクロツーリズムに対応した滞在型旅行プランなど農泊の取組を推進し、奥出雲ブランドの醸成を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">10</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>奥出雲たたらと刀剣館の多言語化</summary><p>鉄の道文化圏推進協議会（安来市・雲南市・奥出雲町）が日本遺産の重点支援地域に指定されたことを踏まえ、今後需要の増加が見込まれるインバウンドに対応するため、たたらと刀剣館の多言語化を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>文化遺産の普及啓発とたたら体験学習</summary><p>奥出雲町の文化遺産の普及啓発や小学校でのたたら体験学習などにより、奥出雲の文化・歴史の保存・継承に努め、文化の薫り高いまちづくりを推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>日本農業遺産を生かした農産物ブランド化と農泊の推進</summary><p>たたら製鉄に由来する資源循環型農業の歴史的価値を軸に、仁多米・奥出雲和牛・ソバなど高品質な農産物の生産と資源循環型農業を推進する。日本農業遺産の認定を生かした情報発信・PRを進め、棚田景観や田舎・農業体験と結びついた滞在型旅行・農泊に取り組み、奥出雲ブランドの推進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">12</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>世界農業遺産の申請書再提出</summary><p>世界農業遺産について、指摘事項を踏まえて修正を行っており、本年夏に再提出する予定である。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>たたらと刀剣館の多言語化翻訳の活用</summary><p>日本遺産の構成要素であるたたらと刀剣館で、令和5年度観光庁事業によりインバウンド対策の多言語翻訳を実施した。翻訳成果を展示パネルでの紹介やQRコードでの通信翻訳などに活用する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>たたら製鉄・棚田の文化的景観の保全とたたら角炉の修繕</summary><p>国の重要文化的景観に選定されている奥出雲たたら製鉄及び棚田の文化的景観の保全を進め、阿井地区のたたら角炉の修繕など保存活用を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>日本遺産「出雲國たたら風土記」の認定更新に向けた取組</summary><p>日本遺産「出雲國たたら風土記」は平成28年の認定から10年目を迎え、本年は認定更新の時期となる。鉄の道文化圏推進協議会を中心に関係自治体でたたら関連施設や構成文化財を活用した観光振興に取り組んできた成果が評価されることから、認定更新に向け引き続き取組を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>奥出雲たたら製鉄及び棚田の文化的景観の整備活用計画策定</summary><p>国の重要文化的景観に選定されている奥出雲たたら製鉄及び棚田の文化的景観の保全と活用を進めるため、整備活用計画を策定し、保存活用を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>仁多米のブランド化と有利販売（関東方面への販路拡大）</summary><p>世界農業遺産認定を契機に、関東方面への販路拡大などで仁多米の有利販売に取り組む。産地間競争に勝ち抜くため、安定生産と高品質化によるブランド化を軸に、スマート農業技術による省力化、気候変動に対応した米づくり、鳥獣被害対策もあわせて進める。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>小規模事業者の事業継続支援</summary><p>町内の小規模事業者の事業継続を支えるため、国・県の各種助成制度などを活用する。新規事業や世界農業遺産を活用した販路拡大などに取り組む事業者を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>日本遺産と世界農業遺産を活用したツアー造成</summary><p>令和7年の観光入り込み客数は71万5,000人で前年から減少した。昨年7月に認定更新に選定された日本遺産「出雲國たたら風土記～鉄づくり1000年が生んだ物語～」と、8月に認定された世界農業遺産を生かして新たなツアーを造成し、誘客の増加を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>世界農業遺産クラスターの形成</summary><p>世界農業遺産の認定を契機に、産学官と金融機関も含めた世界農業遺産クラスターを形成する。農林業にとどまらず、観光や各産業の振興、定住の促進、魅力ある教育づくりにつなげたまちづくりを進める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>櫻井家住宅前座敷屋根の修景工事への支援</summary><p>文化財保護の新規事業として、令和8年度に国の重要文化的景観の構成要素に選定されている櫻井家住宅前座敷屋根の修景工事を支援する。歴史的価値の保存と魅力の向上に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>奥出雲町総合計画の改定</summary><p>令和3年度を初年度とする10年間の奥出雲町総合計画は、当初策定から5年が経ち来年度に中間年を迎える。施策の成果を検証し、人口減少、子育てや移住定住対策、AI等のデジタル技術の活用、世界農業遺産認定を生かした農業・観光などの急速な時代の変化に対応するため、計画を改定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>スポーツ振興</h3>
+    <p class="terms">語: スポーツ振興・スポーツ・体育館</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="lt25" data-year="H24"><b>1</b><span class="of">/8人</span><span class="q">2件</span></td><td class="lt25" data-year="H25"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt25" data-year="H30"><b>3</b><span class="of">/13人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="ge25" data-year="R03"><b>4</b><span class="of">/13人</span><span class="q">4件</span></td><td class="ge25" data-year="R04"><b>4</b><span class="of">/13人</span><span class="q">4件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/13人</span><span class="q">6件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/13人</span><span class="q">4件</span></td><td class="ge25" data-year="R07"><b>3</b><span class="of">/11人</span><span class="q">3件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・糸原壽之</span><span class="ttl">町内のスポーツ少年団</span><span class="sum">小学校統合後のスポーツ少年団の種類別の数と加入者数、教育委員会としての育成方針と指導者育成、各団体の県大会などへの出場状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・内田圭子</span><span class="ttl">屋内運動場の空調設備</span><span class="sum">中学校体育館の空調設備の整備状況と今後の計画を尋ね、避難所に指定されている仁多中学校体育館への空調設備整備臨時特例交付金を活用した前向きな検討と、廃校となった小学校の体育館の避難所機能の維持・強化の進め方を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・田食道弘</span><span class="ttl">想定外の災害への備え</span><span class="sum">戸別受信機の利用状況の把握と、火の元点検や自主防災組織による保守状況の確認を町から提案することを尋ね、指定避難所となる公共施設のＷｉ－Ｆｉ環境の改善と、廃校となった小学校の体育館の空調設備の整備と防災計画の避難所の再検討を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・糸原壽之</span><span class="ttl">文化スポーツ振興課の設置</span><span class="sum">4月に教育委員会内に設置した課の意義と狙いについて、国民スポーツ大会や部活動の地域展開に関する所掌事務の先にある考えと、部活動の地域移行との関係を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・北村千寿</span><span class="ttl">小学校体育館の避難所機能</span><span class="sum">避難所となっている小学校体育館と閉校後も避難所として位置づけるかを尋ね、夏の災害時の避難者の健康に配慮した体育館への空調設備の設置を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・内田雅人</span><span class="ttl">幼少期の運動の意義</span><span class="sum">子供の基礎的な体力の低下を挙げ、幼少期の運動の意義についての情報発信と運動や遊びの環境づくりの必要性を尋ね、スポーツ少年団の加入率を踏まえた体力の二極化への認識と今後の考えを質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・内田雅人</span><span class="ttl">スポーツ振興の体制強化</span><span class="sum">2030年の島根かみあり国スポ開催や部活動の地域移行を控え、岐阜県郡上市の例を挙げてスポーツ振興に関わる人員を増やす必要性について町長の考えを質した。</span></li>
+          
+          <li><span class="who">令和7年第1回定例会・一般質問・内田雅人</span><span class="ttl">避難所の空調整備</span><span class="sum">学校体育館の空調設備の設置率が島根県は1.4%にとどまることを挙げ、町の避難所の現状と今後の整備計画、島根原発の有事の避難先であることを踏まえた有利な補助金の要望、使用頻度の高い体育館から整備する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第2回定例会・一般質問・川西明徳</span><span class="ttl">子供の権利と教育条件</span><span class="sum">仁多地域統合小学校の体育館や特別教室の設置と現校舎のトイレの洋式化・老朽化対策など教育条件の整備の優先、不登校に対する公的な子供の居場所の整備と子供が行きたくなる学校づくり、校則の在り方や子どもの権利条約を尊重する教育行政を求めた。</span></li>
+          
+          <li><span class="who">令和5年第2回定例会・一般質問・大垣照子</span><span class="ttl">仁多地域の学校再編</span><span class="sum">統合小学校の本校舎の構造と建築内容の提示スケジュールと地元住民への周知・意見集約、課内での行事予定の共有、町民体育館と併用する新体育館の昼夜の管理運営と児童の優先利用、子供に合わせて動かせるゴールなどの設備、西日の反射と放射熱への設計上の対応、学校再編での住民への説明の在り方を質した。</span></li>
+          
+          <li><span class="who">令和5年第3回定例会・一般質問・大垣照子</span><span class="ttl">中央公民館の在り方</span><span class="sum">町民体育館と併設され解体が必要になると考えられる中央公民館の今後の在り方と建設に向けたタイムスケジュール、町民体育館跡地を商業施設等に有利な立地とした発言を踏まえた商業施設等の立地の考えを質した。</span></li>
+          
+          <li><span class="who">令和5年第3回臨時会・一般質問・内田雅人</span><span class="ttl">仮校舎での給食と式典</span><span class="sum">三成小学校の要望を十分に反映したことを踏まえ、給食を多目的ホールで取る予定か、3月から仮校舎に入った後の次の卒業式や入学式を今の体育館で行う予定かを質した。</span></li>
+          
+          <li><span class="who">令和5年第4回定例会・一般質問・内田雅人</span><span class="ttl">活動へのポイント付与</span><span class="sum">町のスポーツ大会や文化祭、健康づくりのイベントや講演会への参加にポイントを付与する活動インセンティブの取組を、鳥取県・山口県の健康マイレージや邑南町・飯南町の例を挙げ、盛んな地域交流を促すため商工会や福祉会などと連携して実施するよう提起した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・川西明徳</span><span class="ttl">国の財政支援の活用</span><span class="sum">令和6年度地方財政対策を受け、会計年度任用職員の給与改定の遡及適用、自治体独自の子育て支援経費とこども・子育て支援事業債の活用策や推奨事業メニューの限度額残、保育士の配置基準と処遇の改善、子供医療費助成のペナルティー廃止を生かした拡充、交付金や地方債を活用した中学校体育館の空調設置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回定例会・一般質問・内田裕紀</span><span class="ttl">教育施設の安全性の基準</span><span class="sum">町民体育館のＩｓ値0.18や仁多中学校裏山の土砂災害特別警戒区域を挙げて教育施設と公共施設の安全性の基準の考えを尋ね、Ｉｓ値0.35の布勢小学校と0.26の三成小学校、仁多中学校のレッドゾーン解消を含む個々の計画の策定状況、仁多地域統合小学校の建設地ごとの概算事業費を比べた所見を質した。</span></li>
+          
+          <li><span class="who">令和4年第4回定例会・一般質問・田食道弘</span><span class="ttl">災害時の避難対応</span><span class="sum">9月に開設した指定避難所の利用状況と課題を尋ね、収容人員50人の馬木コミセンに加えた馬木小学校体育館の開設や模擬避難訓練、避難行動要配慮者の支援方法の具体化と指定避難所の開設数の増、福祉避難所の確保を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・小田川謙一</span><span class="ttl">町民からの提言の実施</span><span class="sum">島根リハビリテーション学院の地域リハビリテーションサークル「にたまご」が旧高田小学校を利用して自己完結型のスポーツジムをつくる計画への町の協賛と対応を尋ね、山形県遊佐町の少年町長・少年議員公選事業を例に子供たちが考えたことを実行するための基金の準備を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・川西明徳</span><span class="ttl">学校再編と施設の複合化</span><span class="sum">公共施設の総量削減の下で学校施設に他の公共施設を集約・複合化する動きが強まる中、仁多統合小学校（仮称）と中央体育館の複合化利用の提案について、利用者を含めた実態を踏まえた検証の必要性への認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回定例会・一般質問・田食道弘</span><span class="ttl">学校体育館と福祉避難所</span><span class="sum">指定避難所の学校体育館がこの夏に開設されなかった理由を尋ね、避難所としての施設点検と改善、土砂災害特別警戒区域にある高尾・三沢小学校体育館の改修の進捗、横田地域を含む社会福祉施設との福祉避難所の協定締結、保健師による事前の連絡調整の仕組みを質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・内田雅人</span><span class="ttl">耐震基準を満たさない避難所</span><span class="sum">耐震診断で安全性評価が低かった町民体育館と横田コミュニティセンターが地震の際の指定避難所から外れたことによる収容人数の確保を尋ね、利用中に地震が起きた際の身の守り方や避難の仕方の明示と地震を想定した避難訓練を質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・石原武志</span><span class="ttl">原発と事故時の避難対策</span><span class="sum">脱炭素社会の実現に向けた原子力発電の必要性についての町の立場を尋ね、原発事故時の避難者の受入れ体制、中核的な施設となる中央体育館の修復計画、避難対策への電力会社の協力を仰ぐことへの考えを質した。</span></li>
+          
+          <li><span class="who">令和3年第4回定例会・一般質問・内田裕紀</span><span class="ttl">公共施設の改修と耐震</span><span class="sum">地方債残高156億円という財政状況を踏まえて公共施設の改修計画や削減計画の有無を尋ね、旧耐震の介護老人保健施設の計画と、Ｉｓ値を挙げて布勢・三成小学校の代替校舎や町民体育館との優先順位を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第3回定例会・一般質問・田食道弘</span><span class="ttl">土砂災害と洪水の防災対策</span><span class="sum">土砂災害特別警戒区域に指定された地点の住民への説明会や個別支援、避難所となる学校体育館への空調設備の設置、浸水想定区域や危険箇所の調査と洪水ハザードマップの作成などの対策を求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第2回定例会・一般質問・内田雅人</span><span class="ttl">スポーツ振興とその効果</span><span class="sum">三成公園ホッケー場の整備やスポーツ合宿誘致、インドのナショナルホッケーチームの東京オリンピック事前キャンプ誘致の費用対効果と誘致の状況、ウルトラおろち100キロ遠足などのスポーツイベントの費用対効果、スポーツ資源と観光・文化の融合によるブランド確立、国の支援と地域スポーツコミッションの組織化、スポーツ振興と学習意欲や生活習慣との関連、健康寿命の延伸への効果と各担当課の連携を質した。</span></li>
+          
+          <li><span class="who">平成30年第2回定例会・一般質問・内田精彦</span><span class="ttl">公共施設の使用規定の統一</span><span class="sum">カルチャープラザや横田コミセン、体育館、各公民館などで開館時間や閉館日、予約の受付期間、夜間割増し、減免、商業利用料金の定めが異なる状況を尋ね、3カ月より前の予約受付による不利益を指摘し、教育長が議員時代に求めた条例・規則の見直しも踏まえて統一する考えを質した。</span></li>
+          
+          <li><span class="who">平成31年第1回定例会・一般質問・景山利則</span><span class="ttl">三沢小学校の地盤沈下</span><span class="sum">造成当初の沈下と判断された三沢小学校の体育館入口付近で最大17センチのすき間や空洞が生じているのに、盛り土など雨水の流入を防ぐ現場復旧をしてこなかった理由と、問題を指摘されたら直ちに対応する行政の責務を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・塔村俊介</span><span class="ttl">産業としての観光振興</span><span class="sum">奥出雲町の観光産業の概要と入り込み客数や観光関連消費額の算出を尋ね、農林漁業体験民宿などの民泊、大会や合宿の宿泊に向けた空き家や単身者住宅や高田小学校の活用、教育・研修旅行とスポーツ合宿の誘致と受け入れ環境の整備、ランチでの誘客、休業したサイクリングターミナルのレストランの今後、インバウンド観光の可能性、たたらを核とした景観整備、観光戦略の方針と鳥取との広域連携を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・景山孝志</span><span class="ttl">人口減少対策の取り組み</span><span class="sum">雇用の場の確保として古民家を改修した企業・創業支援とその雇用効果、駐車場と誘導看板の計画、Ｕ・Ｉターン者の働き場の確保、地元企業者との共生の環境整備を尋ね、少子化対策として学校再編を含む教育環境の整備と子育て支援パンフレットの作成・掲示、健康のまちづくりとして挨拶推進の町宣言と軽スポーツの振興、結婚相談所の開設を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第3回定例会・一般質問・塔村俊介</span><span class="ttl">五輪合宿など滞在型観光</span><span class="sum">東京五輪の事前合宿誘致への考え、スポーツ合宿や教育旅行の県と連携した受け入れ体制の強化、奥出雲振興や観光文化協会を核とした着地型観光プランの開発・実施、観光文化協会への専任職員の配置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第1回定例会・一般質問・塔村俊介</span><span class="ttl">五輪に向けたスポーツ振興</span><span class="sum">ホッケーの町として東京オリンピックの事前合宿の誘致、日本代表候補やジュニア世代への町独自の強化選手指定による支援、ホッケー選手の確保策、温水プールやトレーニングジム・クラブハウスなど拠点の拡充、天叢雲剣伝説と中四国中学生選抜剣道大会の連動、仁多中・横田中の合同部活動の可能性を質した。</span></li>
+          
+          <li><span class="who">平成26年第1回定例会・一般質問・川西明徳</span><span class="ttl">三成小学校の教育環境</span><span class="sum">三成小学校の早急な耐震化と、照明器具の故障や雨漏りなど体育館の補修、防災避難所としての備品の設置、地区民も利用できる図書館機能と司書の配置、木質バイオマスエネルギーを利用した温水プールの設置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回定例会・一般質問・若月忠男</span><span class="ttl">ボート競技人口の育成支援</span><span class="sum">さくらおろち湖ボートコースの完成を踏まえ、小・中・高校や専門学校、一般の競技人口確保に向けた育成指導と支援、学校のスポーツ教育での取り組み、チームワークを生かせる競技としての積極的な取り組みを質した。</span></li>
+          
+          <li><span class="who">平成24年第4回定例会・一般質問・若月忠男</span><span class="ttl">スポーツ施設と合宿誘致</span><span class="sum">クロカンパークなど質の高い競技を可能にするスポーツ施設の整備拡充、自然を生かしたクロスカントリーコースの設置、高校・大学・実業団の合宿誘致の強化、全日本ジュニア陸上競技大会や県高校駅伝の誘致、トレイルランニングの町主催大会を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第2回定例会・一般質問・塔村俊介</span><span class="ttl">子供が減る中の教育環境</span><span class="sum">幼稚園の保育所化に伴う幼稚園教育の総括と保育所への活用、民間設置の幼児園の収支と保護者への費用の説明、複式学級に対応する教師の研修、スポーツ少年団の再編や送迎と文化活動への配慮、横田高校の志願者が定員の半数強にとどまったことの受け止めと原因、来年度に向けた町の対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>スポーツの競技力向上と軽スポーツ普及の支援</summary><p>町技であるホッケー競技を初め、町体育協会の陸上・剣道などの競技部の競技力の向上や軽スポーツの普及など、必要な支援を続ける。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>総合型地域スポーツクラブによる生涯スポーツの振興</summary><p>3月末に設立を予定している総合型地域スポーツクラブを中心に、生涯スポーツの普及・振興に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>奥出雲スポーツクラブを中心とした生涯スポーツの振興</summary><p>昨年3月に発足した奥出雲スポーツクラブを中心に、生涯スポーツの普及と振興に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>第36回全国スポーツ少年団ホッケー交流大会の開催</summary><p>今年8月に本町を会場として、全国から小学生高学年の男女約50チームが集う第36回全国スポーツ少年団ホッケー交流大会が開催され、約1,000人を超える来町者を迎えて実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>生涯スポーツの普及・振興</summary><p>伝統と歴史のある町体育協会の陸上、剣道などの競技力の向上や、健康づくりを目的とした奥出雲スポーツクラブの充実など、生涯スポーツの普及・振興に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>生涯スポーツの普及・振興</summary><p>奥出雲スポーツクラブなどによる町民の健康増進・体力向上の活動を踏まえ、生涯スポーツの普及・振興のための各種支援に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>生涯スポーツの普及・振興（奥出雲スポーツクラブ等への支援）</summary><p>町民の健康増進、体力向上、生涯スポーツの普及・振興のため、奥出雲スポーツクラブなどへの各種支援に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>生涯スポーツの普及・振興</summary><p>町民の健康増進、体力向上、生涯スポーツの普及・振興のため、引き続き奥出雲町体育協会やスポーツ推進員と連携を図りながら各種支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>ホッケー競技力向上と東京オリンピック事前キャンプ・スポーツ合宿の誘致</summary><p>横田高校などのホッケー競技力の向上を図るとともに、東京オリンピックの事前キャンプや大学生等のスポーツ合宿などの誘致活動を推進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>スポーツ合宿の助成制度</summary><p>大学のホッケー部などが本町で合宿する場合の助成制度を、平成30年度から実施するよう準備を進めている。より多くの方々に本町でスポーツ合宿を行ってもらい、地域活性化につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>三成公園陸上競技場園路の拡幅整備</summary><p>三成小学校新校舎の通学路として併用するため、仁多中学校体育館東側に位置する三成公園陸上競技場の園路を拡幅整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>スポーツ合宿・大会開催を生かした地域振興</summary><p>スポーツ合宿推進事業がアーチェリーやトライアスロン競技の合宿誘致につながっている。平成31年度に本町で開催される剣道の県中学校総体やホッケーの国体中国ブロック予選などを、スポーツを生かした地域振興につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>サイクリングターミナルの大規模改修</summary><p>建設から29年が経過し老朽化したサイクリングターミナルの大規模改修を実施する。スポーツ合宿やビジネス、少人数の利用に対応できるよう、稼働率の低い4人部屋を2人部屋へ改修し、宿泊客の受入れ体制を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>スポーツ推進委員等と連携したスポーツ振興</summary><p>スポーツ推進委員が全国優良団体に選ばれたことを受け、各地区のスポーツ推進委員やスポーツ関係団体の協力を得て、健康づくりの推進と地域の絆を深める各種スポーツ振興に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>インドホッケーチーム事前キャンプ誘致の断念</summary><p>東京オリンピック・パラリンピックでのインドホッケーチームの事前キャンプ誘致について、国の感染防止対策に沿った受入れ体制の整備が困難で、町民との交流事業も実施できないことから断念した。今後もホッケーを通じたインドとのスポーツ・文化交流の深化を願うとした。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>各種スポーツの振興</summary><p>東京2020オリンピックの聖火リレーや町内出身のホッケー日本代表選手の活躍でスポーツが盛り上がったことを受け、ホッケーに限らず町内競技関係者が様々な大舞台で活躍できるよう各種スポーツの振興に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>島根かみあり国スポに向けた機運醸成と環境づくり</summary><p>2030年に島根県で開催される島根かみあり国スポで奥出雲町がホッケー競技とボート競技の開催地に選定されたことを契機に、町民がスポーツをより身近に感じ、健康づくりとしてのスポーツにも参加できるよう機運醸成や環境づくりに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>町内競技者の活躍支援と生涯スポーツの振興</summary><p>ホッケーに限らず町内の競技関係者が様々な大舞台で活躍できるよう支援を継続する。子供から高齢者まで多くの町民がスポーツに触れ、健康で心豊かに過ごせるようスポーツの振興に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>新横田小学校の放課後子ども教室の開設</summary><p>新横田小学校では放課後児童クラブを校内に併設することから、学習やスポーツ・文化活動など多様な学びを提供する放課後子ども教室を新たに開設し、放課後の教育環境の向上を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>企業版関係人口創出プロジェクト事業</summary><p>町をフィールドに地域課題の解決に挑戦する企業を募集し、令和6年度は移住就労促進とスポーツ合宿誘致の実証事業に取り組む2社を採択した。令和7年度はこの2事業を引き続き実施して移住促進や合宿誘致に取り組むとともに、新たに2社程度を採択し、官民連携で地域課題の解決に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>スポーツ振興</summary><p>令和6年度に横田高校男子ホッケー部がインターハイで全国制覇するなど、多くの選手が活躍している。ホッケーに限らず町内競技関係者が大舞台で活躍できるよう支援を継続し、子供から高齢者まで多くの町民がスポーツに触れられるよう振興に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>町職員のスポーツ枠採用</summary><p>町職員採用試験の応募者が少ない中、持続可能な行政組織を維持するため、令和6年度に人物評価を重視した職員のスポーツ枠採用を実施した。専門職としての採用ではなく配属は通常の事務職員と同じである。令和7年度も同様にスポーツ枠を設けた職員募集を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>スポーツ振興（活躍の支援・軽スポーツの普及・体力向上）</summary><p>横田高校ホッケー部のインターハイ優勝など町ゆかりの選手の活躍を踏まえ、ホッケー競技に限らず様々な分野で活躍できるよう支援を続ける。町民が健康で心豊かに過ごせるよう、スポーツ推進員による軽スポーツの普及や子どもの体力向上プログラムなどに取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>図書館と生涯学習</h3>
+    <p class="terms">語: 図書館と生涯学習・図書館・生涯学習</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt25" data-year="H21"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/8人</span><span class="q">0件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt25" data-year="H26"><b>2</b><span class="of">/11人</span><span class="q">2件</span></td><td class="lt25" data-year="H27"><b>1</b><span class="of">/9人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt25" data-year="R07"><b>2</b><span class="of">/11人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・小田川謙一</span><span class="ttl">子供の読書活動の推進</span><span class="sum">第五次子どもの読書活動の推進に関する基本的な計画を踏まえ、図書館及び学校図書館のＤＸ推進や子供たちが主体的に読書活動を行えるような基本方針の推進に向けた今後の取組を質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・高橋恵美子</span><span class="ttl">将来の図書館の在り方</span><span class="sum">図書館の利用状況と本の冊数、年齢別の利用者と割合、学習利用の状況を尋ね、まちづくり拠点としての図書館への町長の所見、老朽化した施設の将来のあるべき姿、三成の老健跡地の複合施設への分室の設置の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・大垣照子</span><span class="ttl">跡地を活用した図書館整備</span><span class="sum">町が取得を説明した旧山陰合同銀行横田出張所の土地・建物を、高校生や小・中学生、町民が利用できる図書館として活用することへの考えを尋ね、面積が足りなければ閉校する学校など利用しなくなった施設を活用した図書館の整備を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・小田川謙一</span><span class="ttl">公立図書館と学校図書館</span><span class="sum">片山善博氏らの指摘を引き、立地適正化計画の新たな交流スペース創出の一環として公共図書館の整備を検討すべきとし、県と市町村の連携による電子図書の活用、小学校統合に当たっての学校図書館への電子書籍導入と公立図書館の貸出サービスとの連携を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第1回定例会・一般質問・内田精彦</span><span class="ttl">町立図書館の建設</span><span class="sum">町立図書館の建設への町長・教育長の認識、総合計画や中期財政計画での位置づけ、「早期」とする時期を尋ね、平成27年に平成30年度以降の計画とした答弁との違いを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第3回定例会・一般質問・川西明徳</span><span class="ttl">図書館の設置</span><span class="sum">住民の読書権と学習権を保障する図書館の設置を求め、公共施設の再編計画の中で住民要望の多い図書館を施設の統廃合計画に組み込み、施設の有効利用を図るよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第2回定例会・一般質問・塔村俊介</span><span class="ttl">子育て支援事業計画の施策</span><span class="sum">子ども・子育て支援事業計画を踏まえ、平成12年の2.42から平成24年の1.67へ低下した合計特殊出生率の現状と目標、病児・病後児保育の前倒し実施、休日保育、障害児保育の現状と施設開設、子供連れで楽しめる場所や図書館の整備計画、少子化の中でのホッケーの位置づけと競技人口の確保策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第2回定例会・一般質問・内田勇</span><span class="ttl">図書館と読書の振興</span><span class="sum">本物の図書館設置の構想、各地区公民館をミニ図書館とする町中図書館構想、読書通帳の発行、古い図書の更新と学校を含めた図書予算の増額、図書室のパソコンの更新を質した。</span></li>
+          
+          <li><span class="who">平成26年第4回定例会・一般質問・塔村俊介</span><span class="ttl">学校教育の現状と方針</span><span class="sum">全国・県の学力調査結果の分析と対策、学校別結果の公開、町長の教育の現状認識と振興策を尋ね、学校の暖房の運用や図書館の建設、高田小学校の平成28年4月の統合を含む学校再編の方針、布勢・八川・三成小学校の耐震化計画を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第1回定例会・一般質問・川西明徳</span><span class="ttl">三成小学校の教育環境</span><span class="sum">三成小学校の早急な耐震化と、照明器具の故障や雨漏りなど体育館の補修、防災避難所としての備品の設置、地区民も利用できる図書館機能と司書の配置、木質バイオマスエネルギーを利用した温水プールの設置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第2回定例会・一般質問・内田勇</span><span class="ttl">図書館建設と図書費の充実</span><span class="sum">生涯学習を保障する本物の図書館を建設する考え、学校図書の司書の配置時間の2時間から5時間への延長時期、人口1人当たりの図書費が県内の町立図書館と110円の格差がある現状への考えを尋ね、図書館費の倍増を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・塔村俊介</span><span class="ttl">教育環境と図書館</span><span class="sum">大人数の中で子供を育てたいという親のニーズに対応できていない保育園・幼稚園があることや図書館が未設置であることを挙げ、特に面積が狭く人もいない横田コミセンの図書室など横田地域の図書館の現状認識と今後の計画を質した。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・藤原友征</span><span class="ttl">町営生徒寮の設置</span><span class="sum">図書館の早期整備を重ねて要望したうえで、町の学力向上と子育て負担の軽減の方策として、すぐれた教育者を招き夜間や休日に集団で学習する中学生・高校生を対象とした勉強のための町営生徒寮の開設を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>子育て支援室の設置</summary><p>すこやかな育ちと望ましい幼児教育を一元的に実施するため、教育委員会の生涯学習課内に子育て支援室を設置する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>公民館の地域活性化拠点機能の強化</summary><p>各地区公民館について、地域の生涯学習の拠点としてだけでなく、地域活性化の活動拠点としての機能を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>公民館の地域活性化拠点機能の強化</summary><p>各地区公民館を、地域の生涯学習の拠点としてだけでなく、地域活性化の活動拠点としての機能を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>地区公民館の拠点機能の強化</summary><p>各地区公民館について、地域の生涯学習の拠点、また地域活性化の活動拠点としての機能を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>教育委員会事務局の組織改編（子育て支援課の設置・社会教育課への名称変更）</summary><p>教育委員会事務局の組織について2点を改める考えで、3月18日開会の教育委員会で審議する。(1)子育て支援策の一層の充実のため、生涯学習課の内室である子育て支援室を課に昇格させる。(2)担当業務の内容を町民に分かりやすくするため、生涯学習課を社会教育課に名称変更する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>地区公民館の機能強化</summary><p>各地区公民館を地域の生涯学習の拠点として、また地域活性化の活動拠点として機能を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>地区公民館の機能充実</summary><p>各地区公民館を、地域の生涯学習の拠点と地域活性化活動の拠点として、その機能を充実強化する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>学習用・学校図書館用パソコンの更新</summary><p>児童・生徒の学習用パソコンと学校図書館用パソコンを更新する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>国際交流と姉妹都市</h3>
+    <p class="terms">語: 国際交流と姉妹都市・国際交流・姉妹都市</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H21"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/8人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第2回定例会・一般質問・糸原文昭</span><span class="ttl">国際交流と姉妹都市交流</span><span class="sum">旧横田町のタイへのそろばん教育支援が途絶えたことに触れ、海外へ目を向けた交流の必要性、島根デザイン専門学校の外国人学生と子供や地域との異文化交流、関係人口づくりとしての姉妹都市協定の締結、中高生や新たに町内で就職した青年の海外派遣を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第1回定例会・一般質問・若月忠男</span><span class="ttl">韓国との国際交流</span><span class="sum">三成愛宕祭りでのサムルノリ公演を機に深まる韓国との交流について、奥出雲町からの訪韓と国際姉妹縁組みの考え、奥出雲町国際交流協会への支援の内容、専門学校や高校の学生の海外派遣を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第3回定例会・一般質問・若月忠男</span><span class="ttl">農山村交流と地域活性化</span><span class="sum">農山村交流を通した地域活性化について、児童生徒の農山村留学への町長と教育長の考え、横田高校の生徒数増員に向けた総合学科の設置や県・関係機関との協議状況、韓国などとの国際交流の取り組みを尋ね、奥出雲人会への呼びかけによる農村交流事業、町外からの通学生への通学・寄宿舎経費の助成、映像やインターネット発信を含む国際交流の強化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・若月康男</span><span class="ttl">タイとの国際交流</span><span class="sum">旧横田町がそろばん教育やダルニー奨学金制度を通じて続けたタイ国との交流が合併後は継続されていないことから、呼びかければ応えてくれるとして、本町のこれからの国際交流の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>島根リハビリテーション学院との連携による知の拠点形成</summary><p>学院が専門職大学化の取り組みを一旦見送る判断をしたことを受け、町も学院と連携して最適な高等教育機関のあり方を検討する。地域との連携強化や奨学金制度による就学支援、国際交流活動などを進め、医療・保健・福祉の知の拠点形成を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>公共施設の除却事業</summary><p>公共施設の適正化を推進するため、公共施設の除却事業を進める。令和8年度は老朽化した上阿井国際交流センター、高田コミセン、旧阿井幼稚園舎、鳥上・横田・八川の集畜場を解体・除却する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.0.1</p>
+                    
+                    <p class="project-credit">
+                        奥出雲町議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>

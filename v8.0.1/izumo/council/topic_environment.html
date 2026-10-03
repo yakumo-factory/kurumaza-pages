@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エネルギー・環境 — 出雲市議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">出雲市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+                    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+                        <div class="cross-nav-inner">
+                            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+                            
+                        </div>
+                    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_environment.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">国のエネルギー政策</a></li>
+                            
+                            <li><a href="#topic-02">再生可能エネルギーの導入</a></li>
+                            
+                            <li><a href="#topic-03">脱炭素とカーボンニュートラル</a></li>
+                            
+                            <li><a href="#topic-04">省エネルギーと節電</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 市長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">出雲市 · 議会レポート / <b>エネルギー・環境</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">エネルギー・環境</h1>
+  <p class="page-subtitle">
+    出雲市議会の一般質問・代表質問について、区分「エネルギー・環境」に属する4の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">国のエネルギー政策</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">再生可能エネルギーの導入</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="lt10">3</td><td class="lt10">3</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">7</td><td class="lt10">3</td><td class="lt10">4</td><td class="h0">0</td><td class="lt25">11</td><td class="lt10">7</td><td class="lt10">4</td><td class="lt10">7</td><td class="lt25">11</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">脱炭素とカーボンニュートラル</a></th>
+            <td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="ge25">36</td><td class="lt25">21</td><td class="lt25">11</td><td class="h0">0</td><td class="lt25">18</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">省エネルギーと節電</a></th>
+            <td class="lt10">3</td><td class="lt10">4</td><td class="lt10">7</td><td class="lt10">3</td><td class="lt10">3</td><td class="lt10">6</td><td class="lt10">3</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">4</td><td class="lt10">4</td><td class="h0">0</td><td class="lt25">18</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>32</td><td>28</td><td>30</td><td>30</td><td>31</td><td>31</td><td>36</td><td>32</td><td>29</td><td>27</td><td>26</td><td>26</td><td>29</td><td>30</td><td>28</td><td>24</td><td>28</td><td>28</td><td>27</td><td>27</td><td>28</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>国のエネルギー政策</h3>
+    <p class="terms">語: 国のエネルギー政策・エネルギー政策・エネルギー基本計画</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/36人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">原発をめぐるエネルギー政策</span><span class="sum">原発の再稼働反対が国民多数の世論となっている現状への所見、原発を重要なベースロード電源と位置づけ2030年度までに発電の20％から22％を目指す第5次エネルギー基本計画案は改めるべきではないか、六ヶ所再処理工場の完成が再度3年延長され核燃料サイクルが破綻している今、即時原発ゼロの政治決断と再生可能エネルギーの大幅導入が必要ではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・大国陽介</span><span class="ttl">エネルギー政策の基本認識</span><span class="sum">原子力発電と高レベル放射性廃棄物の処理方法の未確立という問題、総括原価方式や発送電一体、原発監視機関と推進機関の一体化、温暖化防止策としての原発推進など日本のこれまでの原子力政策に対する市長の認識を尋ね、原発依存から抜け出し原発ゼロを目指すことと、太陽光や風力や水力やバイオマスなど自然エネルギーの普及拡大に力を注ぐことを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>再生可能エネルギーの導入</h3>
+    <p class="terms">語: 再生可能エネルギーの導入・再生可能エネルギー・自然エネルギー・太陽光発電</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="lt10" data-year="H21"><b>2</b><span class="of">/31人</span><span class="q">2件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/36人</span><span class="q">2件</span></td><td class="lt10" data-year="H24"><b>2</b><span class="of">/32人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>2</b><span class="of">/26人</span><span class="q">3件</span></td><td class="lt10" data-year="H29"><b>2</b><span class="of">/29人</span><span class="q">2件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="lt25" data-year="R03"><b>3</b><span class="of">/28人</span><span class="q">3件</span></td><td class="lt10" data-year="R04"><b>2</b><span class="of">/28人</span><span class="q">2件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="lt10" data-year="R06"><b>2</b><span class="of">/27人</span><span class="q">2件</span></td><td class="lt25" data-year="R07"><b>3</b><span class="of">/28人</span><span class="q">4件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年度第2回定例会・一般質問・大村朋寛</span><span class="ttl">脱炭素政策の費用対効果</span><span class="sum">日本が2050年に脱炭素を実現しても気温の低下は0.006度にとどまるとの分析を挙げて、これまで脱炭素政策にかけた予算の総額と今後かけていく予算の概算、日本が脱炭素を実現した場合の効果の評価、再エネ賦課金の負担が増している再生可能エネルギーの推進の評価と政策自体を見直す必要がないか、再エネ賦課金の廃止を含めた制度の見直しを国に求めることを質した。</span></li>
+          
+          <li><span class="who">令和7年度第2回定例会・代表質問・大谷良治</span><span class="ttl">再生可能エネルギー導入</span><span class="sum">脱炭素社会の実現に向けて、住宅用太陽光発電設備等の導入や民間事業者への設備導入、個人住宅のＺＥＨ化への目標値を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・長廻利行</span><span class="ttl">安心して暮らせる環境整備</span><span class="sum">再生可能エネルギー等の導入や省エネ効果の高い家庭用エアコン・冷蔵庫への買換えを支援する脱炭素の具体策と農地を活用したソーラーシェアリングの内容、「コンパクト・プラス・ネットワーク」と立地適正化計画で策定する内容、自治会の未加入世帯への戸別訪問をいつ誰がどのように実施するのかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・大谷良治</span><span class="ttl">脱炭素の設備導入支援</span><span class="sum">再生可能エネルギー等の導入や省エネ効果の高い家庭用エアコンや冷蔵庫への買換えを支援するとされた脱炭素に関わる設備導入費について、その支援内容を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年度第3回定例会・一般質問・今岡真治</span><span class="ttl">太陽光発電施設の現状</span><span class="sum">太陽光発電施設の設置数と設置場所を個人事業者別に尋ね、その規模等の概要、近隣住民からの相談やトラブル・苦情の状況と対応の手続、土砂流出や濁り水の発生・景観への影響など市として想定するリスク、全国で290条例が公布される中で条例やガイドラインを制定する考えを質した。</span></li>
+          
+          <li><span class="who">令和6年度第3回定例会・一般質問・吉井安見</span><span class="ttl">再生可能エネルギーと核燃料</span><span class="sum">出雲市内の再生可能エネルギーの発電施設数と発電量の推移及び今後の普及の方針、休耕地などへの設置に伴う周辺環境への影響と住民への周知や説明の機会の確保、市内の出力制御の状況と事業者への補償、島根原発2号機の再稼働による出力制御への認識を尋ね、高レベル放射性廃棄物の最終処分場の市内への受入れについての市長の立場を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年度第3回定例会・一般質問・吉井安見</span><span class="ttl">再生可能エネルギーの普及</span><span class="sum">市内での再生可能エネルギーの普及の現状と今後の展望を尋ね、安来市内で進む大規模な風力発電施設を挙げて地域住民の理解や環境と景観の保全に自治体がイニシアチブを発揮することへの認識、インボイス制度で電力買取事業者に生じる負担への対策と普及への影響を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年度第6回定例会・一般質問・寺本淳一</span><span class="ttl">太陽光パネルの廃棄問題</span><span class="sum">住宅と民間企業と公共施設での太陽光パネルの設置数とこれまでの太陽光発電や蓄電池への補助金の交付件数、2036年以降の最終処分場の状況、リユースやリサイクルの専門企業が県内にあるかと廃棄する太陽光パネルの処分についての国や島根県の動向、福岡県のような協議会が島根県にあるか、市としても回収処分を含めたリユース・リサイクル推進に向けた取組を検討すべきとの考えを質した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・代表質問・児玉俊雄</span><span class="ttl">脱炭素社会への取組</span><span class="sum">「ゼロカーボンシティ出雲」の実現には市民の理解と協力が不可欠だとして現状の認識と今後どのようにアピールしていくのか、電気代の高騰への対策と合わせた施策として住宅用太陽光発電設備や蓄電池設備に対する補助をさらに拡充する考えはないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第2回定例会・一般質問・児玉俊雄</span><span class="ttl">木質バイオマス発電</span><span class="sum">松江市と江津市で稼働する発電所を含む県内の動向、建設や運営に対する国・県・市の支援と現在の支援措置、今後の再生可能エネルギーの利用における木質バイオマス発電の位置づけ、みんなでつくる出雲の森事業の実績と今後の方向性、市で整備する考えや積極的に誘致に動く考えを質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・川上幸博</span><span class="ttl">脱炭素のまち出雲の道筋</span><span class="sum">ゼロカーボンシティ宣言を受け、県内屈指の再生可能エネルギー発電施設を有する市として二酸化炭素排出削減を新電力事業のみならず推進する必要があるとして、「脱炭素のまち出雲」の実現に向けた取組の道筋を質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・寺本淳一</span><span class="ttl">住宅の断熱と脱炭素</span><span class="sum">家庭で消費されるエネルギーの約70％が冷暖房と給湯に使われていることから、再生可能エネルギーと省エネルギー化をバランスよく取り組む必要があるとして、早急に断熱性、機密性の向上支援策を考えながらゼロカーボンシティを目指すべきとの見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年度第4回定例会・一般質問・飯塚俊之</span><span class="ttl">再生エネルギーの利活用</span><span class="sum">出雲市の再生可能エネルギーの発電容量を発電事業別と県内他市との比較で尋ね、現在の利活用状況、新電力会社を設立した福岡県みやま市など他の自治体の取組みへの評価、今後の利活用策と想定されるリスクを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">原発をめぐるエネルギー政策</span><span class="sum">原発の再稼働反対が国民多数の世論となっている現状への所見、原発を重要なベースロード電源と位置づけ2030年度までに発電の20％から22％を目指す第5次エネルギー基本計画案は改めるべきではないか、六ヶ所再処理工場の完成が再度3年延長され核燃料サイクルが破綻している今、即時原発ゼロの政治決断と再生可能エネルギーの大幅導入が必要ではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年度第2回定例会・一般質問・保科孝充</span><span class="ttl">太陽光発電施設の対応</span><span class="sum">周辺住民に何の説明もないまま工事が進む新川元滑走路東側約1ヘクタールの太陽光発電設備と西側約2.7ヘクタールの考え、国の指導義務や市への許認可等の協議の必要と条例・指導要綱等の制定および他の自治体の状況、西側を仮設住宅用地や緊急避難場所や駐車場として利用する考え、南側の道路部分の修繕、地目が雑種地となっている固定資産税の状況を質した。</span></li>
+          
+          <li><span class="who">平成29年度第5回定例会・代表質問・錦織稔</span><span class="ttl">雇用創出と産業の支援</span><span class="sum">産業情報サイト「出雲人」の閲覧状況と出雲で働くことの魅力の発信のポイント、ものづくり高度技術者やＩＴ技術者などの人材育成と異業種交流や商談会の実績の評価及び今後の取組み、空き店舗を活用した開業支援の成果と評価、新たな工業団地の規模と選定とスケジュール、住宅の太陽光発電設備で削減されたＣＯ2をクレジット化する「神話の國出雲さんさん倶楽部クレジット」を活用した森林再生事業の取組み状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年度第1回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の廃止と避難計画</span><span class="sum">原発立地並みの安全協定の見通しと障害、市でも説明会を行うよう中電へ要請すべきこと、使用済み核燃料722本を六ヶ所村へ譲り渡す計画、複合災害を踏まえた避難計画と屋内退避、島根半島にある原発の安全性、市内の再生可能エネルギーの発電量を尋ね、原発を廃止し再生可能エネルギーへ転換する考えを質した。</span></li>
+          
+          <li><span class="who">平成28年度第2回定例会・一般質問・松村豪人</span><span class="ttl">新エネルギー施策の方針</span><span class="sum">市民満足度調査で新エネルギーの利用促進に「分からない」と回答した市民が増えたことを踏まえ、国の再生可能エネルギー固定価格買取制度の動向を受けて本市として今後どのように新エネルギー関連施策を進める考えかを質した。</span></li>
+          
+          <li><span class="who">平成28年度第2回定例会・一般質問・松村豪人</span><span class="ttl">地域電力会社への支援</span><span class="sum">群馬県中之条町が町長を代表理事として設立した一般財団法人中之条電力の例を挙げ、民間による地域電力会社の設立を支援してご当地電力を供給することは地域活性化と再生可能エネルギーの地産地消を進めるうえでよいことだとして市の見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年度第3回定例会・一般質問・大場利信</span><span class="ttl">市施設への太陽光発電</span><span class="sum">太陽光発電システムを導入している市の建物と、本庁舎の設置費や平成24年度・平成25年の年間使用電力量に占める太陽光発電の電力量、売電収入と相殺した電気料金、初期投資額の回収時期を尋ね、学校を含む建物への計画的な導入と既設への導入の意向、国・県の有利な補助制度、財政上の制約を含む導入の障害を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年度第2回定例会・一般質問・大場利信</span><span class="ttl">出雲さんさん倶楽部事業</span><span class="sum">住宅用太陽光発電システムを設置した市民に事業を理解して加入してもらう方策と削減されたＣＯ2排出量の捕捉の容易さ、売却価格をトンあたり1,500円とした積算根拠、国内クレジットからの収入額の活用先、バイオマスや中小水力発電、メガソーラーなど他分野へ制度を普及させる計画を質した。</span></li>
+          
+          <li><span class="who">平成24年度第2回定例会・一般質問・井原優</span><span class="ttl">原発ゼロへの市長の姿勢</span><span class="sum">関西電力大飯原発3号機、4号機の再稼働について国に再稼働中止を求める意見を提出すべきとの考えと、島根原発についても再稼働すべきでないとの意見を県にあげるべきとの認識を尋ね、「脱原発を目指す首長会議」に参加して自然エネルギーへの転換の道を進むよう質した。</span></li>
+          
+          <li><span class="who">平成24年度第3回定例会・一般質問・井原優</span><span class="ttl">原発ゼロへの政治姿勢</span><span class="sum">原発の再稼働なしでも今年の夏の電力は足りていたとして、再稼働ではなく原発ゼロへの政治決断に対する認識、脱原発や再生可能エネルギーによる持続可能な社会を目指す討論会やシンポジウムを開く考え、島根原発2号機の再稼働の中止を求めることへの認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・大国陽介</span><span class="ttl">エネルギー政策の基本認識</span><span class="sum">原子力発電と高レベル放射性廃棄物の処理方法の未確立という問題、総括原価方式や発送電一体、原発監視機関と推進機関の一体化、温暖化防止策としての原発推進など日本のこれまでの原子力政策に対する市長の認識を尋ね、原発依存から抜け出し原発ゼロを目指すことと、太陽光や風力や水力やバイオマスなど自然エネルギーの普及拡大に力を注ぐことを質した。</span></li>
+          
+          <li><span class="who">平成23年度第4回定例会・一般質問・大国陽介</span><span class="ttl">原発と自然エネルギー</span><span class="sum">老朽化する1号機の廃炉や2号機のプルサーマル計画に市長が言及しない理由と市民の代表としての政治的メッセージの必要性、住民説明会で社員や関連会社に参加を要請した中国電力への抗議、島根原発で適正な運転が行われ安全管理体制が適切と言えるかを尋ね、国と中国電力に原発からの撤退の決断を要求することと、小規模な太陽光や風力や小水力による自然エネルギーの普及を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年度第2回定例会・一般質問・原隆利</span><span class="ttl">出雲ブランドの確立</span><span class="sum">多伎のイチジクや西浜いも、デラウエアブドウ、西条柿、唐川のお茶、十六島のり、小伊津のアマダイなど産品のブランド化の具体的な対策と上海や韓国を訪問した後の具体的な進展を尋ね、国道四三一号東林木バイパスの残地に太陽光発電パネルを設置する構想を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年度第2回定例会・一般質問・遠藤力一</span><span class="ttl">太陽光発電の導入促進</span><span class="sum">三年間の地域グリーンニューディール基金を機に家庭用太陽光発電パネルの設置へ市独自の上乗せ補助を実施すること、新エネルギー・フレンドパートナーシップ制度を利用してグリーンステップへ太陽光発電設備を導入することへの所見を質した。</span></li>
+          
+          <li><span class="who">平成21年度第2回定例会・代表質問・福代秀洋</span><span class="ttl">産業都市創造の施策</span><span class="sum">国の第1次補正予算による生活環境道路改良事業のさらなる前倒し発注、従来と異なる農林業振興の構想、空中散布中止後の松枯れ対策と急傾斜地の斜面災害への備え、住宅用太陽光発電への独自支援策の有無と今後の方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>住宅用太陽光発電システム設置費補助</summary><p>地球温暖化防止の取り組みとして、住宅用太陽光発電システムの設置費補助などの施策を推進する。化石エネルギーから再生可能エネルギーへの転換を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>住宅用太陽光発電システム設置補助と新エネルギー産業の創出</summary><p>住宅用太陽光発電システムの設置に対する補助を引き続き行う。国で検討されている再生可能エネルギー全量買取制度の動向を見極めながら、民間の新たな取組みを支援することで新産業の創出・誘致をめざす。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>太陽光発電の導入促進</summary><p>再生可能エネルギー固定価格買取制度の施行を受け、太陽光発電についてメガソーラー事業の候補地選定を進め、事業化を検討する民間事業者へ情報提供を行う。あわせて住宅用太陽光発電システムの設置費用の助成を引き続き実施する。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>太陽光発電の屋根貸し事業の検討</summary><p>新エネルギーの利活用のうち太陽光発電について、これまでの住宅用の設備設置助成に加え、民間事業者が公共施設の屋根を使って発電を行う屋根貸し事業を検討する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>大規模太陽光発電事業への支援</summary><p>引き続き大規模太陽光発電事業の候補地選定に取り組む。あわせて事業化を検討している民間事業者への支援に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>新エネルギーの普及啓発と住宅用太陽光発電の設置助成</summary><p>住宅用太陽光発電システムの設置助成を行う。あわせて新エネルギーツアーやセミナーの開催など、新エネルギーの普及啓発に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>新エネルギーの推進（Ｊ－クレジット活用と風力発電支援）</summary><p>太陽光発電システムの導入等により削減した二酸化炭素をクレジット化して企業等に販売できる国のＪ－クレジット制度を活用し、環境にやさしいまちづくりを推進する。あわせて風力発電などの民間企業に対する支援を中心に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>「神話の國出雲さんさん倶楽部クレジット」の活用</summary><p>太陽光発電システムの導入等により削減したＣＯ2をクレジット化して企業等に販売する「神話の國出雲さんさん倶楽部クレジット」を活用し、森林再生などに役立てて環境にやさしいまちづくりを進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>官民共同出資による新電力会社の設立と地域新電力事業</summary><p>県内屈指の太陽光や風力などの再生可能エネルギー発電施設を有することを生かし、本年7月に官民共同出資による新電力会社を設立して地域新電力事業に取り組み、エネルギーの地産地消を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>水素活用と再生可能エネルギーのベストミックス</summary><p>カーボンニュートラルの鍵とされる水素について、国や産業界の知見と技術を活用し、再生可能エネルギーのベストミックスを進めることで「脱炭素のまち出雲」を実現する。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>ゼロカーボン推進室の新設</summary><p>環境政策課に「ゼロカーボン推進室」を新設し、地球温暖化対策、再生可能エネルギー事業等への取組みを強化する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>再生可能エネルギーポテンシャル調査</summary><p>「再生可能エネルギーポテンシャル調査」を実施し、再生可能エネルギーの拡大に向けた新たな施策を検討する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>いずも縁結び電力による公共施設への電力供給と創エネ事業</summary><p>昨年7月に設立した官民共同出資による地域新電力会社「いずも縁結び電力株式会社」が、本年4月から2施設を加え138の施設へ電力を供給する。あわせて公共施設の屋根などの未利用地に太陽光発電設備を設置する創エネ事業の実施に向けて取組みを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>太陽光発電設備・蓄電池の補助拡充</summary><p>太陽光発電設備の導入補助額と蓄電池設置の補助対象者を拡充し、再生可能エネルギーの導入を促進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>出雲市環境総合計画に基づくゼロカーボンシティ出雲の推進</summary><p>新年度からの新たな出雲市環境総合計画に基づき、国・県と連携しながら市民・事業者とともに取り組む。2050年二酸化炭素排出実質ゼロのゼロカーボンシティ出雲の実現に向け、再生可能エネルギーの促進をはじめ豊かな自然環境を次世代につなぐ施策を推進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>再生可能エネルギー導入補助（住宅用・民間事業者向け新制度）</summary><p>住宅用太陽光発電設備等の導入補助を引き続き実施する。あわせて民間事業者への設備導入に向けた新たな補助制度を創設する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>公共施設への太陽光発電設備導入（ＰＰＡモデル事業）</summary><p>新たに整備する公共施設への太陽光発電設備の導入を進める。既存施設については設置可能施設を選定し、いずも縁結び電力株式会社との連携により、市が設備を所有しないＰＰＡモデル事業による導入を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>大規模な再生可能エネルギー事業者の進出促進</summary><p>大規模な再生可能エネルギーの導入に向け、ポテンシャル調査の結果を活用する。発電事業者の進出を促す。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>民間事業所・個人住宅への再生可能エネルギー設備導入支援</summary><p>国の地域脱炭素移行・再エネ推進交付金を活用し、民間事業所への太陽光発電や蓄電池などの設備導入を支援する。あわせて個人住宅のゼロ・エネルギー・ハウス化を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>PPAモデルによる公共施設への太陽光発電設備導入</summary><p>既存の公共施設への太陽光発電設備について、いずも縁結び電力株式会社と連携する。市が設備を所有しないPPAモデル事業による導入を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの導入支援</summary><p>住宅用太陽光発電設備等の導入、民間事業所への設備導入、個人住宅のZEH化を引き続き支援する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>公共施設におけるPPAモデル事業の導入</summary><p>公共施設の太陽光発電設備について、いずも縁結び電力株式会社と連携し、民間事業者が設置した設備で発電した再生可能エネルギーを市が購入するPPAモデル事業の導入を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>市民・事業者への脱炭素設備の導入支援</summary><p>市民や事業者に対する脱炭素に係る設備導入支援として、再生可能エネルギー等の導入を支援する。新たに省エネ効果の高い家庭用エアコンや冷蔵庫への買換えも支援する。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>公共施設の太陽光発電PPAモデル事業と照明のLED化</summary><p>公共施設について、いずも縁結び電力株式会社と連携した太陽光発電のPPAモデル事業を推進する。あわせて照明のLED化を積極的に進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>脱炭素とカーボンニュートラル</h3>
+    <p class="terms">語: 脱炭素とカーボンニュートラル・脱炭素・カーボンニュートラル・カーボンシティ・ゼロカーボン・ゼロカーボンシティ・地球温暖化・ＣＯ２削減・ＣＯ２排出量・CO2削減・CO2排出量</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="lt10" data-year="H20"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="lt10" data-year="H21"><b>2</b><span class="of">/31人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/36人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="ge25" data-year="R03"><b>10</b><span class="of">/28人</span><span class="q">12件</span></td><td class="lt25" data-year="R04"><b>6</b><span class="of">/28人</span><span class="q">6件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/27人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="lt25" data-year="R07"><b>5</b><span class="of">/28人</span><span class="q">8件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年度第2回定例会・一般質問・大村朋寛</span><span class="ttl">脱炭素政策の費用対効果</span><span class="sum">日本が2050年に脱炭素を実現しても気温の低下は0.006度にとどまるとの分析を挙げて、これまで脱炭素政策にかけた予算の総額と今後かけていく予算の概算、日本が脱炭素を実現した場合の効果の評価、再エネ賦課金の負担が増している再生可能エネルギーの推進の評価と政策自体を見直す必要がないか、再エネ賦課金の廃止を含めた制度の見直しを国に求めることを質した。</span></li>
+          
+          <li><span class="who">令和7年度第2回定例会・代表質問・萬代輝正</span><span class="ttl">個人住宅のＺＥＨ化</span><span class="sum">脱炭素社会の実現に向けて、個人住宅のＺＥＨ（ゼッチ）化の現状と今後の支援内容を質した。</span></li>
+          
+          <li><span class="who">令和7年度第2回定例会・代表質問・大谷良治</span><span class="ttl">再生可能エネルギー導入</span><span class="sum">脱炭素社会の実現に向けて、住宅用太陽光発電設備等の導入や民間事業者への設備導入、個人住宅のＺＥＨ化への目標値を質した。</span></li>
+          
+          <li><span class="who">令和7年度第2回定例会・代表質問・大谷良治</span><span class="ttl">デコ活の認知度向上</span><span class="sum">二酸化炭素排出量実質ゼロを目指すゼロカーボンシティに挑戦する趣旨に賛同して令和5年（2023）にデコ活宣言を行ったとして、デコ活認知度向上へのこれまでの取組を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・今岡真治</span><span class="ttl">安心して暮らせる環境づくり</span><span class="sum">省エネ家電への買換え支援やＰＰＡモデル事業を進める脱炭素で市民や事業者の負担を考慮した出雲モデルとも呼べる独自戦略、多伎地域でも実証運行を始める定額乗合交通の先行地域から見えた課題と他地域への展開及び持続可能な運行モデル、自治会への行政ポイント付与期間終了後の加入維持と自治会負担の抜本的な軽減策を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・長廻利行</span><span class="ttl">安心して暮らせる環境整備</span><span class="sum">再生可能エネルギー等の導入や省エネ効果の高い家庭用エアコン・冷蔵庫への買換えを支援する脱炭素の具体策と農地を活用したソーラーシェアリングの内容、「コンパクト・プラス・ネットワーク」と立地適正化計画で策定する内容、自治会の未加入世帯への戸別訪問をいつ誰がどのように実施するのかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・長廻利行</span><span class="ttl">個別避難計画と脱炭素</span><span class="sum">個別避難計画の現状の作成率と来年度の作成率の目標値、空き家対策で想定される支援策や体制、森林Ｊ－クレジットの内容と実施効果、出雲環境センターの今後の在り方についてどのような課題があり何を検討しているのかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・大谷良治</span><span class="ttl">脱炭素の設備導入支援</span><span class="sum">再生可能エネルギー等の導入や省エネ効果の高い家庭用エアコンや冷蔵庫への買換えを支援するとされた脱炭素に関わる設備導入費について、その支援内容を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年度第4回定例会・一般質問・湯淺啓史</span><span class="ttl">来年度予算編成の考え</span><span class="sum">市長就任初年度の施政方針で市政運営のポイントとして示された脱炭素社会の実現とデジタルファーストの推進について、任期最終年度となる令和6年度の予算編成にどのような考えで臨むのかを問うた。</span></li>
+          
+          <li><span class="who">令和5年度第4回定例会・一般質問・鐘推義憲</span><span class="ttl">都市計画マスタープラン</span><span class="sum">現行の出雲市都市計画マスタープランにおける土地利用と市街地整備、都市施設、自然環境や景観や防災防犯という三つの分野の取組状況と進捗状況、前回の市民アンケート調査で課題となった若い世代の定住意識の向上対策と交通利便性や子どもが安全に遊べる場所の確保への取組を尋ね、次期計画の策定体制とロードマップおよび住民参加の方法、市民アンケート調査の時期や内容や方法、本市の現況と主要課題、目標年次、将来人口と将来都市像、分野別整備方針、ＳＤＧｓと脱炭素社会への取組、空き家の適正管理、公共建築物と公共インフラ施設の維持管理と再編、自然災害への備えと河川の整備・改修、コンパクト・プラス・ネットワークによる都市づくり、島根県の出雲都市計画区域マスタープランの位置づけと見直しの予定を質した。</span></li>
+          
+          <li><span class="who">令和5年度第5回定例会・代表質問・萬代輝正</span><span class="ttl">脱炭素と環境農業</span><span class="sum">2050年ＣＯ2排出実質ゼロの「脱炭素のまち出雲」の実現に向けた現在の取組状況と新たな取組、「環境にやさしい農業研究会」を中心とした有機栽培等の実証実験と農作物の販売戦略の検討について誰が先導しどのようなメンバーで進めるのかを質した。</span></li>
+          
+          <li><span class="who">令和5年度第5回定例会・代表質問・萬代輝正</span><span class="ttl">デコ活と海洋ごみ対策</span><span class="sum">未来に向けた脱炭素社会へのチャレンジとして、認知度がまだ低いと思われる「デコ活」の普及啓発の進め方、世界で問題化している海洋プラスチックへの対応、神西湖の水環境の保全等の取組の現状認識と具体的な方策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年度第3回定例会・一般質問・鐘推義憲</span><span class="ttl">みどりの食料システム戦略</span><span class="sum">本市の農業分野の脱炭素化に向けた取組みの現状、スマート農業の実証試験の実施内容と効果の測定結果、環境保全型農業直接支払交付金制度の内容と取組状況、有機農業の定義と本市の取組農家数・面積・全農地に対する割合、県内外の実践事例、戦略の実践具体策と農家等への支援内容、今後の運用スケジュール、オーガニックビレッジと推進交付金、本市の今後の取組方針を質した。</span></li>
+          
+          <li><span class="who">令和4年度第5回定例会・一般質問・錦織稔</span><span class="ttl">地球温暖化対策の推進</span><span class="sum">グリーントランスフォーメーションの考え方、温室効果ガス排出源の6割以上を占める衣食住に関わる市民のライフスタイルの転換への取組み、企業と連携したグリーンライフ・ポイント制度の導入、ウォームビズと公共施設・職員の排出削減の取組み、市民への広報を質した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・一般質問・高橋扶治夫</span><span class="ttl">公用車の管理と適正化</span><span class="sum">公用車の保有台数の直近年度と3年前・6年前および30台以上保有する部局の台数、交通事故件数と人身・物損の内訳、維持管理費の金額、安全運転管理者の選任の現状や車両台帳・運転日誌・日常点検・給油伝票の管理など安全運転対策の取組状況、部署ごとの適正な台数と車両をコスト削減の観点からどうチェックしているか、リース車両の割合と今後のリースへの見解、電気自動車の台数と脱炭素化への見解、管理事務全体のデジタル化に向けた取組状況を質した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・一般質問・湯淺啓史</span><span class="ttl">エネルギーセンターの稼働</span><span class="sum">本稼働から11か月となった新出雲エネルギーセンターの稼働状況や発電状況は建設計画時のもくろみと比べてどうか、いずも縁結び電力へ電力を供給している発電施設はほかにどのようなものがあるか、同社の設立意義や仕組みが脱炭素社会の実現にどのような役割を果たすのかを質した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・代表質問・児玉俊雄</span><span class="ttl">脱炭素社会への取組</span><span class="sum">「ゼロカーボンシティ出雲」の実現には市民の理解と協力が不可欠だとして現状の認識と今後どのようにアピールしていくのか、電気代の高騰への対策と合わせた施策として住宅用太陽光発電設備や蓄電池設備に対する補助をさらに拡充する考えはないかを質した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・代表質問・宮本享</span><span class="ttl">脱炭素とトキのまちづくり</span><span class="sum">2030年のＣＯ2排出量削減46％というチャレンジ目標に向けたロードマップと取組内容や市長の意気込みと市民・事業者への啓発活動の展開、トキをシンボルとしてまちづくりを推進するための総合的な取組が展開できる体制とはどういうものかとその下での具体的な取組の方向性や広報・啓発活動の展開を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第2回定例会・一般質問・湯淺啓史</span><span class="ttl">ゼロカーボンへの合意形成</span><span class="sum">脱炭素社会・カーボンニュートラル・ゼロカーボンシティという言葉の受け止めと定義、ゼロカーボンシティへの挑戦が指す具体的な取組、脱炭素のまち出雲が実現したと言える状態とその計測の方法、鍵を水素に置く真意とカーボンニュートラルに対するコストの認識、地域新電力事業が脱炭素に資する取組と言えるか、原発の再稼働に態度を決めないまま宣言する順序への疑問、挑戦に向けた合意形成の道筋を質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・一般質問・本田一勇</span><span class="ttl">小水力発電の候補地調査</span><span class="sum">「脱炭素のまち出雲」の実現にあたり小水力発電と水力発電についての考えとどのようなところが適しているかを尋ね、佐田町や多伎町の候補地の今後の調査と、発電した電力を周囲10キロに及ぶイノシシの電気柵につなぐ活用策を含めた再調査の考えを質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・川上幸博</span><span class="ttl">脱炭素のまち出雲の道筋</span><span class="sum">ゼロカーボンシティ宣言を受け、県内屈指の再生可能エネルギー発電施設を有する市として二酸化炭素排出削減を新電力事業のみならず推進する必要があるとして、「脱炭素のまち出雲」の実現に向けた取組の道筋を質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・大場利信</span><span class="ttl">ゼロカーボン推進室の事業</span><span class="sum">「ゼロカーボンシティ」や「脱炭素のまち出雲」への挑戦の宣言とゼロカーボン推進室の設置をスピード感ある対応と受け止めたうえで、当該室が具体的にどのような事業に取り組むのかを質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・福島孝雄</span><span class="ttl">ゼロカーボンのメリット</span><span class="sum">ゼロカーボンシティに挑戦する宣言をしたことについて、市民にとってのメリットと地元産業にとってのメリットを分かりやすく示すよう質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・大谷良治</span><span class="ttl">カーボンニュートラルの姿</span><span class="sum">「脱炭素のまち出雲」の実現について、削減と吸収というカーボンニュートラル独特の考え方を踏まえ、出雲市が実現を目指すカーボンニュートラルとはどのようなものなのかを質した。</span></li>
+          
+          <li><span class="who">令和3年度第3回定例会・一般質問・岸道三</span><span class="ttl">脱炭素社会の実現</span><span class="sum">第2次出雲市地球温暖化対策実行計画の進捗状況と課題、新たな計画策定に向けたスケジュール、財源確保に向けた取組みを尋ね、二酸化炭素の排出量と吸収量を示さなければ計画が立てられないこと、国の地域脱炭素ロードマップのモデル地域への申請、ふるさと納税の返礼品への活用、水素への市長の思いとゼロカーボンシティ宣言の意味を質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・大場利信</span><span class="ttl">市有林のＪ－クレジット</span><span class="sum">カーボンニュートラルの実現に向け、出雲市における二酸化炭素排出量と市有林全体の面積、市有林でＪ－クレジットを創出する際の森林施業や保護、間伐などの課題、認証までの作業工程とおおむねの期間、コンサルへの委託費、森林環境譲与税の目的と交付額を尋ね、購入資金を森林環境整備に充てる制度を構築する意気込みを質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・伊藤繁満</span><span class="ttl">行財政改革の基本的考え</span><span class="sum">デジタル社会・脱炭素社会に向けた事務事業の見直しとスクラップ・アンド・ビルドによる行政事務量の抑制、203施設を対象とした公共施設の縮減の効果と指定管理料の高止まり、市内全般を把握できる人材の育成、公営企業会計への多額の繰出金を踏まえた財源の確保と債務の抑制を質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・寺本淳一</span><span class="ttl">宍道湖・中海圏域の構想</span><span class="sum">60万宍道湖・中海圏域を牽引し脱炭素社会やデジタル社会における元気な地方都市のトップランナーとして果敢に挑戦するとした点について、これまで経験してきた経営者としての圏域の持つポテンシャルと将来構想の考えを問うた。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・寺本淳一</span><span class="ttl">住宅の断熱と脱炭素</span><span class="sum">家庭で消費されるエネルギーの約70％が冷暖房と給湯に使われていることから、再生可能エネルギーと省エネルギー化をバランスよく取り組む必要があるとして、早急に断熱性、機密性の向上支援策を考えながらゼロカーボンシティを目指すべきとの見解を質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・今岡久人</span><span class="ttl">脱炭素と山林竹林の管理</span><span class="sum">Ｊ－クレジットの販売や収支による具体策と期待される効果を尋ね、間伐材のチップ化や新エネルギーセンターの熱源利用、孟宗竹を乳牛の餌にする例などを挙げて山林や竹林の管理の考えを問い、トキによるまちづくり構想に関わる里山の復活や耕作放棄された田畑の課題を踏まえ、出雲市民はどのような努力を行えばよいかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年度第4回定例会・一般質問・福代秀洋</span><span class="ttl">地球温暖化対策の推進</span><span class="sum">出雲市として地球温暖化対策を行う必要性と重要性、地方公共団体実行計画の区域施策編と事務事業編それぞれの課題と対処及び成果、計画の推進にかける費用と人員体制の評価を尋ね、2050年までに排出量をゼロとする宣言の検討を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・多久和康司</span><span class="ttl">トキと観光基本計画</span><span class="sum">市民がトキを自分の目で直接見て飛び交う姿を見ることで環境や自然保護に対する意識の高揚が図られるとして国への強い働きかけを要望したうえで、地球温暖化防止を含めこれまでの取り組みの拡充も必要であるとして出雲市観光基本計画の成果を検証し今後どのように生かして見直していくのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年度第5回定例会・一般質問・飯塚俊之</span><span class="ttl">地球温暖化と環境政策</span><span class="sum">地球温暖化問題についての本市の認識と現在の環境問題に対する取り組みおよび今後の取り組みを尋ね、学校での省エネ学習の推進や庁舎のシュレッダーごみのリサイクル、中小企業の省エネ機器導入への支援、しまねグリーン製品の積極的な利用、カーボンオフセット商品の開発を質した。</span></li>
+          
+          <li><span class="who">平成21年度第5回定例会・代表質問・多久和康司</span><span class="ttl">子どもへの環境教育</span><span class="sum">地球温暖化防止の取り組みを進めるには子どものころからの環境教育が必要だとして、子どもが植えた菜の花を菜種油にして給食センターで使い廃食油を公用車で利用する新潟市の例を挙げ、子どもが事業に携わって考え学びとる取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成20年度第2回定例会・一般質問・福代秀洋</span><span class="ttl">地球温暖化への対処</span><span class="sum">ＩＰＣＣ第4次評価報告書が示す最悪で6.4度の気温上昇という現状と予測への所感、市の温暖化防止の取り組み状況と成果を尋ね、治水安全度が100年後に半分近くになるという国土交通省の予測を挙げて具体的な適応策を検討し対処する時期だと質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成17年度第6回定例会・一般質問・曽田盛雄</span><span class="ttl">地球温暖化防止の取り組み</span><span class="sum">北山山系の風力発電事業を二酸化炭素削減と環境保護に貢献する重点プロジェクトとして早く進めることを求め、環境まちづくり協議会の合併後の会長と活動状況、木質バイオマス発電施設の進捗、平田東部で立ち上がりつつあるお茶の産地化計画への行政の支援と対応策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成17年度</td>
+            <td><details class="it"><summary>出雲ふるさとの森再生事業</summary><p>森林が持つ水資源涵養、災害の防止、地球温暖化の抑止などの公益的機能が重要視される中、出雲ふるさとの森再生事業を市民とともに引き続き実施する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>新出雲風力発電所（仮称）事業への支援</summary><p>21世紀を拓く新エネルギー産業を立ち上げるため、「新出雲風力発電所（仮称）」事業を支援する。自然環境の保全や新たな景観創造に留意しつつ、地球温暖化防止と地域経済の発展という立場から取り組む。</p></details></td>
+            <td class="c">7</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>地球温暖化対策実行計画の策定</summary><p>京都議定書の履行に向け、国・県と連動して地球温暖化対策実行計画を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>低炭素社会に向けたエネルギー戦略</summary><p>新たな環境政策として低炭素社会の実現を目指す。風力、バイオマス、水素ガスの活用など、地球温暖化防止のエネルギー戦略の実践に結びつけていく。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>出雲市環境保全推進協議会（仮称）の立ち上げ</summary><p>「出雲市環境基本計画」の目標達成に向け、地球温暖化防止や省エネルギー対策の具体的な行動指針として策定する「出雲市地域省エネルギービジョン」に基づき、新年度に市民・事業者・市で組織する「出雲市環境保全推進協議会（仮称）」を立ち上げ、環境保全全般にかかわる取り組みを展開する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>出雲産材の活用方策の検討</summary><p>林業について、林産から木材流通・利用に至る現状と課題を検証する。建材用途のほか、バイオマスとしての活用やCO2削減をはじめとする環境面での価値の付与など、出雲産材の活用方策を多面的に検討する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>住宅用太陽光発電システム設置費補助</summary><p>地球温暖化防止の取り組みとして、住宅用太陽光発電システムの設置費補助などの施策を推進する。化石エネルギーから再生可能エネルギーへの転換を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>レジ袋無料配布中止の取組み継続</summary><p>昨年7月からのレジ袋無料配布中止の取組みにより、CO2削減やごみの減量化など環境意識の啓発に努めてきた。協定締結店でのマイバッグ持参率は85％に達しており、今後も「NO！レジ袋推進協議会」を中心に取組みを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>農地・水・環境保全向上対策の新制度への移行</summary><p>農地・水・環境保全向上対策が、新年度から地球温暖化防止等に効果の高い環境に配慮した農業を支援する「環境保全型農業直接支援対策」と、水路・農道等の長寿命化のための活動を支援する「農地・水保全管理支払交付金」として実施される。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>公用車への電気自動車導入</summary><p>地球温暖化防止に向けた二酸化炭素削減の取組みとして、公用車に電気自動車を導入する。周辺市町とも連携を図りながら広域的な環境保全活動を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>電気自動車の普及促進</summary><p>地球温暖化防止に向けた電気自動車の普及促進として、新年度から道の駅ご縁広場の急速充電器の供用を開始する。他市との連携を図りながら、引き続き普及啓発に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>急速充電スタンドの追加整備</summary><p>地球温暖化防止対策の推進として、急速充電スタンドを追加整備する。電気自動車の普及を促進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>急速充電スタンドの運用開始と電気自動車の普及促進</summary><p>地球温暖化対策として、道の駅キララ多伎と湯の川で急速充電スタンドの運用を開始する。電気自動車の一層の普及促進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>ゼロカーボンシティ宣言</summary><p>豊かな自然と人の営みが調和する「ふるさと出雲」を次世代につなぐため、2050年二酸化炭素排出実質ゼロをめざし、「ゼロカーボンシティ」に挑戦することを宣言する。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>水素活用と再生可能エネルギーのベストミックス</summary><p>カーボンニュートラルの鍵とされる水素について、国や産業界の知見と技術を活用し、再生可能エネルギーのベストミックスを進めることで「脱炭素のまち出雲」を実現する。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>市内産木材の生産拡大と再造林の支援</summary><p>市民参加型の森林整備や循環型林業によるゼロカーボンを推進するため、市内産木材の生産拡大と再造林を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>ゼロカーボン推進室の新設</summary><p>環境政策課に「ゼロカーボン推進室」を新設し、地球温暖化対策、再生可能エネルギー事業等への取組みを強化する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>出雲市環境総合計画の策定</summary><p>脱炭素に向けた取組みの基本方針や、二酸化炭素排出削減に関する数値目標などを盛り込んだ「出雲市環境総合計画」を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>Ｊ－クレジットの周知・販売と新規創出の検討</summary><p>Ｊ－クレジットについて、事業者への周知や販売を通してゼロカーボンへの意識を高める。あわせて新たなクレジット創出に向けて検討を進める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>地球温暖化対策の啓発（ストップ地球温暖化フェア等）</summary><p>地球温暖化対策協議会が実施するストップ地球温暖化フェアや講演会などの活動を通して、ゼロカーボンシティの実現に向けた機運を高める。市民や事業者とともに地球温暖化対策を推進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>出雲市環境総合計画に基づくゼロカーボンシティ出雲の推進</summary><p>新年度からの新たな出雲市環境総合計画に基づき、国・県と連携しながら市民・事業者とともに取り組む。2050年二酸化炭素排出実質ゼロのゼロカーボンシティ出雲の実現に向け、再生可能エネルギーの促進をはじめ豊かな自然環境を次世代につなぐ施策を推進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>地域環境部の環境エネルギー部への改称</summary><p>脱炭素社会の実現に向けた取組みの強化を明確にする。地域環境部の名称を環境エネルギー部に変更する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>民間事業所・個人住宅への再生可能エネルギー設備導入支援</summary><p>国の地域脱炭素移行・再エネ推進交付金を活用し、民間事業所への太陽光発電や蓄電池などの設備導入を支援する。あわせて個人住宅のゼロ・エネルギー・ハウス化を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>「デコ活」の普及と食品ロス削減・水環境保全</summary><p>脱炭素につながる豊かで環境にやさしい暮らしをめざす「デコ活」の普及を図る。あわせて食品ロス削減の取組、海洋ごみへの対応、宍道湖・神西湖・河川の水環境や水辺環境の保全を推進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>市内事業者を対象とした脱炭素化の支援</summary><p>市内事業者を対象に、新たに脱炭素に関する勉強会を開催する。エネルギー診断やCO2排出量の見える化等の支援などを通して脱炭素化を促進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>「脱炭素のまち出雲」の実現に向けた地域一体の取組</summary><p>「脱炭素のまち出雲」の実現に向け、市民・事業者・市が連携し、2050年二酸化炭素排出実質ゼロを目指して地域一体となった取組を推進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>市民・事業者への脱炭素設備の導入支援</summary><p>市民や事業者に対する脱炭素に係る設備導入支援として、再生可能エネルギー等の導入を支援する。新たに省エネ効果の高い家庭用エアコンや冷蔵庫への買換えも支援する。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>「デコ活」の推進と企業の脱炭素化の普及啓発</summary><p>環境にやさしい暮らしを目指す「デコ活」を推進し、市民の意識変容を促す。あわせて企業の脱炭素化の促進に向け、セミナー等による普及啓発に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>省エネルギーと節電</h3>
+    <p class="terms">語: 省エネルギーと節電・省エネ・節電</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="lt10" data-year="H19"><b>2</b><span class="of">/30人</span><span class="q">3件</span></td><td class="lt10" data-year="H20"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="lt10" data-year="H21"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt10" data-year="H22"><b>2</b><span class="of">/31人</span><span class="q">2件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/36人</span><span class="q">1件</span></td><td class="lt10" data-year="H24"><b>2</b><span class="of">/32人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="lt25" data-year="R07"><b>5</b><span class="of">/28人</span><span class="q">5件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年度第5回定例会・一般質問・川上雅文</span><span class="ttl">出雲のぶどうの生産振興</span><span class="sum">直近10年間における品種別の農家戸数・栽培面積・販売額の推移と分析、2030年に向けた産地の維持・拡大に関する数値目標、新規就農者や親元就農者への支援制度の内容と実績、ぶどう専業農家の所得シミュレーション、ぶどう団地整備事業やリースハウス整備事業など参入しやすい仕組みの整備状況と今後の計画、燃料資材価格の高騰に対する市独自の支援策や省エネ型施設への転換支援、デラウェアとシャインマスカットなどの品種構成の想定モデルと「いずものデラウェア」のブランド価値の再構築を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・今岡真治</span><span class="ttl">安心して暮らせる環境づくり</span><span class="sum">省エネ家電への買換え支援やＰＰＡモデル事業を進める脱炭素で市民や事業者の負担を考慮した出雲モデルとも呼べる独自戦略、多伎地域でも実証運行を始める定額乗合交通の先行地域から見えた課題と他地域への展開及び持続可能な運行モデル、自治会への行政ポイント付与期間終了後の加入維持と自治会負担の抜本的な軽減策を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・長廻利行</span><span class="ttl">安心して暮らせる環境整備</span><span class="sum">再生可能エネルギー等の導入や省エネ効果の高い家庭用エアコン・冷蔵庫への買換えを支援する脱炭素の具体策と農地を活用したソーラーシェアリングの内容、「コンパクト・プラス・ネットワーク」と立地適正化計画で策定する内容、自治会の未加入世帯への戸別訪問をいつ誰がどのように実施するのかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・鐘推義憲</span><span class="ttl">省エネ支援と担い手の負担</span><span class="sum">省エネ効果の高い家庭用エアコンや冷蔵庫への買換え支援が令和8年度の単発事業なのか次年度以降も実施するのか、ケアマネジャーの確保・定着に向けたＡＩを活用した業務効率化と身寄りのない高齢者への対応の具体策及びシャドーワークの実態の精査と削減対策、市から自治会等に依頼している業務を削減していく考えがあるのかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・大谷良治</span><span class="ttl">脱炭素の設備導入支援</span><span class="sum">再生可能エネルギー等の導入や省エネ効果の高い家庭用エアコンや冷蔵庫への買換えを支援するとされた脱炭素に関わる設備導入費について、その支援内容を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年度第5回定例会・一般質問・寺本淳一</span><span class="ttl">省エネ基準改正の影響</span><span class="sum">2025年4月から原則全ての新築住宅に省エネルギー基準への適合が義務化されることを受け、これまで適法だった住宅が既存不適格になるのか、出雲市の資産評価や固定資産税に影響が出るのかを尋ね、断熱窓や外壁の断熱材、給湯器などへの補助金の拡充を求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年度第2回定例会・一般質問・寺本淳一</span><span class="ttl">新築住宅の断熱性能等級</span><span class="sum">今年4月に断熱性能等級が5へ引き上げられたことを受け、等級4であった長期優良住宅や低炭素住宅の新築件数、住宅の断熱性能を向上させることによるメリットとデメリット、等級7に改定されたときに市として省エネ住宅をどのように進めるのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・寺本淳一</span><span class="ttl">住宅の断熱と脱炭素</span><span class="sum">家庭で消費されるエネルギーの約70％が冷暖房と給湯に使われていることから、再生可能エネルギーと省エネルギー化をバランスよく取り組む必要があるとして、早急に断熱性、機密性の向上支援策を考えながらゼロカーボンシティを目指すべきとの見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年度第1回定例会・一般質問・湯淺啓史</span><span class="ttl">公共施設の省エネ対策</span><span class="sum">照明機器のＬＥＤ化の現状と温浴施設の水循環機器や大規模な冷暖房機器の省エネルギー対策、水銀に関する国際条約の影響を受ける機器を尋ね、更新時期を待たずに投資した場合の10年単位の費用の試算の有無や、各課から改善の案が上がる仕組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年度第4回定例会・一般質問・飯塚俊之</span><span class="ttl">改正省エネ法への対応</span><span class="sum">平成22年の省エネ法改正により市長部局・教育委員会・水道局が特定事業者となったとして、それぞれが管理している事業所のエネルギー使用量と施設数、国から求められている年1％以上の省エネ推進義務達成への取り組み状況と達成度、中長期的計画の要点、電気の需要の平準化に向けた電力のピークカット・ピークシフト対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年度第2回定例会・一般質問・多々納弘</span><span class="ttl">脱原発の代替エネルギー</span><span class="sum">脱原発を求めるなら国や県だけにゆだねず市町村自らが相応の代替エネルギー施策を検討すべきとの考え、火力や風力、太陽光、水力など具体的な代替発電施策で実施中のものと今後検討する事項、市自体の節電対策と一般家庭への節電要請、市民が自ら再生エネルギーを調査研究する電源開発研究の組織づくりの推進を質した。</span></li>
+          
+          <li><span class="who">平成24年度第4回定例会・一般質問・遠藤力一</span><span class="ttl">ＬＥＤ照明の導入</span><span class="sum">大阪府が管理する道路照明約2万3,000灯のＬＥＤ化を例に挙げ、公共施設の省エネの取り組みの状況を尋ね、電気代とメンテ費用の低減分をリース料の原資とするリース方式による公共施設や防犯灯へのＬＥＤ照明の導入の検討を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・板倉一郎</span><span class="ttl">新エネルギーと省エネ</span><span class="sum">今年4月に設置した新エネルギー推進室での今後の取り組みと斐伊川放水路事業地を候補地とするメガソーラー誘致の具体的な状況、出雲市の省エネルギーの取り組み状況と市の施設におけるＬＥＤ照明など省エネ機器への取り換えの状況を尋ね、グリーンステップの活用を県へ積極的に申し入れる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年度第2回定例会・一般質問・飯塚俊之</span><span class="ttl">改正省エネ法への対応</span><span class="sum">改正省エネ法により出雲市が特定事業者の指定を受けたのかと市のエネルギー使用量および該当施設と使用量の多い施設を尋ね、年一パーセント以上の省エネ推進義務をどのように達成するのかと中長期計画の策定方針、エネルギー管理統括者をだれが務めるのかを質した。</span></li>
+          
+          <li><span class="who">平成22年度第2回定例会・一般質問・福代秀洋</span><span class="ttl">省エネビジョンの実行</span><span class="sum">出雲市地域省エネルギービジョンのアクションプランについて取り組みの現状と成果と達成状況および課題と問題点を尋ね、改定の予定と方針を問い、庁舎の冷房の設定温度や市職員のマイカー通勤の自粛、ノーマイカーデーとノーテレビデーの実施状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年度第5回定例会・一般質問・飯塚俊之</span><span class="ttl">地球温暖化と環境政策</span><span class="sum">地球温暖化問題についての本市の認識と現在の環境問題に対する取り組みおよび今後の取り組みを尋ね、学校での省エネ学習の推進や庁舎のシュレッダーごみのリサイクル、中小企業の省エネ機器導入への支援、しまねグリーン製品の積極的な利用、カーボンオフセット商品の開発を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成20年度第2回定例会・一般質問・石川寿樹</span><span class="ttl">ぶどう産地の維持と支援</span><span class="sum">今年のぶどうの生産と販売の状況、10アール当たりの収支と燃油経費の割合、3Ｆ事業で創設する省エネルギー対策の内容、燃油や肥料の値上がりへの緊急助成と低利資金、中長期の農業振興計画の策定、ブランド課を中心とした農商工連携の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成19年度第3回定例会・一般質問・多久和康司</span><span class="ttl">温暖化防止と緑化推進</span><span class="sum">猛暑や氷河の融解など異常気象が続く中での温暖化防止の対応についての考え、省エネ対策の効果と出雲市地域省エネビジョン推進事業の取り組みの現状とこれからの取り組みおよび温暖化対策地域協議会の立ち上げ、幼稚園や小・中学校、コミュニティセンター、支所、公園といった公共の場所での植樹と緑化事業、市民や事業所の植樹や緑化への補助の現状と今後を質した。</span></li>
+          
+          <li><span class="who">平成19年度第4回定例会・一般質問・広戸恭一</span><span class="ttl">ぶどう栽培農家への助成</span><span class="sum">県内生産額の9割を占める出雲のぶどう栽培について、加温用の油の高騰を受けた省エネ型ボイラーへの買い替えと、10アール当たり50万円ほどかかる古いハウスの取り壊しに有利な助成制度が国や県にあるのか、3F事業の対象となるのかを質した。</span></li>
+          
+          <li><span class="who">平成19年度第5回定例会・代表質問・多久和康司</span><span class="ttl">環境保全とごみ減量化</span><span class="sum">出雲市地域省エネビジョンに基づき立ち上げる出雲市環境保全推進協議会の役割と取り組みを尋ね、小中学校など公共施設でのグリーンカーテンや芝を植える取り組みと、旧出雲市で行われたごみ座談会のように職員が各地域へ出向いて減量化と資源化を継続して働きかけることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年度第2回定例会・一般質問・長岡幸江</span><span class="ttl">新庁舎の基本計画と設計</span><span class="sum">中央病院跡地が適当とされた背景と新庁舎のあるべき姿及び将来の人口規模や職員数を見据えた基本構想を尋ね、敷地の特性の生かし方や防災センターを含む敷地利用計画、人と車の動線、部門構成、市民開放スペース、外観、維持管理、省エネルギー、防災避難計画など基本設計の方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成17年度第2回定例会・一般質問・遠藤力一</span><span class="ttl">温暖化防止と環境大学</span><span class="sum">温暖化防止に向けた市の具体的取り組みと目標数値、出雲市が果たしている貢献度、サマータイムの導入への考え、省エネチャレンジデーの創設、総合学習で行ってきた環境教育のカリキュラムの変化と専門家の有無を尋ね、宍道湖を擁する平田の湖遊館周辺に東のエコパークとして環境大学を開設してはどうかと質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>出雲市環境保全推進協議会（仮称）の立ち上げ</summary><p>「出雲市環境基本計画」の目標達成に向け、地球温暖化防止や省エネルギー対策の具体的な行動指針として策定する「出雲市地域省エネルギービジョン」に基づき、新年度に市民・事業者・市で組織する「出雲市環境保全推進協議会（仮称）」を立ち上げ、環境保全全般にかかわる取り組みを展開する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>ごみの減量化・再資源化と省エネルギーの促進</summary><p>環境施策として、市民、事業者と一体となり、ごみの減量化や再資源化、省エネルギーの促進などに取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>経済環境部への統合と市民文化部への再編</summary><p>新エネルギー・省エネルギー推進の取り組みで連携を密にするため、環境と産業観光の部署を統合して経済環境部とする。あわせて文化環境部を市民文化部とし、市民活動の支援や文化・スポーツの振興に努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>ごみ減量化・再資源化・省エネルギーの推進</summary><p>市民、事業者と一体となり、ごみ減量化や再資源化、省エネルギーへの取組を推進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>省エネルギー普及啓発「ＣＯＯＬ　ＣＨＯＩＣＥ」の促進</summary><p>市民、事業者に向けた省エネルギーの普及啓発活動を充実する。日々の生活において賢い選択をする「ＣＯＯＬ　ＣＨＯＩＣＥ」の取組みを促進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>中小企業の信用保証料補助・事業承継相談・省力化支援</summary><p>中小企業信用保証料補助金の上限額を引き上げる。あわせて事業承継に関する相談体制の充実を図り、デジタル化・省力化・省エネ化を重点的に支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>信用保証料補助の拡充と企業のデジタル化・省エネ支援</summary><p>市内企業が経営環境の変化に柔軟に対応できるよう、県融資制度に係る信用保証料補助を拡充する。あわせてデジタル化による業務効率化や生産性向上、エネルギーコスト削減の取組を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>市民・事業者への脱炭素設備の導入支援</summary><p>市民や事業者に対する脱炭素に係る設備導入支援として、再生可能エネルギー等の導入を支援する。新たに省エネ効果の高い家庭用エアコンや冷蔵庫への買換えも支援する。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">4</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.0.1</p>
+                    
+                    <p class="project-credit">
+                        出雲市議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
