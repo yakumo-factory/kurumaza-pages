@@ -1,0 +1,3306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>子育てと少子化 — 奥出雲町議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">奥出雲町 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+                    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+                        <div class="cross-nav-inner">
+                            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+                            
+                        </div>
+                    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_childcare.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">待機児童と保育所整備</a></li>
+                            
+                            <li><a href="#topic-02">放課後児童クラブ</a></li>
+                            
+                            <li><a href="#topic-03">少子化対策と出生率</a></li>
+                            
+                            <li><a href="#topic-04">子育ての経済的支援</a></li>
+                            
+                            <li><a href="#topic-05">子育て世代の相談支援</a></li>
+                            
+                            <li><a href="#topic-06">子どもの貧困とヤングケアラー</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 町長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">奥出雲町 · 議会レポート / <b>子育てと少子化</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">子育てと少子化</h1>
+  <p class="page-subtitle">
+    奥出雲町議会の一般質問・代表質問について、区分「子育てと少子化」に属する6の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">待機児童と保育所整備</a></th>
+            <td class="ge25">50</td><td class="ge25">36</td><td class="ge25">27</td><td class="ge25">50</td><td class="ge25">33</td><td class="lt10">9</td><td class="lt25">11</td><td class="lt25">17</td><td class="lt10">8</td><td class="lt25">15</td><td class="lt25">17</td><td class="h0">0</td><td class="lt10">8</td><td class="lt25">23</td><td class="lt25">15</td><td class="ge25">31</td><td class="ge25">64</td><td class="lt10">9</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">放課後児童クラブ</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">12</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">15</td><td class="lt25">17</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="lt10">8</td><td class="lt25">18</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">少子化対策と出生率</a></th>
+            <td class="lt25">21</td><td class="lt10">9</td><td class="h0">0</td><td class="ge25">25</td><td class="ge25">25</td><td class="lt25">18</td><td class="lt25">11</td><td class="lt10">8</td><td class="ge25">31</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">8</td><td class="lt25">23</td><td class="lt25">15</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">子育ての経済的支援</a></th>
+            <td class="ge25">36</td><td class="lt10">9</td><td class="h0">0</td><td class="ge25">38</td><td class="ge25">33</td><td class="lt25">18</td><td class="lt25">22</td><td class="ge25">25</td><td class="ge25">38</td><td class="lt25">23</td><td class="h0">0</td><td class="lt10">8</td><td class="lt25">23</td><td class="ge25">38</td><td class="lt25">23</td><td class="lt25">23</td><td class="ge25">36</td><td class="lt10">9</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">子育て世代の相談支援</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="lt25">15</td><td class="lt10">8</td><td class="lt25">18</td><td class="lt10">9</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">子どもの貧困とヤングケアラー</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">9</td><td class="lt10">9</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>14</td><td>11</td><td>11</td><td>8</td><td>12</td><td>11</td><td>9</td><td>12</td><td>13</td><td>13</td><td>12</td><td>12</td><td>13</td><td>13</td><td>13</td><td>13</td><td>11</td><td>11</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>待機児童と保育所整備</h3>
+    <p class="terms">語: 待機児童と保育所整備・待機児童・保育所・認定こども園・保育施設・幼稚園・こども誰でも通園制度・幼児園</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="ge25" data-year="H21"><b>7</b><span class="of">/14人</span><span class="q">12件</span></td><td class="ge25" data-year="H22"><b>4</b><span class="of">/11人</span><span class="q">5件</span></td><td class="ge25" data-year="H23"><b>3</b><span class="of">/11人</span><span class="q">4件</span></td><td class="ge25" data-year="H24"><b>4</b><span class="of">/8人</span><span class="q">5件</span></td><td class="ge25" data-year="H25"><b>4</b><span class="of">/12人</span><span class="q">5件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="lt25" data-year="H27"><b>1</b><span class="of">/9人</span><span class="q">1件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="H30"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt25" data-year="R01"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="R04"><b>3</b><span class="of">/13人</span><span class="q">3件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="ge25" data-year="R06"><b>4</b><span class="of">/13人</span><span class="q">9件</span></td><td class="ge25" data-year="R07"><b>7</b><span class="of">/11人</span><span class="q">11件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・小田川謙一</span><span class="ttl">町の学校教育ビジョン</span><span class="sum">幼・小架け橋カリキュラムによる仁多地域の幼児園とよこた認定こども園の取組と連携、統合で多人数となった小学校での教育方法の基本的な考え方、義務教育9年間を通した小中の連携とスクールカウンセラーやスクールソーシャルワーカーの配置の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・北村千寿</span><span class="ttl">認定こども園への移行</span><span class="sum">幼児園と認定こども園の違いと横田幼児園が認定こども園となった場合の変化を尋ね、運営主体が仁多福祉会から仁多学園に替わる際の職員の転籍の進め方と、職員向けの説明での発言に対する町長の考えを質した。</span></li>
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・小田川謙一</span><span class="ttl">認定こども園と幼児教育</span><span class="sum">八川・馬木幼児園を横田幼児園に統合して幼保連携型認定こども園とする計画の概要と進捗、今後のスケジュールを尋ね、横田の認定こども園1か所と仁多の幼児園4か所の体制の継続見通しと今後の幼児教育の考え方、預け先を各家庭の希望で受け入れるかを質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・落合孝行</span><span class="ttl">子育て家庭に寄り添う仕組み</span><span class="sum">町長との子育て意見交換会の保護者の参加数と出た声を尋ね、認定こども園を利用する保護者への直接の説明の機会と仁多地域を含めた説明会、幼児園の配布物を使った周知、理想の子育てを一緒に考える個別の専門窓口の設置、子育て家庭同士の交流の場づくりと親自身が資源をつくる活動への支援を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・内田圭子</span><span class="ttl">認定こども園移行の説明</span><span class="sum">統合される横田・八川・馬木幼児園の園児数と保護者数、これまでの説明会の回数や参加人数と内容、説明不足との声の受け止めを尋ね、今後の説明会の予定と周知方法、入園申込みまでの体制・方針の明示、保護者の意見を反映する仕組みと仁多学園との橋渡し役の配置、スクールバスの運行、ジョーホー奥出雲のアプリを活用した情報提供を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援施設の運営</span><span class="sum">両子育て支援センターの企画への参加と一時保育の利用状況、一時保育の料金の見直しの進展、旧鳥上幼児園でのよこた子育て支援センターの継続利用を尋ね、横田の放課後児童クラブの利用状況と問題点を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・北村千寿</span><span class="ttl">横田地区の子育て支援</span><span class="sum">仁多福祉会が撤退した場合の横田地区の子育て支援センターと放課後児童クラブの運営、仁多学園が運営する場合の特徴を尋ね、鳥上幼児園を活用した子育て支援センターを閉鎖するとした場合の理由を質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・落合孝行</span><span class="ttl">木育施設の利用形態</span><span class="sum">八川幼児園を活用して設置する木育施設の住民による利用形態と開所曜日や利用料金の想定を尋ね、雨の日や猛暑日にも子育て家庭が毎週遊びに来られる拠点とすることを質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・大垣照子</span><span class="ttl">幼保連携型認定こども園</span><span class="sum">幼児園から幼保連携型認定こども園に再び移行する根拠と、仁多地域での開設のスケジュール、認定こども園へ移行した後の保護者負担の変化を質した。</span></li>
+          
+          <li><span class="who">令和7年第4回定例会・一般質問・北村千寿</span><span class="ttl">ごみの分別と削減</span><span class="sum">大木町や東彼地区の視察を踏まえ、ごみの分別と３Ｒの取組状況と課題、広域でのごみ処理計画での分別と３Ｒの検討、ごみの収集費の想定額を尋ね、幼稚園から中学校までの環境教育の実施と取組への考えを質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・糸原壽之</span><span class="ttl">子育て教育の充実</span><span class="sum">妊娠から出産、子育て期間の医療費無償化までの切れ目のない支援や認定こども園の開設など子育て・教育の一連の施策を評価したうえで、今日までの経過と今後の推進・展開について町長の考えを問うた。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援の取組</span><span class="sum">こども誰でも通園制度への取組と町の果たす役割、保護者と保育士の負担軽減に向けたおむつのサブスクの導入、木育施設として展開する八川幼児園に発達支援センターの機能を持たせる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">切れ目ない子育て支援</span><span class="sum">教育大綱の改定と子どもの権利条約に触れ、今年度の特別支援を必要とする児童・幼児の数、5歳児健診の取組、非認知能力を含む小学校への滑らかな就学に向けた幼児園の在り方、将来空く幼児園施設の活用方法を質した。</span></li>
+          
+          <li><span class="who">令和6年第2回定例会・一般質問・川西明徳</span><span class="ttl">全ての子供の育ちの応援</span><span class="sum">2年後に導入が目指されるこども誰でも通園制度への町長の見方と、2023年12月定例会で求めた保育士の配置基準と処遇の改善のその後の具体的な内容を尋ね、町でこの制度に応えられる体制整備が可能かを質した。</span></li>
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">保育ソーシャルワークの導入</span><span class="sum">今年度新設されたこども家庭センターの半年間の相談状況を尋ね、保育所や子育て支援センターに保育ソーシャルワーカーを設置して関係機関と連携し保育士と保護者を支援することを質した。</span></li>
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・北村千寿</span><span class="ttl">食品ロスの有効活用</span><span class="sum">町民一日議会で提案された規格外で廃棄される野菜を仲介者を介して幼児園の給食に利用する仕組みや、島根デザイン学校からの留学生への提供の要望を受け、食品ロスの有効活用への町の見解を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・川西明徳</span><span class="ttl">子ども・子育て支援</span><span class="sum">子ども・子育て支援新制度やこども誰でも通園制度の創設に触れ、子供の権利擁護と当事者の声を大事にした行政の在り方が求められるとして、町長の子供・子育て支援の見解を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・田食道弘</span><span class="ttl">住宅と学校の断熱</span><span class="sum">先進的窓リノベ事業を活用した住宅の断熱化の推進とWHOの室温基準や窓の断熱への認識、太陽光発電などとのセット条件を外した断熱改修単独の補助を尋ね、町内の学校の室温管理と断熱、横田統合小学校や中学校・幼児園の窓の断熱改修、生徒らによるDIYの断熱改修の取組を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・高橋恵美子</span><span class="ttl">将来の幼児園の在り方</span><span class="sum">こども誰でも通園制度を見据え、子育て支援センターの一時保育の利用実態と規約や半日でも1日1,500円とする料金、今年度の途中入所の状況、幼児園数の将来像、保育士の働き方改革と休憩の取り方、小学校入学に向けた連携を質した。</span></li>
+          
+          <li><span class="who">令和7年第1回定例会・一般質問・川西明徳</span><span class="ttl">こども誰でも通園制度</span><span class="sum">こども誰でも通園制度は市町村の保育実施義務がなく保育士の配置も通常より低い水準であるなどの問題を指摘して制度への認識を尋ね、保育士配置基準の抜本改善と公が責任を持つ保育施設の体制づくりへの所見を質した。</span></li>
+          
+          <li><span class="who">令和7年第1回定例会・一般質問・田食道弘</span><span class="ttl">病児・病後児保育の拡充</span><span class="sum">病児保育施設ほっとすていの利用定員が1日2人と少ないとして保育士の増員などによる定員増を尋ね、1日2,000円の利用料金の無料化と病後児保育事業の開始を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第4回定例会・一般質問・川西明徳</span><span class="ttl">公的保育制度の創造</span><span class="sum">少子化で保育所利用者の減少に直面するなか、地域に保育所を残し少人数保育と労働条件の改善を同時に進めるため、利用者減に応じた配置基準や面積の改善、公立施設の役割を挙げ、公的保育制度をこれからの時代にふさわしい形に創造するよう提起した。</span></li>
+          
+          <li><span class="who">令和5年第4回定例会・一般質問・高橋恵美子</span><span class="ttl">これからの幼児教育環境</span><span class="sum">5歳児健診の実施や発達相談支援センターの設置を提案しつつ、今年度の幼児園の入所者数、保育士の定数確保と途中の退職・採用、来年度の入所受入れ状況、発達が緩やかな子供への保育の取組と課題、保育現場や申請のデジタル化、認定こども園も視野に入れた福祉会との連携を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回定例会・一般質問・内田精彦</span><span class="ttl">木次線の利用促進</span><span class="sum">議員連盟が提出した観光列車「あめつち」導入を受けての提言書への町の対応と、横田－備後落合間の収支率の低さを報じた記事への所感を尋ね、三段式スイッチバックを町の負担で幼児園から中学校までの乗車体験学習とし全国へ発信する案、同区間に限り2名でも半額補助とする考え、ＪＲ西日本から在り方を議論する場の要請が来ているかを質した。</span></li>
+          
+          <li><span class="who">令和4年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援環境の充実</span><span class="sum">今年始まったファミリーサポートセンターの使用状況と課題・対応策を尋ね、病後児保育施設ほっとすていの活用、原則42万円を上回る出産費用を踏まえた出産一時金の増額に対する見解、医療費の無料化を質した。</span></li>
+          
+          <li><span class="who">令和4年第4回定例会・一般質問・大垣照子</span><span class="ttl">コロナとインフルエンザ対策</span><span class="sum">町内の感染者総数と無症状の陽性者の対応や入院基準、同時流行に備えた町の対応と医療従事者の確保、ワクチン接種後の急変時の対応、医薬品のストックと治療薬ゾコーバの配分、幼児・児童のマスク着用と幼児園・小学校での保育士や教員の負担軽減を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回定例会・一般質問・大垣照子</span><span class="ttl">コロナ感染拡大時の対応</span><span class="sum">感染拡大時の対応策と指定医療機関が満杯になった場合の治療体制を尋ね、自宅療養での医療・生活支援、マンパワーの確保と資材のストック、生活用品を届ける宅配業者との取決め、小学校や保育所での感染への対応を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第4回定例会・一般質問・田食道弘</span><span class="ttl">学校・幼児園給食の安全</span><span class="sum">仁多米のエコロジー米や国産小麦のパン、低温殺菌牛乳を使う学校給食の取組を副読本などで啓発すること、幼児園のパンを国内産小麦を原料とするものに切り替えること、食の安全性確保の視点からの食材の点検・指導・改善を質した。</span></li>
+          
+          <li><span class="who">令和2年第1回定例会・一般質問・大垣照子</span><span class="ttl">新型コロナへの町の対応</span><span class="sum">感染拡大の原因の捉え方、町内で感染者が出た場合の危機管理と検査の手順、奥出雲病院での受け入れ病床、小・中学校の休校の判断と幼児園・放課後児童クラブとの矛盾、特別支援学級の児童生徒への対応、保護者の休職に伴う収入補償や事業所支援、非正規職員の賃金、給食食材の扱い、医療・介護のマンパワー、首相の休校要請への町長の受け止めを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第2回定例会・一般質問・藤原充博</span><span class="ttl">地震に備えた防災訓練</span><span class="sum">山陰地方で震度4以上の地震が多いことを挙げ、町や公民館、学校・幼児園、病院・介護施設・老人ホーム、第三セクターの宿泊・温泉施設での防災訓練と教育の実態、夜間の発災時に要支援者を抱える施設への町の応援、災害時の支援を申請した要支援者の数を尋ね、各機関が一斉に行う避難訓練の実施を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・川西明徳</span><span class="ttl">年度途中の待機児童</span><span class="sum">年度途中の0歳児・1歳児の受け入れなどのため配置基準を超えて保育士を配置する保育所へ人件費補助を行っているとする中で、年度途中の待機児童ゼロの実態を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第1回定例会・一般質問・内田勇</span><span class="ttl">働き方改革とタイムカード</span><span class="sum">昨年の一般質問を踏まえ役場へのタイムカード導入の現状を尋ね、全小・中学校と幼児園への速やかな導入、看護師が地域で活動するコミュニティーナースの創設を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第2回定例会・一般質問・内田精彦</span><span class="ttl">幼児園の現状と鳥上幼児園</span><span class="sum">町内各幼児園の平成28年4月1日現在の概要と定員と現状、全園の幼児園化から1年が経過した所感を尋ね、鳥上幼児園の子供を週の半分横田の幼児園で保育している理由、仁多福祉会の説明会への町の参加、この状況への町の認識と鳥上幼児園の存続への対応を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・大垣照子</span><span class="ttl">幼児園の現状とあり方</span><span class="sum">各幼児園の園児数の現状と今後の推移、少子化の影響で経営が困難な状況にある幼児園の有無、今後の幼児園のあり方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第1回定例会・一般質問・石原武志</span><span class="ttl">そろばん産業の普及</span><span class="sum">施政方針に掲げた伝統産業振興のうちそろばん産業の普及について、町内幼児園での教育の導入と小学校での授業拡大の考え、老人介護施設等での採用によるヘルスケアの実績づくりと事業拡大の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第3回定例会・一般質問・川西明徳</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">来年4月からの子ども・子育て支援新制度について、児童福祉法24条1項による町の保育実施義務の堅持、認定こども園に移行しないこと、保育料を上げない約束と関係者への説明の機会、施設の類型や規模にかかわらない同じ保育環境と条件を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・内田勇</span><span class="ttl">子育て環境の充実</span><span class="sum">青森県西目屋村の子育て支援を例に町内の人口動態を尋ね、若い世代の雇用安定による出生率の向上、幼児教育の無償化、第2子20万円・第3子以上30万円への出産祝い金の拡充、小中学校や幼児園へのミストシャワー設置と芝生化を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・内田精彦</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">国の基準より低く設定した町独自の保育料の内容と、多子世帯保育料軽減の内容や平成24年度の実績、1人当たりの軽減額を尋ね、保育所や幼稚園に預けず家庭で子育てする親への支援を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・川西明徳</span><span class="ttl">幼児教育の公的責任</span><span class="sum">市町村の保育実施義務の空洞化が懸念されるとして子ども・子育て関連法の施行凍結や保育所整備の補助金制度の復活を求める考えを尋ね、来年度の園児募集が三成幼稚園のみとなる中での幼稚園の廃園や経営形態の見直しが公的責任を薄める懸念を質した。</span></li>
+          
+          <li><span class="who">平成25年第4回定例会・一般質問・塔村俊介</span><span class="ttl">集落の維持と活性化</span><span class="sum">しまねの郷づくりカルテを活用した公民館単位の集落支援、専任の集落支援員のモデル地区での設置、役場職員による集落支援の体制、女性や若者の活用、集落ごとの未来ビジョンの策定、三沢幼児園の計画、集落の政策プランのコンテストへの支援を質した。</span></li>
+          
+          <li><span class="who">平成25年第4回定例会・一般質問・川西明徳</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">町の保育実施責任と直接契約の併存や保育時間の上限、施設間の基準の格差、保育料負担の増加など子ども・子育て支援新制度の問題点を挙げ、子ども・子育て会議の進捗状況と、会議を開く前の幼稚園廃止提案の是非、多様な幼児教育を選べる場の整備を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回定例会・一般質問・大垣照子</span><span class="ttl">大型公共事業の考え方</span><span class="sum">幼児園の新築や鬼の舌震のつり橋整備などの竣工総額と起債の返済計画、鬼の舌震の事業費に山林取得費が含まれるか、返済原資の確保、年間10万人の入園者数の根拠と町民へのメリット、土産品など町にお金が落ちる方策、危険な生活道路の改良を優先する考えを質した。</span></li>
+          
+          <li><span class="who">平成24年第2回定例会・一般質問・大垣照子</span><span class="ttl">幼児園の運営状況</span><span class="sum">各幼児園の定員と入園児数、保育士と教員の数と雇用形態、定員を超える布勢幼児園の保育室の確保と他園からの応援、正職と嘱託・臨時職員の賃金格差など職員の労働環境の整備について福祉会への町の働きかけを質した。</span></li>
+          
+          <li><span class="who">平成24年第3回定例会・一般質問・岩田明人</span><span class="ttl">23年度実施事業の運営</span><span class="sum">横田・八川幼児園など幼児園化に伴う社会福祉会への運営委託費と職員の人数・賃金等の労働条件、幼児園化による町の支出の増減、玉峰山荘と佐白温泉のチップボイラーの採算性、佐白温泉の運営状況とＮＰＯ法人への支援額を質した。</span></li>
+          
+          <li><span class="who">平成24年第3回定例会・一般質問・内田精彦</span><span class="ttl">放課後児童クラブ</span><span class="sum">放課後児童クラブの根拠と設置・運営主体、実施場所と利用児童数・利用料、幼児園内の専用室の有無と児童1人当たりの面積の考え、教育委員会としての今後の方針と指導を質した。</span></li>
+          
+          <li><span class="who">平成25年第1回定例会・一般質問・内田正男</span><span class="ttl">公共建築事業の竣工検査</span><span class="sum">公共建築工事の竣工検査をだれがどのように行っているか、佐白温泉の浴槽室などの修繕に関する瑕疵担保責任の契約条項と修繕・改築費の額、構造材の割れ目の保証範囲、佐白温泉と横田幼児園の検査者の建築検査資格の有無を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第4回定例会・一般質問・塔村俊介</span><span class="ttl">子育て環境の情報公開</span><span class="sum">阿井地区の幼稚園・保育所の現状と平成25年4月を目途とする幼児園化計画、要望の無い地区で説明会を開いた理由、他地区の幼児園化の経過と早目の情報公開・残る幼稚園の活用、私立保育所運営費の見直しに伴う国補助額と年少扶養控除廃止による税収増、私立保育所に限らない多様な保育の検討、小規模小学校と中学校への学習支援員の配置を質した。</span></li>
+          
+          <li><span class="who">平成24年第1回定例会・一般質問・内田正男</span><span class="ttl">布勢公民館進入路の凍結</span><span class="sum">高台にある布勢公民館と布勢幼児園の進入路が冬季に積雪・凍結しスリップ事故もあったことから、町としての対策と凍結剤の早期の配備を質した。</span></li>
+          
+          <li><span class="who">平成24年第1回定例会・一般質問・吾郷益已</span><span class="ttl">奥出雲町総合計画</span><span class="sum">総合計画策定の基本的な考え、定住対策と雇用の場の確保と新たなビジネスモデル、神話と自然を生かした観光資源の整備とストーリー性のある観光ルート、観光協会事務局長への民間人の登用、高齢者の社会参加と認知症対策、ひとり親家庭への支援、幼保一元化と幼児園の条例化、松江市のような高齢者運転免許証自主返納の支援策、実施計画の策定状況を質した。</span></li>
+          
+          <li><span class="who">平成24年第1回定例会・一般質問・塔村俊介</span><span class="ttl">乳幼児の教育と施設</span><span class="sum">休園となった三成幼稚園の平成25年度の運営方針、保育所と幼児園の違い、仁多福祉会への幼児教育充実事業1,700万円の目的・内容・根拠と平成25年度以降の方針、幼児園の増加に伴う配置人数と新たな雇用を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第2回定例会・一般質問・塔村俊介</span><span class="ttl">子供が減る中の教育環境</span><span class="sum">幼稚園の保育所化に伴う幼稚園教育の総括と保育所への活用、民間設置の幼児園の収支と保護者への費用の説明、複式学級に対応する教師の研修、スポーツ少年団の再編や送迎と文化活動への配慮、横田高校の志願者が定員の半数強にとどまったことの受け止めと原因、来年度に向けた町の対策を質した。</span></li>
+          
+          <li><span class="who">平成22年第3回定例会・一般質問・吾郷益已</span><span class="ttl">旧横田幼稚園跡地の活用</span><span class="sum">永生クリニックに隣接する旧横田幼稚園跡地について、町の活用計画の有無と、将来の高齢者専用住宅の建設用地として確保する考えを質した。</span></li>
+          
+          <li><span class="who">平成22年第4回定例会・一般質問・若月忠男</span><span class="ttl">町有施設用地の賃借料</span><span class="sum">3年前にも質問した土地賃借料の見直しの状況を尋ね、単価に相違がある町有施設用地の賃借料と賃借契約の見直し、幼稚園・小学校・公民館など教育施設の賃借料の見直しと今後の用地購入の検討を質した。</span></li>
+          
+          <li><span class="who">平成22年第4回定例会・一般質問・塔村俊介</span><span class="ttl">子供を第一にした教育環境</span><span class="sum">小学校再編と幼保一元化について、高尾小学校をめぐる地元との話し合いの現状と町長・教育長の再編の考え方、高田小学校が15人以下になった場合の扱い、幼児教育推進協議会の議論、幼稚園廃園・保育所新設とする理由と認定こども園の検討、保育に欠けない子供への対応を尋ね、財政論に偏らない説明と町長部局・教育委員会の意思疎通を質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・景山孝志</span><span class="ttl">教育環境の充実策</span><span class="sum">幼児教育を全地区1園の幼児園とする構想が基本路線か、教育施設の耐震化の進み具合とアスベスト対策の終了、道徳教育の進め方、ふるさと教育の時間と授業費の増額を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・内田正男</span><span class="ttl">幼保一元化</span><span class="sum">平成20年12月の一般質問への答弁を踏まえ、布勢地区の幼稚園児が6名である一方で布勢から約25名が三成の保育所に通う状況から、地域の幼稚園を改修して各地区で保育児と幼稚園児を一本化することを質した。</span></li>
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・大垣照子</span><span class="ttl">新型インフルエンザ対策</span><span class="sum">今回の新型インフルエンザ発生による教訓と、発生時にパニックにならないための対応マニュアルと訓練、保育所・幼稚園・小中学校や医療機関との連携を尋ね、秋冬の流行に備えた重症化した妊婦・子ども・病弱者への体制整備と雲南病院までの搬送、住民への情報提供を質した。</span></li>
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・吾郷益已</span><span class="ttl">少子化対策</span><span class="sum">昨年度の出生数が84名にとどまる中、小手先の支援策ではなく大きな財源を投入してでも子どもを産み育てやすい町づくりへ投資すべきだとして、町長のいう子育て支援策の具体的な内容と進め方を尋ね、病児・病後児に備えた保育所・幼稚園への看護師の配置を質した。</span></li>
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・塔村俊介</span><span class="ttl">奥出雲町の教育環境</span><span class="sum">教育長が感じる教育の課題と将来ビジョン、亀嵩小学校の建替えに先立つ小学校配置の方針と高尾小学校教室棟の整備、学校数別の建設維持費・運営費の概算、児童生徒へのアンケート、幼稚園・保育所の将来ビジョン、保育時間の延長や休日保育、病児・病後児保育、雨天時の施設開放を質した。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・内田勇</span><span class="ttl">環境問題への対策</span><span class="sum">環境先進地を目指し、学校・公民館等の公共施設への太陽光発電の導入と国と自治体で3分の1の補助となる一般家庭への助成の創設、鳥取方式による保育所・幼稚園・小学校の校庭の芝生化、町としての地球温暖化対策の行動計画の提示を求めた。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・塔村俊介</span><span class="ttl">未整備の保育環境</span><span class="sum">病児・病後児保育、日曜・祝休日保育、延長夜間保育、病院内での保育、常設小児科がないことなど未整備の子育て環境について、ニーズを尋ねるアンケートを含めた現在の検討状況と実現への障壁、保育所を運営する福祉会と町の連携・議論の状況を質した。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・塔村俊介</span><span class="ttl">教育環境と図書館</span><span class="sum">大人数の中で子供を育てたいという親のニーズに対応できていない保育園・幼稚園があることや図書館が未設置であることを挙げ、特に面積が狭く人もいない横田コミセンの図書室など横田地域の図書館の現状認識と今後の計画を質した。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・岩田明人</span><span class="ttl">奥出雲町福祉会の運営</span><span class="sum">福祉会の臨時・嘱託別の職員数、給料の定め方と平均給料・年齢・勤続年数・残業手当、町・県・国の支援金や施設の提供、旧病院の返済残額、幼稚園・保育所等の役割と福祉施設の統一的仕組みを尋ね、低賃金の職員への町の助言を質した。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・吾郷益已</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">若年層の定住促進と雇用の場の創出の進行状況、子育て支援室を総務課に設置した理由、福祉会に一任する幼稚園・保育園の就学前教育への行政の指導と組織体制、安心して子供を産み育てる環境づくりのプランと平成22年度予算での検討を尋ね、町づくりの基本構想の早急な策定を質した。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・塔村俊介</span><span class="ttl">町政重要課題の工程表</span><span class="sum">庁舎建て替え、小学校再編計画と耐震化工事、幼稚園・保育所の再編計画について、就任以来の経緯と基本方針・基本計画の決定時期、検討委員会や住民説明会、設計と工事の時期を示す工程表を尋ね、総合計画がないことの法的な問題と起債が元金返済を上回る財政運営への考えを質した。</span></li>
+          
+          <li><span class="who">平成22年第1回定例会・一般質問・塔村俊介</span><span class="ttl">子育て教育環境の充実</span><span class="sum">第3子以降の医療費無料など子育て応援施策の町民へのPRを求め、幼保一体化計画の全体像と全9地区への幼児園設置の考え、全幼稚園を保育園化した場合の町負担の削減額と改築費用、9地区の保育所の経営、幼稚園がすべてなくなることへの教育委員会の議論、布勢幼児園の場所変更の可否を質した。</span></li>
+          
+          <li><span class="who">平成22年第1回定例会・一般質問・景山孝志</span><span class="ttl">幼児教育の一元化</span><span class="sum">幼児教育推進協議会の構成と設立時期、全9地区からの委員の選任、幼児園の整備の進め方と町内全地区の幼児園構想を打ち出した要因を尋ね、各地区・保護者への説明会の開催、子育て支援室の教育委員会への移管による福祉会との関わりと効果を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>多子世帯保育料軽減</summary><p>第3子からの保育所・幼児園・幼稚園の保育料と幼稚園給食費を無料にする多子世帯保育料軽減施策を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>幼児園化の推進（布勢幼稚園・横田保育所／幼稚園）</summary><p>布勢幼稚園を平成23年度から幼児園としてスタートできるよう、来年度に施設改修を行う。あわせて老朽化している横田保育所・横田幼稚園についても、幼児園化に向けた準備に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>幼児園の逐次整備</summary><p>現有施設の老朽化や地域の要望、地区別の子ども数などから将来を予測しつつ、幼児園の整備に逐次取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>多子世帯保育料軽減施策の拡充</summary><p>今年度から実施している第3子からの保育所・幼児園・幼稚園の保育料と幼稚園給食費を無料にする多子世帯保育料軽減施策を拡充し、新たに第2子の保育料を2分の1軽減する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>幼児園化の推進</summary><p>今年4月に布勢幼児園を開園し、横田保育所、横田幼稚園、八川幼稚園についても幼児園化に向けて取り組む。今後も現有施設の老朽化や地域の要望、地区別の子どもの数などを見ながら逐次整備する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>横田・八川幼児園の開園</summary><p>4月に横田と八川の幼児園を開園する。横田幼児園は新園舎が完成する7月まで現在の保育園を利用する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>阿井保育所・鳥上幼稚園の改修と幼児園化</summary><p>平成24年度に阿井保育所と鳥上幼稚園の施設改修を行い、平成25年4月1日にそれぞれ幼児園として開園できるよう取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>奥出雲病院の医療スタッフ確保と診療体制の維持</summary><p>常勤医師8名体制となったものの医療従事者は依然不足しているため、島根大学医学部や県担当部局への協力要請に加え、院内保育所の開設等で職場環境を充実させ、地域の中核病院として診療体制を維持する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>幼児園化（幼保一元化）の推進</summary><p>幼保一元化を実現する幼児園化として、4月に鳥上と阿井地区に幼児園が開園し町内の幼児園は6園となる。さらに来年度は亀嵩幼稚園の施設改修を行い、平成26年4月1日に幼児園として開園できるよう取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">10</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>鳥上幼児園の備品等の充実</summary><p>子供たちの健やかな成長のための環境を整えるため、今春開園予定の鳥上幼児園に対する備品等の充実を図り、所要の経費を補正予算に計上した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>奥出雲病院の医療スタッフ確保と診療体制の維持</summary><p>町立奥出雲病院は常勤医師8名体制となり院内保育所も整備したが、10対1の看護基準の堅持には依然医療従事者が不足している。島根大学医学部等への協力要請や地元出身の医療従事者への情報発信等により医療スタッフを確保し、地域の中核病院として診療体制の維持整備を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>子育て世帯への経済的支援と幼児園整備</summary><p>安心して子供を産み育てることのできる環境づくりを最重要課題として、幼児園の整備、多子世帯の児童生徒の医療費無料化、保育料の軽減、予防接種の助成、出産祝い金の支給などを引き続き行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">16</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>町内全地区の幼児園化</summary><p>4月の亀嵩幼児園の開園により町内の幼児園は7園となる。来年度は三沢幼稚園と三成児童館の改修を行い、町内全地区の幼児園化に向けて取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>奥出雲病院の医療環境整備と健全経営</summary><p>地方公営企業会計基準の見直しなどで病院経営が厳しくなる中、院内保育所や医師住宅の整備、電子カルテシステムの更新による勤務環境の整備に続き、引き続き医療環境の整備と医療スタッフの確保に努め、健全経営に努める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>文化芸術の交流・鑑賞と校歌・郷土音楽の調査保存</summary><p>地域の活性化と文化の薫り高い町を目指し、町文化協会等による音楽団体等との交流や芸術鑑賞のほか、町内の幼児園、小・中学校の校歌や郷土音楽の調査・保存を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>全町幼児園化の完了</summary><p>平成21年度から進めてきた幼児園化について、4月の三成、三沢幼児園の開園により町内の幼児園は9園となり、全町幼児園となる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>馬木幼児園（旧馬木幼稚園舎）の改修</summary><p>園舎本体の改修を行っていなかった馬木幼児園の旧馬木幼稚園舎について、安全安心な環境整備のため、窓ガラスの複層化などの改修を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>電子カルテシステム更新と院内保育所整備</summary><p>町立奥出雲病院で電子カルテシステムの更新や院内保育所の整備などを進め、業務の効率化と勤務環境の整備・充実により医療従事者の確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>幼小中連携と県派遣の指導主事・社会教育主事の配置</summary><p>幼児園、小・中学校が連携した事業等を推進する。学力向上や特別支援教育、公民館活動などの充実を図るため、教育委員会事務局に県派遣の指導主事と社会教育主事を各1名、引き続き配置する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>病児保育事業の開始（奥出雲病院院内保育所の改修）</summary><p>来年度、奥出雲病院の院内保育所を改修し、病児保育事業を開始する。幼児園に通う子どもが病気になったとき、仕事を休めない保護者に代わって保育を受けられる体制を整える。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>幼小中連携と県派遣の指導主事・社会教育主事の配置</summary><p>幼児園、小・中学校の連携事業を推進する。学力向上や特別支援教育、公民館活動などの充実を図るため、県派遣の指導主事と社会教育主事各1名を引き続き教育委員会事務局に配置する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>幼児園・小中学校・横田高校の連携強化と県派遣職員の配置</summary><p>幼児園、小・中学校の連携に加えて横田高校との連携を強化する。引き続き県派遣の職員を教育委員会事務局に配置し、学力向上や特別支援教育、公民館活動などの充実を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>病児保育施設ほっとすていの運営</summary><p>昨年4月に設置した病児保育施設ほっとすていは好評を得ている。引き続き事業の周知を行いながら、登録者の増加や医療機関などとの連携を図り、仕事と子育ての両立に向けた保育環境確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>町教育魅力化協議会（仮称）の設置</summary><p>平成30年度に町教育魅力化協議会（仮称）を新たに設置し、町全体で教育の魅力化を推進する。将来を担う子供像を幼児園、小・中学校、高校、家庭、地域と共有し、学力の向上に加えふるさと教育、キャリア教育を通じて奥出雲町らしい教育に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>幼児園への防犯カメラ設置</summary><p>幼児園に防犯カメラを設置し、乳幼児が安心して保育を受けられる環境を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>奥出雲町教育魅力化協議会の方針の具現化</summary><p>平成30年度に立ち上げた奥出雲町教育魅力化協議会で取りまとめ中の草案について、各幼児園、小・中学校、高校の活動を通じて具現化を進める。家庭・地域・事業所への周知と連携を図りながら、奥出雲町らしいふるさと教育、キャリア教育、学力の育成に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>鳥上幼児園への屋内型キッズスペース整備</summary><p>ニーズ調査で要望が多かった屋内型キッズスペースを鳥上幼児園に整備し、子育て世代が子供と触れ合える全天候型の環境を整える。その効果などを検証する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>休園中の鳥上幼児園を活用した屋内型子どもの遊び場</summary><p>休園中の鳥上幼児園を活用した屋内型子どもの遊び場を令和2年度はイベント形式で開催し、延べ125名が利用した。参加者アンケートの意見を参考に、子育て世代が子どもと触れ合う場、親同士の交流の場となるよう事業を継続する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>ファミリーサポート事業の全町展開</summary><p>これまで試行的に三成地区限定で行っていたファミリーサポート事業を、令和4年度から町内全地域を対象に開始する。幼児園や小学生のクラブ活動への送迎、児童の預かりなどで、仕事をしながら育児をする子育て世帯を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>よこた子育て支援センターの旧鳥上幼児園への移転</summary><p>横田幼児園の一部で開設していたよこた子育て支援センターを、令和4年度から旧鳥上幼児園へ移し、月曜日から金曜日に開設する。月1、2回程度は土曜日または日曜日も利用可能とし、親子の交流や子育ての不安・悩みの相談の場とする。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>横田地域の幼児園統合と幼保連携型認定こども園への移行検討</summary><p>出生数減少で横田地域の幼児園の園児数が大幅に減少し、集団教育の確保や仁多福祉会の運営上の課題から統合は避けられない状況にある。八川・馬木幼児園を横田幼児園に統合した上で幼保連携型の認定こども園への移行を検討し、保護者や地域住民、仁多福祉会へ情報提供しながら準備を進める。仁多地域は現在の運営形態の継続を求める。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>地域資源を活用した特色ある幼児教育プログラム</summary><p>統合後の認定こども園で、これまで幼児園が取り組んできた地域での子育てを継続しながら、奥出雲町の地域資源を活用した特色ある幼児教育プログラムを実施したい考えである。幼児教育の選択肢を増やし町内外へPRすることで子育て世代のU・Iターンや出生率の増加につなげるため、先進事例等の研究に要する事業費を令和7年度当初予算に計上した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>認定こども園開設事業（よこたこども園）</summary><p>令和8年度に幼保連携型認定こども園よこたこども園を新たに開設する。開園当初から円滑に運営できるよう支援するため、認定こども園開設事業を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>にた放課後児童クラブの設置</summary><p>統合で新設される仁多小学校の校舎内と旧三成幼稚園園舎に、にた放課後児童クラブを設置する。令和7年度開設のよこた放課後児童クラブとともに、仁多・横田の各地域で児童の健全育成に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>八川幼児園の木育施設への転用</summary><p>横田地域の認定こども園の開園で空き施設となる八川幼児園を、町内外の子どもや大人が木に親しみ理解を深める木育施設とする。豊かな子育て環境や幼児教育を提供し、雨や雪の日でも安心して過ごせる場所にする。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>公共施設の除却事業</summary><p>公共施設の適正化を推進するため、公共施設の除却事業を進める。令和8年度は老朽化した上阿井国際交流センター、高田コミセン、旧阿井幼稚園舎、鳥上・横田・八川の集畜場を解体・除却する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>国の重点支援地方交付金を活用した物価高騰対策</summary><p>当初予算に国の重点支援地方交付金事業を追加し、既に説明したプレミアム付商品券の発行と水道料金の負担軽減のほか、食材等の物価高騰の影響を受ける保育所給食費、学校給食、公立診療所・介護施設への支援、春まき堆肥代の一部補助を行う。これにより町民生活の負担軽減を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>放課後児童クラブ</h3>
+    <p class="terms">語: 放課後児童クラブ・児童クラブ・学童保育</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="lt25" data-year="H24"><b>1</b><span class="of">/8人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt25" data-year="H30"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt25" data-year="R01"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="R07"><b>2</b><span class="of">/11人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援施設の運営</span><span class="sum">両子育て支援センターの企画への参加と一時保育の利用状況、一時保育の料金の見直しの進展、旧鳥上幼児園でのよこた子育て支援センターの継続利用を尋ね、横田の放課後児童クラブの利用状況と問題点を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・北村千寿</span><span class="ttl">横田地区の子育て支援</span><span class="sum">仁多福祉会が撤退した場合の横田地区の子育て支援センターと放課後児童クラブの運営、仁多学園が運営する場合の特徴を尋ね、鳥上幼児園を活用した子育て支援センターを閉鎖するとした場合の理由を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第1回定例会・一般質問・川西明徳</span><span class="ttl">放課後児童クラブ</span><span class="sum">2019年度以降の放課後児童クラブの充実に向けた取組と成果・課題、小学校再編統合に伴う町内の状況と今後の対応、現地調査への所見を尋ね、放課後児童支援員の賃金の現状と最近の賃上げの状況、一層の引上げを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・川西明徳</span><span class="ttl">保育士配置基準と学童保育</span><span class="sum">75年前から変わらない保育士の配置基準の見直し、転用施設が多い学童保育の生活の場としての年次計画による修繕・改善、子供の生活と発達する権利を保障するための予算の増額と保育・学童保育の維持・拡充を求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第2回定例会・一般質問・川西明徳</span><span class="ttl">放課後児童クラブの配置基準</span><span class="sum">第9次地方分権一括法案による放課後児童クラブの支援員配置基準の参酌化は子どもの安全への責任を放棄し質の低下を招くとして、指導員の専門性を軽んじる1人体制を認めず現行の基準を下げないことと、労働条件の整備による人手不足の解消を求めた。</span></li>
+          
+          <li><span class="who">令和2年第1回定例会・一般質問・大垣照子</span><span class="ttl">新型コロナへの町の対応</span><span class="sum">感染拡大の原因の捉え方、町内で感染者が出た場合の危機管理と検査の手順、奥出雲病院での受け入れ病床、小・中学校の休校の判断と幼児園・放課後児童クラブとの矛盾、特別支援学級の児童生徒への対応、保護者の休職に伴う収入補償や事業所支援、非正規職員の賃金、給食食材の扱い、医療・介護のマンパワー、首相の休校要請への町長の受け止めを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第3回定例会・一般質問・内田雅人</span><span class="ttl">三成小学校の移転改築</span><span class="sum">仁多中学校敷地内への移転改築について、未就学児の保護者や地域住民への説明会の設定、東側での建築案や登下校、放課後児童クラブ、仁多中学校校舎の耐用年数への疑問、測量設計の進捗と場所や規模、教育機能の向上と屋内外運動場やランチルーム、通学の安全管理を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・川西明徳</span><span class="ttl">放課後児童クラブの充実</span><span class="sum">放課後児童支援員の基準が参酌すべき基準に変更される方針を踏まえ、雲南市の83％にとどまる本町の放課後児童クラブ職員の賃金の早急な改善と、経済的理由で利用できない事態を防ぐための利用料の再検討を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第3回定例会・一般質問・内田精彦</span><span class="ttl">放課後児童クラブ</span><span class="sum">放課後児童クラブの根拠と設置・運営主体、実施場所と利用児童数・利用料、幼児園内の専用室の有無と児童1人当たりの面積の考え、教育委員会としての今後の方針と指導を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>小学校再編に向けた校区別協議</summary><p>子ども同士が学び合える学級規模の確保が必要との考えから、令和4年3月末を校区の意向取りまとめ期限として協議を再開した。2月からの各校区別協議会で再編後の通学方法、放課後児童クラブ、学校施設の活用方法について町の考え方を具体的に示し、検討を求めている。</p></details></td>
+            <td class="c">12</td>
+            <td class="c">30</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>横田地域の放課後児童クラブの統合と新横田小学校への併設</summary><p>4月から横田、八川、馬木地区の放課後児童クラブを統合し、新横田小学校に併設する。ICT導入によるアプリを活用した管理運営で、保護者の利便性向上と職員の負担軽減を図る。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>新横田小学校の放課後子ども教室の開設</summary><p>新横田小学校では放課後児童クラブを校内に併設することから、学習やスポーツ・文化活動など多様な学びを提供する放課後子ども教室を新たに開設し、放課後の教育環境の向上を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>にた放課後児童クラブの設置</summary><p>統合で新設される仁多小学校の校舎内と旧三成幼稚園園舎に、にた放課後児童クラブを設置する。令和7年度開設のよこた放課後児童クラブとともに、仁多・横田の各地域で児童の健全育成に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>少子化対策と出生率</h3>
+    <p class="terms">語: 少子化対策と出生率・少子化対策・合計特殊出生率・出生率・婚活・不妊治療</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt25" data-year="H21"><b>3</b><span class="of">/14人</span><span class="q">4件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/11人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="ge25" data-year="H24"><b>2</b><span class="of">/8人</span><span class="q">2件</span></td><td class="ge25" data-year="H25"><b>3</b><span class="of">/12人</span><span class="q">3件</span></td><td class="lt25" data-year="H26"><b>2</b><span class="of">/11人</span><span class="q">2件</span></td><td class="lt25" data-year="H27"><b>1</b><span class="of">/9人</span><span class="q">1件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="ge25" data-year="H29"><b>4</b><span class="of">/13人</span><span class="q">6件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="R04"><b>3</b><span class="of">/13人</span><span class="q">3件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/13人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第2回定例会・一般質問・糸原壽之</span><span class="ttl">雇用促進応援助成金</span><span class="sum">男女の出会いの場と働き場を確保する少子化対策として、町内の事業者等に新たな従業員雇用1人に対する助成金を数年間交付し、制度を最低10年間続けるため債務負担行為の議決を行うことを提起した。</span></li>
+          
+          <li><span class="who">令和5年第4回定例会・一般質問・内田精彦</span><span class="ttl">不妊治療助成の拡充</span><span class="sum">平成22年度から1年上限9万円のまま変わらない不妊治療費助成事業について、令和元年から5年までの対象者数と生まれた子供の数、新規申請の延べ人数を尋ね、上限30万円の町もある県内町村と比べて上限額を拡充する考えを質した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・内田精彦</span><span class="ttl">人口減少と奥出雲創生</span><span class="sum">奥出雲創生の出生数・合計特殊出生率・婚姻数・児童増加数の目標値の考え方、県の合計特殊出生率2.07の目標を踏まえた町の考え、2050年に町の0歳から14歳の人口が62.6%、生産年齢人口が58.7%減るとの推計への受け止めと対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・内田裕紀</span><span class="ttl">少子化対策とその効果</span><span class="sum">新規・拡充の子ども・子育て支援施策と予算規模・財源、少子化の原因と施策の効果・目標の捉え方を尋ね、鳥取県大山町を例にした副食費の助成事業の拡充、有利な起債を活用した新築一戸建ての子育て世帯住宅の整備と役場・病院職員の中途採用による雇用対策を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・大垣照子</span><span class="ttl">若者が集うまちづくり</span><span class="sum">町内全域の情報通信高速化の整備状況と若者定住に向けて優先順位をつけた取組への考え、女性にとって魅力あるまちづくりへの考えを尋ね、大学の学費免除など高等教育の学費の公費負担による少子化対策と人材育成への所感を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・糸原文昭</span><span class="ttl">少子化対策と情報発信</span><span class="sum">出生数が平成12年の133人から令和3年の40人に激減した状況での少子化対策と課の横の連携を尋ね、保育料や高校生等の医療費の無償化などの子育て支援をSNSなどで県外・町外に発信し日本一の子育ての町としてPRすることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第2回定例会・一般質問・内田精彦</span><span class="ttl">出産祝い金の拡充</span><span class="sum">出産時に10万円の商品券を贈る出産祝い金について、妊娠届の減少や総合計画の合計特殊出生率の目標を挙げ、第1子10万円・第2子15万円・第3子以降20万円への拡充を試算とともに提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第3回定例会・一般質問・景山利則</span><span class="ttl">新生児への特別定額給付金</span><span class="sum">特別定額給付金の基準日である4月27日以降に届け出された新生児が同じ年度内でも対象外となるのは不平等であり、少子化対策を真剣に考えている姿勢を示すため令和3年3月31日までの新生児を支給対象とするよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第3回定例会・一般質問・景山利則</span><span class="ttl">婚活支援課の設置</span><span class="sum">年少人口の減少率が高い原因として未婚率の上昇と晩婚化を挙げ、町独自の婚活支援課または婚活推進課を設けて婚活・少子化・人口減少対策に本気で取り組む姿勢を示すよう町長の所見を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回定例会・一般質問・景山利則</span><span class="ttl">合計特殊出生率の回復策</span><span class="sum">総合戦略が2040年に合計特殊出生率2.10を目指すとしていることについて、出生率を回復させるため現在具体的に講じている対策を質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・景山利則</span><span class="ttl">婚活推進の体制</span><span class="sum">婚活支援に特化した課の設置は難しいとした9月議会の答弁について、どういう人口規模なら可能か、債権管理課は設けたのになぜ婚活推進課は合致しないのか、ワンストップ体制の検討から後退した経緯を尋ね、地域おこし協力隊員の任期後の体制や予算を含む本気の取り組みを質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・藤原充博</span><span class="ttl">合計特殊出生率の数値と対策</span><span class="sum">本町の合計特殊出生率について、答弁の数値と総合戦略に示された実績値との食い違いの調査を求め、総合戦略の課題解決策で足りるのかと今後の取り組み、より高い目標値の設定を質した。</span></li>
+          
+          <li><span class="who">平成30年第1回定例会・一般質問・糸原壽之</span><span class="ttl">少子化対策の現状と展開</span><span class="sum">教育委員会内に結婚から子育てまでの支援を一元的に推進する体制を強化することについて、これまでとの違いを具体的に尋ね、本町の少子化対策の現状認識と成果、困難だったこと、今後の課題と必要な施策を質した。</span></li>
+          
+          <li><span class="who">平成30年第1回定例会・一般質問・内田勇</span><span class="ttl">ふるさと納税の使い道</span><span class="sum">平成29年度に3億円近い寄附が寄せられたふるさと納税について、より具体的な課題を示して支援を募るため、婚活支援事業、奥出雲病院の医師・看護師確保のための返済不要の奨学金、たたら製鉄の調査研究と維持存続への活用を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・景山孝志</span><span class="ttl">人口減少対策の取り組み</span><span class="sum">雇用の場の確保として古民家を改修した企業・創業支援とその雇用効果、駐車場と誘導看板の計画、Ｕ・Ｉターン者の働き場の確保、地元企業者との共生の環境整備を尋ね、少子化対策として学校再編を含む教育環境の整備と子育て支援パンフレットの作成・掲示、健康のまちづくりとして挨拶推進の町宣言と軽スポーツの振興、結婚相談所の開設を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第2回定例会・一般質問・塔村俊介</span><span class="ttl">子育て支援事業計画の施策</span><span class="sum">子ども・子育て支援事業計画を踏まえ、平成12年の2.42から平成24年の1.67へ低下した合計特殊出生率の現状と目標、病児・病後児保育の前倒し実施、休日保育、障害児保育の現状と施設開設、子供連れで楽しめる場所や図書館の整備計画、少子化の中でのホッケーの位置づけと競技人口の確保策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第2回定例会・一般質問・内田勇</span><span class="ttl">人口減少対策</span><span class="sum">日本創成会議の推計で若年女性が2010年の1,030人から69.5％減の314人になるとされたことへの受け止めを尋ね、結婚支援センターや結婚祝い金制度による婚活支援、若い女性の町内就職の支援と子育て支援の倍増、地域おこし協力隊や集落支援員への若い女性・青年の配置を質した。</span></li>
+          
+          <li><span class="who">平成27年第1回定例会・一般質問・内田精彦</span><span class="ttl">不妊・不育症治療の助成</span><span class="sum">一般不妊治療助成事業と特定不妊治療事業の内容と対象者数・出生数などの成果、治療費と自己負担を尋ねて助成の拡充を求め、不育症の現実への認識と不育症治療への公的助成の検討を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・大垣照子</span><span class="ttl">2期目の井上町政</span><span class="sum">最重点とする少子化対策について子どもが増えない原因と町内の若い人の所得の傾向を尋ね、今後10年間の公債費の推移、交付税の減額を見据えた行財政運営の手法、平成32年度以降の交付税額の見通し、骨太方針による交付税の優先配分の影響と対応を質した。</span></li>
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・内田勇</span><span class="ttl">子育て環境の充実</span><span class="sum">青森県西目屋村の子育て支援を例に町内の人口動態を尋ね、若い世代の雇用安定による出生率の向上、幼児教育の無償化、第2子20万円・第3子以上30万円への出産祝い金の拡充、小中学校や幼児園へのミストシャワー設置と芝生化を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・内田精彦</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">国の基準より低く設定した町独自の保育料の内容と、多子世帯保育料軽減の内容や平成24年度の実績、1人当たりの軽減額を尋ね、保育所や幼稚園に預けず家庭で子育てする親への支援を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第4回定例会・一般質問・内田勇</span><span class="ttl">子育て支援と少子化対策</span><span class="sum">事業所の職場環境整備と町の子育てサポート体制の充実、子育ての経済的負担や育休制度の職場での状況、奥出雲町の実情に合った子育て支援事業計画の策定と子育て会議の設置、国に先んじた前倒しの取り組みを質した。</span></li>
+          
+          <li><span class="who">平成25年第1回定例会・一般質問・塔村俊介</span><span class="ttl">特定不妊治療費の助成</span><span class="sum">県内で本町のみが実施する年15万円上限の特定不妊治療費助成事業の状況と、気軽に相談できる体制の整備を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第4回定例会・一般質問・内田勇</span><span class="ttl">結婚問題と婚活支援</span><span class="sum">町の結婚適齢世代の結婚率と年間の結婚カップル数を尋ね、行政による婚活支援として会話能力を高めるセミナーの開催と、結婚する人へのお祝い金の支給を質した。</span></li>
+          
+          <li><span class="who">平成23年第1回定例会・一般質問・内田勇</span><span class="ttl">人口減少への歯止め</span><span class="sum">国勢調査の速報値で5年間に1,358人減り減少率が県平均の2倍以上となった人口減少への対策を尋ね、行政や集落を挙げた婚活・就活支援など若者への投資と、公民館長が集落支援員を兼務することの無理を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・吾郷益已</span><span class="ttl">少子化対策</span><span class="sum">昨年度の出生数が84名にとどまる中、小手先の支援策ではなく大きな財源を投入してでも子どもを産み育てやすい町づくりへ投資すべきだとして、町長のいう子育て支援策の具体的な内容と進め方を尋ね、病児・病後児に備えた保育所・幼稚園への看護師の配置を質した。</span></li>
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・内田勇</span><span class="ttl">子育て支援</span><span class="sum">子育て環境日本一を目指し、不妊治療への町の助成、14回を超える妊婦健康診査の無料化、周産期医療の万全の態勢、夫も育児休暇を取れる職場環境の整備、出産お祝い金制度の創設を求めた。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・大垣照子</span><span class="ttl">不妊治療の町独自助成</span><span class="sum">保険適用のない特定不妊治療の高額な治療費と国・県の助成制度の利用者の増加を挙げ、国・県の助成に上乗せする町独自の不妊治療の助成と、広報を通じた制度の周知を求めた。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・吾郷益已</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">若年層の定住促進と雇用の場の創出の進行状況、子育て支援室を総務課に設置した理由、福祉会に一任する幼稚園・保育園の就学前教育への行政の指導と組織体制、安心して子供を産み育てる環境づくりのプランと平成22年度予算での検討を尋ね、町づくりの基本構想の早急な策定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>不妊治療・特定不妊治療への助成制度の創設</summary><p>子どもを授かることのできない悩みに応えるため、不妊治療・特定不妊治療に対する助成制度を創設する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>不妊治療助成制度の拡充</summary><p>子どもを授かることができない悩みにこたえるため、不妊治療・特定不妊治療に対する助成制度を拡充し、助成額を引き上げて実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>不妊治療助成・妊婦健診・任意予防接種</summary><p>少子化対策と子育て支援の一環として、不妊治療助成、妊婦健診、ロタ・おたふく風邪・水ぼうそう等の任意予防接種を継続して実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>婚活事業の委託と地域おこし協力隊による結婚支援</summary><p>結婚対策を出生率向上の最重要課題と位置づけ、婚活セミナーの開催やイベントの実施などを結婚支援団体へ委託する。あわせて地域おこし協力隊を活用し、婚活企画や結婚支援団体の活動支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>婚活支援コーディネーターの配置</summary><p>国の交付金を活用して婚活支援コーディネーターを配置し、独身男女の意識調査や婚活支援ネットワークの構築など、地域に根差した結婚支援を推進する。経費は補正予算に計上した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>不妊治療費助成・妊婦健診・予防接種</summary><p>少子化対策・子育て支援である不妊治療費の助成や妊婦健診、予防接種などを継続する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>小中学校新入生への体育衣料の支給</summary><p>小・中学校の新入生への体育衣料の支給を地方創生に伴う少子化対策の事業と位置づけ、国の交付金を活用して所要額を補正予算に計上した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>縁結び支援（結婚相談所・婚活事業の委託と協力隊による支援強化）</summary><p>少子化対策の一環として、結婚相談所の開設、婚活セミナーやイベントの実施などを縁結び支援団体へ委託する。あわせて地域おこし協力隊を活用し、縁結びネットワーク協議会を中心に縁結び活動の支援を強化する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>不妊治療費助成事業の拡充</summary><p>子育て支援の一環として、不妊治療費の助成事業を拡充する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>結婚新生活支援事業補助金の新設</summary><p>4月以降に婚姻した低所得世帯を対象に、新居の住居費や引っ越し費用の一部を補助する結婚新生活支援事業補助金を来年度新設し、若年夫婦の定住・少子化対策を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>結婚から子育てまでの支援体制の強化</summary><p>平成29年度から結婚・子育てコンシェルジュ事業で定期的な相談日を設けてきたところ、結婚に関する相談が多く寄せられている。結婚対策・婚活支援を人口減少・少子化対策の最重要課題と位置づけ、結婚から子育てまでの切れ目のない支援を一元的に推進できるよう教育委員会の体制を強化し、支援団体と連携して取り組みを展開する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>婚活イベント・セミナーによる出会いの場の提供</summary><p>結婚・婚活支援を人口減少・少子化対策の重要課題と位置づけ、結婚を望む人に対してイベントやセミナーなどでの出会いの場を、縁結びネットワーク協議会の支援団体と連携して引き続き提供する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>結婚支援の継続</summary><p>結婚支援を人口減少・少子化対策の重要課題と位置づけ、平成30年度に強化した支援体制のもと支援団体と連携してセミナーやイベントを行ってきた。婚姻に至った人もあることから、今後も引き続き支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>結婚支援（マッチング支援と出会いの場の提供）</summary><p>少子化対策の重要課題として、奥出雲町縁結びネットワーク協議会の支援団体と協力し、結婚子育てコンシェルジュや地域サポーターと連携した個別のマッチング支援や、イベントなどの出会いの場の提供に引き続き取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>出会いの場の提供と個別マッチング支援</summary><p>奥出雲町縁結びネットワーク協議会の支援団体と協力してイベントなどの出会いの場を提供する。結婚子育てコンシェルジュや地域サポーターと連携した個別マッチング支援にも引き続き取り組み、少子化対策を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>不妊治療費助成事業の拡充</summary><p>不妊治療は令和4年4月から保険適用となったが治療費全体が依然高額であるため、先進医療の費用補助を含め助成額と助成内容を見直す。1人当たりの助成額を年間9万円から30万円に拡充する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>地域資源を活用した特色ある幼児教育プログラム</summary><p>統合後の認定こども園で、これまで幼児園が取り組んできた地域での子育てを継続しながら、奥出雲町の地域資源を活用した特色ある幼児教育プログラムを実施したい考えである。幼児教育の選択肢を増やし町内外へPRすることで子育て世代のU・Iターンや出生率の増加につなげるため、先進事例等の研究に要する事業費を令和7年度当初予算に計上した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>不妊治療助成事業</summary><p>不妊治療は保険適用後も治療費全体が高額負担となるため、令和6年度から先進医療に係る費用を含め1回当たり年間30万円の費用を助成している。出生数の増加に向けて引き続き治療費を助成する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>不妊治療助成事業</summary><p>不妊治療は保険適用後も治療費全体が高額であるため、令和6年度から先進医療に係る費用を含めて1回当たり年間30万円の費用を助成している。令和8年度も出生数の増加に向け、治療費の助成を続ける。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>企業版関係人口創出プロジェクト事業</summary><p>地域課題の解決に挑む企業を募る企業版関係人口創出プロジェクト事業で、今年度は4社を採択し、ホッケー合宿のモニターや婚活支援セミナーなどの実証事業を行った。令和8年度も令和6・7年度の採択企業と実証事業を続け、新たな地域課題をテーマに企業を公募して2社程度を採択する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>子育ての経済的支援</h3>
+    <p class="terms">語: 子育ての経済的支援・子育て支援・子育て支援策・子育て世帯・子ども医療費</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="ge25" data-year="H21"><b>5</b><span class="of">/14人</span><span class="q">7件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="ge25" data-year="H24"><b>3</b><span class="of">/8人</span><span class="q">4件</span></td><td class="ge25" data-year="H25"><b>4</b><span class="of">/12人</span><span class="q">4件</span></td><td class="lt25" data-year="H26"><b>2</b><span class="of">/11人</span><span class="q">2件</span></td><td class="lt25" data-year="H27"><b>2</b><span class="of">/9人</span><span class="q">2件</span></td><td class="ge25" data-year="H28"><b>3</b><span class="of">/12人</span><span class="q">3件</span></td><td class="ge25" data-year="H29"><b>5</b><span class="of">/13人</span><span class="q">6件</span></td><td class="lt25" data-year="H30"><b>3</b><span class="of">/13人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt25" data-year="R03"><b>3</b><span class="of">/13人</span><span class="q">3件</span></td><td class="ge25" data-year="R04"><b>5</b><span class="of">/13人</span><span class="q">8件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/13人</span><span class="q">5件</span></td><td class="lt25" data-year="R06"><b>3</b><span class="of">/13人</span><span class="q">5件</span></td><td class="ge25" data-year="R07"><b>4</b><span class="of">/11人</span><span class="q">6件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・田食道弘</span><span class="ttl">国保税の徴収と支援納付金</span><span class="sum">国保税の年金からの特別徴収の問題点と解決策、口座振替への変更の可否と周知、口座振替での引き落としの回数を尋ね、国保税に上乗せされる子ども・子育て支援納付金について政府に撤回を求めることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援の相談体制</span><span class="sum">こども家庭センターでの子育て相談の現状と課題、5歳児健診の生かし方と家庭ソーシャルワーカーの有資格者の有無、子育て支援事業の申込み方法を尋ね、奈義町の例を挙げた子育て支援の拠点づくりや三成公園のトイレ環境、職場での授乳・搾乳の環境づくりを質した。</span></li>
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・田食道弘</span><span class="ttl">援農ボランティアと米作り</span><span class="sum">町内の作付5ヘクタール未満・以上の米農家数と作付面積の動向、米増産に向けた作付の動向と課題、加工用米から主食用米への転換の動向、仁多米の生産維持・拡大の方策を尋ね、援農ボランティアを募集・養成・受け入れる体制の整備と、生活困窮者や子育て世帯へのお米券の配付を質した。</span></li>
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・小田川謙一</span><span class="ttl">子育て支援事業の充実</span><span class="sum">両親共働きで土日勤務となった場合などのファミリーサポートセンター事業の登録・活用状況を尋ね、急に子供を預けなければならない場合の公的な受入先の設置を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援施設の運営</span><span class="sum">両子育て支援センターの企画への参加と一時保育の利用状況、一時保育の料金の見直しの進展、旧鳥上幼児園でのよこた子育て支援センターの継続利用を尋ね、横田の放課後児童クラブの利用状況と問題点を質した。</span></li>
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・北村千寿</span><span class="ttl">横田地区の子育て支援</span><span class="sum">仁多福祉会が撤退した場合の横田地区の子育て支援センターと放課後児童クラブの運営、仁多学園が運営する場合の特徴を尋ね、鳥上幼児園を活用した子育て支援センターを閉鎖するとした場合の理由を質した。</span></li>
+          
+          <li><span class="who">令和8年第1回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援の取組</span><span class="sum">こども誰でも通園制度への取組と町の果たす役割、保護者と保育士の負担軽減に向けたおむつのサブスクの導入、木育施設として展開する八川幼児園に発達支援センターの機能を持たせる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">切れ目ない子育て支援</span><span class="sum">教育大綱の改定と子どもの権利条約に触れ、今年度の特別支援を必要とする児童・幼児の数、5歳児健診の取組、非認知能力を含む小学校への滑らかな就学に向けた幼児園の在り方、将来空く幼児園施設の活用方法を質した。</span></li>
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">保育ソーシャルワークの導入</span><span class="sum">今年度新設されたこども家庭センターの半年間の相談状況を尋ね、保育所や子育て支援センターに保育ソーシャルワーカーを設置して関係機関と連携し保育士と保護者を支援することを質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・川西明徳</span><span class="ttl">子ども・子育て支援</span><span class="sum">子ども・子育て支援新制度やこども誰でも通園制度の創設に触れ、子供の権利擁護と当事者の声を大事にした行政の在り方が求められるとして、町長の子供・子育て支援の見解を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回定例会・一般質問・高橋恵美子</span><span class="ttl">将来の幼児園の在り方</span><span class="sum">こども誰でも通園制度を見据え、子育て支援センターの一時保育の利用実態と規約や半日でも1日1,500円とする料金、今年度の途中入所の状況、幼児園数の将来像、保育士の働き方改革と休憩の取り方、小学校入学に向けた連携を質した。</span></li>
+          
+          <li><span class="who">令和7年第1回定例会・一般質問・田食道弘</span><span class="ttl">国保税の子供の均等割</span><span class="sum">国保税の負担が加入世帯の家計を圧迫している事実への考えを尋ね、子育て支援として国保税の子供の均等割を町独自策として廃止する制度化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第2回定例会・一般質問・川西明徳</span><span class="ttl">防災・住民本位のまちづくり</span><span class="sum">老朽化した橋や道路の改修、公共施設の耐震化、土砂災害等危険区域の防災工事など暮らしに密着した公共事業への転換への所見と、子育て世帯向け公共住宅の建設や借り上げ公営住宅制度、家賃補助など住宅困窮者への支援を強める考えを質した。</span></li>
+          
+          <li><span class="who">令和5年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">給食費と給食センター</span><span class="sum">物価高騰で負担が増す子育て世帯のため給食費の保護者負担を軽減する事業化や期間を限った無償化の考えと、平成元年建設の横田給食センターでトイレが1か所である環境の改善を質した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・高橋恵美子</span><span class="ttl">女性の働き方と健康支援</span><span class="sum">女性活躍の推進に向けて町が女性の意見を聞く機会、山形市の女性の流出を食い止める取組への所感、職場で女性特有の症状への理解を深める取組、奥出雲病院での産前・産後の伴走型支援の現状と課題や宿泊型の料金、新規の子育て世帯訪問支援事業とこども家庭センターの相談体制を質した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・田食道弘</span><span class="ttl">廃校校区の定住支援</span><span class="sum">小学校がなくなる校区にあえて住宅を新築する子育て世帯に対し、住宅整備支援事業に小学校廃校校区での新築を加算項目の一つとするなど手厚い支援を行うよう提起した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・川西明徳</span><span class="ttl">国の財政支援の活用</span><span class="sum">令和6年度地方財政対策を受け、会計年度任用職員の給与改定の遡及適用、自治体独自の子育て支援経費とこども・子育て支援事業債の活用策や推奨事業メニューの限度額残、保育士の配置基準と処遇の改善、子供医療費助成のペナルティー廃止を生かした拡充、交付金や地方債を活用した中学校体育館の空調設置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">男性の育児休業</span><span class="sum">改正育児休業法の施行や産後パパ育休の開始を踏まえ、町内と役場での男性の育児休業の取得状況と、子育て支援として男性の育児休業に取り組む施策を質した。</span></li>
+          
+          <li><span class="who">令和4年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">地方創生臨時交付金の活用</span><span class="sum">物価高騰による学校給食の値上げが懸念される中、給食の食材費と予算のバランスの状況、地元産食材の活用を含めた今後の見通しを尋ね、地方創生臨時交付金をほかの子育て支援などに活用する考えを質した。</span></li>
+          
+          <li><span class="who">令和4年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援環境の充実</span><span class="sum">今年始まったファミリーサポートセンターの使用状況と課題・対応策を尋ね、病後児保育施設ほっとすていの活用、原則42万円を上回る出産費用を踏まえた出産一時金の増額に対する見解、医療費の無料化を質した。</span></li>
+          
+          <li><span class="who">令和4年第4回定例会・一般質問・北村千寿</span><span class="ttl">子育て支援の強化</span><span class="sum">第2子以降のお祝い金の増額ではなく子育て応援金を創設してお祝い金に加えて交付することや、国の出産子育て応援交付金を活用した第2子・第3子への上乗せ、高校生以下のインフルエンザワクチンの自己負担を高齢者と同等にすることを質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・内田裕紀</span><span class="ttl">少子化対策とその効果</span><span class="sum">新規・拡充の子ども・子育て支援施策と予算規模・財源、少子化の原因と施策の効果・目標の捉え方を尋ね、鳥取県大山町を例にした副食費の助成事業の拡充、有利な起債を活用した新築一戸建ての子育て世帯住宅の整備と役場・病院職員の中途採用による雇用対策を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・北村千寿</span><span class="ttl">令和5年度当初予算編成</span><span class="sum">財政調整基金等から約3億円を取り崩した令和5年度当初予算の編成で既存事業のスクラップや効率化を行ったかを尋ね、結婚・子育て支援事業への集約などを踏まえ、掲げた施策を実施するための今後の財源確保を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・田食道弘</span><span class="ttl">学校給食の無償化</span><span class="sum">学校給食の本町産有機米など有機食材への切替えと一体に、保育料や18歳までの医療費の無償化に続く子育て支援の柱として給食費の無償化を行うことと、吉賀町や千葉県いすみ市の取組に学ぶことを質した。</span></li>
+          
+          <li><span class="who">令和5年第1回定例会・一般質問・糸原文昭</span><span class="ttl">少子化対策と情報発信</span><span class="sum">出生数が平成12年の133人から令和3年の40人に激減した状況での少子化対策と課の横の連携を尋ね、保育料や高校生等の医療費の無償化などの子育て支援をSNSなどで県外・町外に発信し日本一の子育ての町としてPRすることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回定例会・一般質問・景山利則</span><span class="ttl">人口ビジョンと人口減少対策</span><span class="sum">第2次総合計画の人口ビジョンについて、魅力あるまちのイメージ、若者世帯のＵ・Ｉターン促進策と若者や女性の転出抑制の条件設定、20年後9,000人・50年後約7,000人とする目標数値の根拠と達成への決意、企業誘致を含む魅力的な職場づくりと賃金、町職員の町外転出、世帯用住宅の建設見通しと子育て世帯用住宅用地の確保、子育て世帯の新築への固定資産税の減免、若者世代が住みたくなるまちづくりを質した。</span></li>
+          
+          <li><span class="who">令和4年第1回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援策の充実</span><span class="sum">行政組織の改正による子ども家庭支援課の設置を受け、子供の居場所づくりや相談体制など新しい取組の考えを尋ね、学校に行くことをためらう子供や保護者、教職員を支える窓口を一本化した支援の場の設置、子育て世代包括支援の具体的な施策とリスクの高い家庭へのサポートケアの訪問の間隔を質した。</span></li>
+          
+          <li><span class="who">令和4年第1回定例会・一般質問・糸原文昭</span><span class="ttl">障がい児福祉計画の充実</span><span class="sum">第2期奥出雲町障がい児福祉計画で設置目標とした児童発達支援センターや放課後等デイサービスなどが第1期から未設置である点への考えを尋ね、雲南市の事業所へ通う障害児の交通手段の確保、放課後等デイサービスの整備状況と二つの課の計画に載る同サービスの設置・運営体制、縦割りでない障害児政策の進め方と子ども・子育て支援事業計画の見直しを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第1回定例会・一般質問・田食道弘</span><span class="ttl">国保税の負担軽減</span><span class="sum">3年間の基金取崩しによる国保税負担軽減が終わる中、基金残高が計画どおり下がったかと令和3年度以降の基金管理・運用の方針を尋ね、基金残高のガイドラインの撤廃と、子供にもかかる均等割を近隣自治体並みに引き下げるなど国保基金を子育て支援に使うことを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第2回定例会・一般質問・川西明徳</span><span class="ttl">町長施策の事業効果と評価</span><span class="sum">児童生徒の医療費助成、子ども・子育て支援、保育料の減免、地域福祉計画評価委員会、総合教育会議の開催・公開・議事録、中小企業・小規模企業振興基本条例による施策の検証と公表、総合戦略評価委員会、人事評価制度、ストレスチェック、水道料金の値上げ計画と幹線の耐震化、生活困窮者学習支援、地方創生推進交付金や地域おこし協力隊関連の補助金など、条例・規則等に基づく施策の事業効果と評価を尋ね、効果の上がっていない施策への責任の果たし方を質した。</span></li>
+          
+          <li><span class="who">平成30年第3回定例会・一般質問・大垣照子</span><span class="ttl">町長選挙と2期目の町政運営</span><span class="sum">町長選挙を通じて感じたことと相手候補に関する答弁の真意を尋ね、施政方針の子育て支援での総合的検討の具体策と町独自施策、結婚支援の他の施策と女性が住みやすい環境づくり、雇用確保の努力と求人情報紙の配布や進学者への就職情報の発信、雲南広域連合議会を欠席した理由を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・田食道弘</span><span class="ttl">国保税の均等割の減免</span><span class="sum">国保税の均等割が子育て支援や人口減少対策に逆行するとして18歳未満の被保険者に対する均等割の廃止を求め、少なくとも均等割の減免制度を創設し、その財源を一般会計からの法定外繰り入れで賄うよう求めた。</span></li>
+          
+          <li><span class="who">平成31年第1回定例会・一般質問・田食道弘</span><span class="ttl">18歳までの医療費無料化</span><span class="sum">静岡県が子ども医療費助成を18歳の年度末まで引き上げた動きを挙げ、中学生までの医療費無料化を吉賀町に次ぐ県内2番目として18歳まで拡大することを求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回定例会・一般質問・川西明徳</span><span class="ttl">保育士の処遇改善</span><span class="sum">子ども・子育て支援新制度での支給認定の制度改善を国に求めているかを尋ね、公定価格の不十分さを踏まえた町レベルでの保育士の処遇改善の創設・拡充、必要な保育士数や長時間保育に見合う基準で公定価格を算出するよう国に求めることを質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・川西明徳</span><span class="ttl">母子保健と子育て支援</span><span class="sum">要保護児童対策地域協議会の実践事例を挙げて小・中学校を早期発見の場とする仕組みを求めたうえで、妊娠期から青年期までの切れ目のない支援の現状、少子化や子供の貧困化が町の教育に及ぼす影響、いじめ・児童虐待・不登校の把握の実態を質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・内田雅人</span><span class="ttl">提案募集方式の活用</span><span class="sum">地方分権改革の提案募集方式を住民サービスの向上と行財政改革の実現手段と捉えるかを尋ね、平成27年に模索した子育て支援施策の共同提案の相手と内容・再提案の計画、職員個人の意見を広く募る職員提案制度の導入を質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・内田勇</span><span class="ttl">子育て支援施策の充実</span><span class="sum">岡山県奈義町の成功事例を引き、町の子育て支援関係予算を尋ね、高校生への就学支援、第1子から第5子以降まで5段階の出産祝い金、子育て世代としての教育長の考え、学校給食の無償化を質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・藤原充博</span><span class="ttl">子育て支援の満足度</span><span class="sum">総合戦略で目標値60%とされる子育て支援の満足度について、子育て世代が支援策をどう感じているかを町がどう把握しているかを尋ね、80%程度の数字が出るような周知徹底を質した。</span></li>
+          
+          <li><span class="who">平成29年第4回定例会・一般質問・田食道弘</span><span class="ttl">学校給食費の無償化</span><span class="sum">憲法の義務教育無償の精神や全国で無償化する自治体の広がりを挙げ、子育て支援や教職員の集金事務の負担解消のため学校給食費の保護者負担の無償化を求め、口座振替ができない場合の督促など学校現場の実態を踏まえた改善を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第4回定例会・一般質問・大垣照子</span><span class="ttl">総合戦略の評価と結婚支援</span><span class="sum">総合戦略のＰＤＣＡサイクルによる平成27年度の評価と改善策を尋ね、出産年齢人口や結婚をふやす具体策と施策の達成度、子育て支援の町外へのアピール、他自治体との比較による施策の充実、出会いの場や婚姻数の重要業績評価指標の目標値が低過ぎないかと定住しない原因の把握、移住者を担当課へきちんとつなぐ対応を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・川西明徳</span><span class="ttl">保育士の処遇と子供の貧困</span><span class="sum">子ども・子育て支援新制度の実施に関連し、保育士の書き物の時間の保障と町の実態に即した配置基準、労働条件の改善、町長マニフェストでの保育事業の位置づけと評価を尋ね、子供の貧困調査としての等価可処分所得調査の実施、経済的理由で学習塾に通えない生徒への月謝の支援、準要保護世帯への入学準備費の新単価の適用と前倒し支給、いじめ事案で第三者委員会を設置しない理由を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回定例会・一般質問・景山孝志</span><span class="ttl">人口減少対策の取り組み</span><span class="sum">雇用の場の確保として古民家を改修した企業・創業支援とその雇用効果、駐車場と誘導看板の計画、Ｕ・Ｉターン者の働き場の確保、地元企業者との共生の環境整備を尋ね、少子化対策として学校再編を含む教育環境の整備と子育て支援パンフレットの作成・掲示、健康のまちづくりとして挨拶推進の町宣言と軽スポーツの振興、結婚相談所の開設を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第2回定例会・一般質問・塔村俊介</span><span class="ttl">子育て支援事業計画の施策</span><span class="sum">子ども・子育て支援事業計画を踏まえ、平成12年の2.42から平成24年の1.67へ低下した合計特殊出生率の現状と目標、病児・病後児保育の前倒し実施、休日保育、障害児保育の現状と施設開設、子供連れで楽しめる場所や図書館の整備計画、少子化の中でのホッケーの位置づけと競技人口の確保策を質した。</span></li>
+          
+          <li><span class="who">平成28年第1回定例会・一般質問・内田雅人</span><span class="ttl">子育て支援の体制整備</span><span class="sum">結婚・子育てコンシェルジュ制度の創設に向けた相談員の人材と現状と方向性を尋ね、岡山県奈義町のチャイルドホームの視察、総合戦略の就学資金貸与制度の対象と方向性、子育て世代に限ったデザインにこだわった住まいの提供、スマートフォンを活用した情報提供システムの構築を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第2回定例会・一般質問・内田勇</span><span class="ttl">人口減少対策</span><span class="sum">日本創成会議の推計で若年女性が2010年の1,030人から69.5％減の314人になるとされたことへの受け止めを尋ね、結婚支援センターや結婚祝い金制度による婚活支援、若い女性の町内就職の支援と子育て支援の倍増、地域おこし協力隊や集落支援員への若い女性・青年の配置を質した。</span></li>
+          
+          <li><span class="who">平成26年第3回定例会・一般質問・川西明徳</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">来年4月からの子ども・子育て支援新制度について、児童福祉法24条1項による町の保育実施義務の堅持、認定こども園に移行しないこと、保育料を上げない約束と関係者への説明の機会、施設の類型や規模にかかわらない同じ保育環境と条件を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・若月忠男</span><span class="ttl">2期目の重点町政課題</span><span class="sum">井上町長の2期目に特に重点的に取り組む町政課題の考えを尋ね、子育て支援の対策と、入り込み客や滞在型宿泊の集客につながる観光振興の内容を質した。</span></li>
+          
+          <li><span class="who">平成25年第2回定例会・一般質問・内田勇</span><span class="ttl">子育て環境の充実</span><span class="sum">青森県西目屋村の子育て支援を例に町内の人口動態を尋ね、若い世代の雇用安定による出生率の向上、幼児教育の無償化、第2子20万円・第3子以上30万円への出産祝い金の拡充、小中学校や幼児園へのミストシャワー設置と芝生化を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回定例会・一般質問・内田精彦</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">国の基準より低く設定した町独自の保育料の内容と、多子世帯保育料軽減の内容や平成24年度の実績、1人当たりの軽減額を尋ね、保育所や幼稚園に預けず家庭で子育てする親への支援を質した。</span></li>
+          
+          <li><span class="who">平成25年第4回定例会・一般質問・川西明徳</span><span class="ttl">子ども・子育て支援新制度</span><span class="sum">町の保育実施責任と直接契約の併存や保育時間の上限、施設間の基準の格差、保育料負担の増加など子ども・子育て支援新制度の問題点を挙げ、子ども・子育て会議の進捗状況と、会議を開く前の幼稚園廃止提案の是非、多様な幼児教育を選べる場の整備を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第4回定例会・一般質問・内田勇</span><span class="ttl">子育て支援と少子化対策</span><span class="sum">事業所の職場環境整備と町の子育てサポート体制の充実、子育ての経済的負担や育休制度の職場での状況、奥出雲町の実情に合った子育て支援事業計画の策定と子育て会議の設置、国に先んじた前倒しの取り組みを質した。</span></li>
+          
+          <li><span class="who">平成24年第4回定例会・一般質問・内田精彦</span><span class="ttl">出産祝い金など子育て支援</span><span class="sum">出産祝い金の平成23年度の支給者数と出生者数・制度内容、商品券の使途、出生数の予測、過疎債財源の実質一般財源、第3子の祝い金の50万円などへの引き上げ、祖父母孫家庭等応援手当事業とふるさと留学奨励金事業の内容・実績と今後を質した。</span></li>
+          
+          <li><span class="who">平成25年第1回定例会・一般質問・若月忠男</span><span class="ttl">町政2期目の取り組み姿勢</span><span class="sum">財政健全化や子育て支援、Ｕ・Ｉターン対策、たたら文化の振興、新エネルギー対策など1期4年間の成果を挙げたうえで、2期目に挑む抱負と振興策で力点を置く点、町づくりの方向性と政策を鮮明に打ち出す考えを問うた。</span></li>
+          
+          <li><span class="who">平成25年第1回定例会・一般質問・内田勇</span><span class="ttl">幼児教育と医療費の無償化</span><span class="sum">子育て世帯の負担軽減のため3歳から5歳児の幼児教育を国に先んじて無償化する考え、他町の例を踏まえた子供の医療費無料化の検討と小学6年生・中学3年生まで実施した場合の必要予算を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第2回定例会・一般質問・内田勇</span><span class="ttl">NPO法人の育成と支援</span><span class="sum">県がNPO法人向けの低利融資制度を創設したことを挙げ、町内のNPO法人の活動状況と育成、医療や介護、子育て支援などでのNPO法人の役割、地域づくりのパートナーとしての財政支援の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・吾郷益已</span><span class="ttl">少子化対策</span><span class="sum">昨年度の出生数が84名にとどまる中、小手先の支援策ではなく大きな財源を投入してでも子どもを産み育てやすい町づくりへ投資すべきだとして、町長のいう子育て支援策の具体的な内容と進め方を尋ね、病児・病後児に備えた保育所・幼稚園への看護師の配置を質した。</span></li>
+          
+          <li><span class="who">平成21年第2回定例会・一般質問・内田勇</span><span class="ttl">子育て支援</span><span class="sum">子育て環境日本一を目指し、不妊治療への町の助成、14回を超える妊婦健康診査の無料化、周産期医療の万全の態勢、夫も育児休暇を取れる職場環境の整備、出産お祝い金制度の創設を求めた。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・内田精彦</span><span class="ttl">都会の子供へのアンケート</span><span class="sum">4年間で出生者と死亡者の差し引き517名が減少する中、子供たちがふるさとに帰れる町づくりに向け、都会に出た人や親に帰郷の考えや町に望むことを地元企業や子育て支援の内容も入れて尋ねるアンケートの実施と、対応する専門部署の設置を質した。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・塔村俊介</span><span class="ttl">子育て世帯向けの住宅</span><span class="sum">若者の子育て世帯向けの住宅として、三成の雇用促進住宅を町で買い上げ格安な家賃で提供することを提起した。</span></li>
+          
+          <li><span class="who">平成21年第3回定例会・一般質問・塔村俊介</span><span class="ttl">子育て支援への提案</span><span class="sum">経常収支比率が県下一よい中で生まれた財源の子育て支援への投資、子育て支援の具体的なビジョンの提示、町長と子育て世代の少人数での意見交換の場、行政主導の子育て世代の横のつながりの会、保育料等を示す住民目線のホームページとI・Uターン者への一元的な窓口の設置を提起した。</span></li>
+          
+          <li><span class="who">平成21年第4回定例会・一般質問・吾郷益已</span><span class="ttl">少子化対策と子育て支援</span><span class="sum">若年層の定住促進と雇用の場の創出の進行状況、子育て支援室を総務課に設置した理由、福祉会に一任する幼稚園・保育園の就学前教育への行政の指導と組織体制、安心して子供を産み育てる環境づくりのプランと平成22年度予算での検討を尋ね、町づくりの基本構想の早急な策定を質した。</span></li>
+          
+          <li><span class="who">平成22年第1回定例会・一般質問・景山孝志</span><span class="ttl">幼児教育の一元化</span><span class="sum">幼児教育推進協議会の構成と設立時期、全9地区からの委員の選任、幼児園の整備の進め方と町内全地区の幼児園構想を打ち出した要因を尋ね、各地区・保護者への説明会の開催、子育て支援室の教育委員会への移管による福祉会との関わりと効果を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>子育て支援室の設置</summary><p>すこやかな育ちと望ましい幼児教育を一元的に実施するため、教育委員会の生涯学習課内に子育て支援室を設置する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>子育て世代のUターン推進</summary><p>若い子育て世代のUターンを推進するため、町独自の子育て支援制度を継続し、保育・幼児教育の環境整備を一層進めて、安心して子育てができる町を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>幼児教育推進の専任職員配置</summary><p>就学前の幼児教育の充実を図るため、子育て支援室に幼児教育推進の専任職員を配置し、保育・教育現場の職員とともに保育・教育の評価と検証を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>多子世帯の医療費無料化・保育料減免・出産祝い金</summary><p>多子世帯の児童生徒の医療費無料化、保育料の減免、出産祝い金の支給などの子育て支援策を引き続き実施する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>子ども・子育て支援事業計画の策定と子ども・子育て会議の設置</summary><p>子ども・子育て関連3法の成立に伴い、市町村子ども・子育て支援事業計画の策定と、子ども・子育て会議の設置に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>教育委員会事務局の組織改編（子育て支援課の設置・社会教育課への名称変更）</summary><p>教育委員会事務局の組織について2点を改める考えで、3月18日開会の教育委員会で審議する。(1)子育て支援策の一層の充実のため、生涯学習課の内室である子育て支援室を課に昇格させる。(2)担当業務の内容を町民に分かりやすくするため、生涯学習課を社会教育課に名称変更する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>臨時福祉給付金及び子育て世帯臨時特例給付金</summary><p>消費税率の引き上げに対応し、低所得者や子育て世帯への負担の影響を緩和するため、臨時福祉給付金と子育て世帯臨時特例給付金を今年度補正予算に措置した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>子育て世帯への経済的支援と幼児園整備</summary><p>安心して子供を産み育てることのできる環境づくりを最重要課題として、幼児園の整備、多子世帯の児童生徒の医療費無料化、保育料の軽減、予防接種の助成、出産祝い金の支給などを引き続き行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">16</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>子ども・子育て会議による事業計画の策定</summary><p>昨年10月に設置した奥出雲町子ども・子育て会議において、ニーズ調査をもとに地域住民の声を反映させ、事業計画の策定や条例の制定を行い、子育て支援の充実に努める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>不妊治療助成・妊婦健診・任意予防接種</summary><p>少子化対策と子育て支援の一環として、不妊治療助成、妊婦健診、ロタ・おたふく風邪・水ぼうそう等の任意予防接種を継続して実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>小中学生の医療費無料化</summary><p>子育て世帯の経済的負担軽減のため、来年度から多子世帯に限らず全ての小学校児童・中学校生徒の医療費を無料化する。経費を補正予算に計上し、児童生徒医療費助成条例を提出した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>保育料軽減</summary><p>子育て世帯を応援するため、保育料軽減などを引き続き実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>子育て世帯への商品券無料配布</summary><p>国の交付金を活用して子育て世帯へ商品券を無料配布する経費を補正予算に計上した。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>子ども・子育て支援事業計画の推進</summary><p>奥出雲町子ども・子育て会議での議論を踏まえて策定した子ども・子育て支援事業計画に基づき、安心して子どもを産み育てる環境の整備に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>不妊治療費助成・妊婦健診・予防接種</summary><p>少子化対策・子育て支援である不妊治療費の助成や妊婦健診、予防接種などを継続する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>児童生徒医療費助成事業</summary><p>子育て世帯の経済的負担を軽減し子育て環境の充実を図るため、昨年度から実施している児童生徒医療費助成事業を継続する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>不妊治療費助成事業の拡充</summary><p>子育て支援の一環として、不妊治療費の助成事業を拡充する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>行政改革審議会への諮問（公共施設の適正配置等）</summary><p>交付税の一本算定への移行で交付額が減少する一方、総合戦略に基づく子育て支援や定住対策等が求められている。社会情勢の変化に対応した簡素で効率的な町政を推進するため、公共施設の適正配置等の諸課題について、来年度、行政改革審議会に諮問する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>児童生徒医療費補助事業の継続</summary><p>子育て世帯の経済的負担を軽減し子育て環境の充実を図るため、児童生徒医療費補助事業を継続する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>子育て情報発信サイト「ママフレ奥出雲」の充実</summary><p>4月に開設した子育て情報発信サイト「ママフレ奥出雲」について、最新の子育て支援情報をいつでもどこでも気軽に入手できるよう、サイトのPRと掲載内容の充実に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>子育て支援情報発信サイトと交流の場の提供</summary><p>子育て支援施策の情報が簡単に入手できるよう、情報発信サイトの周知と掲載内容の充実に努める。あわせて子育て世代の交流の場を提供するなどの支援に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>子育て世代包括支援センターの設置</summary><p>妊娠期から子育て期の母子保健サービスと子育て支援サービスをワンストップで提供するため、令和2年4月に健康福祉課内に子育て世代包括支援センターを設置する。不妊相談や妊娠・出産時の相談・訪問に加え、奥出雲病院等と連携して産婦健診、産前産後サポート事業、産後ケア事業など切れ目のない支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>子ども・子育て支援事業計画（第2期）に基づく横断的支援</summary><p>令和2年度から5か年を期間とする奥出雲町子ども・子育て支援事業計画第2期を策定した。子育て世代が仕事と子育てを両立し安心して子供を産み育てられるよう、関係課が横断的に連携して支援に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>ファミリーサポート事業の全町展開</summary><p>これまで試行的に三成地区限定で行っていたファミリーサポート事業を、令和4年度から町内全地域を対象に開始する。幼児園や小学生のクラブ活動への送迎、児童の預かりなどで、仕事をしながら育児をする子育て世帯を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>よこた子育て支援センターの旧鳥上幼児園への移転</summary><p>横田幼児園の一部で開設していたよこた子育て支援センターを、令和4年度から旧鳥上幼児園へ移し、月曜日から金曜日に開設する。月1、2回程度は土曜日または日曜日も利用可能とし、親子の交流や子育ての不安・悩みの相談の場とする。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>結婚・子育て支援事業（縁結びサポートの包括実施）</summary><p>結婚相談、出会いの場の創設、新婚世帯の新生活スタートアップ助成など個別に行ってきた結婚支援事業を、令和5年度から結婚・子育て支援事業として集約し、縁結びサポートを包括的に実施する。結婚・子育てコンシェルジュや地域サポーター、奥出雲町縁結びネットワーク協議会と連携し、少子化の課題解決に向けて切れ目のない支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>こども家庭センターの設置</summary><p>全ての子供や子育て世帯を包括的に支援する拠点として、令和6年度からこども家庭支援課内にこども家庭センターを設置する。子育て世代包括支援センターの妊産婦・乳幼児支援と子ども家庭総合支援拠点の子育て相談・児童虐待対応を一本化し、切れ目ない支援を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>子育て世帯訪問支援事業（新規）</summary><p>家事・育児等に不安や負担を抱える子育て家庭やヤングケアラー等に対し、早期支援を行う新規事業を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>住宅整備支援事業の拡充</summary><p>移住・定住の推進に向け、若者・子育て世帯の住宅の新築・増改築を支援する住宅整備支援事業を実施しており、令和5年度は14件を支援した。令和6年度からは若者世帯の親が実施する新築・改修も補助対象に加える。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>町土地開発公社所有地の宅地分譲</summary><p>若者・子育て世帯から住宅新築の場所を求める声が多いため、町土地開発公社所有地を区画整理して宅地分譲を行う。まず稲原・下横田地区の分譲を進め、三成地区をはじめ他地区にも可能な箇所から順次拡大する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>こども計画・第3期子ども・子育て支援事業計画に基づく子育て施策</summary><p>子育て支援施策の一層の充実を図るため、こども計画・第3期子ども・子育て支援事業計画を策定した。令和7年度から11年度までの5か年計画であり、これに基づき子育て施策を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>住まいづくりサポート事業の拡充</summary><p>若年世帯や子育て世帯の持ち家取得を支援する住まいづくりサポート事業について、令和7年度から対象者の年齢要件を緩和し、住宅分譲地加算の追加や子供加算・転入加算等を拡充する。住宅を理由とする転出の抑制と移住定住の促進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>中学校給食の提供単価の維持（差額の町補填）</summary><p>中学校も食材費等の高騰で実質的に給食費が値上げとなるが、差額を町が補填して現在の提供単価を維持する。小学校の無償化とあわせて保護者の負担を軽減し、子育て支援を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>住まいづくりサポート事業</summary><p>若年世帯や子育て世帯の持ち家の希望をかなえ経済的負担を軽減するため、住まいづくりサポート事業を継続する。住宅を理由とする転出を抑え、移住定住を促進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>都市部の子育て世帯向け子育て体験プログラム</summary><p>新たな関係人口の創出に向け、令和8年度から幼児教育施設を活用し、都市部の子育て世帯が一定期間町内の施設を利用して自然豊かな環境で子育てを体験できるプログラムを実施する。将来的な移住定住につなげるため、関係課が連携して受入れ体制や具体的なプログラムづくりを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>子育て世代の相談支援</h3>
+    <p class="terms">語: 子育て世代の相談支援・子育て世代包括支援センター・こども家庭センター・産後ケア</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/8人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="R07"><b>2</b><span class="of">/11人</span><span class="q">2件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・内田圭子</span><span class="ttl">産前産後支援の在り方</span><span class="sum">温泉施設を活用した産後ケア事業の利用状況と利用者の声、病院の産後ケアとのニーズの違い、上限回数の利用状況、利用しなかった人の把握、繁忙期に予約が取りにくい状況と今後の方向性、産前産後サポート事業の利用状況と周知、母親同士のつながりづくりのその後の取組、助産師や保健師が地域で力を発揮できる環境づくりを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・高橋恵美子</span><span class="ttl">子育て支援の相談体制</span><span class="sum">こども家庭センターでの子育て相談の現状と課題、5歳児健診の生かし方と家庭ソーシャルワーカーの有資格者の有無、子育て支援事業の申込み方法を尋ね、奈義町の例を挙げた子育て支援の拠点づくりや三成公園のトイレ環境、職場での授乳・搾乳の環境づくりを質した。</span></li>
+          
+          <li><span class="who">令和7年第2回定例会・一般質問・内田圭子</span><span class="ttl">産前産後の支援事業</span><span class="sum">産後ケアや交通費助成、産前産後サポート事業の利用者数と上限回数までの利用状況を尋ね、利用者が選べる柔軟な制度設計や子育て中の親同士が出会う場づくり、奥出雲病院の母乳外来の現状と課題、検索で町が上位に出る工夫を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">保育ソーシャルワークの導入</span><span class="sum">今年度新設されたこども家庭センターの半年間の相談状況を尋ね、保育所や子育て支援センターに保育ソーシャルワーカーを設置して関係機関と連携し保育士と保護者を支援することを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・高橋恵美子</span><span class="ttl">女性の働き方と健康支援</span><span class="sum">女性活躍の推進に向けて町が女性の意見を聞く機会、山形市の女性の流出を食い止める取組への所感、職場で女性特有の症状への理解を深める取組、奥出雲病院での産前・産後の伴走型支援の現状と課題や宿泊型の料金、新規の子育て世帯訪問支援事業とこども家庭センターの相談体制を質した。</span></li>
+          
+          <li><span class="who">令和6年第1回定例会・一般質問・大垣照子</span><span class="ttl">子育て・教育の充実</span><span class="sum">令和6年度に新設するこども家庭センターの運営の考え方と職員体制、明石市のような迅速な相談対応の工夫、幼児教育の変化と在り方、親子の関わりの研究への所感、県の学力テストの結果と読解力を高める対策、施政方針への教育の充実の反映、中学生・高校生への性感染症や子宮頸がんを含む性教育の取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第3回定例会・一般質問・糸原文昭</span><span class="ttl">子育て対策の充実</span><span class="sum">千葉県流山市の例を挙げて保育料の無償化の考えを尋ね、奥出雲病院の分娩休止を受けた妊産婦へのより手厚い支援、雲南市立病院のカルテ情報の町の保健師等との共有、奥出雲病院での宿泊型産後ケア、保育士への一時金に限らない給料や家賃の長期的な補助を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回定例会・一般質問・内田勇</span><span class="ttl">産後ケア事業の導入</span><span class="sum">出産後の母親の心身を助産師や保健師が支える産後ケア事業の実施自治体の状況を尋ね、豊橋市の産婦健康診査や産後ケアの例を挙げて本町での早期導入の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>子育て世代包括支援センターの設置</summary><p>妊娠期から子育て期の母子保健サービスと子育て支援サービスをワンストップで提供するため、令和2年4月に健康福祉課内に子育て世代包括支援センターを設置する。不妊相談や妊娠・出産時の相談・訪問に加え、奥出雲病院等と連携して産婦健診、産前産後サポート事業、産後ケア事業など切れ目のない支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>子育て世代包括支援センターの産前産後サポート・産後ケア</summary><p>設置2年目の子育て世代包括支援センターで、奥出雲病院と連携して産前産後サポート事業により妊娠・出産・子育ての悩みの軽減に努め、産後ケア事業で出産後の母子の心身の安定と育児不安の解消を図る。安心して出産・子育てができる環境づくりに努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>子育て世代包括支援センターの伴走型相談支援</summary><p>子育て世代包括支援センターで、妊娠届出時、妊娠8か月時、出産後の新生児訪問時にそれぞれ面談を行い、出産や子育てについてきめ細やかな伴走型の相談支援を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>産後ケアの宿泊型サービス開始</summary><p>これまで日帰りのみ実施していた産後ケアについて、令和5年度から宿泊型のサービスも開始し、産後の悩みや不安を抱える母親が利用しやすくする。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>こども家庭センターの設置</summary><p>全ての子供や子育て世帯を包括的に支援する拠点として、令和6年度からこども家庭支援課内にこども家庭センターを設置する。子育て世代包括支援センターの妊産婦・乳幼児支援と子ども家庭総合支援拠点の子育て相談・児童虐待対応を一本化し、切れ目ない支援を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>こども家庭センターによる相談・妊産婦支援</summary><p>こども家庭センターが引き続き相談事業と妊産婦の支援を実施する。子育て応援事業所等と連携し、地域ぐるみで子供を育てる環境づくりと安心して子育てができる支援体制を推進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>妊婦出産費用助成事業（こども家庭センター事業の拡充）</summary><p>こども家庭支援課内のこども家庭センターで、相談業務とあわせて妊産婦健康診査交通費助成や産後ケア事業などを実施している。令和8年度からセンター事業を拡充し、高額となる出産費用に1人5万円を助成する妊婦出産費用助成事業を始める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>子どもの貧困とヤングケアラー</h3>
+    <p class="terms">語: 子どもの貧困とヤングケアラー・ヤングケアラー・生理用品・フードバンク</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/8人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/11人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/13人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/11人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回定例会・一般質問・内田圭子</span><span class="ttl">学校トイレへの生理用品設置</span><span class="sum">小・中学校で生理用品が必要になった児童生徒への対応、仁多中学校での導入の時期、小学校を保健室での対応としている理由を尋ね、中学校での導入の効果や児童生徒の声を踏まえた小学校での試行的な導入を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">食品ロス削減の推進</span><span class="sum">フードバンクやフードドライブによる未利用食品の寄附の普及拡大、岡山市の例を挙げたコミュニティーフリッジの設置と運営の支援、規格外の農産物など地域の食材の有効活用と消費拡大への支援、産直センターへの規格外品の出荷の扱い、生ごみ処理機の購入助成を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">妊娠前の健康管理</span><span class="sum">若い男女が適切な知識を身につけるための学校への医師や助産師による出前講座、千葉市の例を示した性や妊娠などに関する女性のための健康相談窓口の設置、中学校のトイレへの生理用品の設置状況と常設を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回定例会・一般質問・高橋恵美子</span><span class="ttl">避難への備えと防災対策</span><span class="sum">自助として各家庭への非常持ち出し袋の配布を尋ね、避難所での紙おむつや生理用品などの備品とプライバシー保護、モバイルバッテリーの準備、女性の声を聞く場、高齢者や避難困難者の個別避難計画と訓練、防災士の人数を質した。</span></li>
+          
+          <li><span class="who">令和4年第1回定例会・一般質問・高橋恵美子</span><span class="ttl">学校への生理用品の設置</span><span class="sum">生理用品の入手に苦労した人が5人に1人いたことや学校訪問で中学校の女子トイレに生理用品が置かれていなかったことを踏まえ、小・中学校の女子トイレに生理用品を設置する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>子育て世帯訪問支援事業（新規）</summary><p>家事・育児等に不安や負担を抱える子育て家庭やヤングケアラー等に対し、早期支援を行う新規事業を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.1.0</p>
+                    
+                    <p class="project-credit">
+                        奥出雲町議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
