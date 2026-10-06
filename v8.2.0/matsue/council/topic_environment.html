@@ -1,0 +1,2683 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エネルギー・環境 — 松江市議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">松江市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../financial/index.html" class="cross-nav-link">財政レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_environment.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">国のエネルギー政策</a></li>
+                            
+                            <li><a href="#topic-02">再生可能エネルギーの導入</a></li>
+                            
+                            <li><a href="#topic-03">脱炭素とカーボンニュートラル</a></li>
+                            
+                            <li><a href="#topic-04">省エネルギーと節電</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 市長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">松江市 · 議会レポート / <b>エネルギー・環境</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">エネルギー・環境</h1>
+  <p class="page-subtitle">
+    松江市議会の一般質問・代表質問について、区分「エネルギー・環境」に属する4の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">国のエネルギー政策</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">3</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">10</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">5</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">再生可能エネルギーの導入</a></th>
+            <td class="lt10">5</td><td class="lt10">6</td><td class="lt10">3</td><td class="lt10">3</td><td class="lt25">14</td><td class="lt25">10</td><td class="lt25">10</td><td class="lt25">20</td><td class="lt25">17</td><td class="lt25">13</td><td class="lt10">7</td><td class="lt25">11</td><td class="lt10">3</td><td class="lt25">17</td><td class="lt10">3</td><td class="lt10">4</td><td class="lt25">23</td><td class="lt25">10</td><td class="lt25">18</td><td class="lt25">15</td><td class="lt25">11</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">脱炭素とカーボンニュートラル</a></th>
+            <td class="lt10">2</td><td class="lt10">6</td><td class="lt25">11</td><td class="lt10">8</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">13</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="lt10">7</td><td class="h0">0</td><td class="lt25">11</td><td class="lt25">16</td><td class="lt10">7</td><td class="ge25">25</td><td class="lt10">7</td><td class="lt10">7</td><td class="lt10">5</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">省エネルギーと節電</a></th>
+            <td class="lt10">7</td><td class="lt10">3</td><td class="lt10">8</td><td class="lt10">5</td><td class="lt25">10</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">3</td><td class="h0">0</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>44</td><td>35</td><td>37</td><td>37</td><td>29</td><td>29</td><td>30</td><td>30</td><td>29</td><td>30</td><td>28</td><td>27</td><td>31</td><td>30</td><td>30</td><td>27</td><td>31</td><td>30</td><td>28</td><td>27</td><td>28</td><td>22</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>国のエネルギー政策</h3>
+    <p class="terms">語: 国のエネルギー政策・エネルギー政策・エネルギー基本計画</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/44人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/35人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/37人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/37人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>2</b><span class="of">/30人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/29人</span><span class="q">2件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>2</b><span class="of">/30人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>3</b><span class="of">/31人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/22人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和８年第２回松江市議会定例会・一般質問・樋野伸一</span><span class="ttl">原発に依存しない政策転換</span><span class="sum">やらせ説明会問題やその後の不祥事、使用済みＭＯＸ燃料の処理問題を踏まえた2号機のプルサーマル発電の中止、2号機の計画的な廃炉、3号機の新規稼働断念と原発に依存しないエネルギー政策への転換を国や中国電力に求めることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和７年第５回松江市議会定例会・代表質問・たちばなふみ</span><span class="ttl">原発と福島事故の教訓</span><span class="sum">原発の最大限活用を明記した第7次エネルギー基本計画に対し、重大な欠陥が指摘される島根原発3号機の稼働、除染土の民間工事での再利用の可能性、国へ原発依存度の低減を求めることについて市長の見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和３年第５回松江市議会定例会・一般質問・長谷川修二</span><span class="ttl">エネルギー政策</span><span class="sum">この冬の電力需給逼迫が及ぼす影響と対応、ブラックアウトしない安定した電力供給の条件、大地震発生時の避難経路の確保と複合災害時のインフラ復旧に向けた事業者との協力体制を質した。</span></li>
+          
+          <li><span class="who">令和３年第５回松江市議会定例会・代表質問・太田哲</span><span class="ttl">エネルギー政策</span><span class="sum">太陽光発電導入や蓄電池開発支援、ブルーカーボン、玉湯の地熱発電など再生可能エネルギーの取組状況と、島根原発2号機に関する住民説明会で出た声、市長の福島原発視察での認識、再稼働した場合の稼働期間を質した。</span></li>
+          
+          <li><span class="who">令和４年第２回松江市議会定例会・代表質問・細木明美</span><span class="ttl">脱炭素とエネルギー政策</span><span class="sum">島根原発2号機の再稼働同意を評価したうえで、全国に先駆けて推進するとする持続可能なエネルギー政策の具体的な取組、進める上での課題、市民の暮らしへの影響を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第２回松江市議会定例会・代表質問・津森良治</span><span class="ttl">原発問題と3号機申請</span><span class="sum">エネルギー基本計画骨子案への見解と原発がなくなる見通し、3号機視察を踏まえた市民の不安の解消認識、核燃料サイクルと乾式貯蔵、廃炉交付金の使途、周辺自治体との連携を質した。</span></li>
+          
+          <li><span class="who">平成30年第３回松江市議会定例会・一般質問・橘祥朗</span><span class="ttl">原発問題の個別課題</span><span class="sum">岐路を迎えた核燃料サイクル、エネルギー基本計画の原発比率と世界の流れとの乖離、低レベル放射性廃棄物を含む処分の現状、複合災害で避難先や避難ルートが被災するおそれのある避難計画への市長の見解と、原発の即時中止と3号機の審査の門前払いへの所感を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第２回松江市議会定例会・代表質問・畑尾幸生</span><span class="ttl">原発コストとエネルギー政策</span><span class="sum">廃炉費用や事故時の補償を含めた原発のコストへの見解、原発比率20〜22％とする計画が40年廃炉の原則に照らし公約違反ではないかを立地自治体協議会で議論すること、長期的視点に立つエネルギー政策と市民や企業が考える場の提供を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第２回松江市議会定例会・一般質問・芦原康江</span><span class="ttl">再生可能エネルギー計画</span><span class="sum">国のエネルギー基本計画に数値目標が示されない一方で全国の自治体が計画策定を進めていることを踏まえ、地域で得た利益を地域で回すため、市として再生可能エネルギーの推進計画を策定することを提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第３回松江市議会定例会・一般質問・野津照雄</span><span class="ttl">木質バイオマス発電への支援</span><span class="sum">市長の将来のエネルギー政策の考えと、大井町の東工業団地に計画される木質バイオマス発電所への支援策、チップ運搬車が通る市道大井朝酌線の路側帯を含む拡幅、送電線設置交渉の後押し、想定される地域の懸案事項を質した。</span></li>
+          
+          <li><span class="who">平成25年第３回松江市議会定例会・一般質問・貴谷麻以</span><span class="ttl">新エネルギーと新産業政策</span><span class="sum">新エネルギー政策をどの部署がどう動かすのかと横断的な体制の必要性、農業の6次産業化を含む新産業政策と、全国市長会副会長としての国との交渉への抱負と方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第５回松江市議会定例会・一般質問・野津直嗣</span><span class="ttl">エネルギー政策の説明</span><span class="sum">全国の原発が停止した場合のエネルギー確保や経済・税収への影響を挙げ、原子力と共存する場合としない場合のメリットとデメリットを市民に示して説明し、国の形を描くメッセージを発信する考えを質した。</span></li>
+          
+          <li><span class="who">平成23年第５回松江市議会定例会・代表質問・畑尾幸生</span><span class="ttl">代替エネルギー政策</span><span class="sum">原発のコストが必ずしも安くないとの試算が出るなか、メガソーラー構想への考え方と、バイオマスの研究や市の温泉施設での利用の検討を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>原子力発電所のあり方に関する国への要請</summary><p>老朽化した原発は一定の基準を設けて廃炉にすべきとの考えに立ち、国が示した運転年数最長40年・特例20年延長の方針について、40年の根拠や特例の基準の明確化を求める。夏に策定予定の国のエネルギー基本計画で原発の役割を明確にし、納得できるビジョンを示すよう要請する。</p></details></td>
+            <td class="c">9</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>地球温暖化対策実行計画での再生可能エネルギー普及策の検討</summary><p>再生可能エネルギーの普及促進について、国のエネルギー基本計画を踏まえて策定する地球温暖化対策実行計画の中で具体策を検討する。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの導入とエネルギーの地産地消モデルの構築</summary><p>環境負荷の低減に資するエネルギー政策として、松江らしい再生可能エネルギーの導入を検討し、民間の先駆的な事業を支援してエネルギーの地産地消モデルを構築する。温泉資源による地熱発電や小水力発電などの可能性を調査し、推進のため環境保全部を環境エネルギー部に再編する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>再生可能エネルギーの導入</h3>
+    <p class="terms">語: 再生可能エネルギーの導入・再生可能エネルギー・自然エネルギー・太陽光発電</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>2</b><span class="of">/44人</span><span class="q">2件</span></td><td class="lt10" data-year="H18"><b>2</b><span class="of">/35人</span><span class="q">2件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/37人</span><span class="q">1件</span></td><td class="lt10" data-year="H20"><b>1</b><span class="of">/37人</span><span class="q">1件</span></td><td class="lt25" data-year="H21"><b>4</b><span class="of">/29人</span><span class="q">4件</span></td><td class="lt25" data-year="H22"><b>3</b><span class="of">/29人</span><span class="q">3件</span></td><td class="lt25" data-year="H23"><b>3</b><span class="of">/30人</span><span class="q">5件</span></td><td class="lt25" data-year="H24"><b>6</b><span class="of">/30人</span><span class="q">6件</span></td><td class="lt25" data-year="H25"><b>5</b><span class="of">/29人</span><span class="q">5件</span></td><td class="lt25" data-year="H26"><b>4</b><span class="of">/30人</span><span class="q">5件</span></td><td class="lt10" data-year="H27"><b>2</b><span class="of">/28人</span><span class="q">2件</span></td><td class="lt25" data-year="H28"><b>3</b><span class="of">/27人</span><span class="q">3件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt25" data-year="H30"><b>5</b><span class="of">/30人</span><span class="q">6件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="lt25" data-year="R03"><b>7</b><span class="of">/31人</span><span class="q">7件</span></td><td class="lt25" data-year="R04"><b>3</b><span class="of">/30人</span><span class="q">3件</span></td><td class="lt25" data-year="R05"><b>5</b><span class="of">/28人</span><span class="q">6件</span></td><td class="lt25" data-year="R06"><b>4</b><span class="of">/27人</span><span class="q">9件</span></td><td class="lt25" data-year="R07"><b>3</b><span class="of">/28人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/22人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和７年第４回松江市議会定例会・一般質問・村松りえ</span><span class="ttl">再エネ条例と住民同意</span><span class="sum">再生可能エネルギー発電事業条例と県の開発協議通知書との関係、近接住民の3分の2以上の同意など地域住民の同意の再考、運用後の合意形成次第で条例改正があり得るかを質した。</span></li>
+          
+          <li><span class="who">令和７年第５回松江市議会定例会・一般質問・太田哲</span><span class="ttl">脱炭素と再生可能エネルギー</span><span class="sum">脱炭素先行地域として、堀川遊覧船の電動推進機の運用面の課題と導入スケジュール、旧玉湯小学校での地熱バイナリー発電事業の現状と今後の予定、熱水の2次利用のスケジュールを質した。</span></li>
+          
+          <li><span class="who">令和７年第５回松江市議会定例会・一般質問・三島明</span><span class="ttl">松江カントリー跡地の太陽光</span><span class="sum">松江カントリー跡地の太陽光発電事業について、着工延期の理由、条例上の説明対象となる自治会と説明範囲の拡大、パネルの放置や不法投棄を条例で防げるか、法吉地区の協定書解除への市の認識と対応を質した。</span></li>
+          
+          <li><span class="who">令和７年第６回松江市議会定例会・一般質問・三島明</span><span class="ttl">大規模太陽光発電への見解</span><span class="sum">高市政権のメガソーラー規制強化の流れや市条例の制定を踏まえ、住宅地や小学校に近い場所で計画中の大規模太陽光発電事業に対する市長の率直な見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和６年第４回松江市議会定例会・一般質問・村松りえ</span><span class="ttl">ゴルフ場跡地のメガソーラー</span><span class="sum">松江カントリークラブ跡地のメガソーラー事業について、地元自治会と事業者の協定の締結状況と有効性、市と事業者の協定締結、赤道の払下げに応じない方針、進捗状況、風力発電も含めた再生可能エネルギー条例の制定を質した。</span></li>
+          
+          <li><span class="who">令和６年第４回松江市議会定例会・一般質問・錦織伸行</span><span class="ttl">旧ゴルフ場跡地の太陽光</span><span class="sum">旧ゴルフ場跡地の太陽光発電事業の現状認識、市議会が全会一致で出した意見書に対する国の対応、市独自の条例制定への考えを質した。</span></li>
+          
+          <li><span class="who">令和６年第４回松江市議会定例会・代表質問・三島明</span><span class="ttl">太陽光発電設備の規制</span><span class="sum">太陽光発電の急増に伴い地域のトラブルが増えていることを踏まえ、市民の安全や自然景観を守るため太陽光や風力など再生可能エネルギー設備に何らかの規制をかける必要があるとして市の考えを質した。</span></li>
+          
+          <li><span class="who">令和６年第６回松江市議会定例会・一般質問・三島明</span><span class="ttl">再生可能エネルギー条例</span><span class="sum">制定を目指す再生可能エネルギー条例について、宍道湖の水質や浸水被害、法吉小学校への影響を挙げて松江カントリークラブ跡地が規制区域に含まれない理由と規制区域の設定内容、許可の審査体制、市民への説明方法と草案を示したうえでのパブリックコメントの実施を質した。</span></li>
+          
+          <li><span class="who">令和６年第６回松江市議会定例会・一般質問・村松りえ</span><span class="ttl">メガソーラー協定と条例</span><span class="sum">法吉地区自治会連合会総会で決議を経ずに協定書が承認された経緯と市の出席や懇親会参加、事業者ＰＡＧが当初から協議に加わったことの是非、3月の総会資料と4月の締結版で除草剤使用の文言が変わり立会人である松江市の記載が削除された理由と協定の有効性、市長の認識、再生可能エネルギー条例のパブリックコメントの周知、熊野大社など神社仏閣周辺の禁止区域化、開発協議通知書の履行前の許可の可否、既存事業への変更許可の適用を質した。</span></li>
+          
+          <li><span class="who">令和６年第６回松江市議会定例会・一般質問・錦織伸行</span><span class="ttl">太陽光発電施設の規制条例</span><span class="sum">熊野大社の前で同一業者が小規模な太陽光パネル施設を時間差で複数建設しようとしていることへの市の所感と懸念、新条例での対応、パブリックコメントにおけるパソコンに不慣れな高齢者への配慮を質した。</span></li>
+          
+          <li><span class="who">令和７年第２回松江市議会定例会・一般質問・錦織伸行</span><span class="ttl">再生可能エネルギー施設</span><span class="sum">法吉・八雲地区でメガソーラーへの不安が高まる中で再エネ条例の制定が遅れている理由と、農薬や除草剤による宍道湖の環境汚染への考え及び条例案での配慮を質した。</span></li>
+          
+          <li><span class="who">令和７年第２回松江市議会定例会・一般質問・村松りえ</span><span class="ttl">再エネ条例のパブコメ</span><span class="sum">上程が延期された再生可能エネルギー発電事業の条例について、予想以上に集まったパブリックコメントの内容と多かった意見を質した。</span></li>
+          
+          <li><span class="who">令和７年第２回松江市議会定例会・代表質問・田中明子</span><span class="ttl">再エネ発電施設の条例</span><span class="sum">再エネ条例のパブリックコメントの結果への市長の受け止め、禁止区域や抑制・考慮すべき場所の考え方、計画地周辺住民の意見の扱い、再生可能エネルギーとの共生の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和５年第３回松江市議会定例会・一般質問・三島明</span><span class="ttl">風力発電とメガソーラー</span><span class="sum">安来市・雲南市の風力発電計画による景観への影響と対策、土砂災害や水源の地下水への影響、県都としての役割、松江カントリー跡地のメガソーラーによる浸水の懸念と地元にメリットが乏しい中での住民への説明、自然を壊す再生可能エネルギーへの基本的な考えを質した。</span></li>
+          
+          <li><span class="who">令和５年第４回松江市議会定例会・一般質問・錦織伸行</span><span class="ttl">カントリー跡地のソーラー</span><span class="sum">旧松江カントリークラブ跡地の太陽光発電計画の進捗と市の考え、後始末や水環境への住民の不安に対する指導の内容、町内会ごとのきめ細かな説明や地元へのメリットの提示を求める指導を質した。</span></li>
+          
+          <li><span class="who">令和５年第４回松江市議会定例会・一般質問・三島明</span><span class="ttl">外資の土地買収とソーラー</span><span class="sum">太陽光発電の拡大を背景に、外資による森林・農地買収の状況と農地を守る方法、松江カントリー跡地メガソーラーの定期点検体制や協定の締結、パネル飛散時の住民への補償と対策を質した。</span></li>
+          
+          <li><span class="who">令和５年第４回松江市議会定例会・代表質問・細木明美</span><span class="ttl">脱炭素と太陽光発電</span><span class="sum">脱炭素先行地域の選定を受けた今後の取組と意気込み、市内で進む大規模太陽光発電事業に寄せられた市民の相談内容と事業の進捗、国の再エネ特措法改正による事業規律強化に対する市の考えと取組を質した。</span></li>
+          
+          <li><span class="who">令和５年第５回松江市議会定例会・一般質問・たちばなふみ</span><span class="ttl">再エネとメガソーラー</span><span class="sum">松江カントリークラブ跡地の太陽光発電計画への不安を受け、国の基準に満たない事業や域外企業に臨む市独自のガイドラインと、住民参加で保全地区と建設可能地区を定めるゾーニングを質した。</span></li>
+          
+          <li><span class="who">令和６年第２回松江市議会定例会・一般質問・村松りえ</span><span class="ttl">メガソーラー事業への対応</span><span class="sum">松江カントリークラブ跡地のメガソーラー建設について、関係自治会に限られた説明を補う市民への周知の取組を問い、能登半島地震での太陽光発電所の被害も踏まえ、市と事業者との協定締結を求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和４年第３回松江市議会定例会・一般質問・村松りえ</span><span class="ttl">太陽光発電の条例制定</span><span class="sum">太陽光発電設備の設置に伴う全国のトラブルへの認識、1ヘクタール以上の開発での県土地利用開発協議で十分か、1ヘクタール未満の小規模林地開発の要綱策定の検討結果と時期、条例制定の検討を質した。</span></li>
+          
+          <li><span class="who">令和４年第３回松江市議会定例会・代表質問・米田ときこ</span><span class="ttl">豪雨災害への対応</span><span class="sum">令和2・3年度に災害認定された道路・河川・農地等の復旧工事の進捗、護岸・橋脚・道路のり面の点検率と改修率、ため池の廃止数、傾斜地を含む太陽光発電の設置状況と指導、愛護団活動の世代継承への支援の改善を質した。</span></li>
+          
+          <li><span class="who">令和５年第１回松江市議会定例会・一般質問・三島明</span><span class="ttl">松江カントリー跡地の太陽光</span><span class="sum">再生可能エネルギービジョンの松江らしい取組と大規模発電の懸案を問い、外資系企業による松江カントリー跡地のメガソーラーについて住民不安への市の役割、土地の所有、安全保障上の懸念、市独自の規制や事業者との協定締結を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和３年第３回松江市議会定例会・代表質問・川島光雅</span><span class="ttl">原発問題と脱炭素</span><span class="sum">島根原発2号機の審査合格の見通しへの受け止めと対処、コロナ禍で滞る原子力災害の避難訓練の再計画、脱炭素社会に向けた再生可能エネルギーの今後の取組、原発交付金の使い道の見直しを質した。</span></li>
+          
+          <li><span class="who">令和３年第３回松江市議会定例会・代表質問・田中明子</span><span class="ttl">脱炭素への取組</span><span class="sum">改正地球温暖化対策推進法の成立を受け、市の二酸化炭素排出量の直近の推移、再生可能エネルギー導入拡大に向けた今後の政策、家庭部門の排出割合と市民への脱炭素の啓発手法を質した。</span></li>
+          
+          <li><span class="who">令和３年第３回松江市議会定例会・代表質問・田中肇</span><span class="ttl">原子力発電と再稼働</span><span class="sum">原発と決別し再生可能エネルギーを支援する政治決断、市長の福島原発事故現地の訪問、2号機の再稼働を認めないこと、住民投票による市民意思の確認、避難計画の根本的見直し、中国電力の資質、周辺自治体の安全協定を質した。</span></li>
+          
+          <li><span class="who">令和３年第５回松江市議会定例会・一般質問・村松りえ</span><span class="ttl">メガソーラーと規制条例</span><span class="sum">市内のメガソーラーの所在地、住民トラブルの有無、年間発電量、建設時期、今後の建設計画の把握状況と、再エネ賦課金による電気代負担増への考えを問い、太陽光発電の設置を規制する条例の制定を質した。</span></li>
+          
+          <li><span class="who">令和３年第５回松江市議会定例会・一般質問・たちばなふみ</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">不祥事を繰り返す中国電力の再稼働理解要請に知事と同様の疑問を持たなかったか、第6次エネルギー計画が福島事故の反省に基づくと言えるかを問い、多くの市民の意見を聞く姿勢の確認と、再生可能エネルギーへの移行に向けた専門職員の育成や部局の拡充を質した。</span></li>
+          
+          <li><span class="who">令和３年第５回松江市議会定例会・一般質問・山根宏</span><span class="ttl">再エネの主力電源化</span><span class="sum">再生可能エネルギーは周波数調整やバックアップに火力発電を要するなど課題があるとして、1つの電源に偏らないエネルギーミックスの観点から再生可能エネルギーの主力電源化に対する市長の見解を質した。</span></li>
+          
+          <li><span class="who">令和３年第５回松江市議会定例会・代表質問・太田哲</span><span class="ttl">エネルギー政策</span><span class="sum">太陽光発電導入や蓄電池開発支援、ブルーカーボン、玉湯の地熱発電など再生可能エネルギーの取組状況と、島根原発2号機に関する住民説明会で出た声、市長の福島原発視察での認識、再稼働した場合の稼働期間を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和２年第６回松江市議会定例会・代表質問・篠原栄</span><span class="ttl">脱炭素社会の実現</span><span class="sum">玉湯町の地熱利用事業の現状と展望、再生可能エネルギー活用ビジョンの進捗、次期環境基本計画での脱炭素化、市内の二酸化炭素排出量の推移、食品ロス対策、環境産業への注力、新庁舎建設の考え方、排出実質ゼロの宣言を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第２回松江市議会定例会・代表質問・田中肇</span><span class="ttl">原発の必要性と再稼働</span><span class="sum">最大被害想定地震と島根原発1号機の災害対策重点区域の変更の経緯と見通し、再生可能エネルギーを優先するフレキシビリティーで原発は不要になるのではないか、2号機の再稼働を認めるべきではないことを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第２回松江市議会定例会・代表質問・吉儀敬子</span><span class="ttl">島根原発3号機の審査申請</span><span class="sum">新規制基準と基準地震動820ガルの妥当性、周辺自治体の立地並み安全協定への働きかけ、2・3号機の必要性、3号機の審査申請への不同意と再生可能エネルギーへの転換を質した。</span></li>
+          
+          <li><span class="who">平成30年第３回松江市議会定例会・一般質問・貴谷麻以</span><span class="ttl">猛暑下の学校空調と公共設備</span><span class="sum">幼稚園や小中学校の猛暑への対応状況、国の補助が限られるなかでのガスのコージェネや太陽光発電によるバックアップ、新築建物への太陽光パネル設置の状況、公共設備を子どもが使いやすくするプログラム、学校の困りごとが地域に伝わる仕組みを質した。</span></li>
+          
+          <li><span class="who">平成30年第３回松江市議会定例会・代表質問・南波巖</span><span class="ttl">地球温暖化対策</span><span class="sum">一歩踏み込んだ地球温暖化対策の検討、民間の地域新電力計画の有無、再生可能エネルギー移行を民間任せにしてよいか、エネルギー構造高度化事業の活用、シュタットベルケの導入、全体的な取り組みの考え方を質した。</span></li>
+          
+          <li><span class="who">平成30年第４回松江市議会定例会・一般質問・田中肇</span><span class="ttl">原発の必要性と許容性</span><span class="sum">原発を脱炭素技術とする評価と温排水の海水温への影響、再生可能エネルギーの発電量、北海道地震を踏まえた大規模電源としての評価、原発直下の活断層のずれの想定、液状化による避難への影響を質した。</span></li>
+          
+          <li><span class="who">平成30年第４回松江市議会定例会・代表質問・橘祥朗</span><span class="ttl">再生可能エネルギーの推進</span><span class="sum">九州電力の出力制御に見る原発優先の問題、北海道のブラックアウトを踏まえた大規模集中型から地域分散型への転換、姉妹都市宝塚市の再生可能エネルギーの取り組みへの見解を質した。</span></li>
+          
+          <li><span class="who">平成31年第１回松江市議会定例会・代表質問・吉儀敬子</span><span class="ttl">活断層対策と原発問題</span><span class="sum">宍道断層の被害想定を踏まえ活断層の帯を防災特別推進地域に指定する施策、原発を動かさず北道路の建設費を断層周辺の災害対策に充てること、国への自然エネルギー転換の要求と電気の地産地消を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第１回松江市議会定例会・代表質問・南波巖</span><span class="ttl">再生可能エネルギーの導入</span><span class="sum">再生可能エネルギー導入の基本的考え方と今後の展開、地球温暖化対策実行計画との関連、玉湯町の地熱の活用方法、市内の発電施設を生かした地域新電力会社の設立、新庁舎への再エネ・省エネ設備の導入を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第２回松江市議会定例会・代表質問・森脇勇人</span><span class="ttl">小規模林地開発の制度化</span><span class="sum">太陽光発電などのため許可の要らない1ヘクタール未満の林地開発が県も市も把握しないまま行われ、忌部地区で地すべりも起きた現状を踏まえ、市への届け出義務や開発行為の点検の制度化について見解を質した。</span></li>
+          
+          <li><span class="who">平成28年第３回松江市議会定例会・一般質問・貴谷麻以</span><span class="ttl">エネルギー自立のまちづくり</span><span class="sum">地場産業を興しエネルギーや食料を自給する地域単位のまちづくりの方策と、ため池や水路を生かした小水力発電など再生可能エネルギーの導入を国・県と連携して進める計画を質した。</span></li>
+          
+          <li><span class="who">平成28年第３回松江市議会定例会・一般質問・芦原康江</span><span class="ttl">学校への太陽光発電設置</span><span class="sum">避難所となる学校の災害時の電源確保と環境教育・省エネ対策として、蓄電機能つき太陽光発電などを市内の学校屋上へ設置する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第４回松江市議会定例会・一般質問・長谷川修二</span><span class="ttl">再生可能エネルギーの普及</span><span class="sum">下水道や浄水場の流水の利用など非営利型の再生可能エネルギーによる小規模発電の現状と課題・可能性、公用車への導入を含む水素エネルギーの普及促進の課題を質した。</span></li>
+          
+          <li><span class="who">平成27年第５回松江市議会定例会・代表質問・橘祥朗</span><span class="ttl">原発再稼働と核燃料サイクル</span><span class="sum">川内・伊方原発の再稼働と核燃料サイクルの行き詰まりへの見解、周辺自治体と中国電力との安全協定締結への協力と監視・チェック体制の強化、再生可能エネルギーの拡大に向けた専門担当の配置など施策の充実を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第２回松江市議会定例会・一般質問・芦原康江</span><span class="ttl">再生可能エネルギー計画</span><span class="sum">国のエネルギー基本計画に数値目標が示されない一方で全国の自治体が計画策定を進めていることを踏まえ、地域で得た利益を地域で回すため、市として再生可能エネルギーの推進計画を策定することを提起した。</span></li>
+          
+          <li><span class="who">平成26年第２回松江市議会定例会・一般質問・橘祥朗</span><span class="ttl">再生可能エネルギーの普及</span><span class="sum">再生可能エネルギーの利活用と普及を数値で示す計画、家庭用太陽光発電などの現状分析、ソーラーシェアリングの普及と農地の条件緩和、10キロワット以上50キロワット未満の太陽光発電事業への行政の対応を質した。</span></li>
+          
+          <li><span class="who">平成26年第４回松江市議会定例会・一般質問・橘祥朗</span><span class="ttl">再生可能エネルギーの導入</span><span class="sum">電力会社が再生可能エネルギー買取制度の接続申し込み受け付けを中断し混乱が広がっていることへの見解と、地球温暖化対策実行計画における再生可能エネルギー導入目標数値の根拠と水準を質した。</span></li>
+          
+          <li><span class="who">平成27年第１回松江市議会定例会・一般質問・野津照雄</span><span class="ttl">再生可能エネルギー</span><span class="sum">ＣＯ２削減における再生可能エネルギーへの所見、太陽光発電の助成増額の理由とメガソーラーの状況、バイオマス発電に向けた林道整備計画、竹の利活用とチップ化機械の開発を質した。</span></li>
+          
+          <li><span class="who">平成27年第１回松江市議会定例会・一般質問・吉儀敬子</span><span class="ttl">原発と再生可能エネルギー</span><span class="sum">島根原発を一基たりとも動かさない決断を求め、地球温暖化対策実行計画で再生可能エネルギー100％を目指し、太陽光やバイオマスの数値目標を盛り込むべきではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第３回松江市議会定例会・一般質問・吉儀敬子</span><span class="ttl">自然エネルギーの推進</span><span class="sum">原発を動かすほど増える使用済み核燃料のプールの状況を確認したうえで、木質バイオマスにとどまらず小さな河川の水力なども含め市内の自然エネルギーの可能性を調査し、市としてのビジョンを明らかにする考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第３回松江市議会定例会・代表質問・川井弘光</span><span class="ttl">地域エネルギー戦略と太陽光</span><span class="sum">昨年9月定例会で示された官民一体の検討プロジェクトチームと地域エネルギー戦略の進捗・今後の方針・課題と、公共施設の屋根や遊休地の提供を含む太陽光発電の具体的な普及促進策を質した。</span></li>
+          
+          <li><span class="who">平成25年第６回松江市議会定例会・代表質問・野津照雄</span><span class="ttl">木質バイオマス発電</span><span class="sum">再生可能自然エネルギーに対する市の方向性と、大井町で計画される木質バイオマス発電所に関し、チップ搬入路の拡幅など道路の安全対策、環境影響への業者指導、チップ工場の建設予定地と規模、誘致企業への助成、チップの見込み量と路網整備を質した。</span></li>
+          
+          <li><span class="who">平成26年第１回松江市議会定例会・一般質問・芦原康江</span><span class="ttl">再生可能エネルギーの推進</span><span class="sum">松江市で有権者の18%が署名したエネルギー自立地域推進基本条例の直接請求への受けとめと応え方、市民とともに省エネと再生可能エネルギーの活用を進める踏み込んだエネルギー計画の策定を質した。</span></li>
+          
+          <li><span class="who">平成26年第１回松江市議会定例会・代表質問・片寄直行</span><span class="ttl">原発・エネルギーと防災計画</span><span class="sum">福島事故の現状と教訓の総括、島根原発2号機の審査状況の感想、最終処分場の候補地を求められた場合の対応、広域避難計画の策定時期と課題、10キロメートル圏内にある市庁舎の防災拠点としての適否、複合災害の想定、原発の地域経済へのメリット・デメリットの比較、みどりのエネルギー条例署名の受けとめ、市の消費電力と再生可能エネルギー比率、省エネ計画の進捗、バイオマス発電のあり方、自然エネルギーのポテンシャル調査を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第２回松江市議会定例会・一般質問・片寄直行</span><span class="ttl">原発問題と地域防災計画</span><span class="sum">再稼働をめぐる市長答弁の後退、原発に依存しない決意を政府に求めること、再生可能エネルギーと公民館・集会所への導入、宍道断層と鳥取沖断層の連動の再調査、水道局プランの事故原因の記述を質した。</span></li>
+          
+          <li><span class="who">平成24年第２回松江市議会定例会・代表質問・畑尾幸生</span><span class="ttl">再生可能エネルギーの推進</span><span class="sum">松江として積極的に取り組みたい再生可能エネルギーを尋ねるとともに、県と県内自治体の資金による基金の造成で松江市がリーダーシップをとることと、未利用市有地でのメガソーラー誘致を提起した。</span></li>
+          
+          <li><span class="who">平成24年第３回松江市議会定例会・一般質問・田中豊昭</span><span class="ttl">原発安全協定のあり方</span><span class="sum">周辺3市が求める立地並みの安全協定への国・県・市長の対応、福島の事故を踏まえた松江市からの協定見直しの必要性、電力会社が再生可能エネルギーなどの発電に取り組むべきとの考えを質した。</span></li>
+          
+          <li><span class="who">平成24年第３回松江市議会定例会・代表質問・川井弘光</span><span class="ttl">再生可能エネルギーの活用</span><span class="sum">市としてのエネルギー戦略の基本、自家発電による自給自足と地域の小規模発電事業の促進、市有地・市有建物の実験場としての貸し出しや民間の実証実験・発電事業者育成への支援策を質した。</span></li>
+          
+          <li><span class="who">平成24年第４回松江市議会定例会・一般質問・野津照雄</span><span class="ttl">再生可能エネルギー</span><span class="sum">県内や近隣の再生可能エネルギーの稼働状況と運営主体、太陽光以外への助成制度、地元企業がバイオマス発電を検討する際の市の協力、その利点と課題、売電価格を質した。</span></li>
+          
+          <li><span class="who">平成25年第１回松江市議会定例会・一般質問・貴谷麻以</span><span class="ttl">松江独自の政策づくり</span><span class="sum">再生可能エネルギーの資源は地方にこそあるとして、国の政策を待たずエネルギーや文化観光、産業ものづくりのマスタープランなど松江独自の政策をつくり、都市計画と整合させた地域循環型経済を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第５回松江市議会定例会・代表質問・片寄直行</span><span class="ttl">原発からの撤退と島根原発</span><span class="sum">福島原発事故の教訓として原発技術の危険性と安全神話への認識、推進機関から独立した規制機関の確立、原発ゼロを目指す政治的決断、自然エネルギーの導入と立地自治体での仕事おこし、電源立地地域対策交付金の改善、1号機の廃炉、プルサーマル了解の撤回と2号機の停止・安全総点検、3号機建設の中止、宍道断層の再調査の要望、使用済み核燃料の再処理の見通し、引き波対策の根拠の明確化を質した。</span></li>
+          
+          <li><span class="who">平成23年第６回松江市議会定例会・一般質問・片寄直行</span><span class="ttl">原発とエネルギー問題</span><span class="sum">野田内閣の原発方針への所見、老朽化した1号機の廃炉と3号機の稼働阻止、やらせ問題での中国電力の調査、独立した規制機関、引き波対策、環境安全対策協議会委員の公募、専門教育機関の要請、公共施設への自然エネルギー導入を質した。</span></li>
+          
+          <li><span class="who">平成23年第６回松江市議会定例会・一般質問・森脇幸好</span><span class="ttl">太陽光発電の導入促進</span><span class="sum">補助実績を踏まえた太陽光発電導入促進事業の今後の考え方と公共施設への設置を問い、県の補助の復活を要望するよう求め、国主導の補助体系への整理を質した。</span></li>
+          
+          <li><span class="who">平成23年第７回松江市議会定例会・一般質問・貴谷麻以</span><span class="ttl">再生可能エネルギーと産業</span><span class="sum">東出雲中学校への太陽光パネル設置を評価し、未利用地を再生可能エネルギーに活用する考えと、ものづくり技術を生かし松江の産業を紹介するなど産業振興の方策を質した。</span></li>
+          
+          <li><span class="who">平成24年第１回松江市議会定例会・一般質問・片寄直行</span><span class="ttl">原発・エネルギーと防災</span><span class="sum">原発停止下の中国地区の電力需給状況、自然エネルギー活用の基礎調査の実施、県の新たな地震想定を受けた引き波時の冷却用取水問題への対応、宍道断層のずれによる送電線分断の検討を中国電力に求めることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第４回松江市議会定例会・一般質問・吉金隆</span><span class="ttl">原子力発電の将来</span><span class="sum">原子力発電の利点と、放射性廃棄物の処分や解体費用などの問題点を挙げ、太陽光発電や風力発電など多様な技術が開発されるなかで原子力発電の将来を市長がどう考えるかを問うた。</span></li>
+          
+          <li><span class="who">平成22年第６回松江市議会定例会・一般質問・野津照雄</span><span class="ttl">太陽光発電補助事業</span><span class="sum">太陽光発電補助事業の今年度の進行状況、予定件数に達して補助を終了することの納入業者や設置業者への通知の経緯、国・県の動向と市の今後の計画を質した。</span></li>
+          
+          <li><span class="who">平成22年第６回松江市議会定例会・代表質問・三島良信</span><span class="ttl">平成23年度予算編成の方針</span><span class="sum">平成22年度決算を踏まえた平成23年度予算編成の方針について、教室の暑さ対策としてのエアコン設備、耐震改修時の地元産材や太陽光発電・雨水利用設備、学校の備品予算などの環境整備に触れ、予算の力点と総額の想定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第４回松江市議会定例会・代表質問・加本市郎</span><span class="ttl">省エネ機器導入支援の継続</span><span class="sum">環境ビジネス支援事業のうち太陽光発電システム導入補助金の申請状況と継続の考え、100台がすぐに完売した電動アシストつき自転車の購入補助の継続を質した。</span></li>
+          
+          <li><span class="who">平成21年第６回松江市議会定例会・一般質問・桂善夫</span><span class="ttl">環境政策の推進</span><span class="sum">温室効果ガス25％削減目標への市長の受け止め、太陽光発電の補助継続と新築・既設住宅の導入割合、設備購入の貸付制度の検討状況、電動アシストつき自転車購入補助の高齢者にわかりやすい周知、新しい生ごみ処理機の家庭用・業務用の研究を質した。</span></li>
+          
+          <li><span class="who">平成21年第６回松江市議会定例会・一般質問・斎藤菊市</span><span class="ttl">環境対策の補助制度</span><span class="sum">9月補正の太陽光発電・省エネ機器・電動アシストつき自転車の補助数量の根拠、自転車通勤の登録など環境対策としての制度設計、高効率機器の補助対象へのリースの追加、環境政策ビジョン策定の方向性と時期を質した。</span></li>
+          
+          <li><span class="who">平成21年第８回松江市議会定例会・代表質問・立脇通也</span><span class="ttl">公共施設への太陽光発電</span><span class="sum">地球温暖化対策として、緊急経済対策による太陽光発電普及補助金の交付状況と、市民や児童生徒の啓発・教育にも役立つ学校や公共施設への太陽光発電の今後の導入推進を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第２回松江市議会定例会・一般質問・桂善夫</span><span class="ttl">低炭素社会とリサイクル</span><span class="sum">太陽光発電システム購入の貸し付け制度の創設、市内のレジ袋使用枚数とマイバッグ率の推計と掛川市を参考にしたマイバッグ運動やレジ袋有料化の促進、周辺市町と協力した廃食油の回収拡大を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成19年第６回松江市議会定例会・一般質問・角田正紀</span><span class="ttl">島根原発と防災の取り組み</span><span class="sum">経済産業省への申し入れに対する国の回答と立地市町村による働きかけ、1・2号機の耐震補強の早期着手の申し入れ、宍道断層と鹿島断層の活動履歴の徹底調査、緊急地震速報と公民館単位の災害対策本部の取り組み、自然エネルギー重視の政策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年第２回松江市議会定例会・一般質問・田中明子</span><span class="ttl">新エネルギーの創出と節電</span><span class="sum">八戸市の分散型エネルギー供給システムの視察を踏まえ、自然エネルギーの取り組みへの所見と市民生活で利用可能なエネルギー開発の試みの有無、夏に向けた電力節約の取り組みと市民への啓発を質した。</span></li>
+          
+          <li><span class="who">平成18年第３回松江市議会定例会・代表質問・津森良治</span><span class="ttl">自然エネルギーの普及</span><span class="sum">ガソリン高騰や資源の有限性を背景に、県に倣い市庁舎などへペレットストーブを試験的に設置するよう求め、森林資源を活用した自然エネルギーの普及と温泉施設など観光施設での活用を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成17年第２回松江市議会定例会・代表質問・西村びん</span><span class="ttl">島根原発への原子力行政</span><span class="sum">安全協定の11項目の改正、2号機の水漏れ頻発の原因究明、天候・複合災害・要援護者避難や沃素剤配備を含む防災体制、プルサーマルへの対処と市独自の調査委員会、原子力安全対策室の格上げと人材、中電の匿名寄附の拒否、太陽光発電補助の復活を質した。</span></li>
+          
+          <li><span class="who">平成17年第３回松江市議会定例会・代表質問・片寄直行</span><span class="ttl">中小零細企業対策</span><span class="sum">不況で廃業の声がある中小零細建設業者への対策として、出雲市が実施する住宅リフォーム助成制度と小規模工事契約希望者登録制度の実施を提起し、太陽光発電への助成との整合性も質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>太陽光発電の導入支援</summary><p>全国的にも高い水準の補助制度により平成21年度の補助件数が340件となった太陽光発電について、環境対策・経済対策の両面から平成22年度も引き続き導入を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>新エネルギーの導入（太陽光発電）</summary><p>太陽光発電の設置補助制度を拡充し、市役所庁舎・公民館・学校への太陽光発電の導入を図る。その他の新エネルギーについても研究する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>新総合体育館の整備</summary><p>市民が気軽に利用でき、ハイレベルなプレーが楽しめ、競技団体やスポーツクラブの拠点となる新総合体育館を整備する。長期避難が可能で障がい者・高齢者に優しく、太陽光発電を導入した施設とし、松江らしいおもてなしの機能も検討する。平成24年度から基本設計に着手し、平成27年度の竣工を目指す。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>太陽光発電の活用と木質バイオマス発電の研究</summary><p>自然エネルギーとして引き続き太陽光発電の活用を図り、木質バイオマス発電の研究を進める。循環型林業による雇用創出や森林保全と宍道湖・中海の水質浄化の両立も期待される。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>松江市環境創造・こども未来基金の創設</summary><p>固定価格買取制度のバイオマス発電所に認定されたエコクリーン松江の売電収入を活用して基金を創設し、自然エネルギーの推進や将来を担う子供たちの育成の財源とする。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>地球温暖化対策実行計画での再生可能エネルギー普及策の検討</summary><p>再生可能エネルギーの普及促進について、国のエネルギー基本計画を踏まえて策定する地球温暖化対策実行計画の中で具体策を検討する。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>太陽光発電導入補助の継続と未利用市有地の活用</summary><p>太陽光発電導入補助を継続実施するとともに、新たな取り組みとして未利用市有地を活用する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>再生可能エネルギー補助対象の拡大</summary><p>太陽光発電の導入促進補助の実績を踏まえ、平成27年度からはさらなる普及促進に向けて太陽光発電以外にも補助対象を拡大する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの推進（地熱発電等の調査研究）</summary><p>太陽光・木質バイオマス熱などへの補助や小水力発電の導入事業に続き、エネルギー構造転換を推進する観点から、平成28年度は温泉地ならではの地熱発電等について調査研究を行う。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">13</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの研究・活用とエネルギー構造転換</summary><p>太陽光・バイオマス発電に加え、小水力発電や地熱エネルギー、高等教育機関と連携した新素材の蓄電池などエネルギーの構造転換に取り組み、産業育成と環境主都まつえのイメージ向上につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">20</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの推進（地熱・小水力発電）</summary><p>これまでの太陽光発電・バイオマス発電などに加え、地熱発電や上水道を利用した小水力発電についても進め、原発だけに頼らないエネルギーの構造転換に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">28</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの地域振興への活用</summary><p>温泉熱を活用した発電と温泉水の産業活用の研究、松江高専や企業と協力した木炭活用の蓄電池の実証実験を進める。島根大学や民間企業と連携し、再生可能エネルギーを地域振興に活用するためのビジョン策定や温泉資源を活用した特産品開発などの共同研究を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>環境主都まつえに向けた環境施策の推進</summary><p>環境主都まつえの実現に向けて担当部内に政策部門を新設し、戦略的に環境施策を進める。シェアリングエコノミーなどによる産業創出、再生可能エネルギーの活用研究によるエネルギーの地産地消、4Rなどのライフスタイルイノベーションに分野横断的に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">12</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>次期環境基本計画の策定</summary><p>気候変動やプラスチックごみによる海洋汚染などの環境課題を受け、再生可能エネルギーの活用、ごみ減量化・資源化、環境人材の育成を通じて地球温暖化防止の仕組みをつくる必要があるとし、市民総参加の環境行動計画として次期環境基本計画を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>家庭の太陽光発電と地元企業の蓄電池開発支援</summary><p>温室効果ガス抑制のため、家庭での太陽光発電の導入や地元企業による蓄電池開発などを支援し、再生可能エネルギーの普及を後押しする。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>再生可能エネルギー活用ビジョンの策定</summary><p>原子力発電所立地の県庁所在都市として、将来的には原子力発電への依存度を下げ再生可能エネルギーへ振り替えていくことが望ましいとの考えから、再生可能エネルギーの普及を促す活用ビジョンを策定し、地球環境に配慮した取組を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの導入とエネルギーの地産地消モデルの構築</summary><p>環境負荷の低減に資するエネルギー政策として、松江らしい再生可能エネルギーの導入を検討し、民間の先駆的な事業を支援してエネルギーの地産地消モデルを構築する。温泉資源による地熱発電や小水力発電などの可能性を調査し、推進のため環境保全部を環境エネルギー部に再編する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>再生可能エネルギービジョンに基づく脱炭素モデルの構築</summary><p>今年3月に策定する再生可能エネルギービジョンに基づき、市有施設や松江城周辺の観光施設への再生可能エネルギー導入などを進め、国際文化観光都市ならではの脱炭素モデルの構築を図る。山陰合同銀行、中国電力などの事業者と連携して環境省の脱炭素先行地域の選定を目指す。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>再生可能エネルギーの開発と観光分野での活用</summary><p>太陽光・水力・地熱・バイオマスなど多様な再生可能エネルギーの開発と宿泊・観光施設での利用促進を図る。あわせてカーボン・オフセットの仕組みを取り入れた旅行商品の造成など、観光振興に着目した松江ならではの取組を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>脱炭素先行地域における官民の環境負荷低減の取組</summary><p>脱炭素先行地域の選定を受け、民間事業者と行政が一体となって環境負荷低減に取り組む。令和6年度は市有遊休地への太陽光発電設備の導入、旅館照明のＬＥＤ化、松江しんじ湖温泉エリアにおけるＥＶのシェアリングなどを行う予定である。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>まつえ再エネ条例の制定</summary><p>再生可能エネルギー発電設備の適正な設置・管理に必要な事項を定める条例を制定する。立地の禁止区域の設定、許可制と事前協議、地域住民や要配慮施設の関係者への説明を定め、議決後は10月1日の施行を見込む。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">20</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>脱炭素先行地域の取組（オフサイトＰＰＡ・公民館の充放電設備）</summary><p>脱炭素先行地域として、令和7年度は市有遊休地にオフサイトPPAによる太陽光発電設備を導入する。避難先となる公民館の防災機能強化の観点から、充放電設備の整備も継続する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>オフサイトＰＰＡによる脱炭素化</summary><p>民間事業者と連携し、市有地に太陽光発電設備を設けて再生可能エネルギーを創出・供給するオフサイトＰＰＡにより脱炭素化を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>脱炭素とカーボンニュートラル</h3>
+    <p class="terms">語: 脱炭素とカーボンニュートラル・脱炭素・カーボンニュートラル・カーボンシティ・ゼロカーボン・ゼロカーボンシティ・地球温暖化・ＣＯ２削減・ＣＯ２排出量・CO2削減・CO2排出量</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/44人</span><span class="q">2件</span></td><td class="lt10" data-year="H18"><b>2</b><span class="of">/35人</span><span class="q">2件</span></td><td class="lt25" data-year="H19"><b>4</b><span class="of">/37人</span><span class="q">4件</span></td><td class="lt10" data-year="H20"><b>3</b><span class="of">/37人</span><span class="q">3件</span></td><td class="lt10" data-year="H21"><b>2</b><span class="of">/29人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt25" data-year="H26"><b>4</b><span class="of">/30人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt10" data-year="H30"><b>2</b><span class="of">/30人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="lt25" data-year="R02"><b>3</b><span class="of">/27人</span><span class="q">3件</span></td><td class="lt25" data-year="R03"><b>5</b><span class="of">/31人</span><span class="q">5件</span></td><td class="lt10" data-year="R04"><b>2</b><span class="of">/30人</span><span class="q">2件</span></td><td class="ge25" data-year="R05"><b>7</b><span class="of">/28人</span><span class="q">9件</span></td><td class="lt10" data-year="R06"><b>2</b><span class="of">/27人</span><span class="q">3件</span></td><td class="lt10" data-year="R07"><b>2</b><span class="of">/28人</span><span class="q">2件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/22人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和８年第２回松江市議会定例会・代表質問・柳原治</span><span class="ttl">中尾地区ＧＸ産業団地構想</span><span class="sum">（仮称）中尾地区企業団地がＧＸ産業団地構想へ発展した経緯、将来への位置づけと目指すまちの姿、本市ならではの強み、目指す産業分野と大学・高専等との連携、脱炭素電源を生かした地域振興、推進体制と市民への情報共有を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和７年第５回松江市議会定例会・一般質問・太田哲</span><span class="ttl">脱炭素と再生可能エネルギー</span><span class="sum">脱炭素先行地域として、堀川遊覧船の電動推進機の運用面の課題と導入スケジュール、旧玉湯小学校での地熱バイナリー発電事業の現状と今後の予定、熱水の2次利用のスケジュールを質した。</span></li>
+          
+          <li><span class="who">令和７年第６回松江市議会定例会・一般質問・吉岡麻美</span><span class="ttl">生ごみ処理機の購入補助</span><span class="sum">糸島市の事例を踏まえ、焼却の補助燃料削減による脱炭素効果が期待できるコンポスト・生ごみ処理機の購入補助制度の導入を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和６年第６回松江市議会定例会・一般質問・野々内誠</span><span class="ttl">ものづくりアクションプラン</span><span class="sum">策定中の第5期ものづくりアクションプランについて、大まかな予算規模と特徴的な事業、脱炭素化に向けた取組の支援内容と中小企業が取り組めるか、外部人材の確保に向けた具体的な取組を質した。</span></li>
+          
+          <li><span class="who">令和６年第６回松江市議会定例会・代表質問・長谷川修二</span><span class="ttl">水素活用の方策</span><span class="sum">カーボンニュートラルポートや水素利活用をめぐる国と国内企業の動向、まつえ水素活用協議会の現状と、水素エネルギーの産業や暮らしへの活用の見通しを質した。</span></li>
+          
+          <li><span class="who">令和７年第２回松江市議会定例会・一般質問・長谷川修二</span><span class="ttl">温暖化対策とＬＥＤ化</span><span class="sum">水銀灯に続き蛍光灯も製造・輸出入が禁止されることを踏まえ、松江市地球温暖化対策実行計画に照らしたＬＥＤ化の推進など今後の取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和５年第４回松江市議会定例会・代表質問・細木明美</span><span class="ttl">脱炭素と太陽光発電</span><span class="sum">脱炭素先行地域の選定を受けた今後の取組と意気込み、市内で進む大規模太陽光発電事業に寄せられた市民の相談内容と事業の進捗、国の再エネ特措法改正による事業規律強化に対する市の考えと取組を質した。</span></li>
+          
+          <li><span class="who">令和５年第４回松江市議会定例会・代表質問・森本秀歳</span><span class="ttl">脱炭素と再エネの促進区域</span><span class="sum">脱炭素に向けた市民への啓発策、水素の調査研究、地域脱炭素化促進事業の促進区域設定の有無と環境保全・社会的配慮の捉え方、松江カントリー跡地メガソーラーの協議会の進め方、雲南市の風力発電計画への見解を質した。</span></li>
+          
+          <li><span class="who">令和５年第５回松江市議会定例会・一般質問・岩本雅之</span><span class="ttl">脱炭素先行地域の取組</span><span class="sum">住んでよし訪れてよしの観光都市を目指す脱炭素先行地域の取組状況と、グリーンスローモビリティなど、まちあるきやちょこっと移動支援につながる多様なモビリティーの導入・運用を質した。</span></li>
+          
+          <li><span class="who">令和５年第５回松江市議会定例会・一般質問・岩本雅之</span><span class="ttl">まち歩きマップの活用</span><span class="sum">29の公民館が作るまち歩きマップをSDGs未来都市や脱炭素先行地域の推進の中でどう位置づけ活用するかを問い、健康増進活動との連携や休憩場所の確保を提起した。</span></li>
+          
+          <li><span class="who">令和５年第５回松江市議会定例会・一般質問・海徳邦彦</span><span class="ttl">不要布団のリサイクル</span><span class="sum">エコクリーン松江に持ち込まれ廃棄される布団の数量と処分方法を問い、官民連携で不要布団を回収・リサイクルし、ごみ減量とCO2削減につなげる体制づくりを質した。</span></li>
+          
+          <li><span class="who">令和５年第５回松江市議会定例会・一般質問・三島進</span><span class="ttl">樹木の管理と緑化</span><span class="sum">宍道湖畔の松や城山、けやき通りの樹木伐採の理由の説明を求め、樹木管理のマニュアルの有無と消毒など樹木を守る管理の考え、地球温暖化の観点からの緑化に対する市長の思いを質した。</span></li>
+          
+          <li><span class="who">令和６年第２回松江市議会定例会・一般質問・三島明</span><span class="ttl">環境学習の拠点施設</span><span class="sum">かごしま環境未来館の視察を踏まえ、脱炭素先行地域やSDGs未来都市として、こどもが環境やエネルギーを学べる拠点施設を市民、事業者と行政の協働でつくれないかを質した。</span></li>
+          
+          <li><span class="who">令和６年第２回松江市議会定例会・代表質問・南波巖</span><span class="ttl">脱炭素のまちづくり</span><span class="sum">国際文化観光都市・松江の脱炭素による魅力的なまちづくりについて、どのようなイメージを描き、具体的にどう取り組んでいくのかを質した。</span></li>
+          
+          <li><span class="who">令和６年第２回松江市議会定例会・代表質問・南波巖</span><span class="ttl">森林の高齢化への対応</span><span class="sum">人工林の高齢化と放置林の増加が災害への弱さや脱炭素の壁となるおそれを挙げ、森林の荒廃に歯止めをかける現在の取組と今後の方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和４年第３回松江市議会定例会・一般質問・長谷川修二</span><span class="ttl">カーボンニュートラル施策</span><span class="sum">2050年の排出実質ゼロに向けたカーボンニュートラル施策の考え方、ブルーカーボンとカーボンクレジットの企業等との連携状況、環境省の先進地や補助金選定への取組、プラスチック資源循環促進法に基づくリサイクルの取組状況を質した。</span></li>
+          
+          <li><span class="who">令和５年第１回松江市議会定例会・一般質問・田中明子</span><span class="ttl">GXの促進</span><span class="sum">地域のグリーントランスフォーメーションの必要性、脱炭素への市民の意識や行動の啓発と実態調査、グリーンライフ・ポイント制度の導入、衣食住でのライフスタイル転換、まつえ環境市民会議の会員拡大と今後の活動を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和３年第３回松江市議会定例会・一般質問・長谷川修二</span><span class="ttl">水素を活用した社会</span><span class="sum">改正地球温暖化対策推進法の成立など脱炭素化の流れを受け、水素を活用した社会への今後の対応と、エネファームの推進や水素ステーションの設置など山陰の水素拠点としての取組を質した。</span></li>
+          
+          <li><span class="who">令和３年第３回松江市議会定例会・代表質問・川島光雅</span><span class="ttl">原発問題と脱炭素</span><span class="sum">島根原発2号機の審査合格の見通しへの受け止めと対処、コロナ禍で滞る原子力災害の避難訓練の再計画、脱炭素社会に向けた再生可能エネルギーの今後の取組、原発交付金の使い道の見直しを質した。</span></li>
+          
+          <li><span class="who">令和３年第３回松江市議会定例会・代表質問・田中明子</span><span class="ttl">脱炭素への取組</span><span class="sum">改正地球温暖化対策推進法の成立を受け、市の二酸化炭素排出量の直近の推移、再生可能エネルギー導入拡大に向けた今後の政策、家庭部門の排出割合と市民への脱炭素の啓発手法を質した。</span></li>
+          
+          <li><span class="who">令和３年第４回松江市議会定例会・代表質問・柳原治</span><span class="ttl">都市ガス事業の将来</span><span class="sum">都市ガスの供給戸数と販売量が減少しコロナ禍の影響も受けるなか、脱炭素化や他のエネルギー事業者との競争といった環境変化を踏まえた本市の都市ガス事業の見通しと将来のあるべき姿を質した。</span></li>
+          
+          <li><span class="who">令和４年第２回松江市議会定例会・代表質問・細木明美</span><span class="ttl">脱炭素とエネルギー政策</span><span class="sum">島根原発2号機の再稼働同意を評価したうえで、全国に先駆けて推進するとする持続可能なエネルギー政策の具体的な取組、進める上での課題、市民の暮らしへの影響を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和２年第６回松江市議会定例会・一般質問・長谷川修二</span><span class="ttl">水銀灯のＬＥＤ化</span><span class="sum">水俣条約に伴い水銀灯ランプの生産・輸出入が禁止される中、脱炭素社会の観点も踏まえた水銀灯のＬＥＤ化の現状と計画策定の進捗を質した。</span></li>
+          
+          <li><span class="who">令和２年第６回松江市議会定例会・代表質問・篠原栄</span><span class="ttl">脱炭素社会の実現</span><span class="sum">玉湯町の地熱利用事業の現状と展望、再生可能エネルギー活用ビジョンの進捗、次期環境基本計画での脱炭素化、市内の二酸化炭素排出量の推移、食品ロス対策、環境産業への注力、新庁舎建設の考え方、排出実質ゼロの宣言を質した。</span></li>
+          
+          <li><span class="who">令和３年第１回松江市議会定例会・一般質問・新井昌禎</span><span class="ttl">脱炭素社会の実現</span><span class="sum">ゼロカーボンシティ宣言を受けた取組と市民への周知、公用車の電動化計画と新庁舎での対応、市周辺の風力発電の適地、上下水道局・ガス局・交通局のカーボンニュートラルの取組、堀川遊覧船の電動化の検討に加え、原子力発電への所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第３回松江市議会定例会・代表質問・南波巖</span><span class="ttl">地球温暖化対策</span><span class="sum">一歩踏み込んだ地球温暖化対策の検討、民間の地域新電力計画の有無、再生可能エネルギー移行を民間任せにしてよいか、エネルギー構造高度化事業の活用、シュタットベルケの導入、全体的な取り組みの考え方を質した。</span></li>
+          
+          <li><span class="who">平成30年第４回松江市議会定例会・一般質問・田中肇</span><span class="ttl">原発の必要性と許容性</span><span class="sum">原発を脱炭素技術とする評価と温排水の海水温への影響、再生可能エネルギーの発電量、北海道地震を踏まえた大規模電源としての評価、原発直下の活断層のずれの想定、液状化による避難への影響を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第１回松江市議会定例会・代表質問・南波巖</span><span class="ttl">再生可能エネルギーの導入</span><span class="sum">再生可能エネルギー導入の基本的考え方と今後の展開、地球温暖化対策実行計画との関連、玉湯町の地熱の活用方法、市内の発電施設を生かした地域新電力会社の設立、新庁舎への再エネ・省エネ設備の導入を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第２回松江市議会定例会・代表質問・川井弘光</span><span class="ttl">木質バイオマスの活用策</span><span class="sum">松江バイオマス発電所への燃料供給計画の進捗と懸念への対策、伐採・運搬・チップ製造の新技術の調査状況、熱利用を含む具体策を地球温暖化対策実行計画で検討するのかと策定の経過を質した。</span></li>
+          
+          <li><span class="who">平成26年第４回松江市議会定例会・一般質問・橘祥朗</span><span class="ttl">再生可能エネルギーの導入</span><span class="sum">電力会社が再生可能エネルギー買取制度の接続申し込み受け付けを中断し混乱が広がっていることへの見解と、地球温暖化対策実行計画における再生可能エネルギー導入目標数値の根拠と水準を質した。</span></li>
+          
+          <li><span class="who">平成27年第１回松江市議会定例会・一般質問・野津照雄</span><span class="ttl">再生可能エネルギー</span><span class="sum">ＣＯ２削減における再生可能エネルギーへの所見、太陽光発電の助成増額の理由とメガソーラーの状況、バイオマス発電に向けた林道整備計画、竹の利活用とチップ化機械の開発を質した。</span></li>
+          
+          <li><span class="who">平成27年第１回松江市議会定例会・一般質問・吉儀敬子</span><span class="ttl">原発と再生可能エネルギー</span><span class="sum">島根原発を一基たりとも動かさない決断を求め、地球温暖化対策実行計画で再生可能エネルギー100％を目指し、太陽光やバイオマスの数値目標を盛り込むべきではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第４回松江市議会定例会・一般質問・畑尾幸生</span><span class="ttl">地球温暖化対策の推進</span><span class="sum">平成19年2月策定の松江市地域省エネルギービジョンの策定以降の実績と重点分野・課題、国の中期目標やＣＯＰ15を踏まえたビジョン改定の方針を質した。</span></li>
+          
+          <li><span class="who">平成21年第８回松江市議会定例会・代表質問・立脇通也</span><span class="ttl">公共施設への太陽光発電</span><span class="sum">地球温暖化対策として、緊急経済対策による太陽光発電普及補助金の交付状況と、市民や児童生徒の啓発・教育にも役立つ学校や公共施設への太陽光発電の今後の導入推進を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成20年第２回松江市議会定例会・一般質問・宅野賢治</span><span class="ttl">地球温暖化対策と緑化</span><span class="sum">地球温暖化対策について、本市の基本的な考え方と市長の決意、数値目標を掲げた脱温暖化行動を加速させる仕組みづくり、緑の基本計画の緑被率・緑化率の状況、民有地緑化の進め方と独自の緑化ルールや大規模店舗・旅館等への助成制度の検討状況を質した。</span></li>
+          
+          <li><span class="who">平成20年第４回松江市議会定例会・一般質問・森脇敏信</span><span class="ttl">燃費改善錠剤の市営バス導入</span><span class="sum">燃費改善や排ガス削減の効果があるとされる燃料添加剤ＭＰＧ－ＣＡＰＳを、経費削減と地球温暖化防止のため市営バスにまず1台から導入し、効果があれば全庁の車両に広げることを求めた。</span></li>
+          
+          <li><span class="who">平成21年第２回松江市議会定例会・代表質問・篠原栄</span><span class="ttl">林業の振興</span><span class="sum">地球温暖化対策として森林のＣＯ２吸収が見込まれる一方で林業の衰退が懸念されることから、森に手を入れる対策や新たな雇用、国産材の利用を含めた林業振興への市長の所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成19年第４回松江市議会定例会・一般質問・勝部加代</span><span class="ttl">レジ袋の有料化推進</span><span class="sum">地球温暖化対策と節税効果の両面から、市長のリーダーシップによるレジ袋有料化の取り組みを求めた。</span></li>
+          
+          <li><span class="who">平成19年第４回松江市議会定例会・代表質問・篠原栄</span><span class="ttl">地球温暖化対策の推進</span><span class="sum">地域省エネルギービジョンのこれまでの成果と今後の姿勢、6％削減目標に向けた家庭・業務部門の施策、市職員のノーマイカーデーの実績と推進、環境配慮契約法の成立に伴う考慮とコストを質した。</span></li>
+          
+          <li><span class="who">平成19年第６回松江市議会定例会・一般質問・田中明子</span><span class="ttl">地球温暖化対策</span><span class="sum">猛暑による熱中症や農水産物への影響を確かめたうえで、家庭部門の省エネ行動の促進、環境家計簿の推進状況、学校や公共施設での緑のカーテン、観光地へのドライミスト導入、私のチャレンジ宣言のＰＲと企業協賛の呼びかけを質した。</span></li>
+          
+          <li><span class="who">平成20年第１回松江市議会定例会・代表質問・藤田彰裕</span><span class="ttl">地球温暖化対策</span><span class="sum">気候変動枠組み条約の現状認識、松江市のＣＯ２排出量が1990年比29％増となった原因と削減目標の妥当性、家庭・業務・運輸・産業各部門の計画、公共施設の省エネや地産地消・緑化、排出権取引の思想を国の財政配分に取り入れる提案について質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年第３回松江市議会定例会・一般質問・西村びん</span><span class="ttl">大橋川改修と当面の治水</span><span class="sum">3点セット完成前でも取り得る災害対策をすべて検討すべきとの考えを示し、緊急用遊水池の確保、天神川のしゅんせつと水門設置の見通し、佐陀川のしゅんせつと水門の存置、地球温暖化による海面上昇を組み込んだ大橋川改修計画のシミュレーションを質した。</span></li>
+          
+          <li><span class="who">平成18年第４回松江市議会定例会・一般質問・南波巖</span><span class="ttl">ISO14001の認証取得</span><span class="sum">ISO14001認証取得に向けた今年度の環境目標項目と目標数値・実績、認証取得後に市の事業全体へ環境配慮を反映させる方法、CO2削減など市民・事業者への啓発を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成17年第２回松江市議会定例会・代表質問・西村びん</span><span class="ttl">大橋川改修と治水手法</span><span class="sum">大橋川改修について、国交省の提言に沿った農地の緊急遊水池の活用を関係機関へ働きかけることと、地球温暖化による海面上昇を計算に入れた計画とするよう国交省に求めることを質した。</span></li>
+          
+          <li><span class="who">平成17年第３回松江市議会定例会・一般質問・西村びん</span><span class="ttl">大橋川改修と洪水対策</span><span class="sum">大橋川改修の完成時期と完成前に47水害規模の大雨が来た場合の対策、洪水時だけの緊急用遊水エリアの設定と地権者との事前協議、地球温暖化の影響を含めた計画見直しの国への要望を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成19年度</td>
+            <td><details class="it"><summary>まつえ環境市民会議による環境保全活動</summary><p>本年2月に市民・市民団体・事業者・行政で設立されたまつえ環境市民会議の取り組みへの理解と参加を広げ、地球温暖化防止など環境保全の実践活動を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>LED照明の導入推進</summary><p>地球温暖化を防止するCO2削減の取り組みとして、長寿命で省電力のLED照明の導入を推進する事業に新たに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>堀川遊覧船の電動化</summary><p>CO2削減の取り組みとして堀川遊覧船の電動化を進め、環境保護と観光を結びつけて環境主都松江のシンボルにすることを目指す。対応する船外機の国内開発が進んでいないため、松江高専等の研究機関や大手メーカーに製品の開発・改良を働きかける。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>地球温暖化対策実行計画での再生可能エネルギー普及策の検討</summary><p>再生可能エネルギーの普及促進について、国のエネルギー基本計画を踏まえて策定する地球温暖化対策実行計画の中で具体策を検討する。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>次期環境基本計画の策定</summary><p>気候変動やプラスチックごみによる海洋汚染などの環境課題を受け、再生可能エネルギーの活用、ごみ減量化・資源化、環境人材の育成を通じて地球温暖化防止の仕組みをつくる必要があるとし、市民総参加の環境行動計画として次期環境基本計画を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>再生可能エネルギービジョンに基づく脱炭素モデルの構築</summary><p>今年3月に策定する再生可能エネルギービジョンに基づき、市有施設や松江城周辺の観光施設への再生可能エネルギー導入などを進め、国際文化観光都市ならではの脱炭素モデルの構築を図る。山陰合同銀行、中国電力などの事業者と連携して環境省の脱炭素先行地域の選定を目指す。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>SDGs未来都市の認定取得に向けた取組</summary><p>内閣府によるSDGs未来都市の認定取得を目標に、SDGsアドバイザーの助言を得て取組の具体化を図る。自然や温泉、食などの癒やしをテーマとするヘルスツーリズムや、海藻や水草による脱炭素化を目指すブルーカーボンなどのプロジェクトをひもづけ、持続可能な松江を切り開く。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>脱炭素先行地域における官民の環境負荷低減の取組</summary><p>脱炭素先行地域の選定を受け、民間事業者と行政が一体となって環境負荷低減に取り組む。令和6年度は市有遊休地への太陽光発電設備の導入、旅館照明のＬＥＤ化、松江しんじ湖温泉エリアにおけるＥＶのシェアリングなどを行う予定である。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>脱炭素先行地域の取組（オフサイトＰＰＡ・公民館の充放電設備）</summary><p>脱炭素先行地域として、令和7年度は市有遊休地にオフサイトPPAによる太陽光発電設備を導入する。避難先となる公民館の防災機能強化の観点から、充放電設備の整備も継続する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>技術開発型データセンターの誘致</summary><p>Ｇｒｅｅｎ×Ｄｉｇｉｔａｌ Ｔｏｗｎ Ｐｒｏｊｅｃｔにおける技術開発型データセンターの誘致を通じ、デジタル社会を支える最先端産業クラスターの形成と、脱炭素化に寄与する持続可能な産業基盤の構築を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>オフサイトＰＰＡによる脱炭素化</summary><p>民間事業者と連携し、市有地に太陽光発電設備を設けて再生可能エネルギーを創出・供給するオフサイトＰＰＡにより脱炭素化を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>省エネルギーと節電</h3>
+    <p class="terms">語: 省エネルギーと節電・省エネ・節電</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>3</b><span class="of">/44人</span><span class="q">3件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/35人</span><span class="q">1件</span></td><td class="lt10" data-year="H19"><b>3</b><span class="of">/37人</span><span class="q">3件</span></td><td class="lt10" data-year="H20"><b>2</b><span class="of">/37人</span><span class="q">2件</span></td><td class="lt25" data-year="H21"><b>3</b><span class="of">/29人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>2</b><span class="of">/30人</span><span class="q">2件</span></td><td class="lt10" data-year="H24"><b>2</b><span class="of">/30人</span><span class="q">2件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/29人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/22人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和６年第５回松江市議会定例会・代表質問・太田哲</span><span class="ttl">物価高騰下の景気対策</span><span class="sum">価格転嫁が進まず人手不足も深刻な中小企業の現状を踏まえ、市内の業種別の賃金の状況、製造業省エネ対策支援や商業・サービス業等のエネルギーコスト削減対策の補助金の申請・活用状況、市独自の支援策の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和４年第４回松江市議会定例会・一般質問・太田哲</span><span class="ttl">SDGs未来都市の目標</span><span class="sum">省エネ設備導入支援を主としてSDGs未来都市を目指すのか、SDGs未来都市の重点施策の内容、申請の目標時期を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和1年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第４回松江市議会定例会・代表質問・森本秀歳</span><span class="ttl">新庁舎の環境配慮型整備</span><span class="sum">ダイキン工業の研究開発拠点の太陽光追尾型発電やクールヒートトレンチなどの例を挙げ、新庁舎整備に当たり最新の省エネ建築技術を調査研究し、効果が見込めれば採用することを提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第１回松江市議会定例会・代表質問・南波巖</span><span class="ttl">再生可能エネルギーの導入</span><span class="sum">再生可能エネルギー導入の基本的考え方と今後の展開、地球温暖化対策実行計画との関連、玉湯町の地熱の活用方法、市内の発電施設を生かした地域新電力会社の設立、新庁舎への再エネ・省エネ設備の導入を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第３回松江市議会定例会・一般質問・芦原康江</span><span class="ttl">学校への太陽光発電設置</span><span class="sum">避難所となる学校の災害時の電源確保と環境教育・省エネ対策として、蓄電機能つき太陽光発電などを市内の学校屋上へ設置する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第１回松江市議会定例会・一般質問・芦原康江</span><span class="ttl">再生可能エネルギーの推進</span><span class="sum">松江市で有権者の18%が署名したエネルギー自立地域推進基本条例の直接請求への受けとめと応え方、市民とともに省エネと再生可能エネルギーの活用を進める踏み込んだエネルギー計画の策定を質した。</span></li>
+          
+          <li><span class="who">平成26年第１回松江市議会定例会・代表質問・片寄直行</span><span class="ttl">原発・エネルギーと防災計画</span><span class="sum">福島事故の現状と教訓の総括、島根原発2号機の審査状況の感想、最終処分場の候補地を求められた場合の対応、広域避難計画の策定時期と課題、10キロメートル圏内にある市庁舎の防災拠点としての適否、複合災害の想定、原発の地域経済へのメリット・デメリットの比較、みどりのエネルギー条例署名の受けとめ、市の消費電力と再生可能エネルギー比率、省エネ計画の進捗、バイオマス発電のあり方、自然エネルギーのポテンシャル調査を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第２回松江市議会定例会・代表質問・石倉徳章</span><span class="ttl">原発問題と節電の啓発</span><span class="sum">大飯原発の運転再開決定や40年運転・特例延長の問題を踏まえ、市長が2月時点の考えから一歩踏み出すことはないか、また利用者主体の節電の仕組みなど市民への啓発に積極的に取り組む考えを質した。</span></li>
+          
+          <li><span class="who">平成24年第２回松江市議会定例会・代表質問・加本市郎</span><span class="ttl">原子力安全行政と再稼働</span><span class="sum">国会事故調査委員会の中間的報告への見解、原子力規制委員会・規制庁の設置、大飯原発再稼働の政治決断、島根原発1号機も迎える40年超運転、夏の電力需給と節電の必要性について市長の見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第５回松江市議会定例会・一般質問・宅野賢治</span><span class="ttl">震災の教訓と安全対策</span><span class="sum">福島第一原発事故の教訓と島根原発の安全性向上、1号機再稼働の判断ポイントと高経年化への不安、再稼働判断の根拠と時期、住民説明会の開催、耐震設計の基準ガルの再検討、原発停止時の電力安定供給と節電対策、業務継続計画、津波の市民啓発と地域防災計画の見直し、備蓄体制、ツイッターなど災害時広報、災害時要援護者登録制度の実効性、防災教育と放射線教育、避難場所の看板と外国語表示の整備を質した。</span></li>
+          
+          <li><span class="who">平成23年第５回松江市議会定例会・一般質問・石倉徳章</span><span class="ttl">震災と原発事故の影響</span><span class="sum">国の復旧・復興予算が本市財政に与える影響、原発関連企業の誘致など重要施策の変更、支所機能の具体的内容、地方と都会の関係を踏まえた国や市民への訴え、国政の混迷への感想、学校や保育園等の避難対策と節電など生活の見直しの指導、10キロ圏外の住民への研修・啓発事業を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第４回松江市議会定例会・一般質問・畑尾幸生</span><span class="ttl">地球温暖化対策の推進</span><span class="sum">平成19年2月策定の松江市地域省エネルギービジョンの策定以降の実績と重点分野・課題、国の中期目標やＣＯＰ15を踏まえたビジョン改定の方針を質した。</span></li>
+          
+          <li><span class="who">平成21年第４回松江市議会定例会・代表質問・加本市郎</span><span class="ttl">省エネ機器導入支援の継続</span><span class="sum">環境ビジネス支援事業のうち太陽光発電システム導入補助金の申請状況と継続の考え、100台がすぐに完売した電動アシストつき自転車の購入補助の継続を質した。</span></li>
+          
+          <li><span class="who">平成21年第６回松江市議会定例会・一般質問・斎藤菊市</span><span class="ttl">環境対策の補助制度</span><span class="sum">9月補正の太陽光発電・省エネ機器・電動アシストつき自転車の補助数量の根拠、自転車通勤の登録など環境対策としての制度設計、高効率機器の補助対象へのリースの追加、環境政策ビジョン策定の方向性と時期を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成20年第２回松江市議会定例会・一般質問・吉金隆</span><span class="ttl">サマータイム制度への所見</span><span class="sum">2010年からの導入を目指す法案が検討されたサマータイム制度について、省エネ効果と睡眠の質の低下による経済損失などの論点を挙げ、市長の考えを質した。</span></li>
+          
+          <li><span class="who">平成21年第２回松江市議会定例会・一般質問・斎藤菊市</span><span class="ttl">松江駅前の改修</span><span class="sum">緊急対策で改修する松江駅前バス乗り場の屋根の設計と日よけや防雨の機能、観光案内所や高速バス停の位置など市の顔としての駅前の体裁を質し、省エネ給湯機器のリースを補助対象とするよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成19年第４回松江市議会定例会・代表質問・篠原栄</span><span class="ttl">地球温暖化対策の推進</span><span class="sum">地域省エネルギービジョンのこれまでの成果と今後の姿勢、6％削減目標に向けた家庭・業務部門の施策、市職員のノーマイカーデーの実績と推進、環境配慮契約法の成立に伴う考慮とコストを質した。</span></li>
+          
+          <li><span class="who">平成19年第６回松江市議会定例会・一般質問・田中明子</span><span class="ttl">地球温暖化対策</span><span class="sum">猛暑による熱中症や農水産物への影響を確かめたうえで、家庭部門の省エネ行動の促進、環境家計簿の推進状況、学校や公共施設での緑のカーテン、観光地へのドライミスト導入、私のチャレンジ宣言のＰＲと企業協賛の呼びかけを質した。</span></li>
+          
+          <li><span class="who">平成20年第１回松江市議会定例会・代表質問・藤田彰裕</span><span class="ttl">地球温暖化対策</span><span class="sum">気候変動枠組み条約の現状認識、松江市のＣＯ２排出量が1990年比29％増となった原因と削減目標の妥当性、家庭・業務・運輸・産業各部門の計画、公共施設の省エネや地産地消・緑化、排出権取引の思想を国の財政配分に取り入れる提案について質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年第２回松江市議会定例会・一般質問・田中明子</span><span class="ttl">新エネルギーの創出と節電</span><span class="sum">八戸市の分散型エネルギー供給システムの視察を踏まえ、自然エネルギーの取り組みへの所見と市民生活で利用可能なエネルギー開発の試みの有無、夏に向けた電力節約の取り組みと市民への啓発を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成17年第２回松江市議会定例会・一般質問・勝部加代</span><span class="ttl">温暖化対策とごみ問題</span><span class="sum">ＩＳＯ14001認証取得の費用対効果と簡易な認証制度の検討、市民への省エネ啓発、ごみ袋料金の見直し、分別法の再説明とＱ＆Ａ集の作成、外郭団体の家庭並みの分別を質した。</span></li>
+          
+          <li><span class="who">平成18年第１回松江市議会定例会・一般質問・板垣亨</span><span class="ttl">農業施策と環境保全型農業</span><span class="sum">中山間地域等直接支払制度の集落の継続・新規・廃止状況、経営所得安定対策の助成と認定農業者、省エネルギー農業、ポジティブリスト制の啓発、エコファーマー向け堆肥の確保と今後のスケジュールを質した。</span></li>
+          
+          <li><span class="who">平成18年第１回松江市議会定例会・一般質問・森脇幸好</span><span class="ttl">省エネルギーモデル校</span><span class="sum">省エネルギーモデル校の取り組み状況と成果、優秀な学校へ褒美を出す約束の履行を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>新型コロナ5類移行への対応と物価高騰対策</summary><p>新型コロナの5類感染症への移行に際し、国の動向を注視して市民の健康と生活を守るための必要な対応を図る。物価高騰対策として、全世帯を対象とする水道料金2か月分の減免、中小・小規模事業者の省エネルギー設備投資への助成、運輸業の燃料費支援などに取り組み、市長会などを通じて国に予算措置を要望する。</p></details></td>
+            <td class="c">14</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>中小製造業の省エネ設備導入・業務改善の支援</summary><p>長期化するエネルギー高・物価高への対応として、国の総合経済対策に呼応し、中小製造業による省エネルギー効果の高い生産設備の導入や製造現場の業務改善を継続的に支援する。ものづくり企業の負担軽減と生産性向上を後押しし、第4期松江市ものづくりアクションプランの「変化に強い企業づくり」を推進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>農業者・漁業者の物価高騰対策支援</summary><p>農業者には省エネルギー化・省力化に資する農業機械の導入補助と、県の配合飼料購入代金基準を超える飼料購入経費の補助を行う。漁業者には省エネルギー・省コストにつながる漁業用機械・機器の導入経費を補助する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.2.0</p>
+                    
+                    <p class="project-credit">
+                        松江市議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>

@@ -1,0 +1,3022 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原子力 — 出雲市議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">出雲市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+                    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+                        <div class="cross-nav-inner">
+                            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+                            
+                        </div>
+                    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_nuclear.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">原発再稼働</a></li>
+                            
+                            <li><a href="#topic-02">原子力防災と広域避難</a></li>
+                            
+                            <li><a href="#topic-03">原子力安全協定と立地同意</a></li>
+                            
+                            <li><a href="#topic-04">使用済み核燃料と廃炉</a></li>
+                            
+                            <li><a href="#topic-05">原発の耐震と活断層</a></li>
+                            
+                            <li><a href="#topic-06">原発事故と安全性への不信</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 市長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">出雲市 · 議会レポート / <b>原子力</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">原子力</h1>
+  <p class="page-subtitle">
+    出雲市議会の一般質問・代表質問について、区分「原子力」に属する6の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">原発再稼働</a></th>
+            <td class="lt10">3</td><td class="lt10">4</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">13</td><td class="ge25">36</td><td class="lt25">19</td><td class="lt25">17</td><td class="lt25">11</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">3</td><td class="lt25">10</td><td class="h0">0</td><td class="h0">0</td><td class="ge25">25</td><td class="lt25">11</td><td class="lt25">11</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">原子力防災と広域避難</a></th>
+            <td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="lt25">19</td><td class="lt10">3</td><td class="lt10">7</td><td class="lt25">15</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">3</td><td class="lt25">17</td><td class="h0">0</td><td class="lt10">4</td><td class="ge25">25</td><td class="lt25">14</td><td class="lt10">4</td><td class="lt10">4</td><td class="ge25">25</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">原子力安全協定と立地同意</a></th>
+            <td class="h0">0</td><td class="lt10">4</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="lt25">14</td><td class="lt10">3</td><td class="lt25">10</td><td class="lt10">4</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">11</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">使用済み核燃料と廃炉</a></th>
+            <td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="lt25">11</td><td class="lt10">3</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">3</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">4</td><td class="lt10">4</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">原発の耐震と活断層</a></th>
+            <td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="lt10">3</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">原発事故と安全性への不信</a></th>
+            <td class="lt10">3</td><td class="lt10">4</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">3</td><td class="lt10">3</td><td class="lt25">14</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">18</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>32</td><td>28</td><td>30</td><td>30</td><td>31</td><td>31</td><td>36</td><td>32</td><td>29</td><td>27</td><td>26</td><td>26</td><td>29</td><td>30</td><td>28</td><td>24</td><td>28</td><td>28</td><td>27</td><td>27</td><td>28</td><td>25</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>原発再稼働</h3>
+    <p class="terms">語: 原発再稼働・再稼働・原発・島根原発・島根原子力発電所・原子力発電所・原子力発電・新規制基準・原子力規制委員会</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt25" data-year="H22"><b>4</b><span class="of">/31人</span><span class="q">6件</span></td><td class="ge25" data-year="H23"><b>13</b><span class="of">/36人</span><span class="q">23件</span></td><td class="lt25" data-year="H24"><b>6</b><span class="of">/32人</span><span class="q">8件</span></td><td class="lt25" data-year="H25"><b>5</b><span class="of">/29人</span><span class="q">7件</span></td><td class="lt25" data-year="H26"><b>3</b><span class="of">/27人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/29人</span><span class="q">1件</span></td><td class="lt25" data-year="H30"><b>3</b><span class="of">/30人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="ge25" data-year="R03"><b>7</b><span class="of">/28人</span><span class="q">10件</span></td><td class="lt25" data-year="R04"><b>3</b><span class="of">/28人</span><span class="q">4件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/27人</span><span class="q">4件</span></td><td class="lt10" data-year="R06"><b>2</b><span class="of">/27人</span><span class="q">3件</span></td><td class="lt10" data-year="R07"><b>2</b><span class="of">/28人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/25人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年度第3回定例会・一般質問・吉井安見</span><span class="ttl">原子力防災の在り方</span><span class="sum">中国電力が原子力関係の仕事に携わる職員の人件費として5自治体に毎年約5億円を負担する中で出雲市がこの負担金を受け取る根拠と、原子力防災の体制を自治体任せにし核燃料サイクルにしがみつく国の原発推進の姿勢への所見を尋ね、負担金などへの依存が高まることで住民の安全・安心が後景に追いやられないかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第4回定例会・一般質問・長島和孝</span><span class="ttl">原子力防災訓練の実効性</span><span class="sum">11月の原子力防災訓練に参加した市民の人数と本番ではその何倍の規模になるのか、避難者を受け入れる自治体との地域間交流があるかを尋ね、島根原発で福島原発事故並みの事故が起こったと仮定したときの風評被害も含めた年間の経済的損失額を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・吉井安見</span><span class="ttl">原発と核のごみの是非</span><span class="sum">島根原発2号機で2029年度に計画されるプルサーマル発電について周辺3市で住民への説明や意見を聞く場が持たれていないとして住民の理解と合意なしに議論が進められることへの所見を尋ね、核のごみの最終処分場の誘致などは住民の安全・安心と両立し得ないとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年度第2回定例会・一般質問・吉井安見</span><span class="ttl">原発避難体制と核のごみ</span><span class="sum">能登半島地震で避難ルートの大半が通行止めとなり孤立集落が相次いだことを踏まえた空路等による避難体制の整備状況、原子力災害時の広域避難計画の改定状況と正月やゴールデンウィークなど人口が増加する時期を想定条件に追加することへの所見、核のごみの受入れの動きには断固反対とした知事の発言についての市長の考えを質した。</span></li>
+          
+          <li><span class="who">令和6年度第3回定例会・一般質問・吉井安見</span><span class="ttl">再生可能エネルギーと核燃料</span><span class="sum">出雲市内の再生可能エネルギーの発電施設数と発電量の推移及び今後の普及の方針、休耕地などへの設置に伴う周辺環境への影響と住民への周知や説明の機会の確保、市内の出力制御の状況と事業者への補償、島根原発2号機の再稼働による出力制御への認識を尋ね、高レベル放射性廃棄物の最終処分場の市内への受入れについての市長の立場を質した。</span></li>
+          
+          <li><span class="who">令和6年度第4回定例会・一般質問・木佐宏</span><span class="ttl">旧平田地域の防災課題</span><span class="sum">島根原発の避難道路とすべき伊野地区の市道美野本線バイパス事業、大雨増水時に道路が冠水する国富地区の湯谷川の河川改修、数十年進展しない市道口宇賀・西代本線旅伏駅踏切の拡幅事業を挙げ、旧平田地域の総合防災意識の欠如と無責任な執務を糾弾して所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年度第3回定例会・一般質問・吉井安見</span><span class="ttl">使用済み核燃料の保管</span><span class="sum">島根原発内に保管されている使用済み核燃料の量と保管容量の残容量、青森県六ヶ所村の再処理工場で保管されている量と残容量を尋ね、再処理技術が確立されておらず核燃料サイクルは破綻しているとの認識と、搬出ができない現状から2号機再稼働の条件はないとの認識を質した。</span></li>
+          
+          <li><span class="who">令和5年度第5回定例会・一般質問・木佐宏</span><span class="ttl">美野本線と避難道路</span><span class="sum">合併前に実施詳細設計まで行いながら1人の地権者の反対で進んでいない美野本線について、原発の避難道路としての必要性も踏まえ、市長自らが地元を歩いてでもまとめるなど主体性を持って取り組むよう提起した。</span></li>
+          
+          <li><span class="who">令和5年度第5回定例会・一般質問・吉井安見</span><span class="ttl">原子力災害の避難計画</span><span class="sum">志賀原発における被害の全容を出雲市がどのように把握しているのか、島根原発の避難計画の再検証が必要との認識、能登半島地震の教訓や知見がまとまり避難計画に反映されるまでの流れ、今年8月に予定される島根原発2号機の再稼働は一旦立ち止まるべきとの認識を質した。</span></li>
+          
+          <li><span class="who">令和5年度第5回定例会・代表質問・後藤由美</span><span class="ttl">原発再稼働と防災計画</span><span class="sum">能登半島地震で志賀原発に様々な深刻なトラブルが発生したことを踏まえて島根原発2号機の再稼働同意撤回を県に求めるべきとの認識、被害想定を最大規模とする「地域防災計画」の見直し・強化の計画の有無、孤立集落が生まれた教訓を踏まえた防災備蓄物資計画の再検証の必要性を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年度第2回定例会・一般質問・今岡久人</span><span class="ttl">原子力災害の避難行動</span><span class="sum">島根原子力発電所2号機の再稼働が動き出す中、平成24年（2012）に策定した避難行動計画を市民がどれだけ理解していると考えるか、広島県内12市町や市内西部への避難と受入れの方法を関係者へ的確に伝え周知しているのかを質した。</span></li>
+          
+          <li><span class="who">令和4年度第3回定例会・一般質問・今岡久人</span><span class="ttl">8の字ルートの整備</span><span class="sum">約60万人の人口集積地である中海・宍道湖・大山圏域において、出雲大社を中心とした観光や斐川地区・長浜の工業団地の物流、島根原子力発電所の再稼働容認に伴う非常時の避難経路としての役割を挙げ、8の字ルートの早期の開通に向けて熱意を持った繰り返しの要望活動が必要ではないかと質した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・代表質問・児玉俊雄</span><span class="ttl">一畑電車の将来構想</span><span class="sum">上下分離方式に変わってから15年が経過した一畑電車について、延命措置のような発想ではなく観光面へのかじ切りや原発の避難路としての位置づけ、出雲空港への乗入れなど夢のある振興策を考え沿線地域対策協議会へも積極的に提案するよう提起した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・代表質問・吉井安見</span><span class="ttl">原発運転延長と駐屯地</span><span class="sum">ＧＸ実現に向けた基本方針の閣議決定で原則40年・最大60年を超える原発の運転が可能とされたことによる重大事故の危険性への認識と再稼働や新増設の中止を求める所見、出雲駐屯地の増員計画は市が要望していたとおりのものか、駐屯地の拡大・強化が続くことによる危険性への認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第2回定例会・一般質問・湯淺啓史</span><span class="ttl">ゼロカーボンへの合意形成</span><span class="sum">脱炭素社会・カーボンニュートラル・ゼロカーボンシティという言葉の受け止めと定義、ゼロカーボンシティへの挑戦が指す具体的な取組、脱炭素のまち出雲が実現したと言える状態とその計測の方法、鍵を水素に置く真意とカーボンニュートラルに対するコストの認識、地域新電力事業が脱炭素に資する取組と言えるか、原発の再稼働に態度を決めないまま宣言する順序への疑問、挑戦に向けた合意形成の道筋を質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・一般質問・木佐宏</span><span class="ttl">平田地域の総合防災対策</span><span class="sum">国道431号バイパス事業、伊野地域の災害避難道路、一畑電車旅伏駅の踏切拡幅と周辺市道の改良、西代町と国富下地域住民の避難場所の確保という長年提言してきた課題について、島根原発の避難道路も絡めて部長ではなく市長自身の所見を質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・大場利信</span><span class="ttl">住みやすさの重点施策</span><span class="sum">警戒レベル3での避難を踏まえた災害時の要支援者の個別避難計画の策定状況、島根原子力発電所2号機の再稼働に向けた市の対応とスケジュール、消防団員の検討組織の体制とスケジュール、虐待や発達支援を要する児童と複雑化した課題を抱える世帯の総合相談体制、いずもＧＩＧＡスクールプランの教育上の課題、社会教育計画の見直しの内容、国が令和3年4月に始めた地域共生の取組への所感を質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・後藤由美</span><span class="ttl">島根原発の再稼働問題</span><span class="sum">原子力災害時の住民避難計画の実効性を高めることの難しさへの所見、立地自治体と異なり事前了解の規定がない周辺自治体の安全協定の締結に向けた決意、再稼働に反対する世論調査やアンケートの結果を示して島根原発2号機の再稼働に反対を表明することを質した。</span></li>
+          
+          <li><span class="who">令和3年度第3回定例会・一般質問・吉井安見</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">原発事故の被災地の現状の捉え方とふるさとを守るための決意、原因が特定されないままつくられた新規制基準が安全を担保するものかの認識、豪雨や地震などの複合災害を想定したときの避難計画の実効性を尋ね、市長自身による福島の現地視察の考えを質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・福田実</span><span class="ttl">原発再稼働と広域避難計画</span><span class="sum">島根原発2号機が再稼働され万が一の大災害があったときに現在の広域避難計画で本当に大丈夫なのかを尋ね、地区の実情に合った地区単位のハザードマップを配布する予定と、福島第一原発と女川原発を視察した市長の受け止めを質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・後藤由美</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">福島原発事故の原因究明がないまま決められた新規制基準への所見、破綻した核燃料サイクルを止めるためにも再稼働はあり得ないとの所見、広域避難計画の内容を市民に周知徹底する具体策、再稼働の判断基準は市民の合意と市民の命と安全が完全に守れるかにあるとの所見を市長に質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・今岡久人</span><span class="ttl">災害の教訓と避難計画</span><span class="sum">昨年7月、8月の大雨や台風の被害から市としてどのようなことが教訓として残ったのかを尋ね、規範行動意識を高めるべきとしたうえで、市役所や社会福祉協議会、民児協など関係機関と連携した要支援者名簿の作成と、島根原子力発電所の再稼働をめぐる市民への避難行動計画の周知や災害訓練の今後の取組みを質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・今岡久人</span><span class="ttl">国土強靱化と国道9号</span><span class="sum">山陰道の出雲・湖陵道路と湖陵・多伎道路が令和4年に開通予定であることを踏まえて山陰道全線の早期開通と国道9号出雲バイパスの4車線化、神戸橋神西沖線の拡幅及び4車線化の早期実現を求めるとともに、国道9号が原発防災の目線からも事故時の避難行動に欠かせない道路であるとの認識を質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・吉井安見</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">適合性審査への合格は事故が起きないことを保証するものではないとして原発の危険性への認識と、核燃料サイクルや放射性廃棄物の最終処分の行き詰まりが将来世代に負担を負わせるとの認識、現在の避難計画の実効性とその実効性を判断する基準、立地自治体と同等となっていない安全協定の受け止めを尋ね、住民投票の実施を求める9,288筆の署名が提出される中で今議会で判断を下すのはあまりに拙速だとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">原発をめぐるエネルギー政策</span><span class="sum">原発の再稼働反対が国民多数の世論となっている現状への所見、原発を重要なベースロード電源と位置づけ2030年度までに発電の20％から22％を目指す第5次エネルギー基本計画案は改めるべきではないか、六ヶ所再処理工場の完成が再度3年延長され核燃料サイクルが破綻している今、即時原発ゼロの政治決断と再生可能エネルギーの大幅導入が必要ではないかを質した。</span></li>
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">島根原発3号機の新規稼働</span><span class="sum">住民の避難計画を自治体任せにしている新規制基準への認識、中国電力管内の電力の安定供給に3号機の新規稼働は不要ではないか、点検漏れや虚偽の点検記録が続く中国電力の企業体質への認識、39キロに及ぶ宍道断層があり30キロ圏内に市民の70％にあたる12万2,500人が暮らす中での避難計画の実効性、立地自治体並みの安全協定の締結、原発に関する市民アンケートの実施を質した。</span></li>
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・原正雄</span><span class="ttl">新体育館の建設用地の評価</span><span class="sum">5か所の建設候補地から県立大学出雲キャンパス周辺を最適地とした評価点について、人口重心からの距離だけが配点2倍の10点と特化し神西地区が2点にとどまることや、山陰道インターや国道431号との接続と原発30キロ圏外という神西地区の条件を挙げ、平成35年度末開館という事業スケジュールの実現性を問い、専門家を含む横断的なワークショップで合意形成を図る手法を提起した。</span></li>
+          
+          <li><span class="who">平成30年度第2回定例会・一般質問・神門至</span><span class="ttl">新体育館の建設候補地</span><span class="sum">新体育館の建設候補地について、事業費などのコスト及び収支、立地条件、地盤の状況、洪水による避難場所、原子力発電所からの30キロ圏外という防災上の条件、既存の体育施設との連携、経済効果、観光振興、交通アクセスの問題が指摘されたとして、住民目線による比較検討と市民への丁寧な説明責任、見直す考えはないとした定例記者会見の中身について市長の見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年度第2回定例会・一般質問・後藤由美</span><span class="ttl">憲法と原発への姿勢</span><span class="sum">憲法9条に自衛隊を明記すると会見した安倍首相の発言への所見と憲法を守る市長の決意、プルサーマル運転とセットになった島根原発1号機の廃止措置計画を踏まえた原発ゼロの決断、住民の暮らしと福祉を最優先する地方自治体の役割について所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年度第1回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の廃止と避難計画</span><span class="sum">原発立地並みの安全協定の見通しと障害、市でも説明会を行うよう中電へ要請すべきこと、使用済み核燃料722本を六ヶ所村へ譲り渡す計画、複合災害を踏まえた避難計画と屋内退避、島根半島にある原発の安全性、市内の再生可能エネルギーの発電量を尋ね、原発を廃止し再生可能エネルギーへ転換する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年度第1回定例会・一般質問・大国陽介</span><span class="ttl">原発再稼働と活断層調査</span><span class="sum">大飯原発3・4号機の運転再開を認めない5月21日の福井地裁判決をどう受けとめているのか所見を尋ね、島根原発2号機の新規制基準適合性に係る審査の中止と、宍道断層と他の活断層との連動を含む徹底した活断層調査を原子力規制委員会と中国電力へ要請することを質した。</span></li>
+          
+          <li><span class="who">平成26年度第2回定例会・一般質問・飯塚俊之</span><span class="ttl">宍道湖北部の道路整備</span><span class="sum">全線約70キロメートルのうち整備率が21.4％にとどまる地域高規格道路「境港出雲道路」の早期ルート決定と事業化に向けた取り組み、事業化を推進する出雲・美保関間幹線道路整備促進期成同盟の役割と活動状況を尋ね、島根原発の事故を想定した平田東部の伊野・東・佐香地区の避難道路が災害時に十分な役割を果たすといえるのかを質した。</span></li>
+          
+          <li><span class="who">平成26年度第3回定例会・一般質問・井原優</span><span class="ttl">原発再稼働と避難計画</span><span class="sum">中国電力が島根原発2号機の再稼働に向けた適合性確認審査を申請し活断層の見落としの訂正を繰り返してきたとして、避難ルートに宍道断層がある中での再稼働は論外だとする所見と、30キロ圏内約39万6,000人の避難手段や経路、要援護者の避難など課題が山積する中で原発撤退こそが市民の安全だとする所見を質した。</span></li>
+          
+          <li><span class="who">平成26年度第4回定例会・代表質問・大国陽介</span><span class="ttl">原発再稼働と広域避難</span><span class="sum">福島県の被災地を視察し12万人を超える県民が避難生活を余儀なくされている実情を挙げ、安全対策だけでなく稼働することそのものに意見を言う必要性と、立地自治体と同様な安全協定の締結に向けた決意、新設する出雲市原子力安全顧問会議の役割と目的、広域避難計画が実効性あるものとなり得るのかという所見、原発即時ゼロに向けた決意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年度第2回定例会・一般質問・伊藤繁満</span><span class="ttl">循環型社会への取り組み</span><span class="sum">高齢化で河川の草刈りや清掃活動に出られないという声を最近よく耳にするとして高齢化社会における地域共同活動のあり方の方向付けを尋ね、道路・河川の刈り草を堆肥化する取り組みの現状と運搬費を地域通貨券とする助成制度を提案し、稼働していない枝葉リサイクルセンターのその後の状況と再稼働について質した。</span></li>
+          
+          <li><span class="who">平成25年度第2回定例会・代表質問・大国陽介</span><span class="ttl">原子力発電への姿勢</span><span class="sum">過酷事故を起こし得る原子力発電と市民生活との共存はあり得ないとして原発のない社会を目指すべきではないかと問い、島根原発1・2号機は再稼働せず廃炉にし3号機も稼働させないこと、原子炉の停止等の措置命令が可能となる安全協定の締結の早期実現を求めるべきではないかとして所見を質した。</span></li>
+          
+          <li><span class="who">平成25年度第4回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の再稼働方針</span><span class="sum">福島原発事故の原因も明らかでない中での新規制基準への所見、現在の避難計画が十分なものと考えるか、中国電力と原子力安全協定が締結されていない現状への所見を尋ね、原発即時ゼロの決断と再稼働方針への抗議・撤回、県知事への再稼働は認められない旨の意見提出を質した。</span></li>
+          
+          <li><span class="who">平成25年度第4回定例会・一般質問・小村吉一</span><span class="ttl">特定秘密保護法案の見解</span><span class="sum">参議院で審議されている特定秘密保護法案について市長としての見解を尋ね、島根原発30キロ圏内である本市にかかわる原発情報やＴＰＰ交渉の内容が特定秘密に指定されるおそれをどう考えるか、住民の暮らしを守る立場から一定の行動をとる用意があるかを質した。</span></li>
+          
+          <li><span class="who">平成25年度第4回定例会・一般質問・遠藤力一</span><span class="ttl">原発の安全協定と再稼働</span><span class="sum">島根原子力発電所の再稼働をめぐる現状と今後のロードマップ、島根県と交わした覚書に基づき出雲市がどのような考えを伝えるのか、中国電力が立地自治体と同等の安全協定を結ぼうとしない理由と法的根拠を尋ね、再稼働の事前了解の際に市民の意見をくみ取り反映する方法を質した。</span></li>
+          
+          <li><span class="who">平成25年度第5回定例会・一般質問・大国陽介</span><span class="ttl">原発の再稼働への認識</span><span class="sum">福島事故から学んだことは原発に絶対の安全はあり得ず過酷事故が起こり得るということではないか、新規制基準をクリアすれば住民の生命と財産と暮らしを守れると考えるか、放射能の影響を受ける全ての住民が安全に避難できる計画は策定できたのか、再稼働は論外ではないか、市民の暮らしに責任を負う自治体のトップとして市民の立場で発言し行動すべきではないかを質した。</span></li>
+          
+          <li><span class="who">平成25年度第5回定例会・代表質問・井原優</span><span class="ttl">原子力発電所の再稼働</span><span class="sum">福島原発事故の教訓をどう総括し市政に生かす決意か、技術的に未完成な原発の再稼働は論外ではないか、フィルター付きベントでも被曝は避けられず汚染水対策や避難計画も盛り込まれていない新規制基準は不十分ではないか、再稼働をさせないことが最も市民の安全・安心の確保になるのではないか、立地自治体並みの安全協定の締結に向けた決意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年度第2回定例会・一般質問・多々納弘</span><span class="ttl">脱原発の代替エネルギー</span><span class="sum">脱原発を求めるなら国や県だけにゆだねず市町村自らが相応の代替エネルギー施策を検討すべきとの考え、火力や風力、太陽光、水力など具体的な代替発電施策で実施中のものと今後検討する事項、市自体の節電対策と一般家庭への節電要請、市民が自ら再生エネルギーを調査研究する電源開発研究の組織づくりの推進を質した。</span></li>
+          
+          <li><span class="who">平成24年度第2回定例会・一般質問・井原優</span><span class="ttl">原発ゼロへの市長の姿勢</span><span class="sum">関西電力大飯原発3号機、4号機の再稼働について国に再稼働中止を求める意見を提出すべきとの考えと、島根原発についても再稼働すべきでないとの意見を県にあげるべきとの認識を尋ね、「脱原発を目指す首長会議」に参加して自然エネルギーへの転換の道を進むよう質した。</span></li>
+          
+          <li><span class="who">平成24年度第2回定例会・一般質問・遠藤力一</span><span class="ttl">原発再稼働への市長見解</span><span class="sum">野田総理が決めた大飯原発の再稼働並びに運転を停止している島根原発1号機、2号機の再稼働について市長の見解を尋ね、出雲市民の生命財産を守り持続可能な地域とするための今後の島根原発に対する対応を問うた。</span></li>
+          
+          <li><span class="who">平成24年度第3回定例会・一般質問・原隆利</span><span class="ttl">脱原発への市長の見解</span><span class="sum">原発に頼らず今年の夏を乗り越えられたことや国民の7割が脱原発を支持する現状を挙げ、原発依存度を徐々に低下させるのが現実的とした3月議会の答弁から心境に変わりはないのかを問い、30キロ圏の市長として脱原発に向けた見解を質した。</span></li>
+          
+          <li><span class="who">平成24年度第3回定例会・一般質問・井原優</span><span class="ttl">原発ゼロへの政治姿勢</span><span class="sum">原発の再稼働なしでも今年の夏の電力は足りていたとして、再稼働ではなく原発ゼロへの政治決断に対する認識、脱原発や再生可能エネルギーによる持続可能な社会を目指す討論会やシンポジウムを開く考え、島根原発2号機の再稼働の中止を求めることへの認識を質した。</span></li>
+          
+          <li><span class="who">平成24年度第4回定例会・一般質問・大国陽介</span><span class="ttl">市長の政治姿勢</span><span class="sum">市民の暮らしを守る首長として消費税の増税に反対することを求め、島根原発から30キロ圏内に多くの地域が含まれる市として新エネルギーの普及拡大とともに原発ゼロに向けた決意、ＴＰＰ参加への明確な反対の意思表明、オスプレイ配備の中止の声をあげることを質した。</span></li>
+          
+          <li><span class="who">平成24年度第5回定例会・一般質問・井原優</span><span class="ttl">原発の新安全基準と再稼働</span><span class="sum">原子力規制委員会の新安全基準の骨子案は軽水炉の欠陥や活断層の定義を従来のまま踏襲しており再稼働容認ではないかとして所見を尋ね、核燃料サイクルが破綻する中での市の再生エネルギーの取り組み、避難先が未定で民間任せとなっている広域避難計画の所見と、1、2号機の再稼働中止と廃炉こそ最善の防災措置ではないかを質した。</span></li>
+          
+          <li><span class="who">平成24年度第5回定例会・一般質問・木佐宏</span><span class="ttl">原発避難道路と道路発注</span><span class="sum">喫緊の課題である島根原発の避難道路計画が全く示されない一方、財政難のもとで計画に挙げなくてよい高額な道路改良事業が特定業者に連続発注されているとして、情報公開して解析した結果を挙げ、伊野の玄関口や国富の踏切の拡張を含め避難道路のルートをいつまでにどのような方針で定めるのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・遠藤力一</span><span class="ttl">島根原発と住民の安全</span><span class="sum">島根原子力発電所に対する市長の考え、ＥＰＺの範囲に認められることによる住民の利益、災害対応を任される防災交通課の今後の体制、島根原発が福島第一原発のような事態に陥った際に市民がとるべき行動を尋ね、ＥＰＺ認定の見通しと避難計画が組み立てられる時期を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・大国陽介</span><span class="ttl">エネルギー政策の基本認識</span><span class="sum">原子力発電と高レベル放射性廃棄物の処理方法の未確立という問題、総括原価方式や発送電一体、原発監視機関と推進機関の一体化、温暖化防止策としての原発推進など日本のこれまでの原子力政策に対する市長の認識を尋ね、原発依存から抜け出し原発ゼロを目指すことと、太陽光や風力や水力やバイオマスなど自然エネルギーの普及拡大に力を注ぐことを質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の安全管理体制</span><span class="sum">建設から37年が経過した島根原発1号機の再稼働を認めない立場と2号機のプルサーマル計画の中止を求めること、10キロから40キロ圏内の人口や年齢構成や生活形態など屋内退避や避難に備えた状況把握、震災と原子力災害に備えた防災計画の抜本的な見直し、島根県と中国電力との安全協定の締結の追及を尋ね、1号機の廃炉の検討を要求すべきだと質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">日本の原子力政策の見解</span><span class="sum">現在の知識と技術では原発事故は今後も起き一度起きれば甚大な被害が長期に及ぶという視点と、高レベル放射性廃棄物の貯蔵方法も場所も決まらず1万3,000トンを超える使用済み燃料が各地の原発に保管されているという視点から、今後の日本の原子力政策に対する市長の見解を問うた。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の今後のあり方</span><span class="sum">福島原発3号機と同じくＭＯＸ燃料を燃やす島根原発2号機のプルサーマル計画を事故の後も予定どおり推進すると表明した中国電力への考えとＭＯＸ燃料の危険性の認識を尋ね、3号機は建設運転を中止すべきだとして見解を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・珍部全吾</span><span class="ttl">原発と地域経済への影響</span><span class="sum">代替エネルギーを模索しながら原子力発電を徐々に縮小するという考えへの所感と、ソーラーで同じ出力を得るには膨大な土地が要ることや廃炉に伴う廃棄物の行き先が未定であることを挙げたうえで、原発事故が日本経済と当市経済に与える影響への対応、原発に対する市民の不安に対して行政が行うべき啓発、中国地方を全国への電力供給基地とする機会のとらえ方を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・木佐宏</span><span class="ttl">原発事故に備える避難道路</span><span class="sum">総務大臣発令の防災機関としての立場から、島根原発の事故に備える伊野地区の美野バイパスの避難道路としての整備について、地元主導に委ねる回答では話が進まないとして、松江市や県の動きも踏まえ行政トップレベルで決断すべきだと述べ、福島原発の実態を踏まえた新たな認識に立つ見識を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・勝部順子</span><span class="ttl">震災を教訓とした防災対策</span><span class="sum">釜石の奇跡に学ぶ自分の命は自分で守る防災教育の出雲市の教育現場での状況と今後の考え、備蓄など避難生活に必要な諸機能を備えた学校施設の整備、地震災害時に不適用と判定された116施設を含む避難所の見直しと安全性の確保、原発災害も想定した避難のあり方を尋ね、家具転倒防止器具の支給事業と救急医療情報キットの導入を求めた。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・西村亮</span><span class="ttl">島根原発の安全対策</span><span class="sum">点検漏れが見つかり37年以上が経過した島根原発1・2号機の点検状況と再稼働についての所見、地震と津波とテロへの安全対策についての市の考え方、ＥＰＺ内にある地域の避難道の整備、住民が納得できるコミセン単位での地区説明会の開催、ＥＰＺの拡大と原子力の安全協定の締結に向けた施策を尋ね、松江市と県を除く周辺市町の連絡協議会での統一行動の進め方や有事に備えたトンネル整備の考えを質した。</span></li>
+          
+          <li><span class="who">平成23年度第4回定例会・一般質問・大国陽介</span><span class="ttl">原発と自然エネルギー</span><span class="sum">老朽化する1号機の廃炉や2号機のプルサーマル計画に市長が言及しない理由と市民の代表としての政治的メッセージの必要性、住民説明会で社員や関連会社に参加を要請した中国電力への抗議、島根原発で適正な運転が行われ安全管理体制が適切と言えるかを尋ね、国と中国電力に原発からの撤退の決断を要求することと、小規模な太陽光や風力や小水力による自然エネルギーの普及を質した。</span></li>
+          
+          <li><span class="who">平成23年度第4回定例会・一般質問・木佐宏</span><span class="ttl">防災危機管理組織の改革</span><span class="sum">島根原発の有事に対する防災危機管理を生活バスや防犯灯も担う総務部防災交通課が兼ねる現行体制では市民の負託に応えられないとして、松江市が防災安全部長を置き島根県が危機管理監へ昇格させた例を挙げ、原発対策室を独立させ部長級の専任専従者を置く機構改革と、警察官や自衛隊幹部の経験者を長に配置することを提起した。</span></li>
+          
+          <li><span class="who">平成23年度第4回定例会・一般質問・小村吉一</span><span class="ttl">学校での原発学習</span><span class="sum">これまで学校で原子力発電などの学習がどのようになされてきたか、学習指導要領の改訂後の中学校教科書における原子力や原発の記述、原発30キロ圏内の自治体として今後の学校での原子力や原発学習をどうするのかを尋ね、津波でも機能が損なわれないと記す副読本の回収と、小学校での基礎的な危機管理の指導、中学校での科学の到達を踏まえた指導と教員への資料提供や研修を質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・西村亮</span><span class="ttl">原発の安全対策と協定</span><span class="sum">中国電力が示した15メートルの津波に対応する防波壁の強化や高台40メートルへの緊急用発電機の設置などの安全対策をどう評価し、重大事故を想定した避難道の整備や避難路・避難施設の確保に出雲市がどう取り組むのかを尋ね、鳥取県と米子市・境港市が年内の締結を目指すなか県の仲介に頼らず中国電力と直接交渉して立地自治体並みの原子力安全協定を結ぶよう質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・大国陽介</span><span class="ttl">原子力防災と避難計画</span><span class="sum">原発の危険から市民の健康と安全を守る決意と原子力安全協定の締結に向けた進捗、30キロ圏内に居住する人数と入院者や施設入所者や在宅で介護を受ける要援護者の人数、46万人の避難は非現実的との市民の不安をどう把握しているかを尋ね、原発からの撤退を決断してこそ将来にわたる安心と安全が確保できるとして市長の所見を質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・木佐宏</span><span class="ttl">原子力災害の避難道整備</span><span class="sum">県の指針を待つのではなく首長自らの政治理念により避難道路と避難場所の確保に取り組むべきだとして、松江市から東部への避難道路の整備状況を把握しているかを尋ね、脱原発と三号機への燃料棒挿入の中止を国や県へ申し入れるよう質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・一般質問・川上幸博</span><span class="ttl">原発被害時の避難先</span><span class="sum">原発から30キロ圏内に住む12万人の出雲市民には広島へ地域ごとに避難する先が島根県から示されている一方、30キロ以外に住む出雲市民への避難先の指示がないとして、出雲市としてどのように対応するのかを質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・一般質問・大国陽介</span><span class="ttl">原発の停止と撤退の要請</span><span class="sum">中国電力がすべての原発を停止させながら関西電力へ融通するほどの余力があるという事実を認めるかを尋ね、老朽化した1号機の即時廃炉と2号機のプルサーマル計画の中止と3号機を稼働させないことを意味する撤退を中国電力に要請すること、島根原発の稼働やプルサーマル計画に県民と市民の声を反映させることを質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・一般質問・木佐宏</span><span class="ttl">原発防災の認識のずれ</span><span class="sum">30キロ圏外を安全と唱えること、差し止め訴訟の判決を引き合いに安全を唱えること、1号機の40年寿命、未稼働の3号機の構造、3・11を安全神話の崩壊日とすること、県主導の避難訓練、いまだ着手されない防災避難道路、原子力発電への恐れの希薄さという八項目を挙げ、代表質問の質疑応答が市民意識と乖離しているとして次元のずれを質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・井原優</span><span class="ttl">原発からの撤退の要求</span><span class="sum">共産党島根県議団らと福島原発の被災地を視察し南相馬市や飯館村や福島市の仮設住宅で放射能汚染が住民を追い出している現状を目にしたとして、原発は一旦事故を起こすと人間の力では制御できず甚大な被害をもたらすことから、原発を撤退してこそ市民の安全と安心が守れるとして撤退を強く求めた。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・直良昌幸</span><span class="ttl">島根原発の運転再開</span><span class="sum">全炉が運転停止中の島根原子力発電所についてストレステストを経て国から運転再開の要請が強く示されると見込まれ、四月を目途にエネルギーミックスの複数の選択肢がまとまり夏には国民的議論を通して方針が決定される状況を踏まえ、30キロ圏域にある隣接自治体の長としての所見を問うた。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・坂根守</span><span class="ttl">津波対策とスピーディー</span><span class="sum">日本海側でも奥尻島や秋田沖で津波の被害があったとして過去の日本海沿岸での津波の高さと新年度に完成する「津波ハザードマップ」の配布時期およびそれに基づく避難訓練の計画を尋ね、島根原発で事故が発生したときに緊急時迅速放射能影響予測ネットワークシステムの情報が十分に生かされ汚染地域や汚染状況を的確に住民に知らせられるのか、中国電力との話し合いでこの話があったか、市民全員参加の避難訓練の計画を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・原隆利</span><span class="ttl">島根原発の廃炉の主張</span><span class="sum">原発発祥の地である東海村の村長が脱原発を訴えていることを挙げ、危険はその原因を取り除くことに尽きるとして、県庁所在地にあり10キロ圏内に県庁がある特殊性、運転開始から37年を経て欠陥が指摘された1号炉、2号炉のプルサーマル計画、3号炉の稼働と使用済み燃料2,278体の保管、点検漏れ511件に表れた中国電力の管理能力、宍道断層が8キロから22キロへ訂正された認識の甘さを挙げ、廃炉に向けて発言し行動する考えがないかを質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・井上惠夫</span><span class="ttl">原発の安全協定と1号機</span><span class="sum">島根原子力発電所にかかわる出雲市民の安全確保等に関する協定が結ばれたが最終目標である立地市と完全に同等の権限が付与される原子力安全協定に向けた今後の対応と発電所の存続か廃止かを含む見解を尋ね、高経年化した1号機についてストレステストに合格して安全基準が保たれたとすれば容認するのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の点検漏れ</span><span class="sum">島根原発一号機二号機の点検交換漏れと中国電力の対応についての市長の所見を尋ね、安全協定の締結など4月2日付で行った申し入れ項目の実現に向けた今後の対応を問い、二号機のプルサーマル計画の中止を求めるべきだとして所見を質した。</span></li>
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・米山広志</span><span class="ttl">新出雲風力発電所</span><span class="sum">出雲市と新出雲ウインドファームが取り交わした覚書と要望書の内容、全基が停止している風力発電の再稼働の時期、作業用道路が市に移管される時期を尋ね、立地奨励金の扱いと市道認定基準に合わない路線について地元への説明の状況を質した。</span></li>
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・西村亮</span><span class="ttl">島根原発の点検不備</span><span class="sum">島根原子力発電所における維持管理体制と中国電力の安全意識の欠如を尋ね、地合町を含む防災対策とＥＰＺのあり方を問い、4月2日付の申し入れにいまだ回答がないことへの市長の考えと、隣接自治体である出雲市への振興策や避難道の整備を質した。</span></li>
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・木佐宏</span><span class="ttl">原発事故の避難道路</span><span class="sum">内閣総理大臣の発令による原子力災害の避難訓練が重ねられる一方で避難道路の事業推進の姿勢が見えないとして、国道四三一号と美野本線を結ぶバイパスルートや伊野川を渡り松江市へ延ばすルートの早期実現を求め、原子力発電所の災害防災管理についての認識を質した。</span></li>
+          
+          <li><span class="who">平成22年度第3回定例会・一般質問・西村亮</span><span class="ttl">原発の安全協定の締結</span><span class="sum">島根原子力発電所で123機器に加え506件の点検時期超過が確認され2号機の原子炉格納容器上ふたの気密性も不十分と判明したとして安全協定を締結する考えはないとした中国電力の回答は不誠実で企業風土の改革が要ると指摘し県の仲介も得た原子力安全協定締結に向けた取り組み全般を質した。</span></li>
+          
+          <li><span class="who">平成22年度第5回定例会・一般質問・木佐宏</span><span class="ttl">防災危機管理の認識</span><span class="sum">内閣総理大臣が原子力緊急事態宣言を発出する原発災害避難訓練に対する見識を問い、平成20年度に約束された湯谷川の中流拡幅改良事業が停滞していることを防災危機管理の点からどう認識しているのかと、国富郵便局前一帯の恒常的な冠水や糸川屋橋のかけ替えの遅れを踏まえたゲリラ豪雨への予防防災対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成19年度第5回定例会・代表質問・荒木孝</span><span class="ttl">防災と原発の安全協定</span><span class="sum">一昨年の豪雨で3名の犠牲者を出した教訓を生かし緊急時の情報伝達をどうするかとして出雲市全体の緊急通報システムの構築を求め、島根原発から10キロ圏内にある本市が事業者と県との3者で安全協定を結ぶ必要を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年度第1回定例会・一般質問・大国陽介</span><span class="ttl">プルサーマル計画</span><span class="sum">中国電力が島根原発二号機で計画するプルサーマル計画について、ＭＯＸ燃料の危険性と使用済燃料の再処理の見通しが立たない問題を挙げて島根県と中国電力に中止を求めるべきだとし、隣接地として安全協定に加わる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成17年度第7回定例会・代表質問・珍部全吾</span><span class="ttl">風力発電と原発の安全説明</span><span class="sum">地元十六島の熱意に反して頭から反対する動きが出ている新出雲風力発電について反対運動の皆さんと今後どのように話し合っていくのかを尋ね、地合地区から10キロ余りにある鹿島の原発について中国電力や松江市から安全についての説明が定期的にあっているのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>原子力安全協定の締結要求</summary><p>中国電力との間で「島根原子力発電所に係る出雲市民の安全確保等に関する協定」を結んだが、最終目標は原発立地市並みの権限が付与される「原子力安全協定」の締結であり、その締結を強く求めていく。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>原発重大事故に備えた住民避難計画の策定・周知</summary><p>災害時に最も大切なものは迅速で正確な情報提供であるとして、平成23年度末を目途に、市民が安全に避難するための方法を定めた計画を策定する。万一の重大事故に備え、市民への周知徹底も行う。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>安心安全を重視した機構改革</summary><p>総務部に部長級の「防災安全管理監」を置き、防災・原発・防犯等の対応機能を強化する。防災交通課を防災対策に特化した「防災安全課」とし、交通政策及び交通安全に関する業務は総合政策部へ移管して新たに「交通政策課」を設置する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>原子力発電所の安全対策への周辺自治体意見の反映要請</summary><p>原子力発電所の安全対策などに周辺自治体の意見が反映されるよう、引き続き中国電力や県をはじめとする関係機関に求める。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">10</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>原子力発電所の安全対策に関する国・中国電力への要求</summary><p>国に対しては、原子力発電所の安全対策などに周辺自治体の意見を反映するための新たな制度創設を引き続き求める。中国電力に対しては、立地自治体並みの安全協定の締結を求める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">12</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>（仮称）出雲市原子力発電所安全対策協議会の設置</summary><p>島根原子力発電所2号機の新規制基準適合性確認申請がなされたことを受け、新年度に「（仮称）出雲市原子力発電所安全対策協議会」を設置する。県や松江市の例により、市民の意見を聴いて原子力安全対策に反映させる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>原子力防災（国への法制度創設要求と安全協定の締結要求）</summary><p>島根原発の安全対策に周辺自治体の意見が反映されるよう、国に法制度の創設を求める。あわせて暫定措置として、中国電力に立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>原子力防災対策（国への法整備要請と安全協定の締結要求）</summary><p>島根原子力発電所の安全対策に周辺自治体の意見が反映されるよう、引き続き国に法整備を求める。あわせて暫定措置として、中国電力に立地自治体と同様な安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>原子力防災対策（法整備要請と安全協定締結要請）</summary><p>島根原子力発電所の安全対策に周辺自治体の意見が反映されるよう、引き続き国に法整備を求める。あわせて中国電力に対し、立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>島根原子力発電所2号機の再稼働に対する市の意見</summary><p>新規制基準適合性審査が進んでいる島根原子力発電所2号機の再稼働に対する市としての意見について、市民や市議会、有識者等の意見を踏まえ、慎重に判断する。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>島根原子力発電所2号機再稼働の判断</summary><p>島根原子力発電所2号機の再稼働について、市民や議会、有識者等の意見を踏まえ、本議会中に判断する考えを示す。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>ＵＰＺ内の道路環境整備</summary><p>広域避難計画の実効性向上に向け、国からの新たな交付金を活用する。原発からおおむね半径30キロメートル圏内であるＵＰＺを中心に、道路の環境整備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>国・中国電力への意見反映の仕組みとプルサーマル説明の要求</summary><p>国及び中国電力に対し、周辺自治体の意見を反映できる仕組みの構築を引き続き求める。あわせて島根原子力発電所2号機におけるプルサーマル発電の実施について、中国電力に市民へ丁寧に説明するよう求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>原子力防災と広域避難</h3>
+    <p class="terms">語: 原子力防災と広域避難・避難計画・原子力防災・広域避難・安定ヨウ素剤・ＵＰＺ・UPZ・原子力災害</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt25" data-year="H23"><b>7</b><span class="of">/36人</span><span class="q">8件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/29人</span><span class="q">2件</span></td><td class="lt25" data-year="H26"><b>4</b><span class="of">/27人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/29人</span><span class="q">1件</span></td><td class="lt25" data-year="H30"><b>5</b><span class="of">/30人</span><span class="q">5件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/24人</span><span class="q">1件</span></td><td class="ge25" data-year="R03"><b>7</b><span class="of">/28人</span><span class="q">12件</span></td><td class="lt25" data-year="R04"><b>4</b><span class="of">/28人</span><span class="q">4件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/27人</span><span class="q">2件</span></td><td class="ge25" data-year="R07"><b>7</b><span class="of">/28人</span><span class="q">7件</span></td><td class="h0"><b>0</b><span class="of">/25人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年度第2回定例会・代表質問・錦織稔</span><span class="ttl">広域避難計画の実効性</span><span class="sum">広域避難計画の実効性の向上に必要な避難道路の整備や受入れ自治体の課題を質した。</span></li>
+          
+          <li><span class="who">令和7年度第2回定例会・代表質問・後藤由美</span><span class="ttl">防災・減災対策の強化</span><span class="sum">県管理河川の整備率が令和5年度（2023）末で5.3％、土砂災害要対策箇所が市内631か所中119か所の19％にとどまるとして不要不急の大型公共工事ではなく防災・減災対策を最優先に組み立てるべきとの所見を尋ね、避難行動要支援者の個別避難計画の作成状況と20法人39施設ある福祉避難所が役割を十分果たせる状況にあるのかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第3回定例会・一般質問・吉井安見</span><span class="ttl">原子力防災の在り方</span><span class="sum">中国電力が原子力関係の仕事に携わる職員の人件費として5自治体に毎年約5億円を負担する中で出雲市がこの負担金を受け取る根拠と、原子力防災の体制を自治体任せにし核燃料サイクルにしがみつく国の原発推進の姿勢への所見を尋ね、負担金などへの依存が高まることで住民の安全・安心が後景に追いやられないかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第4回定例会・一般質問・長島和孝</span><span class="ttl">原子力防災訓練の実効性</span><span class="sum">11月の原子力防災訓練に参加した市民の人数と本番ではその何倍の規模になるのか、避難者を受け入れる自治体との地域間交流があるかを尋ね、島根原発で福島原発事故並みの事故が起こったと仮定したときの風評被害も含めた年間の経済的損失額を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・一般質問・川上雅文</span><span class="ttl">個別避難計画の実効性確保</span><span class="sum">避難行動要支援者名簿の最新の整備・更新状況と対象者への計画の重要性の周知、医療的ケア児や重度障がい者の把握状況と名簿及び計画の内容が人工呼吸器の有無など個々の特性に即して整合しているか、自治会や民生委員と福祉専門職や医療機関との連携体制の構築度合いを尋ね、福祉避難所の指定状況と受入れキャパシティの妥当性、避難支援者のバックアップを含む人的確保の考え方、平時及び緊急時の情報共有の仕組み、本人参加型の避難訓練の実施状況、未策定者への支援策を質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・今岡真治</span><span class="ttl">個別避難計画の実効性</span><span class="sum">福祉専門職の協力を得て作成を進める個別避難計画について、災害時に計画が機能するための訓練や福祉専門職との情報共有体制をどう構築していくのか、作成を加速させるための人員体制と併せて質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・長廻利行</span><span class="ttl">個別避難計画と脱炭素</span><span class="sum">個別避難計画の現状の作成率と来年度の作成率の目標値、空き家対策で想定される支援策や体制、森林Ｊ－クレジットの内容と実施効果、出雲環境センターの今後の在り方についてどのような課題があり何を検討しているのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年度第2回定例会・一般質問・吉井安見</span><span class="ttl">原発避難体制と核のごみ</span><span class="sum">能登半島地震で避難ルートの大半が通行止めとなり孤立集落が相次いだことを踏まえた空路等による避難体制の整備状況、原子力災害時の広域避難計画の改定状況と正月やゴールデンウィークなど人口が増加する時期を想定条件に追加することへの所見、核のごみの受入れの動きには断固反対とした知事の発言についての市長の考えを質した。</span></li>
+          
+          <li><span class="who">令和6年度第6回定例会・一般質問・吉井安見</span><span class="ttl">防災・減災事業の推進</span><span class="sum">近年発生している災害から教訓を学びハードとソフトの両面から備えと対策を強化し実行することへの市の認識、災害関連死を踏まえた避難所環境の改善と災害備蓄物資の配備や充実の図り方、原子力災害時の個別避難計画の策定状況とその実効性についての認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年度第5回定例会・一般質問・吉井安見</span><span class="ttl">原子力災害の避難計画</span><span class="sum">志賀原発における被害の全容を出雲市がどのように把握しているのか、島根原発の避難計画の再検証が必要との認識、能登半島地震の教訓や知見がまとまり避難計画に反映されるまでの流れ、今年8月に予定される島根原発2号機の再稼働は一旦立ち止まるべきとの認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年度第2回定例会・一般質問・今岡久人</span><span class="ttl">原子力災害の避難行動</span><span class="sum">島根原子力発電所2号機の再稼働が動き出す中、平成24年（2012）に策定した避難行動計画を市民がどれだけ理解していると考えるか、広島県内12市町や市内西部への避難と受入れの方法を関係者へ的確に伝え周知しているのかを質した。</span></li>
+          
+          <li><span class="who">令和4年度第2回定例会・一般質問・保科孝充</span><span class="ttl">要支援者の個別避難計画</span><span class="sum">避難行動要支援者の個別避難計画について、地区災害対策本部全体の作成進捗率と今後の予定、自治会未加入者を含む要支援者把握の実態、関係部署や民生委員との情報共有とプライバシーの考え方、計画に盛り込む内容を質した。</span></li>
+          
+          <li><span class="who">令和4年度第5回定例会・一般質問・福島孝雄</span><span class="ttl">デジタルファースト推進計画</span><span class="sum">出雲市デジタルファースト推進計画のロードマップについて、コア業務とノンコア業務の実態、システムの構築及び改修、市独自の申請システム、押印廃止率、キャッシュレス決済、引越しワンストップサービス、避難行動要支援者・個別避難計画管理システム、デジタルを活用した不登校対策、ＲＰＡ、ペーパーレス化の現状と目標を尋ね、ノンコア業務の受皿と職員の意識改革、デジタル推進室の人数を質した。</span></li>
+          
+          <li><span class="who">令和4年度第6回定例会・代表質問・錦織稔</span><span class="ttl">備蓄倉庫と原子力防災</span><span class="sum">トルコ・シリアの大地震で防災・減災の備えの大切さを考えさせられたとして本市の分散型備蓄倉庫の構築の進み具合と集中型備蓄倉庫の役割を担う場所、原子力防災の地域別パンフレットの配布の進捗と広域避難計画における他市・他県の受入れの調整の状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・西村亮</span><span class="ttl">原子力防災の安全協定</span><span class="sum">周辺自治体と連携して中国電力に立地自治体同様の安全協定の締結を求めることに対する中国電力の反応を尋ね、鍵を握るのは島根県だとして県への相談と議会も一緒になった働きかけの考えを質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・大場利信</span><span class="ttl">住みやすさの重点施策</span><span class="sum">警戒レベル3での避難を踏まえた災害時の要支援者の個別避難計画の策定状況、島根原子力発電所2号機の再稼働に向けた市の対応とスケジュール、消防団員の検討組織の体制とスケジュール、虐待や発達支援を要する児童と複雑化した課題を抱える世帯の総合相談体制、いずもＧＩＧＡスクールプランの教育上の課題、社会教育計画の見直しの内容、国が令和3年4月に始めた地域共生の取組への所感を質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・後藤由美</span><span class="ttl">島根原発の再稼働問題</span><span class="sum">原子力災害時の住民避難計画の実効性を高めることの難しさへの所見、立地自治体と異なり事前了解の規定がない周辺自治体の安全協定の締結に向けた決意、再稼働に反対する世論調査やアンケートの結果を示して島根原発2号機の再稼働に反対を表明することを質した。</span></li>
+          
+          <li><span class="who">令和3年度第3回定例会・一般質問・吉井安見</span><span class="ttl">災害対策の強化と避難計画</span><span class="sum">河川改修が進んでいる古志町の新宮川などでも新たな被害が発生したとして大雨災害の教訓と今後の対策、自力での避難が困難な方や1階建ての福祉施設の実情に寄り添った避難計画の見直し、避難所の運営におけるジェンダーの視点についての所見と取組みを質した。</span></li>
+          
+          <li><span class="who">令和3年度第3回定例会・一般質問・吉井安見</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">原発事故の被災地の現状の捉え方とふるさとを守るための決意、原因が特定されないままつくられた新規制基準が安全を担保するものかの認識、豪雨や地震などの複合災害を想定したときの避難計画の実効性を尋ね、市長自身による福島の現地視察の考えを質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・高橋扶治夫</span><span class="ttl">原子力の広域避難計画</span><span class="sum">浜山公園へ向かう車の台数が駐車可能台数を大きく上回るとして避難退域時検査候補地を増やす考え、広島県へ避難する際の避難経由所の駐車可能台数など受入体制の確認、コミュニティセンターの地区災害対策本部単位での避難訓練、広域避難計画の市民への周知の時期と方法を質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・福田実</span><span class="ttl">原発再稼働と広域避難計画</span><span class="sum">島根原発2号機が再稼働され万が一の大災害があったときに現在の広域避難計画で本当に大丈夫なのかを尋ね、地区の実情に合った地区単位のハザードマップを配布する予定と、福島第一原発と女川原発を視察した市長の受け止めを質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・後藤由美</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">福島原発事故の原因究明がないまま決められた新規制基準への所見、破綻した核燃料サイクルを止めるためにも再稼働はあり得ないとの所見、広域避難計画の内容を市民に周知徹底する具体策、再稼働の判断基準は市民の合意と市民の命と安全が完全に守れるかにあるとの所見を市長に質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・一般質問・大場利信</span><span class="ttl">原発事故時の本部の退避</span><span class="sum">県が県庁業務を浜山公園の体育館で行うための環境整備費として18億8,200万円の予算を提出したとして県の情報を尋ね、市の対策本部が消防本部や佐田、多伎、湖陵、大社の各行政センターへ退避するにあたっての基本的な考えと市民や職員への広報対策、令和4年度から年額8,000万円となる原子力防災安全等対策交付金の現時点での具体的な使途を質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・一般質問・大場利信</span><span class="ttl">要支援者の個別避難計画</span><span class="sum">該当者の総数6,125人のうち名簿提出に同意した4,541人を踏まえ、支援が必要な人はどのような状態の人かを尋ね、介護支援専門員等の福祉専門職の協力による作成率の向上と内容の充実、新規の個別避難計画作成経費140万円の目的と内容、自治会未加入者への策定の考え、実効性の向上に最も大切なこと、名簿登載に同意されない1,584人への対応を質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・今岡久人</span><span class="ttl">災害の教訓と避難計画</span><span class="sum">昨年7月、8月の大雨や台風の被害から市としてどのようなことが教訓として残ったのかを尋ね、規範行動意識を高めるべきとしたうえで、市役所や社会福祉協議会、民児協など関係機関と連携した要支援者名簿の作成と、島根原子力発電所の再稼働をめぐる市民への避難行動計画の周知や災害訓練の今後の取組みを質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・吉井安見</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">適合性審査への合格は事故が起きないことを保証するものではないとして原発の危険性への認識と、核燃料サイクルや放射性廃棄物の最終処分の行き詰まりが将来世代に負担を負わせるとの認識、現在の避難計画の実効性とその実効性を判断する基準、立地自治体と同等となっていない安全協定の受け止めを尋ね、住民投票の実施を求める9,288筆の署名が提出される中で今議会で判断を下すのはあまりに拙速だとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年度第3回定例会・一般質問・福島孝雄</span><span class="ttl">コロナ下の地域防災計画</span><span class="sum">分散避難及び避難訓練の考えと計画策定のスケジュール、間仕切りや段ボールベッドなど衛生環境と備蓄品及び避難所の運営の考え、新型コロナウイルス感染症対応地方創生臨時交付金の災害時での用途と出雲市としての活用内容とスケジュール、避難計画の市民への周知を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">島根原発3号機の新規稼働</span><span class="sum">住民の避難計画を自治体任せにしている新規制基準への認識、中国電力管内の電力の安定供給に3号機の新規稼働は不要ではないか、点検漏れや虚偽の点検記録が続く中国電力の企業体質への認識、39キロに及ぶ宍道断層があり30キロ圏内に市民の70％にあたる12万2,500人が暮らす中での避難計画の実効性、立地自治体並みの安全協定の締結、原発に関する市民アンケートの実施を質した。</span></li>
+          
+          <li><span class="who">平成30年度第2回定例会・一般質問・錦織稔</span><span class="ttl">水害時の避難計画</span><span class="sum">斐伊川河床の安定のための対策、宍道湖の水位上昇の把握と洪水予報の判断、避難時の交通渋滞の対策とハザードマップへの避難方向の矢印の記載、浸水想定表示板の設置、防災意識啓発のための研修等の実施状況、マイ・タイムライン作成の普及を進める考えを質した。</span></li>
+          
+          <li><span class="who">平成30年度第2回定例会・一般質問・多々納剛人</span><span class="ttl">災害時要支援者の避難</span><span class="sum">前期総合計画での災害時要支援者の名簿と情報提供の課題の検証と評価、提供される個人情報の内容と地区での受け皿・管理・運用、個別計画にかかわる主体と作成手順、福祉避難所の指定と避難誘導への地域のかかわり、既存の高齢者施設の避難計画と地域との情報共有、情報の更新の状況を尋ね、共通の管理マニュアルと個人情報の取り扱いに関する広報・啓発を質した。</span></li>
+          
+          <li><span class="who">平成30年度第4回定例会・代表質問・川光秀昭</span><span class="ttl">住みやすさＮｏ．１の施策</span><span class="sum">新たに設置される原子力防災室の役割、子ども医療費助成制度の新設内容と支援対象外となる世帯、生活保護の最低生活費を下回る高齢者単身世帯が利用できる制度、日本語指導を必要とする児童生徒に向けた初期集中指導教室の内容、舞台演芸など音楽以外の芸術を行うための支援、新体育館建設基本計画の策定までの手順を質した。</span></li>
+          
+          <li><span class="who">平成30年度第4回定例会・代表質問・福島孝雄</span><span class="ttl">防災と医療費助成の拡充</span><span class="sum">43ある各地区災害対策本部の要支援者避難計画の作成期限と市の関与、通学路の危険ブロック塀の調査及び対策、松江市の2万円などに比べ5,000円にとどまる高齢者運転免許自主返納支援でさらなる返納につながるのか、子ども医療費助成制度の拡充に至った経緯と将来展望、生活保護になる前の段階での自立支援策の内容を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年度第3回定例会・一般質問・大場利信</span><span class="ttl">災害弱者への避難支援</span><span class="sum">避難行動要支援者名簿に記載する者の範囲と現在の登録者数、名簿登載者の個別の避難計画の策定方法と策定にあたっての課題、避難後の要支援者の生活に配慮するための人材の確保策、34か所指定されている福祉避難所へさらに多くの社会福祉施設等の協力を求める必要性を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年度第1回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の廃止と避難計画</span><span class="sum">原発立地並みの安全協定の見通しと障害、市でも説明会を行うよう中電へ要請すべきこと、使用済み核燃料722本を六ヶ所村へ譲り渡す計画、複合災害を踏まえた避難計画と屋内退避、島根半島にある原発の安全性、市内の再生可能エネルギーの発電量を尋ね、原発を廃止し再生可能エネルギーへ転換する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年度第2回定例会・一般質問・福島孝雄</span><span class="ttl">土砂災害への防災対策</span><span class="sum">広島の土砂災害を受け、花崗岩が風化したマサ土土質の地域が市内にどの程度あるかと危険箇所の見直しや対策の強化を尋ね、避難計画の変更点や注意点、災害時避難行動要支援者の避難態勢と支援関係者の行動、自治会単位の地域ネットワークの役割、ハザードマップの活用、危険地域での防災訓練、広島への人的支援と物資の支援を質した。</span></li>
+          
+          <li><span class="who">平成26年度第3回定例会・一般質問・大場利信</span><span class="ttl">ハザードマップの全戸配布</span><span class="sum">自治会加入者が全市民の約7割にとどまる中で、自治会未加入者に対する災害ハザードマップと原子力防災ガイドブックの現在の配布方法を尋ね、コミセン単位で地域の団体やボランティアの力を借りて届けるなど全市的に同一の対処方法をとることを質した。</span></li>
+          
+          <li><span class="who">平成26年度第3回定例会・一般質問・井原優</span><span class="ttl">原発再稼働と避難計画</span><span class="sum">中国電力が島根原発2号機の再稼働に向けた適合性確認審査を申請し活断層の見落としの訂正を繰り返してきたとして、避難ルートに宍道断層がある中での再稼働は論外だとする所見と、30キロ圏内約39万6,000人の避難手段や経路、要援護者の避難など課題が山積する中で原発撤退こそが市民の安全だとする所見を質した。</span></li>
+          
+          <li><span class="who">平成26年度第4回定例会・代表質問・大国陽介</span><span class="ttl">原発再稼働と広域避難</span><span class="sum">福島県の被災地を視察し12万人を超える県民が避難生活を余儀なくされている実情を挙げ、安全対策だけでなく稼働することそのものに意見を言う必要性と、立地自治体と同様な安全協定の締結に向けた決意、新設する出雲市原子力安全顧問会議の役割と目的、広域避難計画が実効性あるものとなり得るのかという所見、原発即時ゼロに向けた決意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年度第4回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の再稼働方針</span><span class="sum">福島原発事故の原因も明らかでない中での新規制基準への所見、現在の避難計画が十分なものと考えるか、中国電力と原子力安全協定が締結されていない現状への所見を尋ね、原発即時ゼロの決断と再稼働方針への抗議・撤回、県知事への再稼働は認められない旨の意見提出を質した。</span></li>
+          
+          <li><span class="who">平成25年度第5回定例会・代表質問・井原優</span><span class="ttl">原子力発電所の再稼働</span><span class="sum">福島原発事故の教訓をどう総括し市政に生かす決意か、技術的に未完成な原発の再稼働は論外ではないか、フィルター付きベントでも被曝は避けられず汚染水対策や避難計画も盛り込まれていない新規制基準は不十分ではないか、再稼働をさせないことが最も市民の安全・安心の確保になるのではないか、立地自治体並みの安全協定の締結に向けた決意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年度第5回定例会・一般質問・井原優</span><span class="ttl">原発の新安全基準と再稼働</span><span class="sum">原子力規制委員会の新安全基準の骨子案は軽水炉の欠陥や活断層の定義を従来のまま踏襲しており再稼働容認ではないかとして所見を尋ね、核燃料サイクルが破綻する中での市の再生エネルギーの取り組み、避難先が未定で民間任せとなっている広域避難計画の所見と、1、2号機の再稼働中止と廃炉こそ最善の防災措置ではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・遠藤力一</span><span class="ttl">島根原発と住民の安全</span><span class="sum">島根原子力発電所に対する市長の考え、ＥＰＺの範囲に認められることによる住民の利益、災害対応を任される防災交通課の今後の体制、島根原発が福島第一原発のような事態に陥った際に市民がとるべき行動を尋ね、ＥＰＺ認定の見通しと避難計画が組み立てられる時期を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の安全管理体制</span><span class="sum">建設から37年が経過した島根原発1号機の再稼働を認めない立場と2号機のプルサーマル計画の中止を求めること、10キロから40キロ圏内の人口や年齢構成や生活形態など屋内退避や避難に備えた状況把握、震災と原子力災害に備えた防災計画の抜本的な見直し、島根県と中国電力との安全協定の締結の追及を尋ね、1号機の廃炉の検討を要求すべきだと質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・大国陽介</span><span class="ttl">原子力防災と避難計画</span><span class="sum">原発の危険から市民の健康と安全を守る決意と原子力安全協定の締結に向けた進捗、30キロ圏内に居住する人数と入院者や施設入所者や在宅で介護を受ける要援護者の人数、46万人の避難は非現実的との市民の不安をどう把握しているかを尋ね、原発からの撤退を決断してこそ将来にわたる安心と安全が確保できるとして市長の所見を質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・木佐宏</span><span class="ttl">原子力災害の避難道整備</span><span class="sum">県の指針を待つのではなく首長自らの政治理念により避難道路と避難場所の確保に取り組むべきだとして、松江市から東部への避難道路の整備状況を把握しているかを尋ね、脱原発と三号機への燃料棒挿入の中止を国や県へ申し入れるよう質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・多々納剛人</span><span class="ttl">原子力防災計画の策定</span><span class="sum">原子力防災連絡会議のその後の協議状況と、市町村があらかじめ具体的な避難基準を定めるよう国の防災基本計画素案に明記されたことを受けた出雲市独自の対応を尋ね、モニタリングポストなど資機材の責任の所在と費用負担とオペレーション、専門職員の養成、一時集結所と一時避難場所、諫早市や津山市との災害時相互応援協定、学校を含む防災教育の現状を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・井原優</span><span class="ttl">安全協定と避難計画の課題</span><span class="sum">中国電力との間で安全確保協定が締結されたが立地自治体並みのより強い権限を持つ原子力安全協定の締結にこだわるべきだとして市長の決意を尋ね、30キロ圏内に住む約12万人の避難にあたり要援護者の避難方法や避難先、市民への的確な情報提供、子どもを守るヨウ素剤の服用手順と管理体制の点検や検証や訓練など、計画策定にあたっての課題の認識を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・勝部順子</span><span class="ttl">避難計画と女性の視点</span><span class="sum">平成23年度（2011）末を目途に策定する市民が安全に避難するための計画の具体的な内容と市民への周知徹底の方法を尋ね、新設される「防災安全課」や出雲市防災会議に女性をもっと登用し、避難所の整備や運営など生活者の視点である女性の視点からの災害対策に力を入れることを求めた。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・多久和康司</span><span class="ttl">避難計画と市民への周知</span><span class="sum">災害時には一人ひとりがいかに自分で判断して行動するかが大事であるとして、地域別の避難計画をどのようにするのか、市民が考え行動するための一人ひとりへの啓発活動をどうするのか、自治会への加入率が下がるなかで市民への周知をどのようにして徹底するのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・木佐宏</span><span class="ttl">原発事故の避難道路</span><span class="sum">内閣総理大臣の発令による原子力災害の避難訓練が重ねられる一方で避難道路の事業推進の姿勢が見えないとして、国道四三一号と美野本線を結ぶバイパスルートや伊野川を渡り松江市へ延ばすルートの早期実現を求め、原子力発電所の災害防災管理についての認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年度第2回定例会・一般質問・長岡幸江</span><span class="ttl">新庁舎の基本計画と設計</span><span class="sum">中央病院跡地が適当とされた背景と新庁舎のあるべき姿及び将来の人口規模や職員数を見据えた基本構想を尋ね、敷地の特性の生かし方や防災センターを含む敷地利用計画、人と車の動線、部門構成、市民開放スペース、外観、維持管理、省エネルギー、防災避難計画など基本設計の方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成20年度</td>
+            <td><details class="it"><summary>原子力防災訓練の実施</summary><p>原子力防災について、昨年に引き続き住民避難を中心とした防災訓練などを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>原発重大事故に備えた住民避難計画の策定・周知</summary><p>災害時に最も大切なものは迅速で正確な情報提供であるとして、平成23年度末を目途に、市民が安全に避難するための方法を定めた計画を策定する。万一の重大事故に備え、市民への周知徹底も行う。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>原子力災害対策の具体化</summary><p>昨年度策定した地域防災計画の原子力災害対策編や広域避難計画について、県や広域避難先の自治体と協議し、その具体化を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>地域津波避難計画の策定</summary><p>海岸部において、地域の住民とともに地域津波避難計画を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>広域避難計画の実効性向上</summary><p>広域避難計画について、関係機関と協議を重ねる。その実効性を高めるよう努める。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>原子力防災（国への法制度創設要求と安全協定の締結要求）</summary><p>島根原発の安全対策に周辺自治体の意見が反映されるよう、国に法制度の創設を求める。あわせて暫定措置として、中国電力に立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>広域避難計画の実効性向上</summary><p>広域避難計画について、より実効性を高めるとともに、避難訓練を通じて得た課題を抽出して計画に反映させる。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>原子力防災対策（国への法整備要請と安全協定の締結要求）</summary><p>島根原子力発電所の安全対策に周辺自治体の意見が反映されるよう、引き続き国に法整備を求める。あわせて暫定措置として、中国電力に立地自治体と同様な安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>広域避難計画の実効性向上</summary><p>広域避難計画の実効性を高めるため、国及び県との連携を強化する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>原子力防災対策（法整備要請と安全協定締結要請）</summary><p>島根原子力発電所の安全対策に周辺自治体の意見が反映されるよう、引き続き国に法整備を求める。あわせて中国電力に対し、立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>広域避難計画の実効性向上</summary><p>広域避難計画の実効性を高めるため、国及び県との連携を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>原子力防災対策（法整備・安全協定の要求）</summary><p>周辺自治体の意見が反映されるよう国に法整備を求める。あわせて中国電力に対し立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>広域避難計画の実効性向上</summary><p>広域避難計画の実効性を高めるため、国及び県との連携を強化する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>防災安全部と原子力防災室の新設</summary><p>新年度から防災安全部を新設し、部内に原子力防災室を置く。危機管理、災害対応体制の強化を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>原子力防災対策と広域避難計画の見直し</summary><p>周辺自治体と連携し、引き続き中国電力に立地自治体と同様な安全協定の締結を求める。あわせて県の広域避難計画の改正に伴い、市の広域避難計画を見直し、実効性を高める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>情報政策課の新設</summary><p>技術革新の流れに対応し、ＡＩ、ＲＰＡなど新技術の利活用も含め、全庁的な情報政策を推進していくため、情報政策課を新設する。防災安全部及び原子力防災室の新設、空き家対策室の設置とあわせた組織・機構の改革の一環。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>原子力防災対策</summary><p>周辺自治体と連携し、中国電力に立地自治体と同様な安全協定の締結を引き続き求める。また、県の広域避難計画が改定されたことを受け、市の原子力災害に備えた防災ガイドブックの更新を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>避難行動要支援者の個別避難計画の策定</summary><p>災害時に避難の支援が必要な高齢者や障がい者など要支援者の個別避難計画の策定を進め、支援体制の充実を図る。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>中国電力への安全協定締結の要求</summary><p>原子力防災対策として、周辺自治体と連携し、中国電力に対して引き続き立地自治体と同様な安全協定の締結を求める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>原子力災害時の避難計画見直しと避難訓練</summary><p>原子力災害時における住民避難について、適時、避難計画の見直しを行うとともに、避難訓練を行い、原子力防災の実効性を高める。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>避難行動要支援者の個別避難計画の充実</summary><p>地区災害対策本部や介護支援専門員等の福祉専門職の協力を得て、避難行動要支援者の個別避難計画の作成率向上と内容の充実を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>原子力防災の広域避難計画見直しと住民周知</summary><p>広域避難計画の適宜の見直しや、国及び県と連携した防災訓練を実施する。原子力災害時の避難について分かりやすい地区別のパンフレットを作成するなど、住民周知に取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>避難行動要支援者の個別避難計画の作成</summary><p>避難行動要支援者の個別避難計画の作成を進める。地区災害対策本部や介護支援専門員等の福祉専門職の協力を得ながら取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>原子力防災訓練と広域避難計画の周知</summary><p>国・県等の関係機関のほか、避難先の地域とも連携した防災訓練を実施する。あわせて地区別パンフレットの配布により広域避難計画の周知を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>ＵＰＺ内の道路環境整備</summary><p>広域避難計画の実効性向上に向け、国からの新たな交付金を活用する。原発からおおむね半径30キロメートル圏内であるＵＰＺを中心に、道路の環境整備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>避難行動要支援者の個別避難計画の作成推進</summary><p>避難行動要支援者の個別避難計画について、引き続き地区災害対策本部や福祉事業者と連携する。計画作成を推進する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>原子力防災訓練と広域避難計画の実効性向上</summary><p>国・県、避難先自治体等の関係機関と連携した原子力防災訓練等を実施する。広域避難計画の実効性の向上を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>避難行動要支援者の個別避難計画の作成</summary><p>避難行動要支援者が円滑に避難できるよう、個別避難計画の作成を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>原子力防災訓練と広域避難計画の実効性向上</summary><p>原子力防災について、国・県等関係機関と連携した防災訓練等を実施し、広域避難計画の実効性の向上を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>避難行動要支援者の個別避難計画の作成</summary><p>避難行動要支援者が円滑に避難できるよう、福祉専門職等の協力を得ながら個別避難計画の作成を進める。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>原子力防災訓練と広域避難計画の実効性向上</summary><p>原子力防災について、国・県等関係機関と連携した防災訓練等を実施し、広域避難計画の実効性向上を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">8</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>原子力安全協定と立地同意</h3>
+    <p class="terms">語: 原子力安全協定と立地同意・安全協定・原子力安全協定・立地自治体</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="H22"><b>2</b><span class="of">/31人</span><span class="q">2件</span></td><td class="lt25" data-year="H23"><b>5</b><span class="of">/36人</span><span class="q">7件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="lt25" data-year="H25"><b>3</b><span class="of">/29人</span><span class="q">4件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>2</b><span class="of">/30人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="lt25" data-year="R03"><b>3</b><span class="of">/28人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/25人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・西村亮</span><span class="ttl">原子力防災の安全協定</span><span class="sum">周辺自治体と連携して中国電力に立地自治体同様の安全協定の締結を求めることに対する中国電力の反応を尋ね、鍵を握るのは島根県だとして県への相談と議会も一緒になった働きかけの考えを質した。</span></li>
+          
+          <li><span class="who">令和3年度第2回定例会・代表質問・後藤由美</span><span class="ttl">島根原発の再稼働問題</span><span class="sum">原子力災害時の住民避難計画の実効性を高めることの難しさへの所見、立地自治体と異なり事前了解の規定がない周辺自治体の安全協定の締結に向けた決意、再稼働に反対する世論調査やアンケートの結果を示して島根原発2号機の再稼働に反対を表明することを質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・吉井安見</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">適合性審査への合格は事故が起きないことを保証するものではないとして原発の危険性への認識と、核燃料サイクルや放射性廃棄物の最終処分の行き詰まりが将来世代に負担を負わせるとの認識、現在の避難計画の実効性とその実効性を判断する基準、立地自治体と同等となっていない安全協定の受け止めを尋ね、住民投票の実施を求める9,288筆の署名が提出される中で今議会で判断を下すのはあまりに拙速だとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">島根原発3号機の新規稼働</span><span class="sum">住民の避難計画を自治体任せにしている新規制基準への認識、中国電力管内の電力の安定供給に3号機の新規稼働は不要ではないか、点検漏れや虚偽の点検記録が続く中国電力の企業体質への認識、39キロに及ぶ宍道断層があり30キロ圏内に市民の70％にあたる12万2,500人が暮らす中での避難計画の実効性、立地自治体並みの安全協定の締結、原発に関する市民アンケートの実施を質した。</span></li>
+          
+          <li><span class="who">平成30年度第4回定例会・代表質問・大谷良治</span><span class="ttl">出雲縁結び空港の強化</span><span class="sum">100万人利用が現実となりつつある出雲縁結び空港について、新規就航路線についての考え方と、慢性的な駐車場不足に対し駐車場対策や拡大だけでなく新たな公共交通の仕組みづくりも見据えた立地自治体としての利用促進や整備の基本的な考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年度第1回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の廃止と避難計画</span><span class="sum">原発立地並みの安全協定の見通しと障害、市でも説明会を行うよう中電へ要請すべきこと、使用済み核燃料722本を六ヶ所村へ譲り渡す計画、複合災害を踏まえた避難計画と屋内退避、島根半島にある原発の安全性、市内の再生可能エネルギーの発電量を尋ね、原発を廃止し再生可能エネルギーへ転換する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年度第4回定例会・代表質問・大国陽介</span><span class="ttl">原発再稼働と広域避難</span><span class="sum">福島県の被災地を視察し12万人を超える県民が避難生活を余儀なくされている実情を挙げ、安全対策だけでなく稼働することそのものに意見を言う必要性と、立地自治体と同様な安全協定の締結に向けた決意、新設する出雲市原子力安全顧問会議の役割と目的、広域避難計画が実効性あるものとなり得るのかという所見、原発即時ゼロに向けた決意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年度第2回定例会・代表質問・大国陽介</span><span class="ttl">原子力発電への姿勢</span><span class="sum">過酷事故を起こし得る原子力発電と市民生活との共存はあり得ないとして原発のない社会を目指すべきではないかと問い、島根原発1・2号機は再稼働せず廃炉にし3号機も稼働させないこと、原子炉の停止等の措置命令が可能となる安全協定の締結の早期実現を求めるべきではないかとして所見を質した。</span></li>
+          
+          <li><span class="who">平成25年度第4回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の再稼働方針</span><span class="sum">福島原発事故の原因も明らかでない中での新規制基準への所見、現在の避難計画が十分なものと考えるか、中国電力と原子力安全協定が締結されていない現状への所見を尋ね、原発即時ゼロの決断と再稼働方針への抗議・撤回、県知事への再稼働は認められない旨の意見提出を質した。</span></li>
+          
+          <li><span class="who">平成25年度第4回定例会・一般質問・遠藤力一</span><span class="ttl">原発の安全協定と再稼働</span><span class="sum">島根原子力発電所の再稼働をめぐる現状と今後のロードマップ、島根県と交わした覚書に基づき出雲市がどのような考えを伝えるのか、中国電力が立地自治体と同等の安全協定を結ぼうとしない理由と法的根拠を尋ね、再稼働の事前了解の際に市民の意見をくみ取り反映する方法を質した。</span></li>
+          
+          <li><span class="who">平成25年度第5回定例会・代表質問・井原優</span><span class="ttl">原子力発電所の再稼働</span><span class="sum">福島原発事故の教訓をどう総括し市政に生かす決意か、技術的に未完成な原発の再稼働は論外ではないか、フィルター付きベントでも被曝は避けられず汚染水対策や避難計画も盛り込まれていない新規制基準は不十分ではないか、再稼働をさせないことが最も市民の安全・安心の確保になるのではないか、立地自治体並みの安全協定の締結に向けた決意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年度第5回定例会・一般質問・米山広志</span><span class="ttl">原子力安全協定の締結</span><span class="sum">立地自治体と同様の安全協定の締結を要請した後に中国電力へ協議を求めた回数と内容、周辺自治体と共に意見を反映させる仕組みを国に求めるとした報道の事実関係とその後の働きかけ、緊急防護措置区域が30キロとなったことに伴う圏内の学校施設数と児童生徒数を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の安全管理体制</span><span class="sum">建設から37年が経過した島根原発1号機の再稼働を認めない立場と2号機のプルサーマル計画の中止を求めること、10キロから40キロ圏内の人口や年齢構成や生活形態など屋内退避や避難に備えた状況把握、震災と原子力災害に備えた防災計画の抜本的な見直し、島根県と中国電力との安全協定の締結の追及を尋ね、1号機の廃炉の検討を要求すべきだと質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・西村亮</span><span class="ttl">島根原発の安全対策</span><span class="sum">点検漏れが見つかり37年以上が経過した島根原発1・2号機の点検状況と再稼働についての所見、地震と津波とテロへの安全対策についての市の考え方、ＥＰＺ内にある地域の避難道の整備、住民が納得できるコミセン単位での地区説明会の開催、ＥＰＺの拡大と原子力の安全協定の締結に向けた施策を尋ね、松江市と県を除く周辺市町の連絡協議会での統一行動の進め方や有事に備えたトンネル整備の考えを質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・西村亮</span><span class="ttl">原発の安全対策と協定</span><span class="sum">中国電力が示した15メートルの津波に対応する防波壁の強化や高台40メートルへの緊急用発電機の設置などの安全対策をどう評価し、重大事故を想定した避難道の整備や避難路・避難施設の確保に出雲市がどう取り組むのかを尋ね、鳥取県と米子市・境港市が年内の締結を目指すなか県の仲介に頼らず中国電力と直接交渉して立地自治体並みの原子力安全協定を結ぶよう質した。</span></li>
+          
+          <li><span class="who">平成23年度第6回定例会・一般質問・大国陽介</span><span class="ttl">原子力防災と避難計画</span><span class="sum">原発の危険から市民の健康と安全を守る決意と原子力安全協定の締結に向けた進捗、30キロ圏内に居住する人数と入院者や施設入所者や在宅で介護を受ける要援護者の人数、46万人の避難は非現実的との市民の不安をどう把握しているかを尋ね、原発からの撤退を決断してこそ将来にわたる安心と安全が確保できるとして市長の所見を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・狩野正文</span><span class="ttl">原子力安全協定と避難路</span><span class="sum">防災安全管理監を置き防災安全課を新設して体制を強化するなかでの原子力安全協定の締結の見通しを尋ね、行政区域が違うというだけで同じエリアの住民に防災対策がとられないのは理不尽だとして、主な避難路となる主要地方道斐川一畑大社線でがけからの転落を防ぎ夜間の車両を誘導する誘導灯や街灯の整備を中国電力や関係機関へ強く要望する考えを質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・井原優</span><span class="ttl">安全協定と避難計画の課題</span><span class="sum">中国電力との間で安全確保協定が締結されたが立地自治体並みのより強い権限を持つ原子力安全協定の締結にこだわるべきだとして市長の決意を尋ね、30キロ圏内に住む約12万人の避難にあたり要援護者の避難方法や避難先、市民への的確な情報提供、子どもを守るヨウ素剤の服用手順と管理体制の点検や検証や訓練など、計画策定にあたっての課題の認識を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・井上惠夫</span><span class="ttl">原発の安全協定と1号機</span><span class="sum">島根原子力発電所にかかわる出雲市民の安全確保等に関する協定が結ばれたが最終目標である立地市と完全に同等の権限が付与される原子力安全協定に向けた今後の対応と発電所の存続か廃止かを含む見解を尋ね、高経年化した1号機についてストレステストに合格して安全基準が保たれたとすれば容認するのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の点検漏れ</span><span class="sum">島根原発一号機二号機の点検交換漏れと中国電力の対応についての市長の所見を尋ね、安全協定の締結など4月2日付で行った申し入れ項目の実現に向けた今後の対応を問い、二号機のプルサーマル計画の中止を求めるべきだとして所見を質した。</span></li>
+          
+          <li><span class="who">平成22年度第3回定例会・一般質問・西村亮</span><span class="ttl">原発の安全協定の締結</span><span class="sum">島根原子力発電所で123機器に加え506件の点検時期超過が確認され2号機の原子炉格納容器上ふたの気密性も不十分と判明したとして安全協定を締結する考えはないとした中国電力の回答は不誠実で企業風土の改革が要ると指摘し県の仲介も得た原子力安全協定締結に向けた取り組み全般を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成19年度第5回定例会・代表質問・荒木孝</span><span class="ttl">防災と原発の安全協定</span><span class="sum">一昨年の豪雨で3名の犠牲者を出した教訓を生かし緊急時の情報伝達をどうするかとして出雲市全体の緊急通報システムの構築を求め、島根原発から10キロ圏内にある本市が事業者と県との3者で安全協定を結ぶ必要を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年度第1回定例会・一般質問・大国陽介</span><span class="ttl">プルサーマル計画</span><span class="sum">中国電力が島根原発二号機で計画するプルサーマル計画について、ＭＯＸ燃料の危険性と使用済燃料の再処理の見通しが立たない問題を挙げて島根県と中国電力に中止を求めるべきだとし、隣接地として安全協定に加わる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>原子力安全協定の締結要求</summary><p>中国電力との間で「島根原子力発電所に係る出雲市民の安全確保等に関する協定」を結んだが、最終目標は原発立地市並みの権限が付与される「原子力安全協定」の締結であり、その締結を強く求めていく。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>原子力発電所の安全対策に関する国・中国電力への要求</summary><p>国に対しては、原子力発電所の安全対策などに周辺自治体の意見を反映するための新たな制度創設を引き続き求める。中国電力に対しては、立地自治体並みの安全協定の締結を求める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">12</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>原子力防災（国への法制度創設要求と安全協定の締結要求）</summary><p>島根原発の安全対策に周辺自治体の意見が反映されるよう、国に法制度の創設を求める。あわせて暫定措置として、中国電力に立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>原子力防災対策（国への法整備要請と安全協定の締結要求）</summary><p>島根原子力発電所の安全対策に周辺自治体の意見が反映されるよう、引き続き国に法整備を求める。あわせて暫定措置として、中国電力に立地自治体と同様な安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>原子力防災対策（法整備要請と安全協定締結要請）</summary><p>島根原子力発電所の安全対策に周辺自治体の意見が反映されるよう、引き続き国に法整備を求める。あわせて中国電力に対し、立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>原子力防災対策（法整備・安全協定の要求）</summary><p>周辺自治体の意見が反映されるよう国に法整備を求める。あわせて中国電力に対し立地自治体と同様の安全協定の締結を求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和1年度</td>
+            <td><details class="it"><summary>原子力防災対策と広域避難計画の見直し</summary><p>周辺自治体と連携し、引き続き中国電力に立地自治体と同様な安全協定の締結を求める。あわせて県の広域避難計画の改正に伴い、市の広域避難計画を見直し、実効性を高める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>原子力防災対策</summary><p>周辺自治体と連携し、中国電力に立地自治体と同様な安全協定の締結を引き続き求める。また、県の広域避難計画が改定されたことを受け、市の原子力災害に備えた防災ガイドブックの更新を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>中国電力への安全協定締結の要求</summary><p>原子力防災対策として、周辺自治体と連携し、中国電力に対して引き続き立地自治体と同様な安全協定の締結を求める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>中国電力との安全協定締結の要求</summary><p>中国電力との安全協定について、周辺自治体と連携し、立地自治体と同様な安全協定の締結を引き続き求める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>使用済み核燃料と廃炉</h3>
+    <p class="terms">語: 使用済み核燃料と廃炉・使用済み核燃料・使用済み燃料・使用済燃料・核燃料サイクル・プルサーマル・廃炉・廃止措置</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="lt10" data-year="H18"><b>2</b><span class="of">/28人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt25" data-year="H23"><b>4</b><span class="of">/36人</span><span class="q">7件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/29人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/29人</span><span class="q">1件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>2</b><span class="of">/28人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/27人</span><span class="q">1件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/28人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/25人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年度第3回定例会・一般質問・吉井安見</span><span class="ttl">原子力防災の在り方</span><span class="sum">中国電力が原子力関係の仕事に携わる職員の人件費として5自治体に毎年約5億円を負担する中で出雲市がこの負担金を受け取る根拠と、原子力防災の体制を自治体任せにし核燃料サイクルにしがみつく国の原発推進の姿勢への所見を尋ね、負担金などへの依存が高まることで住民の安全・安心が後景に追いやられないかを質した。</span></li>
+          
+          <li><span class="who">令和7年度第5回定例会・代表質問・吉井安見</span><span class="ttl">原発と核のごみの是非</span><span class="sum">島根原発2号機で2029年度に計画されるプルサーマル発電について周辺3市で住民への説明や意見を聞く場が持たれていないとして住民の理解と合意なしに議論が進められることへの所見を尋ね、核のごみの最終処分場の誘致などは住民の安全・安心と両立し得ないとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年度第4回定例会・一般質問・吉井安見</span><span class="ttl">プルサーマル運転の是非</span><span class="sum">周辺3市がほとんど議論に加わらないまま進むプルサーマル運転を住民の理解と合意がない中で行うべきでないとして市の認識を尋ね、市民への説明責任の所在と説明会等の在り方、六ヶ所再処理工場が動かない現状を踏まえた核燃料サイクルからの撤退を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年度第3回定例会・一般質問・吉井安見</span><span class="ttl">使用済み核燃料の保管</span><span class="sum">島根原発内に保管されている使用済み核燃料の量と保管容量の残容量、青森県六ヶ所村の再処理工場で保管されている量と残容量を尋ね、再処理技術が確立されておらず核燃料サイクルは破綻しているとの認識と、搬出ができない現状から2号機再稼働の条件はないとの認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・後藤由美</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">福島原発事故の原因究明がないまま決められた新規制基準への所見、破綻した核燃料サイクルを止めるためにも再稼働はあり得ないとの所見、広域避難計画の内容を市民に周知徹底する具体策、再稼働の判断基準は市民の合意と市民の命と安全が完全に守れるかにあるとの所見を市長に質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・代表質問・吉井安見</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">適合性審査への合格は事故が起きないことを保証するものではないとして原発の危険性への認識と、核燃料サイクルや放射性廃棄物の最終処分の行き詰まりが将来世代に負担を負わせるとの認識、現在の避難計画の実効性とその実効性を判断する基準、立地自治体と同等となっていない安全協定の受け止めを尋ね、住民投票の実施を求める9,288筆の署名が提出される中で今議会で判断を下すのはあまりに拙速だとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">原発をめぐるエネルギー政策</span><span class="sum">原発の再稼働反対が国民多数の世論となっている現状への所見、原発を重要なベースロード電源と位置づけ2030年度までに発電の20％から22％を目指す第5次エネルギー基本計画案は改めるべきではないか、六ヶ所再処理工場の完成が再度3年延長され核燃料サイクルが破綻している今、即時原発ゼロの政治決断と再生可能エネルギーの大幅導入が必要ではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年度第2回定例会・一般質問・後藤由美</span><span class="ttl">憲法と原発への姿勢</span><span class="sum">憲法9条に自衛隊を明記すると会見した安倍首相の発言への所見と憲法を守る市長の決意、プルサーマル運転とセットになった島根原発1号機の廃止措置計画を踏まえた原発ゼロの決断、住民の暮らしと福祉を最優先する地方自治体の役割について所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年度第1回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の廃止と避難計画</span><span class="sum">原発立地並みの安全協定の見通しと障害、市でも説明会を行うよう中電へ要請すべきこと、使用済み核燃料722本を六ヶ所村へ譲り渡す計画、複合災害を踏まえた避難計画と屋内退避、島根半島にある原発の安全性、市内の再生可能エネルギーの発電量を尋ね、原発を廃止し再生可能エネルギーへ転換する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年度第2回定例会・代表質問・大国陽介</span><span class="ttl">原子力発電への姿勢</span><span class="sum">過酷事故を起こし得る原子力発電と市民生活との共存はあり得ないとして原発のない社会を目指すべきではないかと問い、島根原発1・2号機は再稼働せず廃炉にし3号機も稼働させないこと、原子炉の停止等の措置命令が可能となる安全協定の締結の早期実現を求めるべきではないかとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年度第5回定例会・一般質問・井原優</span><span class="ttl">原発の新安全基準と再稼働</span><span class="sum">原子力規制委員会の新安全基準の骨子案は軽水炉の欠陥や活断層の定義を従来のまま踏襲しており再稼働容認ではないかとして所見を尋ね、核燃料サイクルが破綻する中での市の再生エネルギーの取り組み、避難先が未定で民間任せとなっている広域避難計画の所見と、1、2号機の再稼働中止と廃炉こそ最善の防災措置ではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の安全管理体制</span><span class="sum">建設から37年が経過した島根原発1号機の再稼働を認めない立場と2号機のプルサーマル計画の中止を求めること、10キロから40キロ圏内の人口や年齢構成や生活形態など屋内退避や避難に備えた状況把握、震災と原子力災害に備えた防災計画の抜本的な見直し、島根県と中国電力との安全協定の締結の追及を尋ね、1号機の廃炉の検討を要求すべきだと質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">日本の原子力政策の見解</span><span class="sum">現在の知識と技術では原発事故は今後も起き一度起きれば甚大な被害が長期に及ぶという視点と、高レベル放射性廃棄物の貯蔵方法も場所も決まらず1万3,000トンを超える使用済み燃料が各地の原発に保管されているという視点から、今後の日本の原子力政策に対する市長の見解を問うた。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の今後のあり方</span><span class="sum">福島原発3号機と同じくＭＯＸ燃料を燃やす島根原発2号機のプルサーマル計画を事故の後も予定どおり推進すると表明した中国電力への考えとＭＯＸ燃料の危険性の認識を尋ね、3号機は建設運転を中止すべきだとして見解を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・珍部全吾</span><span class="ttl">原発と地域経済への影響</span><span class="sum">代替エネルギーを模索しながら原子力発電を徐々に縮小するという考えへの所感と、ソーラーで同じ出力を得るには膨大な土地が要ることや廃炉に伴う廃棄物の行き先が未定であることを挙げたうえで、原発事故が日本経済と当市経済に与える影響への対応、原発に対する市民の不安に対して行政が行うべき啓発、中国地方を全国への電力供給基地とする機会のとらえ方を質した。</span></li>
+          
+          <li><span class="who">平成23年度第4回定例会・一般質問・大国陽介</span><span class="ttl">原発と自然エネルギー</span><span class="sum">老朽化する1号機の廃炉や2号機のプルサーマル計画に市長が言及しない理由と市民の代表としての政治的メッセージの必要性、住民説明会で社員や関連会社に参加を要請した中国電力への抗議、島根原発で適正な運転が行われ安全管理体制が適切と言えるかを尋ね、国と中国電力に原発からの撤退の決断を要求することと、小規模な太陽光や風力や小水力による自然エネルギーの普及を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・一般質問・大国陽介</span><span class="ttl">原発の停止と撤退の要請</span><span class="sum">中国電力がすべての原発を停止させながら関西電力へ融通するほどの余力があるという事実を認めるかを尋ね、老朽化した1号機の即時廃炉と2号機のプルサーマル計画の中止と3号機を稼働させないことを意味する撤退を中国電力に要請すること、島根原発の稼働やプルサーマル計画に県民と市民の声を反映させることを質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・原隆利</span><span class="ttl">島根原発の廃炉の主張</span><span class="sum">原発発祥の地である東海村の村長が脱原発を訴えていることを挙げ、危険はその原因を取り除くことに尽きるとして、県庁所在地にあり10キロ圏内に県庁がある特殊性、運転開始から37年を経て欠陥が指摘された1号炉、2号炉のプルサーマル計画、3号炉の稼働と使用済み燃料2,278体の保管、点検漏れ511件に表れた中国電力の管理能力、宍道断層が8キロから22キロへ訂正された認識の甘さを挙げ、廃炉に向けて発言し行動する考えがないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の点検漏れ</span><span class="sum">島根原発一号機二号機の点検交換漏れと中国電力の対応についての市長の所見を尋ね、安全協定の締結など4月2日付で行った申し入れ項目の実現に向けた今後の対応を問い、二号機のプルサーマル計画の中止を求めるべきだとして所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年度第1回定例会・一般質問・大国陽介</span><span class="ttl">プルサーマル計画</span><span class="sum">中国電力が島根原発二号機で計画するプルサーマル計画について、ＭＯＸ燃料の危険性と使用済燃料の再処理の見通しが立たない問題を挙げて島根県と中国電力に中止を求めるべきだとし、隣接地として安全協定に加わる考えを質した。</span></li>
+          
+          <li><span class="who">平成18年度第1回定例会・一般質問・石川寿樹</span><span class="ttl">風力発電とプルサーマル</span><span class="sum">風車が44基から26基へ減った経過と県環境審議会の審議状況、松江市長が県知事に提出した計画変更を求める意見書の骨子、風力発電とプルサーマルのどちらが優れたエネルギー施策かの見解、プルサーマル計画の事前説明の有無、活断層やミサイル攻撃で原発事故が起きた場合の本市への影響と災害対策の備えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>国・中国電力への意見反映の仕組みとプルサーマル説明の要求</summary><p>国及び中国電力に対し、周辺自治体の意見を反映できる仕組みの構築を引き続き求める。あわせて島根原子力発電所2号機におけるプルサーマル発電の実施について、中国電力に市民へ丁寧に説明するよう求める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>原発の耐震と活断層</h3>
+    <p class="terms">語: 原発の耐震と活断層・活断層・宍道断層</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/31人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>2</b><span class="of">/36人</span><span class="q">2件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H26"><b>2</b><span class="of">/27人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/30人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/25人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年度第1回定例会・一般質問・後藤由美</span><span class="ttl">島根原発3号機の新規稼働</span><span class="sum">住民の避難計画を自治体任せにしている新規制基準への認識、中国電力管内の電力の安定供給に3号機の新規稼働は不要ではないか、点検漏れや虚偽の点検記録が続く中国電力の企業体質への認識、39キロに及ぶ宍道断層があり30キロ圏内に市民の70％にあたる12万2,500人が暮らす中での避難計画の実効性、立地自治体並みの安全協定の締結、原発に関する市民アンケートの実施を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年度第1回定例会・一般質問・大国陽介</span><span class="ttl">原発再稼働と活断層調査</span><span class="sum">大飯原発3・4号機の運転再開を認めない5月21日の福井地裁判決をどう受けとめているのか所見を尋ね、島根原発2号機の新規制基準適合性に係る審査の中止と、宍道断層と他の活断層との連動を含む徹底した活断層調査を原子力規制委員会と中国電力へ要請することを質した。</span></li>
+          
+          <li><span class="who">平成26年度第3回定例会・一般質問・井原優</span><span class="ttl">原発再稼働と避難計画</span><span class="sum">中国電力が島根原発2号機の再稼働に向けた適合性確認審査を申請し活断層の見落としの訂正を繰り返してきたとして、避難ルートに宍道断層がある中での再稼働は論外だとする所見と、30キロ圏内約39万6,000人の避難手段や経路、要援護者の避難など課題が山積する中で原発撤退こそが市民の安全だとする所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年度第5回定例会・一般質問・井原優</span><span class="ttl">原発の新安全基準と再稼働</span><span class="sum">原子力規制委員会の新安全基準の骨子案は軽水炉の欠陥や活断層の定義を従来のまま踏襲しており再稼働容認ではないかとして所見を尋ね、核燃料サイクルが破綻する中での市の再生エネルギーの取り組み、避難先が未定で民間任せとなっている広域避難計画の所見と、1、2号機の再稼働中止と廃炉こそ最善の防災措置ではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">原発事故に備える防護体制</span><span class="sum">中国電力のいう22キロより長いとする専門家の声がある宍道断層の再調査と再評価、想定される引き波の水位より取水口が上にあることへの考え、気象や地形で広がり方が変わる中での自治体を主にした同心円的な被害対策、気象観測施設とモニタリングポストと放射線測定器の早急な設置、海岸部や旧平田地区の小中学校へのヨウ素剤の配布を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・原隆利</span><span class="ttl">島根原発の廃炉の主張</span><span class="sum">原発発祥の地である東海村の村長が脱原発を訴えていることを挙げ、危険はその原因を取り除くことに尽きるとして、県庁所在地にあり10キロ圏内に県庁がある特殊性、運転開始から37年を経て欠陥が指摘された1号炉、2号炉のプルサーマル計画、3号炉の稼働と使用済み燃料2,278体の保管、点検漏れ511件に表れた中国電力の管理能力、宍道断層が8キロから22キロへ訂正された認識の甘さを挙げ、廃炉に向けて発言し行動する考えがないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年度第1回定例会・一般質問・石川寿樹</span><span class="ttl">風力発電とプルサーマル</span><span class="sum">風車が44基から26基へ減った経過と県環境審議会の審議状況、松江市長が県知事に提出した計画変更を求める意見書の骨子、風力発電とプルサーマルのどちらが優れたエネルギー施策かの見解、プルサーマル計画の事前説明の有無、活断層やミサイル攻撃で原発事故が起きた場合の本市への影響と災害対策の備えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>原発事故と安全性への不信</h3>
+    <p class="terms">語: 原発事故と安全性への不信・原発事故・福島原発・放射線・放射能</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和1年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/32人</span><span class="q">1件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="lt10" data-year="H21"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/31人</span><span class="q">1件</span></td><td class="lt25" data-year="H23"><b>5</b><span class="of">/36人</span><span class="q">8件</span></td><td class="h0"><b>0</b><span class="of">/32人</span><span class="q">0件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/29人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/29人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/30人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="lt25" data-year="R03"><b>5</b><span class="of">/28人</span><span class="q">5件</span></td><td class="h0"><b>0</b><span class="of">/28人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/27人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/28人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/25人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年度第4回定例会・一般質問・長島和孝</span><span class="ttl">原子力防災訓練の実効性</span><span class="sum">11月の原子力防災訓練に参加した市民の人数と本番ではその何倍の規模になるのか、避難者を受け入れる自治体との地域間交流があるかを尋ね、島根原発で福島原発事故並みの事故が起こったと仮定したときの風評被害も含めた年間の経済的損失額を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年度第3回定例会・一般質問・高橋扶治夫</span><span class="ttl">境港出雲道路の整備</span><span class="sum">全長70キロのうち28年間で東林木バイパスの4.2キロしか工事されていない境港出雲道路について、観光や物流、原発事故時の避難道路や自衛隊駐屯地の連携の面から市の考え方と、これまでの県や国への働きかけの進捗状況を質した。</span></li>
+          
+          <li><span class="who">令和3年度第3回定例会・一般質問・吉井安見</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">原発事故の被災地の現状の捉え方とふるさとを守るための決意、原因が特定されないままつくられた新規制基準が安全を担保するものかの認識、豪雨や地震などの複合災害を想定したときの避難計画の実効性を尋ね、市長自身による福島の現地視察の考えを質した。</span></li>
+          
+          <li><span class="who">令和3年度第5回定例会・一般質問・後藤由美</span><span class="ttl">島根原発2号機の再稼働</span><span class="sum">福島原発事故の原因究明がないまま決められた新規制基準への所見、破綻した核燃料サイクルを止めるためにも再稼働はあり得ないとの所見、広域避難計画の内容を市民に周知徹底する具体策、再稼働の判断基準は市民の合意と市民の命と安全が完全に守れるかにあるとの所見を市長に質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・一般質問・大場利信</span><span class="ttl">原発事故時の本部の退避</span><span class="sum">県が県庁業務を浜山公園の体育館で行うための環境整備費として18億8,200万円の予算を提出したとして県の情報を尋ね、市の対策本部が消防本部や佐田、多伎、湖陵、大社の各行政センターへ退避するにあたっての基本的な考えと市民や職員への広報対策、令和4年度から年額8,000万円となる原子力防災安全等対策交付金の現時点での具体的な使途を質した。</span></li>
+          
+          <li><span class="who">令和3年度第7回定例会・一般質問・木佐宏</span><span class="ttl">消防団員の公務災害補償</span><span class="sum">震災や原発事故に応援に出向いた消防団員の死亡に至る程度の公務災害への損害補償は最高限度額300万円と情報を得ているとして、日本の消防団員の公務災害補償規程の詳細と金銭的補償以外の規定、市民の生命財産を守る立場からの市長の所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年度第4回定例会・一般質問・大国陽介</span><span class="ttl">島根原発の再稼働方針</span><span class="sum">福島原発事故の原因も明らかでない中での新規制基準への所見、現在の避難計画が十分なものと考えるか、中国電力と原子力安全協定が締結されていない現状への所見を尋ね、原発即時ゼロの決断と再稼働方針への抗議・撤回、県知事への再稼働は認められない旨の意見提出を質した。</span></li>
+          
+          <li><span class="who">平成25年度第5回定例会・一般質問・大国陽介</span><span class="ttl">原発の再稼働への認識</span><span class="sum">福島事故から学んだことは原発に絶対の安全はあり得ず過酷事故が起こり得るということではないか、新規制基準をクリアすれば住民の生命と財産と暮らしを守れると考えるか、放射能の影響を受ける全ての住民が安全に避難できる計画は策定できたのか、再稼働は論外ではないか、市民の暮らしに責任を負う自治体のトップとして市民の立場で発言し行動すべきではないかを質した。</span></li>
+          
+          <li><span class="who">平成25年度第5回定例会・代表質問・井原優</span><span class="ttl">原子力発電所の再稼働</span><span class="sum">福島原発事故の教訓をどう総括し市政に生かす決意か、技術的に未完成な原発の再稼働は論外ではないか、フィルター付きベントでも被曝は避けられず汚染水対策や避難計画も盛り込まれていない新規制基準は不十分ではないか、再稼働をさせないことが最も市民の安全・安心の確保になるのではないか、立地自治体並みの安全協定の締結に向けた決意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">日本の原子力政策の見解</span><span class="sum">現在の知識と技術では原発事故は今後も起き一度起きれば甚大な被害が長期に及ぶという視点と、高レベル放射性廃棄物の貯蔵方法も場所も決まらず1万3,000トンを超える使用済み燃料が各地の原発に保管されているという視点から、今後の日本の原子力政策に対する市長の見解を問うた。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">島根原発の今後のあり方</span><span class="sum">福島原発3号機と同じくＭＯＸ燃料を燃やす島根原発2号機のプルサーマル計画を事故の後も予定どおり推進すると表明した中国電力への考えとＭＯＸ燃料の危険性の認識を尋ね、3号機は建設運転を中止すべきだとして見解を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・小村吉一</span><span class="ttl">原発事故に備える防護体制</span><span class="sum">中国電力のいう22キロより長いとする専門家の声がある宍道断層の再調査と再評価、想定される引き波の水位より取水口が上にあることへの考え、気象や地形で広がり方が変わる中での自治体を主にした同心円的な被害対策、気象観測施設とモニタリングポストと放射線測定器の早急な設置、海岸部や旧平田地区の小中学校へのヨウ素剤の配布を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・珍部全吾</span><span class="ttl">原発と地域経済への影響</span><span class="sum">代替エネルギーを模索しながら原子力発電を徐々に縮小するという考えへの所感と、ソーラーで同じ出力を得るには膨大な土地が要ることや廃炉に伴う廃棄物の行き先が未定であることを挙げたうえで、原発事故が日本経済と当市経済に与える影響への対応、原発に対する市民の不安に対して行政が行うべき啓発、中国地方を全国への電力供給基地とする機会のとらえ方を質した。</span></li>
+          
+          <li><span class="who">平成23年度第2回定例会・一般質問・木佐宏</span><span class="ttl">原発事故に備える避難道路</span><span class="sum">総務大臣発令の防災機関としての立場から、島根原発の事故に備える伊野地区の美野バイパスの避難道路としての整備について、地元主導に委ねる回答では話が進まないとして、松江市や県の動きも踏まえ行政トップレベルで決断すべきだと述べ、福島原発の実態を踏まえた新たな認識に立つ見識を質した。</span></li>
+          
+          <li><span class="who">平成23年度第4回定例会・一般質問・木佐宏</span><span class="ttl">副市長の防災への認識</span><span class="sum">美野本線を10か年計画で整備すると述べた6月議会の答弁を挙げて福島原発の事故を踏まえた防災担当副市長としての認識をただし、5月12日の豪雨で土のう50袋を求めた高齢の夫婦にコミセンまで取りに来るよう答えたことや、電車不通時の学生への情報提供、遠方から消防団員を呼び戻した土のうづくりなど平田支所の対応を質した。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・井原優</span><span class="ttl">原発からの撤退の要求</span><span class="sum">共産党島根県議団らと福島原発の被災地を視察し南相馬市や飯館村や福島市の仮設住宅で放射能汚染が住民を追い出している現状を目にしたとして、原発は一旦事故を起こすと人間の力では制御できず甚大な被害をもたらすことから、原発を撤退してこそ市民の安全と安心が守れるとして撤退を強く求めた。</span></li>
+          
+          <li><span class="who">平成23年度第7回定例会・代表質問・坂根守</span><span class="ttl">津波対策とスピーディー</span><span class="sum">日本海側でも奥尻島や秋田沖で津波の被害があったとして過去の日本海沿岸での津波の高さと新年度に完成する「津波ハザードマップ」の配布時期およびそれに基づく避難訓練の計画を尋ね、島根原発で事故が発生したときに緊急時迅速放射能影響予測ネットワークシステムの情報が十分に生かされ汚染地域や汚染状況を的確に住民に知らせられるのか、中国電力との話し合いでこの話があったか、市民全員参加の避難訓練の計画を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年度第1回定例会・一般質問・木佐宏</span><span class="ttl">原発事故の避難道路</span><span class="sum">内閣総理大臣の発令による原子力災害の避難訓練が重ねられる一方で避難道路の事業推進の姿勢が見えないとして、国道四三一号と美野本線を結ぶバイパスルートや伊野川を渡り松江市へ延ばすルートの早期実現を求め、原子力発電所の災害防災管理についての認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年度第3回定例会・一般質問・木佐宏</span><span class="ttl">国道431号のルート</span><span class="sum">旧平田市議会と地域協議会が求めた国道431号の平たん地ルートが進まない一方、地元の民意を集約せずに期成同盟会の名で40軒の立ち退きを伴う五メートル拡幅へ多額の予算がついた経緯をただし、40年放置された湯谷川沿いの立ち退きとの優先順位、原発事故時の避難道路として西部の幹線ルートをどう構想するのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成18年度第1回定例会・一般質問・石川寿樹</span><span class="ttl">風力発電とプルサーマル</span><span class="sum">風車が44基から26基へ減った経過と県環境審議会の審議状況、松江市長が県知事に提出した計画変更を求める意見書の骨子、風力発電とプルサーマルのどちらが優れたエネルギー施策かの見解、プルサーマル計画の事前説明の有無、活断層やミサイル攻撃で原発事故が起きた場合の本市への影響と災害対策の備えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成17年度第7回定例会・一般質問・高野成俊</span><span class="ttl">バス交通システムの再編</span><span class="sum">検討委員会の答申を受けて大幅なダイヤやルートの改正があるのかを尋ね、市が助成運行する路線や循環バス、福祉バス、スクールバスが混在して複雑化しているバス交通について、放射線状の路線形態ではなく複合型の循環路線でネットワークを図る必要があると質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.2.0</p>
+                    
+                    <p class="project-credit">
+                        出雲市議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
