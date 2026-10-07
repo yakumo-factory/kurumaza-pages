@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地方創生と総合戦略 — 当たった論点の全件 | 自治体くらべ</title>
+<style>
+/* 自治体くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share-part:#eef1f9;  /* shared by some of the municipalities that hold data */
+  --share-all:#d9e0f4;   /* shared by all of them (stronger than --share-part) */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×自治体（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh-part{background:var(--share-part);border-radius:3px;padding:0 4px}
+table.years li.sh-all{background:var(--share-all);border-radius:3px;padding:0 4px;font-weight:600}
+/* How many municipalities a shared bucket appeared in, printed as text beside the
+   bucket. The two tints alone cannot say "all" without the reader knowing how many
+   municipalities held data that year, so the number is written out - the same move
+   as design-convention 3 "read it by length *and* number". */
+table.years .shn{color:var(--ink-faint);font-size:.85em;margin-left:4px}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+/* The three kinds of empty cell (Req 3.5). They must not look alike, and the
+   difference has to survive colour blindness and a greyscale print, so all three
+   keep one colour and differ by marker glyph and rule style instead:
+     none-zero        measured zero - no marker, no rule
+     none-source      the minutes are not in the source - U+203B + dashed rule
+     none-unpublished the term is left out of the reports - U+25C7 + dotted rule
+   The wording differs as well, but that comes from the data (`notices`); the marks
+   here are a second channel, not the only one. Glyphs, never emoji (file header).
+
+   These three are keyed on the class alone, not on `table.years`, so the legend can
+   show the reader what the two marks mean by carrying the very same classes on an
+   empty span - the glyph is written once, here, and cannot drift from the table. */
+.none-zero{border-bottom:0}
+.none-source{border-bottom:1px dashed currentColor}
+.none-source::before{content:"\203B";margin-right:3px}
+.none-unpublished{border-bottom:1px dotted currentColor}
+.none-unpublished::before{content:"\25C7";margin-right:3px}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;min-width:30px;text-align:center;border-radius:3px;margin:0 4px;padding:0 6px;font-size:.8rem}
+.legend .c-part{background:var(--share-part)}
+.legend .c-all{background:var(--share-all);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">自治体くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">自治体くらべ</a> ／ 地方創生と総合戦略</nav>
+
+  <h1 class="page-title">地方創生と総合戦略 — 当たった論点</h1>
+  <p class="page-subtitle">
+    話題の束「地方創生と総合戦略」に当たった論点の全件です（全375件）。
+    1つの質問は、題と要約の組（論点）に分けて読み取っているため、件数は質問の数ではなく論点の数です。
+    自治体ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">127件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H26・長谷川修二</span>
+          <span class="ttl">人口問題と地方創生</span>
+          <span class="sum">日本創成会議の消滅可能性都市の指摘を踏まえた人口減少対策、人口問題に関する会議の取り組みと少子高齢化への対策、インドとの交流も生かした雇用環境の改善策を、私立大学や学部の誘致の提案も交えて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・林干城</span>
+          <span class="ttl">国の予算と市予算の関係</span>
+          <span class="sum">国の予算が地方創生に関する市長の願いにどの程度応えたかの感想、財政面の配慮の受けとめ、公共施設老朽化対策への国のスタンス、介護報酬改定の市介護保険事業への影響と地域支援事業拡充の課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・南波巖</span>
+          <span class="ttl">地方創生と人口対策</span>
+          <span class="sum">生まれる子供の数をふやすにはどういう社会になればよいかの考え、雇用確保に向けた市の産業振興の方向性、周辺地域からの流入対策と都会地からのＵＩターン対策の戦略を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・橘祥朗</span>
+          <span class="ttl">地方創生と地域経済</span>
+          <span class="sum">経済の現状認識、市内の働く人の年収状況と貧困が貧困を生む社会構造への所見、住宅リフォーム助成や中学3年生までの医療費無料化、農林水産業の振興を含む地方創生への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・宅野賢治</span>
+          <span class="ttl">地方創生のソフト事業</span>
+          <span class="sum">地方創生に向けた新交付金や来年度予算への対応と、松江市ならではの独自施策として具体的にどのようなソフト事業に取り組む方針かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・野々内誠</span>
+          <span class="ttl">地方創生の新交付金</span>
+          <span class="sum">地方創生に取り組む自治体を支援する新たな交付金が明らかになった際に速やかに活用できるよう、本市における地方創生の考え方と想定しているソフト事業を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉茂美</span>
+          <span class="ttl">地方版総合戦略と人口対策</span>
+          <span class="sum">まち・ひと・しごと創生法に基づく地方版総合戦略への今後の取り組みと中海・宍道湖・大山圏域市長会との連携の想定、８月に立ち上げた人口対策本部での議論と今後の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・林干城</span>
+          <span class="ttl">地方版総合戦略と農業振興</span>
+          <span class="sum">中海・宍道湖圏域の連携や中核市への移行以外にどのような考えで地方版総合戦略に取り組むか、国の人材派遣制度の活用、地方創生で期待される農業振興の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・津森良治</span>
+          <span class="ttl">地方版総合戦略の策定</span>
+          <span class="sum">来年度の地方版総合戦略の策定に当たっての思いと基本方針、これまでの過疎対策や地域活性化の施策の効果の検証を総合戦略の策定にどう生かすかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・長谷川修二</span>
+          <span class="ttl">地方版総合戦略への提案</span>
+          <span class="sum">木質バイオマス発電の課題と展望、ＣＬＴ建築の可能性、公共施設での木質ペレット暖房・給湯、植物工場の課題と展望、子育て世代と高齢者の移住受け入れ、デマンド型コミュニティーバスの普及を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・畑尾幸生</span>
+          <span class="ttl">定住促進策の成果検証</span>
+          <span class="sum">地方創生に向けてこれまでの定住促進策を検証すべきとして、縁結び市長の手紙の成果、Ｕ・Ｉターンフェアの具体的な成果、就職支援と卒業予定者の希望職種、ＵＩターンへの住宅支援の本市での実績と今後工夫すべき点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉茂美</span>
+          <span class="ttl">平成27年度予算編成</span>
+          <span class="sum">平成27年度予算編成について、めり張りをつけて特に力を入れる施策、地方創生で国に期待すること、消費税率引き上げ延期への見解と市の財政・政策への影響、85億円の歳出抑制を見込む中期財政計画の変更の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・南波巖</span>
+          <span class="ttl">普通交付税の減額</span>
+          <span class="sum">合併算定がえの縮小で減額となった普通交付税の内訳と想定内だったか、合併団体の需要額算定見直しの当初予算への影響額、地方創生経費1兆円の本市交付税への影響と使途を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・畑尾幸生</span>
+          <span class="ttl">総合戦略と地域成長戦略</span>
+          <span class="sum">まち・ひと・しごと総合戦略と市総合計画との関係、外部委員の参画や組織体制を尋ねるとともに、産業連関表を活用した経済分析と人材育成、地域振興部門職員の長期配置、農林水産分野の専門職員の育成、地域資源を掘り起こす主体としての支所機能の見直し、市のキャッチフレーズづくりを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・長谷川修二</span>
+          <span class="ttl">アクティブシニアの移住策</span>
+          <span class="sum">日本創成会議の提言や国の日本版ＣＣＲＣを踏まえ、地方版総合戦略の一環として若年高齢者の移住策を取り入れること、農林漁業への就業希望者への情報発信、空き家を利用した移住の推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・森本秀歳</span>
+          <span class="ttl">人口ビジョンと総合戦略</span>
+          <span class="sum">2060年に人口18万人を確保する人口ビジョンの施策が既存施策の延長にすぎないとして、これまでの施策の達成状況や成果の総括と、総合戦略を1年ごとに見直す仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川井弘光</span>
+          <span class="ttl">人口ビジョンと総合戦略</span>
+          <span class="sum">人口ビジョン策定をめぐる国の姿勢と総合戦略施策の評価、国に物申すべき点、医療・介護・保育など福祉・社会保障分野の雇用確保と労働環境の改善による雇用の質の向上、農林水産業の多様な担い手確保と兼業・小規模農家を区別した支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島進</span>
+          <span class="ttl">人口減少対策</span>
+          <span class="sum">合併後の人口減少の原因、総合戦略の年270人の社会増の達成見込みと手法、誘致企業78社の雇用人数と税収・経済波及効果、本社機能の誘致、地元企業支援の軸と商工会議所との連携、移住定住のワンストップ窓口の人材、人材確保の対象業種と助成制度のルール、介護士・保育士・看護師の子の保育所優先入所、「新しい人の流れ」の意味を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">人口減少対策と地方創生</span>
+          <span class="sum">人口減少・地方創生に向けた市長のリーダーシップ、人口減少を前提とした政策の考え方、日本創成会議の高齢者移住提言への考えの変化と日本版ＣＣＲＣの提案、地方版総合戦略が拙速や自治体間のサービス競争に陥る懸念を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野々内誠</span>
+          <span class="ttl">公民館の拠点機能</span>
+          <span class="sum">地方創生に向け公民館の役割を見直す国の動きを踏まえ、公共施設適正化計画素案で統合の検討対象とされた東出雲町内の４公民館について、本市の公民館の拠点機能の考え方と小学校区に機能を残す考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・岩本雅之</span>
+          <span class="ttl">地域包括ケアシステム</span>
+          <span class="sum">保健・医療・福祉の連携による地域包括ケアシステムの概要、総合戦略と中核市移行での位置づけと役割、高齢者施設サービス事業者を含めた連携と施設のたらい回しをなくすコンシェルジュ制度、0歳から100歳までを対象とする包括的な取り組みへの拡大を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">地方創生と松江版総合戦略</span>
+          <span class="sum">松江版総合戦略の進捗状況と基本となる柱、新市まちづくり計画や総合計画との関係、日本創成会議の高齢者地方移住案への受けとめと施設・人材や財政面での対応、規制を外す特区の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川島光雅</span>
+          <span class="ttl">地方創生の主要施策</span>
+          <span class="sum">主要施策の5つのステップに沿い、松江北道路と宍道中央線、出雲空港の新路線と大口町との交流、やまなみ街道の効果と高速道路無料化、松江駅・乃木駅周辺の整備、商工会への助成と経営発達支援、学力テスト結果の捉え方、統合医療のモデル地域、大橋川改修と白潟・東本町のまちづくりや大橋のかけかえを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・篠原栄</span>
+          <span class="ttl">地方創生の総合戦略</span>
+          <span class="sum">国の財政措置の役割と新型交付金の地元負担への地方財政措置、332事業の特徴、県市長会の人口減少対策の要望、ボトムアップで深化する総合戦略、教育環境の視点からの人口減少の克服、情報処理推進機構の誘致のアピール、地方版政労使会議、人口ビジョン実現への市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・新井昌禎</span>
+          <span class="ttl">地方創生の進め方</span>
+          <span class="sum">地方創生では失敗を恐れず挑戦すべきとの立場から結果重視の考え方への所見と、財政インセンティブに依存する仕組みを踏まえた単年度評価の見直し、10年後など長期の目標や目安の設定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・南波巖</span>
+          <span class="ttl">地方創生への取り組み姿勢</span>
+          <span class="sum">地方創生の政治的効能と拙速・無節操・人口の取り合いといった副作用への所見と今後の取り組み姿勢、コンパクトシティーや公共施設適正化との３点セット、関連予算の国全体と松江市分、2060年に約18万人とする人口目標、出生率向上への国への要望、近隣自治体との共生と人口のダム機能の関係を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野々内誠</span>
+          <span class="ttl">学校図書館活用教育</span>
+          <span class="sum">全国学力テストの結果と読書推進の関係への考え、学校図書館活用教育の現状、学校図書館と市立図書館の図書購入費の現状、村を捨てる学力についての地方創生や共創の観点からの市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・片寄直行</span>
+          <span class="ttl">市長の政治姿勢</span>
+          <span class="sum">安保法制案を違憲とし取り下げの意見を上げるべきこと、年金情報流出を踏まえた市の情報セキュリティー対策とマイナンバー制度中止、総合戦略での農家独自支援と市職員の非正規雇用改善、日本版ＣＣＲＣの評価と国の安定的財政措置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・片寄直行</span>
+          <span class="ttl">市長の政治姿勢と地方創生</span>
+          <span class="sum">安保関連法や首相の改憲発言、トリクルダウン型政策、TPPへの市長の所見、中小零細企業振興条例と住宅リフォーム助成の実施、子どもの医療費無料化の中学生までの先行実施、非正規の幼稚園教諭・保育士を正規扱いした場合の試算と問題解決の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田中明子</span>
+          <span class="ttl">市長の欧州視察の成果</span>
+          <span class="sum">ミラノ国際博覧会への出展、フランスでの地域の特色を生かしたまちづくり、オランダでのスマートアグリ見学など5月の欧州視察で、地方創生に結びつく成果が得られたかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・篠原栄</span>
+          <span class="ttl">平成28年度予算と地方創生</span>
+          <span class="sum">平成28年度予算と国の補正予算・本予算との連動、共創のパートナーを広げる施策、地方創生加速化交付金や地方創生推進交付金等の活用、一般財源の見込みの国や中期財政見通しとの差異、転入者増加対策、マイナス金利の財務活動への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">平成28年度予算編成</span>
+          <span class="sum">財源が厳しい中で平成28年度予算編成に当たり力点を置いた点、総合戦略策定時の市民の意見とその反映、日銀のマイナス金利による市財政への影響、任期最後の1年の市政のかじ取りで予算に特に反映したものを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">平成28年度予算編成</span>
+          <span class="sum">平成28年度と将来の財政事情の見方、市税総額の中期財政計画等との比較と今年度の見込み、総合戦略に基づく94事業の重点と人口減少対策の予算額、多くの事業を抱える中での職員数や人材の確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・橘祥朗</span>
+          <span class="ttl">拠点連携型まちづくり構想</span>
+          <span class="sum">拠点連携型まちづくり構想の検討状況と今後の進め方、国の地方創生との整合性、10の地域拠点のイメージと住民の考えとの合致、地域の受け皿や組織のあり方、中心拠点の商店街再生のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・新井昌禎</span>
+          <span class="ttl">教育の視点での地方創生</span>
+          <span class="sum">教育の視点から見た地方創生として、道徳の検定教科書の導入と教科書採択のスケジュール、文部科学省の教科書採択に関する通知の目的、越前市の小学校英語教育への所見と外国語活動の検討状況、地域スポーツクラブ関係者への空き家を活用した住宅支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・貴谷麻以</span>
+          <span class="ttl">松江らしい地方創生と共創</span>
+          <span class="sum">島根半島の広域振興やジオパーク、隠岐との連携、松江城を中心とした市民団体の活躍の発信と共創の計画、水燈路の展開、海外との連携、若い市職員と市民の協働の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川島光雅</span>
+          <span class="ttl">瑞風でのまちおこし</span>
+          <span class="sum">平成29年度から運行する豪華列車「瑞風」の宍道駅停車を生かした宍道周辺のにぎわい創出を総合戦略に盛り込む余地と、宍道駅停車の地域づくりでの位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・新井昌禎</span>
+          <span class="ttl">総合戦略と人口ビジョン</span>
+          <span class="sum">人口減少によって松江市で懸念される具体的な問題点、行政と企業・市民との問題意識や危機感の共有化の方策、332事業候補の業績評価でのPDCAサイクルの回し方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">総合戦略と住民自治</span>
+          <span class="sum">総合戦略の策定に当たり、海士町や邑南町など人口が増えた中山間地域の実践に学ぶこと、公民館単位で住民が地域を点検・評価して5カ年計画をつくる住民自治、中小企業振興条例の制定、農業・食料・エネルギーの地域内循環、原発を動かさない前提での戦略づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・長谷川修二</span>
+          <span class="ttl">総合戦略と公共交通政策</span>
+          <span class="sum">高齢ドライバーの免許返納や買い物難民、通学環境を踏まえ、ジャンボタクシーなど細かな交通や中心部と周辺を結ぶ交通の充実を地方版総合戦略に積極的に取り入れるべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・橘祥朗</span>
+          <span class="ttl">総合戦略と市民要望の実現</span>
+          <span class="sum">総合戦略に関わり、住宅リフォーム助成制度の創設、中学卒業までの子どもの医療費助成、多子世帯の児童クラブ・保育料の負担軽減、病児保育利用料の引き下げ、木造住宅耐震診断助成の基準撤廃、低所得者向け灯油購入助成などの要望の取り扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・畑尾幸生</span>
+          <span class="ttl">総合戦略と第１次産業振興</span>
+          <span class="sum">第１次総合戦略で第１次産業振興に取り組むに当たり基礎とする生産数量や販売額などの数字、域内消費による拡大循環の現状、域外で勝負できる産品の生産・販売目標や流通・消費地対策と事業主体を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">総合戦略の教育・子育て施策</span>
+          <span class="sum">第１次総合戦略が学力テストの点数向上を前面に出していることへの教育委員会の見解と、年間出生数2,000人の達成に向けた中学卒業までの医療費無料化、多子世帯の保育料軽減の対象拡大、放課後児童クラブの改修計画と６年生までの受け入れ、病後児保育料の値上げ撤回を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・津森良治</span>
+          <span class="ttl">総合戦略の施策の方向性</span>
+          <span class="sum">政府系機関の地方移転がゼロ回答だった国の姿勢への考えと今後の要請、国レベルの経済的負担軽減措置とは何か、拠点連携型まちづくりの拠点と連携の青写真、都市計画マスタープラン改定のスケジュールと方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田中明子</span>
+          <span class="ttl">総合戦略の策定と周知</span>
+          <span class="sum">新規86事業を含む163事業を計画した第１次総合戦略について、策定に当たり心がけたこと、目玉となる事業、市民への周知方法、本市に配分される地方創生先行型交付金の金額を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田中明子</span>
+          <span class="ttl">2017年度予算と国の施策</span>
+          <span class="sum">新年度予算が国の施策にどう呼応するか、給付型奨学金や通級指導の教職員定数改善など教育費、保育士・介護職員の処遇改善と待機児童の見通し、地方創生交付金の活用と意見交換会、行政と民間の働き方改革を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・津森良治</span>
+          <span class="ttl">ソロ社会と地域包括ケア</span>
+          <span class="sum">2025年問題に向け開設する在宅医療・介護支援センターの内容を問い、2035年に単身世帯が主流となるソロ社会が人口ビジョンと総合戦略にどう反映されているか、今後の施策やソロ社会を生き抜く教育を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・南波巖</span>
+          <span class="ttl">地域版総合戦略の意見交換会</span>
+          <span class="sum">地域版総合戦略の策定に向け全公民館を回って行っている意見交換会で出された地域の意見と、今後の進め方や目指すところを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・南波巖</span>
+          <span class="ttl">地方創生と移住推進</span>
+          <span class="sum">社会増の要因分析と若者流出を防ぐ雇用戦略、県や圏域と連携した移住推進策、松江暮らしモデルの提示、松江版ＣＣＲＣによる高齢者移住の状況、職員が同じ方向を向く体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・比良幸男</span>
+          <span class="ttl">地方創生の4つの視点</span>
+          <span class="sum">施政方針の地方創生の4つの視点について、市民運動化で責任の所在が曖昧になる点への市長の決意、圏域連携とあわせた島根県との関係、線引き制度の見直しによる雇用創出拠点づくり、インドとの連携の目標を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・畑尾幸生</span>
+          <span class="ttl">地方創生の総合戦略</span>
+          <span class="sum">一億総活躍プランの陰で地方創生が後退していないかへの市長の見方、合計特殊出生率1.69の評価、高校生の県内外への就職や進学による転出入を踏まえた社会動態への対策、地方創生を担う専門人材の育成への方針と決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・片寄直行</span>
+          <span class="ttl">市長の政治姿勢</span>
+          <span class="sum">ＴＰＰ批准を急ぐ政府の姿勢、核兵器禁止条約の交渉決議への日本の反対、公務員の憲法遵守、地方創生としての産業振興、美保基地での米軍の権限、決算審査意見の予算反映、朝日ヶ丘団地の住民アンケートを含む松江北道路計画について所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・畑尾幸生</span>
+          <span class="ttl">総合戦略と農業政策</span>
+          <span class="sum">松江市の新規就農者が12人にとどまる原因、米の生産を中心とする農業法人14組織の現状の評価と育成策や法人化の取り組み、新規就農者のうちUIターン者の減少の評価と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・森本秀歳</span>
+          <span class="ttl">総合戦略の市民への浸透</span>
+          <span class="sum">市民運動として進める総合戦略が市民に浸透していないとして、各地域や団体向けの研修会やセミナー、取り組み事例の発表会を開いて広めることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・岩本雅之</span>
+          <span class="ttl">総合計画の策定</span>
+          <span class="sum">総合戦略と総合計画の違いや人口ビジョン見直しの影響など市民の関心を踏まえ、今回の総合計画の策定で市民に知ってもらいたいことと過去の総合計画との相違点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・南波巖</span>
+          <span class="ttl">中核市松江の将来展望</span>
+          <span class="sum">中核市移行を地方創生の武器と捉え、市長の意気込みと将来展望、職員や市民・子どもたちへの意識の浸透、社会人採用者の待遇や管理職の育成を含む職員の人材育成と人事評価の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・石倉徳章</span>
+          <span class="ttl">人口減少防止とＣＣＲＣ</span>
+          <span class="sum">人口を18万人台にとどめるとする総合戦略への自信と総合戦略事業の目的達成見込み、東京圏の元気な高齢者の移住を図る日本版ＣＣＲＣ構想への早期の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・南波巖</span>
+          <span class="ttl">圏域市長会の活動</span>
+          <span class="sum">圏域版総合戦略を先駆けて策定した中海・宍道湖・大山圏域市長会の動きが期待外れだとして、事務局の独立で強化した体制を生かした思い切った今後の活動を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・長谷川修二</span>
+          <span class="ttl">地域版総合戦略への支援</span>
+          <span class="sum">地域版総合戦略を財源や人員、発信力の面で後押しし、似通った取り組みは他地域や圏域と連携し行政と協働で進めるための支援策の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・南波巖</span>
+          <span class="ttl">地方創生の大局観</span>
+          <span class="sum">国土や地域の大がかりな再編成が進んでいるとする議員の地方創生論について、国の動向を含めた大局観からの市長の見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・南波巖</span>
+          <span class="ttl">地方創生への基本姿勢</span>
+          <span class="sum">地方創生に取り組む松江市としての基本的な考え方やスタンス、特徴ある取り組み状況を含めた意気込みを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津照雄</span>
+          <span class="ttl">地方創生への市の対応</span>
+          <span class="sum">衆院選後の国の生産性革命・人づくり革命を踏まえ、地産地消による農林水産業・中小企業振興、圃場整備や米直接支払交付金廃止への市独自策、有害鳥獣対策、地域商社の設立、保育人材確保、地方消費税配分見直しの影響額を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島良信</span>
+          <span class="ttl">地産地消への市長の思い</span>
+          <span class="sum">再選した市長が所信表明で人口減少対策の鍵に据えた地産地消について、総合戦略と総合計画の実現に市民の協力を求める市長の思いをわかりやすく説明するよう問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・篠原栄</span>
+          <span class="ttl">所信表明と第１次総合戦略</span>
+          <span class="sum">人材確保アクションプラン策定の背景と狙い、婚姻数増加の見通し、年度途中を含む待機児童解消の決意と保育所整備、民間を活用した放課後児童クラブ対策、県との教員人事権移譲の協議状況、品格を高めるＪＲ松江駅前再整備の内容とスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・宅野賢治</span>
+          <span class="ttl">民泊への考え方とルール</span>
+          <span class="sum">民泊新法の成立を受け、民泊に対する市の基本的スタンス、松江らしい良質な宿泊サービスとするための市独自のルール構築、総合戦略に掲げた古民家民泊事業の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・川島光雅</span>
+          <span class="ttl">総合戦略と人口増対策</span>
+          <span class="sum">転入元を明確にした他自治体へのプロモーション、中小企業・小規模企業への効果的な支援の実績と振興基本条例の制定時期、しんじ学園台団地の市としての積極的なPRなど、人口増対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・南波巖</span>
+          <span class="ttl">総合戦略の進捗と展開</span>
+          <span class="sum">第１次総合戦略の中間時点での進捗と計画修正の有無を問い、観光業の強化、建設業等の担い手確保と経営多角化・住宅助成の事業メニュー、地方移住の推進、若い世代の経済的安定と子育て支援、観光の経済波及効果を高める取り組みや地ビール館の活用、産業観光部分離の機構改革の検証を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・細木明美</span>
+          <span class="ttl">農山漁村の定住対策</span>
+          <span class="sum">農山漁村への人口移動と定住対策の考え、地域版まちづくり総合戦略への市長の意気込み、宅地や空き家の情報を集め発信する仕組みづくり、指定地域での土地取得への補助や若い世帯向け賃貸住宅の整備の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島伸夫</span>
+          <span class="ttl">中枢中核都市と圏域連携</span>
+          <span class="sum">中枢中核都市に選定された松江市の取り組み姿勢と地方創生の先頭に立つ積極的な政策、中海・宍道湖・大山圏域での連携中枢都市圏形成への前向きな検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・細木明美</span>
+          <span class="ttl">地域版まちづくり総合戦略</span>
+          <span class="sum">地域版まちづくり総合戦略の予算執行状況と使途、美保関町のアンケートなどを踏まえた実現に向けた取り組み、各支所や公民館へのまちづくり総合戦略推進室の設置、行政の立ち位置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・南波巖</span>
+          <span class="ttl">地方創生の取り組み</span>
+          <span class="sum">市の最近５カ年の転入転出数の状況と全国での順位、国のわくわく地方生活実現政策に掲げるＵＩＪターンや地域おこし協力隊、外国人材の活用など６項目への取り組み状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・野津照雄</span>
+          <span class="ttl">新年度予算と国の財政対策</span>
+          <span class="sum">国の地方財政対策が市予算へ与えた影響と制度改正への懸念、新年度の予算編成方針、総合戦略の成果と課題、社会資本整備総合交付金の交付状況、地方創生拠点整備交付金の使いにくさを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・野々内誠</span>
+          <span class="ttl">熱中小学校の導入</span>
+          <span class="sum">人材と交流人口をふやす地方創生の取り組みとして、企業経営者らが講師を務める大人の社会塾である熱中小学校を本市でも取り入れることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・篠原栄</span>
+          <span class="ttl">第１次総合戦略の総括</span>
+          <span class="sum">最終年を迎える第１次総合戦略について、２つの挑戦や10の重点プロジェクトに取り組んできた期間の総括と、約43億円を予算化した最終年に対する意気込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・新井昌禎</span>
+          <span class="ttl">第１次総合戦略の評価</span>
+          <span class="sum">第１次総合戦略の５つの基本目標の進捗評価と数値目標、平成31年度の見直し点、出生数2,000人・社会増270人の２つの挑戦に対する４年間の成果と評価、次期総合戦略の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・新井昌禎</span>
+          <span class="ttl">総合戦略の人口目標</span>
+          <span class="sum">第１次総合戦略で掲げた出生者数年間2,000人・社会増年間270人の目標に対する策定以降の出生者数と社会増の推移、目標を下回っている場合の具体的な対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・川島光雅</span>
+          <span class="ttl">総合戦略の実績と地域事業</span>
+          <span class="sum">第１次総合戦略の５つの基本目標と10の重点プロジェクトの達成度と残る１年の取り組み、地域版まちづくり総合戦略事業の実施件数と予算、支所の地域振興補助金の継続を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・野津直嗣</span>
+          <span class="ttl">関係人口の創出</span>
+          <span class="sum">松江に居住していなくても応援してくれる人との関係人口の構築に向け、人のプラットホームづくりを土台とした基本的な考え方と施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・宅野賢治</span>
+          <span class="ttl">関係人口をふやす施策</span>
+          <span class="sum">関係人口の重要性が注目される中、ふるさと納税者をふるさと市民に認定するなど、関係人口をふやすための今後の施策展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉徳章</span>
+          <span class="ttl">人口減少対策と若者定着</span>
+          <span class="sum">若者・若い女性の流出防止に向けた第２次総合戦略の意気込み、県内学生枠の拡大や県内就職の働きかけとＵＩターンの状況、就職氷河期世代の専用窓口、関係人口、石見部や山間部の活性化への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島良信</span>
+          <span class="ttl">合併後のまちづくり</span>
+          <span class="sum">合併から14年半のまちづくりの進捗と課題、昭和の合併以来の周辺地域を含む融合一体化、第２次総合戦略への考え、公民館区別の人口減少と高齢化の現状認識と対策、拠点づくりと将来像を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・森脇勇人</span>
+          <span class="ttl">国の交付金と国土強靱化</span>
+          <span class="sum">中海スポーツパーク事業の不採択を踏まえた今後の取り組みと地方創生推進交付金・拠点整備交付金への所見、県や県内市町村の事業申請・採択状況、国土強靱化地域計画の策定状況と今年度の事業予算を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・新井昌禎</span>
+          <span class="ttl">地方創生と圏域連携</span>
+          <span class="sum">若い世代を奪い合う地方創生には合理性がないとして、中海・宍道湖・大山圏域が自治体間競争に陥らず連携し、限られた資源や人材を有効に活用して地方創生を実現することへの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島良信</span>
+          <span class="ttl">地方創生拠点整備交付金</span>
+          <span class="sum">国の補正予算による地方創生拠点整備交付金について、活用できる施設の要件を挙げて候補施設に対する市の認識と、事前の調査・計画による申請準備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・森脇勇人</span>
+          <span class="ttl">市職員の人材育成</span>
+          <span class="sum">地方創生交付金を活用した「選ばれるまち　松江」人財育成ワーキンググループについて、現在の進捗状況と出された政策、今後の事業予算化の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・森脇勇人</span>
+          <span class="ttl">来年度予算編成の考え方</span>
+          <span class="sum">会派の重点要望8項目・一般要望25項目や各種団体・自治会の要望を踏まえ、任期最終年かつ第２次総合戦略の初年度となる来年度予算編成に向けた市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・橘祥朗</span>
+          <span class="ttl">東京一極集中と人口減少</span>
+          <span class="sum">第１次総合戦略での若者・女性向けの人口減少対策の効果と課題の総括と、人口減少対策と東京一極集中問題についての市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・細木明美</span>
+          <span class="ttl">松江の学校教育の充実</span>
+          <span class="sum">小中一貫教育10年の成果と課題、義務教育学校の変化、痛ましい事件への受けとめ、保幼小連携、教員の充足と働き方改革、チーム学校、新学習指導要領による変化、教育長の教育ビジョン、全国学力調査の公表の功罪と成果、学力の意義、よこの一貫教育とコミュニティ・スクールへの移行、親になるための教育、総合戦略に向けた考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中明子</span>
+          <span class="ttl">第１次総合戦略の評価</span>
+          <span class="sum">出生数と社会増の２つの挑戦が未達に終わった第１次総合戦略について５つの基本目標ごとの評価と、若い女性の転出者数と理由、第２次に向けた施策、市民と危機意識を共有する働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・長谷川修二</span>
+          <span class="ttl">第２次総合戦略</span>
+          <span class="sum">第１次総合戦略の評価と第２次総合戦略策定の基本的な考え方、明石市の例を踏まえ教育や子育てで選択と集中を図るとすれば何をもってなすべきかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・宅野賢治</span>
+          <span class="ttl">第２次総合戦略</span>
+          <span class="sum">国の基本方針にあるＳＤＧｓやＳｏｃｉｅｔｙ5.0など新たな観点の取り入れ方と、県と連携しつつ松江の強みと弱みを踏まえた独自の事業や施策の構想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・森本秀歳</span>
+          <span class="ttl">第２次総合戦略の策定</span>
+          <span class="sum">第１次総合戦略の検証が不十分ではないかとの見解、第１次と同じ出生数年間2,000人の目標値の根拠、特定地域づくり事業協同組合を設ける地域維持特別措置法案の受けとめを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉徳章</span>
+          <span class="ttl">観光政策とインバウンド</span>
+          <span class="sum">観光入り込み客の傾向と今後の目標、インバウンド施策の方針と当面の課題、出雲空港の格安新路線を活用した交流や関係人口の増加による東京一極集中の是正への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・太田哲</span>
+          <span class="ttl">ＳＤＧｓと第２次総合戦略</span>
+          <span class="sum">第２次総合戦略にＳＤＧｓの理念を取り入れる理由、職員研修と職員・市民への周知、ＳＤＧｓ未来都市としての取り組み、アイコンを課や係の表示板・名刺に活用する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・野津直嗣</span>
+          <span class="ttl">コロナ禍の経済対策</span>
+          <span class="sum">国の第３次地方創生臨時交付金を見据えた早期の支援策の組成と、スナックやバーなど接待を伴う飲食業、障がい者支援の作業所、小児科医やアパレルショップなど隠れた影響を受ける業態への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・河内大輔</span>
+          <span class="ttl">地方創生臨時交付金の活用</span>
+          <span class="sum">島根県に171億4,000万円、松江市に27億5,000万円の交付が決定している地方創生臨時交付金の県と市の活用状況と、国の第３次補正予算の動向の予測を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・畑尾幸生</span>
+          <span class="ttl">安倍政権の評価</span>
+          <span class="sum">安倍首相の辞任表明を受け、東京一極集中の是正など地方創生の課題が不十分なまま残ったとして、自治体の長としての安倍政権への評価と新首相に一番望むことを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・細木明美</span>
+          <span class="ttl">移住推進と空き家対策</span>
+          <span class="sum">総合戦略策定後の移住者数と全国・県内他市との比較、移住施策の内容と評価、空き家バンクの登録が少ない理由、市街化区域の空き家増加と調整区域の住宅開発、都市計画区域外の空き家のバンク掲載、住みたい田舎ランキングに回答しなかったことへの見解、家財処分費用の支援を含む戦略的な空き家対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・畑尾幸生</span>
+          <span class="ttl">第1次総合戦略の検証</span>
+          <span class="sum">第1次総合戦略について令和元年・2年の人口増減と目標との乖離の要因、出産適齢期女性の減少への対応、減少傾向にあるUIターン者を増やす特色ある施策のアイデアを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・畑尾幸生</span>
+          <span class="ttl">総合計画の見直し</span>
+          <span class="sum">令和3年度で終期を迎える総合計画と令和2年度から始まった第2次総合戦略の計画期間に2年のずれがあることから、期間と関係性を見直す必要はないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・三島伸夫</span>
+          <span class="ttl">財政調整基金と臨時交付金</span>
+          <span class="sum">今年度の財政調整基金のコロナ対策での使用と年度末残高の見込み、指定管理料補填の予測、積立ての目標額とその根拠、地方創生臨時交付金の第３次の見通し、県の財政調整基金や臨時交付金の未使用分からの市町村への配分予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">コロナ交付金とワクチン接種</span>
+          <span class="sum">地方創生臨時交付金の検証と他自治体の充当状況、県市の配分総額と新年度の事業、県との調整、令和２年度事業の効果と返還の有無、ワクチン予約の混乱への配慮、集落単位の接種ができない理由、職域接種への働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川島光雅</span>
+          <span class="ttl">人口減少と地方創生</span>
+          <span class="sum">人口の自然増減・社会増減が目標を大きく下回った原因と対策、総合計画策定に当たっての目標値の見直し、ＰＤＣＡサイクルの作用とそれに代わるチェック遂行手法の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">地方創生臨時交付金</span>
+          <span class="sum">コロナ対策の財源となる地方創生臨時交付金の次の配分額の予想と昨年・今年の額を問い、国の支援が届かないところやアフターコロナを見据えた成長の土台づくりに焦点を合わせるべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">市周辺部の地域振興</span>
+          <span class="sum">朝酌や本庄、持田、秋鹿など市周辺部の活性化に向け、地域版総合戦略関連の予算事業をもっと活用してもらう施策と、地域振興課や公民館が連携したモデル地域づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・細木明美</span>
+          <span class="ttl">支所の人員配置</span>
+          <span class="sum">兼務や人員削減で日々の業務もままならない支所の在り方と今後の人員削減の考えを問い、過疎計画や地域版まちづくり総合戦略を進めるため地元出身の若手職員を支所に配置するよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・森脇勇人</span>
+          <span class="ttl">施政方針と地方創生</span>
+          <span class="sum">令和４年度へ向けた具体策と市長の思い、海外友好都市との新たな関係づくり、コロナ禍での事業の開催見通し、中海・宍道湖・大山圏域のリーダーとして新幹線誘致や湖の振興に取り組む意気込み、国・県・市の中での各地域の在り方への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">納入業者等へのコロナ支援</span>
+          <span class="sum">まん延防止措置で協力金の対象外となった納入業者や関連事業者への支援の必要性と、地方創生臨時交付金の残額を踏まえた市の政策判断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・米田ときこ</span>
+          <span class="ttl">観光政策と周遊ルート</span>
+          <span class="sum">地域の古くからの行事を地域版まちづくり総合戦略に位置づけ観光パンフレットに載せることと、観光施設の周遊ルートの作成や貸し自転車・シェアカーなど多様な移動手段の確保について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・小澤一竜</span>
+          <span class="ttl">関係人口と都市の発信</span>
+          <span class="sum">コロナ禍以降のＵＩターン者数の推移、関係人口創出の手段としてのマッチングサイト「おてつたび」との連携、テレビやネット配信番組、映画のロケ地、ＳＮＳのインフルエンサーとのコラボなどへの依頼や営業の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・太田哲</span>
+          <span class="ttl">コロナ禍の経済対策</span>
+          <span class="sum">松江市事業復活支援金の申請状況と見通し、当初推計1,520件との差異への見解と財源の使い道、地方創生臨時交付金の松江市への配分額、物価高騰に対するさらなる経済対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・長谷川修二</span>
+          <span class="ttl">人口減少対策の見直し</span>
+          <span class="sum">総合戦略のアップデートに向けて、松江市と圏域における人口減少対策の見直しと外部調査についての所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・野津直嗣</span>
+          <span class="ttl">地方創生交付金の活用</span>
+          <span class="sum">地方創生推進交付金や拠点整備交付金の活用で担当部と調整中の政策、外部・民間への企画立案調整委託の予算拡充、スタートアップや公共・商業・観光施設の改修への活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・野津直嗣</span>
+          <span class="ttl">地方創生拠点整備交付金</span>
+          <span class="sum">マリンパーク多古鼻、カラコロ工房、フォーゲルパーク、大森の湯、小泉八雲の研究拠点施設などに地方創生拠点整備交付金の活用を視野に入れ、国の有利な支援があるうちに検討に入るべきかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・岩本雅之</span>
+          <span class="ttl">関係人口の創出</span>
+          <span class="sum">縁雲などを通じてつながりやコミュニティーが生まれている中で、関係人口の創出に向けて松江式ワーケーションやノマドワークに期待することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・小澤一竜</span>
+          <span class="ttl">ＮＦＴによる関係人口創出</span>
+          <span class="sum">長岡市旧山古志村のデジタル住民や上士幌町のふるさと納税返礼品の例を挙げ、多くのアートクリエーターがいる松江の特色を生かしＮＦＴを活用した関係人口の創出に取り組むことを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・長谷川修二</span>
+          <span class="ttl">人口減少と共存する方法</span>
+          <span class="sum">合計特殊出生率の低下を受けた総合計画・総合戦略の練り直し、人口増の施策を続けるか人口減少との共存を受け入れるか、定住人口の維持に向け大企業や工場を誘致する専門部署と人員の配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・岩本雅之</span>
+          <span class="ttl">公民連携の在り方</span>
+          <span class="sum">地方創生の鍵となる公民連携について市が目指す在り方と、公民連携の推進が施策にもたらす変革、施策と連動して公民連携に対応する窓口の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・川島光雅</span>
+          <span class="ttl">合併20年の総括</span>
+          <span class="sum">旧町村の施設閉鎖・譲渡による活力の喪失、地方創生での雇用創出、出生数の減少への危機感、小規模校や複式学級を含む教育環境の維持、外国人労働者の現状と多文化共生への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・津森良治</span>
+          <span class="ttl">地方創生の取組の評価</span>
+          <span class="sum">人口戦略会議の消滅可能性自治体の推計を受け、約16億5,000万円を投じた本市の地方創生事業が人口流出対策と東京一極集中の是正にどう効果があったかの評価と、国の一極集中是正の取組への市長の評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉徳章</span>
+          <span class="ttl">地方創生５本柱への見解</span>
+          <span class="sum">石破内閣の地方創生の５本柱のうち、若者・女性に選ばれる地域づくり、農林水産業等の地方イノベーション、広域連携の抜本的強化の３点について市長の見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・小澤一竜</span>
+          <span class="ttl">二地域居住の推進</span>
+          <span class="sum">松江式ワーケーションを通じた二地域居住について、特定居住促進計画の策定・検討状況、二地域居住等支援法人の指定と特定居住促進協議会の設置状況、今後の課題と展望、市域内での二地域居住・多拠点生活による関係人口の創出への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐藤和彦</span>
+          <span class="ttl">公民館の在り方</span>
+          <span class="sum">公民館について、職員の処遇改善を求めつつ公民館職員の在り方への教育長の見解と、地方創生2.0やＡＩの講習などを公民館単位の社会教育として実施する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・岩本雅之</span>
+          <span class="ttl">官民連携の将来構想</span>
+          <span class="sum">限られた財源の中で市民と共に社会資源・地域資源を生み育てる視点から、国の地方創生の未来投資を見据えた官民連携体制の構築や総合施策の実現に向けた今後の在り方と将来構想を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉徳章</span>
+          <span class="ttl">少子化と関係人口の対策</span>
+          <span class="sum">若者・女性の職場での登用や子育て支援の拡充など少子化・人口減少防止対策への市長の所見と、周辺部で関係人口による地域活性化を試みることへの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐藤和彦</span>
+          <span class="ttl">総合計画と長期ビジョン</span>
+          <span class="sum">地域版まちづくり総合戦略と総合計画や中心市街地エリアビジョンとの関連性を尋ね、2030年以降20年後から50年後の松江市のビジョンと、新幹線・空港・8の字ルート・水上交通などを含むコンパクト・プラス・ネットワークの将来像を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉徳章</span>
+          <span class="ttl">関係人口増加による人口対策</span>
+          <span class="sum">岡山県西粟倉村の100年の森構想やローカルベンチャー創出による地域振興の事例を挙げ、関係人口の増加を通じた周辺部の人口減少対策や地域特性を生かした活性化策を6月議会に続いて質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">71件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H26・中島隆夫</span>
+          <span class="ttl">地域を担う子供たちの育成</span>
+          <span class="sum">地方創生を担う人材育成の必要性と課題、本市のキャリア教育の内容と全体計画・評価と成果、キャリアノートの全児童・生徒への配付と活用、道徳の教科化の捉え方と地域を愛する力を養う道徳教育を尋ね、人口推計を用いたワークショップ、教員の研修、幼小中連携の指導計画の策定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・原田貴与子</span>
+          <span class="ttl">地域消費喚起型と先行型の違い</span>
+          <span class="sum">予算委員会に付託される案件のうち、地域消費喚起・生活支援型と地方創生先行型の違いを尋ね、地域消費喚起・生活支援型の使い方が既に決められているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・上廻芳和</span>
+          <span class="ttl">地方創生と人口対策</span>
+          <span class="sum">ＵＩターン者の定住には住む所と職場が大切との観点から、トップセールスの今後の考え方、市内事業所への企業訪問による事業拡大と雇用増、企業誘致に向けた工業団地の考え方、空き家調査の分析結果と平成27年度に確保する空き家の目標、市外からの通勤者の意見把握、卒業生が地元に残った場合の特典制度、人口対策の考え方と目標数値を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・嶋田豊昭</span>
+          <span class="ttl">地方創生と人口減少対策</span>
+          <span class="sum">地方創生法の成立をどう受けとめどう取り組むのかについて、法律の概要と対応、既に本部を設けた人口減少対策の状況、目標人口や雇用の創出など課題と対策の基本的な方向、人口減少対策を担う市長の意気込みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・原田貴与子</span>
+          <span class="ttl">地方創生と地域再生</span>
+          <span class="sum">地方衰退の原因の認識、高齢化率50％を超える集落数と民生児童委員の待遇改善、就学援助の認定基準の明示と要件拡充や給食費の全額助成、放課後児童クラブの保育料減免、中小企業振興条例と住宅リフォーム助成制度、家族経営農家への支援と米価対策、わかさ会館の整備、給食センターの地産地消を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・樋野智之</span>
+          <span class="ttl">地方創生交付金の活用</span>
+          <span class="sum">地域住民生活等緊急支援のための交付金について、あらえっさ振興券の反省点を踏まえたプレミアム付商品券の計画と、定住サポート事業での積極的な情報発信や関係機関との連携、介護福祉士応援事業などと結びつけたシングルマザーの移住促進策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐々木厚子</span>
+          <span class="ttl">地方創生戦略の推進</span>
+          <span class="sum">地域住民生活等緊急支援のための交付金によるプレミアム付商品券の内容と発行時期、地方創生先行型交付金の活用と一押しの施策、国家公務員などを首長の補佐役として派遣する制度の活用、クラウドファンディングの活用、地域おこし協力隊への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・樋野智之</span>
+          <span class="ttl">地方版総合戦略の策定</span>
+          <span class="sum">市町村淘汰の到来ともいえる地方創生政策の下で、他の市町村に負けない安来市版総合戦略を早期かつ有効に策定することについて、市としての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・作野幸憲</span>
+          <span class="ttl">地方版総合戦略の策定</span>
+          <span class="sum">地方版総合戦略の施策を絞り込む方向性、策定の時期、地域との対話の時期と手法、ボランティア団体からの意見聴取、国や県との連携への市長の決意、地方創生特区やモデル地区への取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・田中武夫</span>
+          <span class="ttl">安心して暮らせる地域の施策</span>
+          <span class="sum">県の地方創生交付金を活用した補正予算を例に、安心して暮らせる地域社会にするための市の施策、就労対策、ひとり親家庭の定住に向けた働く場と住まいの用意のその後を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉刻夷</span>
+          <span class="ttl">少子化対策と農地制度</span>
+          <span class="sum">地方創生・地方分権改革の推進に関して、目指せ出生率アップ戦略など少子化対策の抜本的な強化を図る市の施策、農地の総量確保の実効性を確保する市の考え、農地転用の迅速化と農業委員会改革への農業委員会の所見を尋ね、小規模な転用は市の農業委員会で許可する改革を望む立場から改めて所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・嶋田豊昭</span>
+          <span class="ttl">市政運営の基本姿勢</span>
+          <span class="sum">人口減少問題を最優先とする市政運営について、安来市版総合戦略への取り組みと地方創生施策への見解、市の人口目標など人口減少問題の中長期的な見解、総合計画審議会への諮問内容と将来像の提示、合併10年の所感と組織機構で力点を置いた点、市長のリーダーシップと幹部の意見の取り入れ、副市長２人体制への感想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・岩田拓郎</span>
+          <span class="ttl">第２次総合計画の策定</span>
+          <span class="sum">第１次総合計画の総括と成果、第２次計画での人口目標の設定、県の集落調査から見た限界集落の状況と傾向、集落再編への支援、地方創生に呼応した人口対策の手だてと数値目標の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉刻夷</span>
+          <span class="ttl">緊急支援交付金の活用</span>
+          <span class="sum">地域住民生活等緊急支援のための交付金について、国からの正式な通達の時期、交付金の内容と使途の制限、地域消費喚起・生活支援型と地方創生先行型の担当部局の選定と予算化の経緯、新たな施策に伴う交付金の拡大と予算措置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・嶋田豊昭</span>
+          <span class="ttl">骨太方針への市長の所見</span>
+          <span class="sum">経済財政運営と改革の基本方針2014のうち人口急減や地方財政制度など地方行政に関わる特徴的事項、地方創生の推進と今後の展開、地方行財政制度の方針への所見に加え、庁内での議論や認識共有の程度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐々木厚子</span>
+          <span class="ttl">人口ビジョンと総合戦略</span>
+          <span class="sum">安来市人口ビジョン及びまち・ひと・しごと創生総合戦略の策定を受け、市内の未婚の若い女性の声も紹介しながら、策定された総合戦略のもとでどのような安来市にしていくのか、特に力を入れて行いたいことは何かを市長に問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">人口減少対策と予算</span>
+          <span class="sum">人口減少対策として、はぴこ交流サロンの開催回数と相談者数、相談員の増員や結婚協力員の育成、減額された結婚支援予算を尋ね、住居と雇用の均衡を欠く定住施策、創業支援の成果、地方創生先行型交付金上乗せ分の予算反映と出産祝い記念品事業の行方、自主財源の確保と事業見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">創生総合戦略の周知と支援</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略について、骨格の説明とさらなる市民への周知方法、持ち歩けるダイジェスト版の作成の考え、具体的な施策に対して国・県から決まっている支援の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">圏域の総合戦略と地方創生特区</span>
+          <span class="sum">中海・宍道湖・大山圏域市長会が石破地方創生大臣に説明した圏域の総合戦略の内容と経緯、市の総合戦略との整合性、中海架橋に関する県要望への回答、中海架橋を日本海側の拠点のシンボルとする考え、地方創生特区を目指す圏域の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・嶋田豊昭</span>
+          <span class="ttl">地方創生の総合戦略</span>
+          <span class="sum">安来市まち・ひと・しごと創生総合戦略について、交付金事業の国の財源見込みと不足時の自主財源の見通し、特色ある主な事業の内容、総合戦略達成のための定住等の条例制定の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐々木厚子</span>
+          <span class="ttl">子育て包括支援と不妊治療</span>
+          <span class="sum">地方版総合戦略への反映を求めて、国の子育て世代包括支援センター（日本版ネウボラ）の設置についての考えと、拡充した一般不妊治療費助成を無料化することへの市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">安来市の人口ビジョン</span>
+          <span class="sum">総合戦略と重なる安来市の人口ビジョンについて、骨格と市民への周知方法を尋ね、成婚数や認定こども園への移行数など具体的に示された目標の最初の検証時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・澤田秀夫</span>
+          <span class="ttl">安来市総合戦略の具体的施策</span>
+          <span class="sum">安来市総合戦略の施策について、出産に対する支援策、小・中学校で安来市の歌を覚える教育、特定の販路を持たない商品の認知度向上、学習訓練センターの機能充実、お試し住宅の方向性、地域リーダー研修派遣事業の内容、交流センターの光熱費など維持管理費の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">安来版CCRCの検討</span>
+          <span class="sum">総合戦略と人口ビジョンで18歳未満、20代後半から30代前半、50代半ばから60代前半に年代を絞った人口対策を問い、東京圏や関西圏の50代半ばから60代前半のUIターンを促す日本版CCRCの安来独自版の仕組みを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・嶋田豊昭</span>
+          <span class="ttl">市長の市政運営と政治姿勢</span>
+          <span class="sum">近藤市政を検証し総合計画初年度の市政運営として、中心市街地活性化のこれまでの施策と将来の方向、コンパクトシティーの概念と描くまちの姿、市民のための政治姿勢、総合戦略・総合計画の実行方針、国勢調査速報値の分析と各種計画への反映、内外情勢の認識と地方行政の行方、公共施設等総合管理計画の進め方、市長のリーダーシップと職員・市民リーダーの育成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田中武夫</span>
+          <span class="ttl">政府機関の地方移転</span>
+          <span class="sum">地方創生の一環である政府機関の地方移転について、先取りして情報を集め市民サービスに資する取り組みを積極的に進めるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・丸山征司</span>
+          <span class="ttl">移住定住とシティセールス</span>
+          <span class="sum">移住定住支援に向け、地方版総合戦略と総合計画の概要と進捗、人口動態の経年資料の作成と転出入者の追跡・意向調査、ＵＪＩターン別の施策、シングルマザーやクリエーターの誘致策、移住交流情報ガーデンでのＰＲ、ふるさと納税の改定への対応、転出者減少策、市外を意識したホームページ、シティプロモーション、山中鹿介の大河ドラマ化や渡部お糸の朝ドラ化、フィルムコミッションを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田淵秀喜</span>
+          <span class="ttl">第２次総合計画と財政見通し</span>
+          <span class="sum">第２次総合計画と人口ビジョン・総合戦略の整合の整理と総合計画の決定が戦略に後れた議会審議の運びへの見解、３大事業の人口・定住対策への活用、切川バイパスの完成遅れによる市民会館の指定管理への影響と市の取り組み、中期財政見通しと収支均衡の目標時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・金山満輝</span>
+          <span class="ttl">総合戦略に基づく新年度施策</span>
+          <span class="sum">2060年の人口目標３万人の実現に向け、平成28年度の人口対策事業として、民間賃貸住宅建設助成と空き家対策、切れ目のない子育て支援の新規・拡充事業、工業団地の適地選定調査の結果と供用開始時期、商工業の事業承継と後継者育成、結婚活動支援の成功件数と今後の取り組み、総合戦略のＫＰＩに基づく検証体制とスケジュール、定住相談窓口の業務内容と相談実績、地域おこし協力隊の採用見込みと増員計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・嶋田豊昭</span>
+          <span class="ttl">総合計画と総合戦略の策定</span>
+          <span class="sum">総合計画を上位計画として策定スケジュールを前倒しするか総合戦略と同時策定できないか、企業誘致・Uターン対策・観光振興の方針、限界集落の現状把握と対応、空家対策特別措置法など新たな課題の計画への勘案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田淵秀喜</span>
+          <span class="ttl">総合計画初年度の市政運営</span>
+          <span class="sum">第２次総合計画初年度にあたり、総合戦略の政策の当初予算への反映、大型ハード事業を人口増につなげる戦略、財政状況の認識と収支の健全化目標、実質公債費比率の見通し、地方交付税の持続的確保への取り組み、財政健全化への市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・田淵秀喜</span>
+          <span class="ttl">総合計画策定と市政運営</span>
+          <span class="sum">第２次総合計画と地方版総合戦略の策定に向け、市長が示すまちづくりの指針と両計画の関係の整理、交付税削減を見据えた市民サービスや中長期財政計画への影響と最悪の場合への備え、市民ニーズの把握と情報発信の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・嶋田豊昭</span>
+          <span class="ttl">財政健全化の見通し</span>
+          <span class="sum">地方交付税の算定見直しなど政府の動向の認識、合併後の普通交付税の特例措置の段階的縮減に対する交付税算定見直しの具体的内容と見通し、総合計画・総合戦略と連動した財政健全化と財政見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">農林業と地方創生</span>
+          <span class="sum">安来版総合戦略における農林業の位置づけと新たな施策、木材ストックヤードの整備と林業の方針、地域おこし協力隊の応募状況と現状、安来独自の受け入れ要件、市内全域・多職種での受け入れ、退任後の定住対策、県の半農半Ｘの活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・作野幸憲</span>
+          <span class="ttl">スポーツと地方創生</span>
+          <span class="sum">安来市スポーツ推進計画の地域特性を生かした４つの取り組みの進捗、バレーボールやフェンシングの合宿プランと体育施設の整備、島根留学生への学生寮などの支援、全国大会等出場激励金の拡充、スポーツ施設の老朽化と耐震化、スポーツを生かした地方創生、健康増進施策への取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">国の地方創生施策の活用</span>
+          <span class="sum">国が関係省庁で用意した政策パッケージの施策や事業を市としてどう活用するか、特に注目している事業を尋ね、安定した雇用を創出し新しい人の流れをつくる進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・嶋田豊昭</span>
+          <span class="ttl">地方創生総合戦略の取り組み</span>
+          <span class="sum">まち・ひと・しごと創生推進戦略について、国の交付金と一般財源の確保の見通し、国勢調査確定値への分析準備、定住支援策への反応、市民の意見集約と周知、自治会単位での意見交換の場づくり、人口対策の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・嶋田豊昭</span>
+          <span class="ttl">地方創生総合戦略の重点</span>
+          <span class="sum">交付税算定が取り組みの成果に応じた算定へ移る中で、まち・ひと・しごと創生総合戦略で何を重点に進めるのか、財源の裏づけのある中長期的な施策と国の施策に頼らない今後の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">将来を見据えたまちづくり</span>
+          <span class="sum">第２次総合計画と総合戦略の実行に向け、まちづくりにおける官民連携の具体策、クラスター型コンパクトシティーの政策間連携と市長の考え方、人の流れを生む空間づくり、空き家の有効活用と危険空き家対策、まちづくり人材の育成、公共施設マネジメントの管理計画の時期と市長の決断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">市政運営と財政の見通し</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略の１年間の経過と分析、新庁舎と総合文化ホールをまちづくりの道具としてどう使うか、公共施設等総合管理計画でめり張りをつけた財政運営と単年度収支を一定の時期にプラス・マイナス・ゼロへ戻す計画への市長の見解、交流センターを核とする地域の取り組み状況と支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・澤田秀夫</span>
+          <span class="ttl">平成29年度当初予算案</span>
+          <span class="sum">前年から14億3,000万円減の277億7,000万円となった当初予算案について、総合戦略関連の事業予算が目立たない理由、事業の統廃合や見直しの実績と方向性、議会が申し入れたタブレット端末による議会運営事業が予算化されなかった理由、特別会計への繰出金増加と第３次行政改革大綱との整合性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・丸山征司</span>
+          <span class="ttl">水道料金の改定</span>
+          <span class="sum">水道料金改定の議案上程に至る経緯と改定の理由・必要性、議員懇談会での意見の反映、根拠人口が100名増減した場合の影響を尋ね、移住定住への影響から総合戦略の検証まで改定を見合わせる考えや住民説明会など市民への周知の状況、マンホールカードとダムカードの活用や水道水のペットボトル販売による水道事業のＰＲを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">総合戦略の進捗と展望</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略の平成28年度までの進捗と見直しについて、成婚数や子育て応援サイトママフレなど評価の低い事業の見直し、20歳代の社会移動の改善に向けた創業支援や企業誘致、定住関連３事業の統合やお試し住宅・空き家バンクの状況、自主防災組織やがん検診、地域おこし協力隊の状況、国や県の動きに合わせた市の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">若者の社会移動とＵターン</span>
+          <span class="sum">総合戦略の基本目標２の数値目標である20代の社会移動の現状を尋ね、住民票を移さず市外へ進学した者の実態、10代後半の市外就学者との差し引きでの比較、女性のＵターンが少ない原因と女性が働きたい産業の拡大、市外の学生への就職フェア等の支援、平成17年に社会増減がほぼ無かったことへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">財政運営と基金の見通し</span>
+          <span class="sum">総合戦略を柱とする今年度の目玉施策と将来の財源を含めた施策の妥当性、事業の重要性・緊急性の判断基準、29年度当初予算での物件費・補助費の精査と財政当局の指導、中期財政計画と実績の財政調整基金の開き、財政調整基金がいつまでもつのかと取り崩しを抑える取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐伯直行</span>
+          <span class="ttl">30代の定住促進</span>
+          <span class="sum">総合戦略策定後の近隣市を含めた30代の社会移動の進捗、県の助成を活用した民間賃貸住宅建設助成事業を平成30年度以降も継続する考え、新規受け付けを終了した定住推進支援事業補助金を復活させない判断に変わりはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・嶋田豊昭</span>
+          <span class="ttl">人口減少と超高齢社会への対応</span>
+          <span class="sum">人口減少と超高齢社会に対応した持続可能な自治体運営の所信、市の将来推計人口と直近の人口・高齢化率の分析、高齢者と医療・介護費のピークと財政負担の見通し、団塊の世代と2025年問題への対応、高齢者の概念を変えた施策、フューチャーデザインの導入、地域ケア会議の取り組み、地方創生総合戦略の検証と今後の施策展開、人材育成や民間活力の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・作野幸憲</span>
+          <span class="ttl">当初予算と今後の財政方針</span>
+          <span class="sum">市立病院と広瀬庁舎の建てかえ方針の報道への見解、平成30年度の予算編成方針、国の地方創生関連予算の反映状況、類似事業の統合や削減の成果、中期財政計画より早まる基金残高の減少を尋ね、財政の見通しと新たな財政方針を市長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐伯直行</span>
+          <span class="ttl">景気と若者の人口流出</span>
+          <span class="sum">景気の動向と就業環境の変化が本市に及ぼす影響の現状分析、安来市創生総合戦略の20代の社会移動の目標達成の見込みと進捗、KPIの軌道修正や新たな施策の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・澤田秀夫</span>
+          <span class="ttl">第2次総合計画と総合戦略</span>
+          <span class="sum">総合戦略の前期後半を迎えるに当たり、目標と実績がかけ離れた場合の目標数値や事業の見直しの必要性に触れ、前半の施策への所見と後半への意気込み、いぶし銀のようなまちづくりのキャッチフレーズの使い方を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・石倉刻夷</span>
+          <span class="ttl">総合戦略の推進状況</span>
+          <span class="sum">３年目を迎えたまち・ひと・しごと創生総合戦略について、ホームページの充実やＳＮＳの利用促進など情報発信の状況、総合戦略推進会議の開催状況、多種多様で魅力的な地域（じげ）の形成の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">地方創生の総合戦略</span>
+          <span class="sum">総合戦略の主な7施策として地域おこし協力隊、新規就農研修、みどりの担い手確保緊急対策、地域交流センターの活性化、生活交通ネットワーク再編、イエローバス運行、道路改良の各事業の現状と検証を踏まえた今後の考え方を尋ね、地域ビジョン作成事業を実施した交流センターの有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岡本早智雄</span>
+          <span class="ttl">外部人材を活用した地域活性化</span>
+          <span class="sum">総合戦略の基本目標４のうち地域の担い手確保・拠点づくりの数値目標の根拠と進捗・評価、最終年度に向けた取り組み、地域おこし協力隊の任期後の定住に向けたフォロー体制、外部アドバイザーの招聘、集落支援員16名の目標に対する配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・作野幸憲</span>
+          <span class="ttl">人口ビジョンと各種計画</span>
+          <span class="sum">人口ビジョン見直しの有無と理由、総合戦略の目標達成見込みと出生数・社会移動、新総合戦略と後期基本計画の方針、財政計画への影響、Ａランク施設の建て替えの財源、子ども・子育て支援事業計画の特色を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">地方創生総合戦略の総括</span>
+          <span class="sum">最終年を迎えたまち・ひと・しごと創生総合戦略について、平成27年以降の人口の自然減・社会減、推進会議の開催状況、目標を達成した施策と達成困難な施策への考え方、知事の人口ビジョン前倒し発言への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島静夫</span>
+          <span class="ttl">芸術家支援と担い手確保</span>
+          <span class="sum">芸術家が農業や介護、デマンドバスの運転などで働きながら制作できる支援策と芸術家村の考えを尋ね、介護ロボット企業の誘致と開発、関係人口への見解、飯梨川河口のカイトボードの活用と環境整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">関係人口施策の推進</span>
+          <span class="sum">田中輝美さんの著書や水源の里シンポジウムでの講演を紹介し、過疎地域や中山間地域の未来を拓く関係人口の施策と戦略を市として推進しないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・澤田秀夫</span>
+          <span class="ttl">令和３年度当初予算案</span>
+          <span class="sum">中期財政計画との差額２億4,100万円で追加された事業、第３次配分の地方創生臨時交付金の見込み額、予算編成方針の変更点に沿った特徴的な事業、行財政改革で見直した事業と市民生活への影響、目玉となる重点事業を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・石倉刻夷</span>
+          <span class="ttl">婚活支援の取り組み</span>
+          <span class="sum">令和元年度の市の婚活施策の総括と、令和２年度の取り組みや戦略の計画、第２期総合戦略における婚活支援の目標数値と目標達成に向けた取り組みの考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・飯橋由久</span>
+          <span class="ttl">デジタル田園都市国家構想</span>
+          <span class="sum">自治体ＤＸ推進計画の内容を尋ね、マイナポイント事業前後のマイナンバーカード交付率と市独自ポイント事業の申請率、利活用拡大の事業、デジタル人材の育成確保、誰一人取り残されない取組、推進交付金を使う事業と今後の市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・佐々木厚子</span>
+          <span class="ttl">地方創生臨時交付金の活用</span>
+          <span class="sum">新型コロナウイルス感染症対応地方創生臨時交付金について、これまでの事業を組み立てる考え方と具体的な事業、令和３年度限度額の留保分１億5,000万円と原油価格・物価高騰対応分の今後の活用方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島静夫</span>
+          <span class="ttl">関係人口の増加と少子化対策</span>
+          <span class="sum">関係人口増加の今後の取組、原子力災害の広域避難先の自治体やカイトボードの愛好者を関係人口につなげる考えを尋ね、教育・結婚・住宅・女性の就業復帰・成婚率向上の支援など市独自の大胆な少子化対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石倉刻夷</span>
+          <span class="ttl">尼子一族全国大会の開催</span>
+          <span class="sum">10月開催予定の第８回尼子一族全国大会と戦国尼子フェスティバルの概要とタイムスケジュール、尼子十旗の地域の参加状況、尼子十旗・十砦との交流と関係人口拡大に向けた戦略を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉刻夷</span>
+          <span class="ttl">交流センターの地域づくり</span>
+          <span class="sum">地方創生の最前線で地域活動の源となる交流センターを核とした地域づくりについて市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・岩崎勉</span>
+          <span class="ttl">人口ビジョンと人口対策</span>
+          <span class="sum">地方創生2.0を市に落とし込んだ施策、人口減少の影響と要因の整理、合計特殊出生率の動向と低い要因、婚活を担う組織の設置、市立病院の役割と経営方針・地域医療提供体制、転入・転出の推移と県外転出の先と理由、目標人口と出生数の目標、人口減少を緩やかにする市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉刻夷</span>
+          <span class="ttl">令和７年度予算編成方針</span>
+          <span class="sum">国の地方創生の再起動の動きを尋ね、人口減少対策の施策と予算計上の考え、ＤＸ施策の新年度の新たな取組とこれまでの成果を踏まえた考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉刻夷</span>
+          <span class="ttl">地方創生の戦略</span>
+          <span class="sum">石破総理による地方創生の総括を踏まえ、予算を増やすだけでなく住民主体の地域づくりを後押しする支援の仕組みについて市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・清水保生</span>
+          <span class="ttl">地方創生への取組</span>
+          <span class="sum">石破総理総裁の誕生と内閣発足への感想と今後の期待を尋ね、地方創生交付金の倍増など「地方を守る」政策に市としてどう取り組むかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石倉刻夷</span>
+          <span class="ttl">交流人口と関係人口の拡大</span>
+          <span class="sum">地方創生2.0に関連して、今年の交流人口・関係人口の実態、交流人口と関係人口それぞれの拡大に向けた施策と戦略、総合計画に位置づける当面の目標値を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐々木厚子</span>
+          <span class="ttl">物価高騰対策</span>
+          <span class="sum">政府の総合経済対策で拡充される物価高騰対応重点支援地方創生臨時交付金について市として現時点で分かることを尋ね、交付が決まった場合の活用策を市内店舗で使えるプレミアム付商品券等の例も挙げて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・仲佐修一</span>
+          <span class="ttl">関係人口と定住の誘導</span>
+          <span class="sum">関係人口の増加への市の取組を尋ね、しまね関係人口マッチング・交流サイトしまっち！や関係人口受入事業助成金の市内団体の活用実績、市の定住メニューの内容と広報の方法を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">60件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H26・伊藤繁満</span>
+          <span class="ttl">ふるさと創生と地方創生</span>
+          <span class="sum">竹下登総理大臣が取り組んだふるさと創生と今回の地方創生との違いは押さえておかなければならないとしてその違いを尋ね、自らのまちは自らが責任を持つ気概と自立するまちづくりに向けた創意工夫が要るとして総合戦略の策定を若い中堅職員の横断的なチームで行ってはどうかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・松村豪人</span>
+          <span class="ttl">人口減少問題への取り組み</span>
+          <span class="sum">日本創成会議が公表した消滅自治体リストを衝撃だとして挙げ、合併１０年を経て特に周辺の農村部・漁村部で人口減少と過疎化が急激に進展しているとして、国の地方創生関連２法に基づく本市の取り組み状況と出雲市総合戦略の策定時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・岸道三</span>
+          <span class="ttl">出雲市総合戦略の策定</span>
+          <span class="sum">総合戦略には５年間の実行期間に合わせたトータルの財源措置が必要であり客観的な手法の未達を理由に地方自治体にレッテルを張ることや国が関与することはあってはならないとして、出雲市まち・ひと・しごと創生本部での検討内容と策定作業の組織体制やスケジュール、国の総合戦略に対する市長の所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大場利信</span>
+          <span class="ttl">医療・福祉施設の集積活用</span>
+          <span class="sum">市立総合医療センターにおける職員及び医療関連ビジネスに携わる人々のおおよその人数、医工連携による医療・福祉機器や機能性食品の開発の状況、出雲商工会議所での薬草の実用化の取り組み、医療や健診を受けることの効用をＰＲする医療ツーリズム、まめネットの普及率、大学や県立病院、商工会議所などとの連携によるネットワークの構築を尋ね、集積した医療や福祉施設を生かした人口定住策を総合戦略の政策パッケージとして取りあげるよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大場利信</span>
+          <span class="ttl">古代山陰道の調査と活用</span>
+          <span class="sum">平成２６年度から６年間かけて行う古代山陰道の調査の主眼と今後の活用の考え、出雲の歴史文化遺産を日本遺産に認定する構想の中での位置付け、シンポジウムに主催者として出席した副市長の感想を尋ね、全国の学生や研究学徒を招いて交流人口の拡大や定住化につなげるよう人口定住総合戦略の総合パッケージとして取りあげることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・保科孝充</span>
+          <span class="ttl">合併１０周年と総合戦略</span>
+          <span class="sum">合併１０周年を迎えるにあたっての合併後の一体感の醸成と各地域の特性を生かしたまちづくりについての感想を尋ね、海士町や邑南町の例を挙げ市役所に元気と緊張感が足りず仕掛け人づくりも課題だとして、人口減少の課題解決につなげる出雲市総合戦略の具体的な内容と協議の委員やスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">圏域で進める海外誘客</span>
+          <span class="sum">中海・宍道湖・大山圏域市長会の目的と中海・宍道湖・大山ブロック経済協議会との関係、現時点での成果、市長会での海外誘客の検討内容を尋ね、出雲市独自の海外誘客施策とその整合性、日本遺産や歴史・文化遺産への登録へ向けた取り組みと海外誘客の関連、海外誘客が出雲市総合戦略の柱になり得るのか、市内在住の外国籍の方々との連携の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大谷良治</span>
+          <span class="ttl">地方創生と人を呼ぶ地域</span>
+          <span class="sum">雇用の機会拡大を図る一方で人材が市外に出ていき地元にたくさんある優良な企業に若者が進まず人材不足の状況が生まれているとして、出雲市に住む若い世代とりわけ子育て世代に対する市長の思いと、人口減少・流出に対してどのような対策が有効であるか、地方創生に関する島根県市長会との連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・福島孝雄</span>
+          <span class="ttl">地方創生と過疎地域</span>
+          <span class="sum">地方創生の取り組みは中心街だけでなく過疎地域対策も重要であるとして、定住人口キープ１７万人プロジェクトにおける地方創生の取り組みが過疎地域にどのような影響を与えるのか具体的な内容を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・板垣成二</span>
+          <span class="ttl">地方創生への取組方針</span>
+          <span class="sum">まち・ひと・しごと創生法案など地方創生関連２法案の成立を受け、地方創生とはどのような内容なのかと市としての取組方針、総合戦略を策定する本部の体制と主管の事務局を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・松村豪人</span>
+          <span class="ttl">地方創生への市の対応</span>
+          <span class="sum">平成１７年３月の２市４町の合併から１０年が経過し周辺部の農村や漁村では学校再編もあって過疎化が進みつつあるとして、地方創生関連の二つの法案の成立を受けて本市がこの地方創生にどう対応するのかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・松村豪人</span>
+          <span class="ttl">地方創生交付金の活用</span>
+          <span class="sum">行財政改革の集中改革期間の２年目として補助金・負担金の廃止や縮小などの見直しが具体化するとして、市民生活に密着し地域活性化に資する事業については地域住民生活等緊急支援のための交付金など地方創生関連の交付金が財源として活用できないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・湯淺啓史</span>
+          <span class="ttl">人口ビジョンと総合戦略</span>
+          <span class="sum">骨子（案）における人口予測の根拠と目標人口、総合戦略の目標設定と具体的施策の選定の過程、５か年計画の主眼と主な施策、進捗状況の把握と目標管理の方法、近隣市との連携や調整、目標実現にあたっての予算確保、どのような社会を目指すのかが示されていない点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・小村吉一</span>
+          <span class="ttl">人口認識と地方創生</span>
+          <span class="sum">人口が９１名増加したことを暮らしのよさが総合的に評価されたと受けとめる認識は甘いのではないかとして市民の暮らしの実態を尋ね、佐田地域で１２％台の減となる地域別の人口変化の受けとめと合併１２年目の評価、地方創生の真の目的、地域再生における住民参加の重要性、既存の事務事業の見直しの中身を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・珍部全吾</span>
+          <span class="ttl">出雲の農業のあり方</span>
+          <span class="sum">ＴＰＰ交渉の現状と今後の見通しおよび関税の問題が日本と出雲の中小の農業に及ぼす影響、農振地域と用途地域の農地が同じ扱いである点、高齢者が支える中山間地の農業を福祉の観点で見る考え、地域創生総合戦略への農業の位置付けを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・福島孝雄</span>
+          <span class="ttl">創生総合戦略と農業</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略の魅力ある雇用の場の創出に農業が果たす役割、農業における５年間の成長目標、出雲未来図前期基本計画との数値目標の違い、コミュニティビジネスの推進の具体策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・寺本淳一</span>
+          <span class="ttl">創生総合戦略の中身</span>
+          <span class="sum">創生総合戦略推進会議で協議される総合戦略の中身と具体的な検討状況、若者や女性の転出を防ぐ仕事と家庭の両立や出産と子育ての環境整備、Ｉターン・Ｕターンを含む若者の起業への市独自の支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・珍部全吾</span>
+          <span class="ttl">地方創生と医療ツーリズム</span>
+          <span class="sum">出雲市まち・ひと・しごと創生総合戦略は従来の継続事業ばかりだとして市長の所感を尋ね、出雲版ＣＣＲＣ構想の具体的な計画、充実した医療施設を生かした医療ツーリズム、世田谷区など都市部との提携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・伊藤繁満</span>
+          <span class="ttl">地方創生と農山村の活性化</span>
+          <span class="sum">農山村に移住しＵ・Ｉターンされている社会増の実態を尋ね、１次産業や自治体の事務系業務への人口減少に対応したロボット戦略の積極的な導入、地産地消を進めて１次産業を６次産業化しベンチャー企業へ発展させること、２０年、３０年先を見据えた総合戦略の視点と長期的なビジョン、明示されていない概算事業費と中期財政計画の発表時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・大場利信</span>
+          <span class="ttl">外国籍住民の日本語学習支援</span>
+          <span class="sum">まち・ひと・しごと総合戦略の人口ビジョンにおける今後の外国籍住民の推計、就学前や義務教育年齢を過ぎた若者を含めた支援のためのプレスクールの設置、日本語指導スタッフの増員と研修による教育職員の養成、母語が分かる支援員や日系人の通訳サポーターの学校配置、県・企業・教育委員会・学校・ＮＰＯ法人・外国人保護者代表による連絡協議会の設置、策定中の多文化共生推進プランの状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・原正雄</span>
+          <span class="ttl">民間によるＣＣＲＣ創出</span>
+          <span class="sum">医療施設の充実や災害への強さ、出雲空港、温暖な気候などＣＣＲＣの考え方に照らして大いに期待が持てるとして、総合戦略の移住促進の施策として創出する場所を具体的にどこと考えているのか、民間にお願いする考えかその民間は地元の方か、行政としての支援を含めた具体的な策があるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・小村吉一</span>
+          <span class="ttl">総合戦略と市民参加</span>
+          <span class="sum">人口が政策目標とされたときには人間を手段とする社会が目指されているという指摘への考え、全国一斉競争方式の中で中央が地方に何をしたか何をするのかをどう考えて総合戦略を作成したのか、策定のために住民の声をどのように取り入れたのか、第一次産業の活性化でなぜ「多くの漁港を有するメリットを生かし」と漁港にしたのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・福島孝雄</span>
+          <span class="ttl">人口減少地域の対策</span>
+          <span class="sum">住民基本台帳で平成２２年から平成２７年の５年間に１０％以上減少した地域への具体策と、自治協会やコミセン・地域住民から各支所に人口減少についての意見・要望が出ているかとその取り扱い、支所での課題認識と職員からの提案、まち・ひと・しごと総合戦略における具体的な対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・大場利信</span>
+          <span class="ttl">企業版ふるさと納税の活用</span>
+          <span class="sum">平成２８年度に創設された地方創生応援税制、いわゆる企業版ふるさと納税の制度の仕組みと、平成２７年度の「日本の心のふるさと出雲」応援寄附に含まれる企業からの寄附３５６万円、今後の活用の意向を尋ね、事業の絞り込みや個別の企業との折衝、クリアすべき課題、認定申請時期など今後の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・伊藤繁満</span>
+          <span class="ttl">再生ビジョンの策定</span>
+          <span class="sum">国の規制改革が進み子育て政策や地方創生など前期計画の策定時とは状況が大きく変わり、中海・宍道湖・大山圏域市長会のトップリーダーにも就任したことを踏まえ、折り返し点にきた総合振興計画について新しい観点から将来に向けた再生ビジョンの策定が必要だとして考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・渡部勝</span>
+          <span class="ttl">ＵＩターンと定住対策</span>
+          <span class="sum">出雲大好きＩターン支援助成金と出雲市移住促進住まいづくり助成金のこれまでの成果と課題、出雲市まち・ひと・しごと創生総合戦略による未婚化・晩婚化対策の成果と課題、新たに設置する「うみ・やま（中山間地域）応援センター」の狙いと内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・湯淺啓史</span>
+          <span class="ttl">中期財政計画の策定</span>
+          <span class="sum">現在の財政状況の判断と中期財政計画を上回る改善ができた主な要因、健全化判定比率の改善と地方債残高圧縮のペースを維持できる見通し、公共施設総合管理計画の１年あたり約２０５億円という更新費用の見積もりを踏襲するか、総合戦略策定時の人口推計と目標値を踏襲するか、常態化した臨時財政対策債の発行が将来の財政運営にもたらす影響を尋ね、策定に議会が関与する進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・今岡真治</span>
+          <span class="ttl">定住とＵＩターンの支援</span>
+          <span class="sum">出雲市まち・ひと・しごと創生総合戦略に基づき定住と移住を促進する施策の現状と成果、現在行っている事業、工芸作家等のＵＩターンに対してどのような支援事業があるのかを尋ね、多様なＵＩターンに市役所の各部署や関係団体が連携して受入体制を確立し横断的にサポートする仕組みづくりの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・寺本淳一</span>
+          <span class="ttl">空き家等の予防と活用</span>
+          <span class="sum">出雲市空家等対策連絡会議のこれまでの検討内容と空き家等に対する市の考え、合併当初から６，３０２世帯増え１世帯あたり２．６５人へ減った状況の受け止め、出雲市空き家相談センターと連携することで期待される効果、ふるさと教育や終活セミナー、空き家予備群バンクによる予防、用途変更に対する市独自の緩和措置、中古住宅の流通への財政措置や税制措置、出雲市空き家等の適正な管理及び活用の推進に関する条例の制定と総合戦略への位置づけ、市とセンターの協定を含む具体的なサポートを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・今岡真治</span>
+          <span class="ttl">関係人口の創出とテレワーク</span>
+          <span class="sum">移住した定住人口でも観光に来た交流人口でもない関係人口を創出する取組みと、情報通信技術を活用した柔軟な働き方であるテレワークについての市の考えを尋ね、サテライトオフィスに前向きな企業を誘致するための環境整備と廃校となった学校の活用の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・保科孝充</span>
+          <span class="ttl">令和新時代の市政運営</span>
+          <span class="sum">定住人口１７万人台キープを目標に地方創生と人口減少問題に引き続き立ち向かい、日本海側の発展をリードする元気な地方都市を創造するとされていることを踏まえ、令和の新時代に輝き続ける出雲へ向けての施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・湯淺啓史</span>
+          <span class="ttl">出雲市の人口ビジョン</span>
+          <span class="sum">まち・ひと・しごと創生人口ビジョン・第２期総合戦略で２０６０年の目標人口が１５万人台と設定される中、今後５年間で８，０００人とした出生数の目標はどのような予測に立つのか、年少・生産年齢・老年の３区分による分析で老年人口をさらに前期と後期に区分した分析はされているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・渡部勝</span>
+          <span class="ttl">外国人住民の増加と人口</span>
+          <span class="sum">外国人住民の増加によってわずかながら人口増となっている今後の見通しを尋ね、社会増の大半をブラジル国籍を中心とする外国人が占めることが総合戦略の成果と言えるのかを問い、市内で再就職先を探す外国籍の方への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・伊藤繁満</span>
+          <span class="ttl">市長就任１２年目の所信</span>
+          <span class="sum">出雲ナンバーの普及をはじめとする出雲シティセールス事業や人口減少対策と地方創生事業、中海・宍道湖・大山圏域の中心都市として日本海側の発展をリードするとされたことを挙げ、持続可能な市政運営には多くの分野に課題があるとして市長就任１２年目の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・岸道三</span>
+          <span class="ttl">第２期総合戦略の策定</span>
+          <span class="sum">第２期出雲市まち・ひと・しごと創生総合戦略の策定について、人口ビジョンにおける人口推計見直しの概要、基本目標に掲げた取組みの成果と課題、市民満足度調査や高校生の定住等意識調査を含む市民意見の反映のあり方、想定される主な見直し項目を尋ね、島根県や圏域版の戦略との連携と整合性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・渡部勝</span>
+          <span class="ttl">総合戦略の基本目標の達成</span>
+          <span class="sum">出雲市まち・ひと・しごと創生総合戦略の期限が来年３月に迫る中、魅力ある雇用の場の創出、ひとの流れ、子育ての希望、住みやすさナンバー１のまちづくり、広域連携という五つの基本目標がどのような状況かを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・福島孝雄</span>
+          <span class="ttl">コロナ下の地域防災計画</span>
+          <span class="sum">分散避難及び避難訓練の考えと計画策定のスケジュール、間仕切りや段ボールベッドなど衛生環境と備蓄品及び避難所の運営の考え、新型コロナウイルス感染症対応地方創生臨時交付金の災害時での用途と出雲市としての活用内容とスケジュール、避難計画の市民への周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・石橋広信</span>
+          <span class="ttl">デジタル化と高齢者支援</span>
+          <span class="sum">デジタル田園都市国家構想のロードマップが具体的にどんなことを示しているのかと出雲市の未来像を含む取組み、デジタル化がどのような流れから始まりその中で何が必要とされ個々にどのような技術が求められるのかを尋ね、年代別のスマートフォン利用者数を問うたうえで、高齢者デジタルサポート事業として同世代の講師によるスマホ教室をコミセン単位で開催できないかとその効果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・錦織稔</span>
+          <span class="ttl">出雲版デジタル田園都市構想</span>
+          <span class="sum">国のデジタル田園都市国家構想を本市にも取り入れて出雲市版のデジタル田園都市構想を強力に推進すべきとの見解を尋ね、デジタルファーストを一律平均的に進めるのか個別なのかという全体像と、職員採用試験の試験採用区分に情報処理を加えて将来的に安定した人員配置をすべきとの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石橋広信</span>
+          <span class="ttl">デジタル田園都市構想</span>
+          <span class="sum">日本が目指すデジタル化に対する日本の現状、デジタル田園都市国家構想の総合戦略の内容と現時点での課題、デジタル化が推進された場合に個人と団体・企業がそれぞれ受けられる恩恵、書かない窓口や富山県朝日町の人と人を結ぶ仕組みやデジタル推進委員の設置拡大といった好事例の横展開への意見、出雲市が目指す構想の実現に向けて特に必要なものと取り組む内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・錦織稔</span>
+          <span class="ttl">学校給食費の負担軽減</span>
+          <span class="sum">物価高騰に伴う学校給食等に関する負担軽減について、食材調達の現状と食材費と予算のバランスを含む今後の見通し、新型コロナウイルス感染症対応地方創生臨時交付金の活用、地元産食材の採用の有用性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・鐘推義憲</span>
+          <span class="ttl">関係人口の創出・拡大</span>
+          <span class="sum">関係人口の意義と定住人口及び交流人口との違い、国の方針と支援策、島根県及び県内外の他自治体の先進事例と成果、本市における取組み意義の認識と現状、労働者協同組合と協同労働の活用、今後の取組み方針及び課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・長廻利行</span>
+          <span class="ttl">五つの重点施策の進捗</span>
+          <span class="sum">周遊滞在と消費環境整備、戦略コンテンツの充実と高付加価値化、ロイヤルカスタマーの獲得と関係人口創出につながる情報発信、２０２５大阪・関西万博を見据えた国内外旅行者の誘致、地域の総力で挑む観光地経営体制の構築という五つの重点施策について、それぞれの具体的な進め方と現在の進捗状況を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川上幸博</span>
+          <span class="ttl">人口推移と出生率</span>
+          <span class="sum">出雲市が合併してからの人口の推移と出生数及び合計特殊出生率について、まち・ひと・しごと創生第２期総合戦略及び出雲市総合振興計画「出雲新話２０３０」にある計画目標などの指標と対比させて示すよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・鐘推義憲</span>
+          <span class="ttl">移住定住と中山間振興</span>
+          <span class="sum">移住・定住の推進と交流人口・関係人口の拡大、中山間地域振興として、観光基本計画を官民一体で策定するのかとその手順とスケジュール、周遊型観光のシェアサイクルの実施予定地域と自転車活用推進計画の目的・内容及び島根県の計画との関連、ドアツードアの定額乗合交通の実証運行の現状と佐田地域以外での実施予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・西村亮</span>
+          <span class="ttl">移住定住と観光戦略</span>
+          <span class="sum">移住・定住の推進、交流人口・関係人口の拡大と中山間地域振興として、東京圏等での若者を対象とした交流会など移住・定住の促進の課題、交流人口・関係人口の拡大の対策と所見、観光戦略の推進と観光基本計画の方針及び具体化に向けた取組、中山間地域振興で企業や団体と連携して配置する地域おこし協力隊員の現状と今後の配置の具体策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・川上幸博</span>
+          <span class="ttl">総合戦略の成果と課題</span>
+          <span class="sum">出雲市まち・ひと・しごと創生総合戦略第１期における総合戦略・人口ビジョンでの成果と、第２期の５年間に対して１期目の課題克服に向け現在どのように取り組まれているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・萬代輝正</span>
+          <span class="ttl">自転車活用の推進</span>
+          <span class="sum">移住・定住の推進と交流人口・関係人口の拡大に向け、新たな観光基本計画の策定に取り組む中でのシェアサイクルの導入実験と自転車活用推進計画の策定、サイクリングロードの検討整備について、エリアなど具体的な内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・鐘推義憲</span>
+          <span class="ttl">農業ＤＸの取組みと方針</span>
+          <span class="sum">農林水産省が公表した農業ＤＸ構想の目的と概要、スマート農業とデジタル駆動型農業の全国の実践事例、ＦａａＳの実現に向けた全国の取組状況と課題を尋ね、本市のスマート農業実証試験の目的・実施状況と結果の評価、今後のデータ駆動型農業への取組予定、みどりの食料システムの推進との連携、デジタル技術を活用した農業技術継承、アグリワーケーションや１日農業バイトによる農業関係人口の創出、行政手続のデジタル化、導入への資金的援助と支援方針、物流の２０２４年問題への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・鐘推義憲</span>
+          <span class="ttl">デジタル田園都市戦略</span>
+          <span class="sum">本年４月から始まる出雲市デジタル田園都市構想総合戦略について、掲げられた五つの基本目標の達成に向けた取組方針と主な実施の具体策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・鐘推義憲</span>
+          <span class="ttl">交流・関係・定住人口</span>
+          <span class="sum">仕事や観光で地域を訪れる交流人口、地域外から継続かつ多様な形で関わる関係人口、移住や定住をする定住人口の位置づけを示したうえで、交流人口の拡大、関係人口の創出、定住人口の増加それぞれの施策の実施状況と成果及び今後の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・湯淺啓史</span>
+          <span class="ttl">人口データの毎年更新</span>
+          <span class="sum">第２期総合戦略の人口ビジョンで示されているデータや分析を毎年更新すること、毎年公表されている「統計でみる出雲」の人口データを市独自で毎年更新できるようにすることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・大場利信</span>
+          <span class="ttl">出雲市の人口対策</span>
+          <span class="sum">第２期総合戦略の数値目標のうち社会増１，６００人と出生数８，０００人について令和４年度実績の要因と目標に近づける方策、人口戦略会議による消滅可能性の分析への考え、子育て世代に愛される出雲になるための自然減対策と社会減対策、市役所における男性職員の育児参加に関する制度と実践、民間やＮＰＯとの連携を含む外国人との共生施策の充実を尋ね、アルメニア等からのＩＴ人材の受入れ状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・川上幸博</span>
+          <span class="ttl">合計特殊出生率の目標</span>
+          <span class="sum">第２期総合戦略が２０４０年において合計特殊出生率２．３０を目指すとしていることについて達成に向けた施策の方針を尋ね、結婚から出産・子育て・教育における切れ目のない支援と雇用の場の確保を挙げて、子育て支援策を市政の中心に据えた市政運営についての市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・川上幸博</span>
+          <span class="ttl">地域コミュニティの活性化</span>
+          <span class="sum">人口減少に悩み地域行事にも支障が出ている地域コミュニティや自治協会があると推察されるとして、地域振興の担い手となる青少年の育成につながる人づくり教育や移住者の空き家活用、農地貸出し、ふるさと会などの関係人口の拡大を挙げ、地域活性策の今後に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・鐘推義憲</span>
+          <span class="ttl">地方創生２．０</span>
+          <span class="sum">人口規模が縮小しても経済成長し社会を機能させる適応策を講じるという基本的な考え方が示された「地方創生２．０」について、これまでの取組の反省を踏まえて確定されたその内容と今後のスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・鐘推義憲</span>
+          <span class="ttl">第２期総合戦略の成果</span>
+          <span class="sum">本年３月末で五年間の計画期間が終了する出雲市まち・ひと・しごと創生第２期総合戦略について、その成果をどのように評価し、現下の課題をどのように認識しているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・川上幸博</span>
+          <span class="ttl">第２期総合戦略の評価</span>
+          <span class="sum">今年度で終了し次期計画に向けて取り組まれている出雲市まち・ひと・しごと創生第２期総合戦略について、特に人口推計や目標人口などの人口ビジョンにおける現時点での評価と今後への課題及び課題解決に向けた方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・後藤由美</span>
+          <span class="ttl">物価高騰下の政治姿勢</span>
+          <span class="sum">市民アンケートで７割が生活が苦しくなったと回答したとして今の市民の暮らしの実態をどう認識しているのかを尋ね、住民の福祉の充実最優先の立場に立ち国の政治の防波堤の役割を果たすべきとの認識と消費税５％への減税を国に要求することを求め、地方創生臨時交付金や財政調整基金２７億円を活用した市独自の支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">１７万人台キープの取組</span>
+          <span class="sum">他地域との競争に勝って民間投資を呼び込むための取組と重点、関係人口の創出拡大に向けた二地域居住やふるさと住民登録制度の内容と期待される効果、子ども医療費の中学生までの無料化に伴う財政負担とコンビニ受診による医療機関の負担増、佐田地域で設置準備される義務教育学校の制度内容と導入メリット及び他地域への導入の可能性を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>奥出雲町<span class="ex-n">65件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H26・大垣照子</span>
+          <span class="ttl">副町長人事</span>
+          <span class="sum">町民の最大の関心事である副町長人事について、地方創生で若手官僚や民間人を首長の補佐として派遣する国の動きも踏まえ、町長の考えを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・若月忠男</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">募集１４名に対し応募１１名にとどまった地域おこし協力隊の再募集への考え、奥出雲町でしかできない支援の発揮と議会等への定期的な情報伝達を尋ね、地方創生に協力隊が寄与できることと、まち・ひと・しごと創生総合戦略審議会等への参画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・村尾明利</span>
+          <span class="ttl">地域おこし協力隊の目標</span>
+          <span class="sum">地方創生関連事業の一つである地域おこし協力隊について、具体的なスケジュールと受け入れ人数の目標枠、３年後も定着してもらう取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石原武志</span>
+          <span class="ttl">地方創生と人口・雇用対策</span>
+          <span class="sum">所信表明の元気なまちづくりに関し、地方創生に対して町が期待する施策や連携の基本的な考え方、バイオマス事業と水力発電の具体的な方策と三沢での水力発電の計画、出雲圏や松江圏に通勤する人への支援による定住促進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・村尾明利</span>
+          <span class="ttl">地方創生の総合戦略策定</span>
+          <span class="sum">地方版総合戦略の策定で町民の当事者意識を醸成する作成プロセスを尋ね、議論の経過の広報、事業案を町民から広く募集する考え、てごねっと石見や日南町など先進地の視察や意見聴取を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・村尾明利</span>
+          <span class="ttl">地方創生への町の取り組み</span>
+          <span class="sum">まち・ひと・しごと創生本部の施策展開への所感を尋ね、若い世代の就労の場として半農半Ｘの職場の確保、全国知事会が提言した移住センターに呼応する対策、雲南広域連合や山陽方面とのネットワークなど地域連携の新たな手だてを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田雅人</span>
+          <span class="ttl">小さな拠点の町づくり</span>
+          <span class="sum">中山間地域の小さな拠点の形成を町の方向性としてどう考えるかと、その形成につながる具体的な取り組みを尋ね、公共施設の老朽化の際に複合化しワンストップで利用できるようにするハード整備の方向と、継続的に利益を生む事業に交付金を使う総合戦略のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田勇</span>
+          <span class="ttl">人が生きる地方創生</span>
+          <span class="sum">40年間で30%減少した人口と高齢化の現状認識と打開策を尋ね、人口減少率の高い地区での小さな拠点の形成と地区別の地域再生計画の作成、日本版CCRC構想と田舎暮らしのPR、結婚から子育てまでのワンストップの支援センターの設置、未婚・晩婚化対策、縁結びやU・Iターンの移住を手助けした人への報償金制度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川西明徳</span>
+          <span class="ttl">公共施設の再編と統廃合</span>
+          <span class="sum">国が地方創生や公共施設等総合管理計画を通じて進める公共施設の再編・統廃合について、住民自治の視点から今なぜ必要と考えるか、公共施設の本質と役割、人口減少社会での再編への具体的な取り組みと予算の獲得にどう向かうかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川西明徳</span>
+          <span class="ttl">地方創生と公共施設統廃合</span>
+          <span class="sum">地方創生関連の施策と密接に関連づけられた公共施設の統廃合について町の数多くの施設対応にどう具体的に取り組むかと、地方創生のための福祉教育予算の獲得にどう向かうかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石原武志</span>
+          <span class="ttl">地方創生の総合戦略</span>
+          <span class="sum">総合戦略の策定でひと・まち・しごとのうち何を主にするかを尋ね、仕事を最優先した企業誘致、町内企業の事業拡大や起業の把握、道づくりの反映、6次産業化の状況と事例、参院選の合区や18歳選挙権への町長の所見を問い、農業の指導体制の確立や周辺地域との広域連携、事業所との交流会の構築を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・塔村俊介</span>
+          <span class="ttl">地方創生加速化事業の狙い</span>
+          <span class="sum">地方創生加速化交付金を申請した伝統産業・観光産業振興事業の狙いを尋ね、刃物や日本刀など付加価値をつけた土産品を町内で販売する考え、しまね留学加速化事業の狙いと横田高校魅力化の今後の展開、日南町とのバスの共同運行の検討の余地を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田雅人</span>
+          <span class="ttl">子育て支援の体制整備</span>
+          <span class="sum">結婚・子育てコンシェルジュ制度の創設に向けた相談員の人材と現状と方向性を尋ね、岡山県奈義町のチャイルドホームの視察、総合戦略の就学資金貸与制度の対象と方向性、子育て世代に限ったデザインにこだわった住まいの提供、スマートフォンを活用した情報提供システムの構築を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・村尾明利</span>
+          <span class="ttl">小さな拠点づくりの推進</span>
+          <span class="sum">公民館エリアを基本とする小さな拠点づくりを町の総合戦略の具体的目標に組み入れ、町民一人一人の役割と目標を示したうえで、モデル地域での実証実験やＪＡ旧支所などの遊休施設を町が買い取り地元に貸し出す推進策と、各地区の活動を集約して促す役場内の部署の設置を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川西明徳</span>
+          <span class="ttl">新骨太方針と地方創生</span>
+          <span class="sum">公的サービスの産業化などを打ち出した新骨太の方針と地方創生基本方針について地方が衰退した原因の認識を尋ね、地方創生事業を主体的に利用し予算編成が真に地域と住民に必要なものを盛り込んだものになるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・塔村俊介</span>
+          <span class="ttl">町民力の育成と活用</span>
+          <span class="sum">総合戦略に関連して開かれた若もん未来会議などで町民が話し合った力の今後の展開を尋ね、来年以降も同様の機会を設けることと、雲南市の例を挙げて行政と住民の間に立つ中間支援組織の役割と立ち上げを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・塔村俊介</span>
+          <span class="ttl">総合戦略と計画のPDCA</span>
+          <span class="sum">まち・ひと・しごと総合戦略とは具体的に何かと重点項目を絞った目標値の設定の考え方を尋ね、奥出雲を好きになってもらう取り組みの議論を求めるとともに、PDCAサイクルを確立する仕組みと事業評価の公開、5年が経過する総合計画のチェックとアクションへの取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石原武志</span>
+          <span class="ttl">総合戦略と農林業の振興</span>
+          <span class="sum">策定された地方創生総合戦略の意味と実行の方法、本町独自の施策、新卒者の地元採用をふやす具体策を尋ね、自伐型林業の説明、小規模農家の営農対策、自伐型林業と組み合わせた個人農業への機械化の助成、孫ターンや通勤圏内での広域的な仕事確保の協力を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田雅人</span>
+          <span class="ttl">総合戦略の町民意識アップ</span>
+          <span class="sum">10月に作成された創生総合戦略が第1ステップに掲げる意識の醸成に向けた具体的な町民の意識アップ策を尋ね、理念を浸透させるため一般公募で今後5年間の覚えやすいキャッチコピーをつくる考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・藤原和範</span>
+          <span class="ttl">総合戦略の進行管理</span>
+          <span class="sum">奥出雲町まち・ひと・しごと創生総合戦略に沿った事業推進が第２ステージを迎えるにあたり、進行管理で重要となるＰＤＣＡサイクルと評価についての基本的な考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・藤原和範</span>
+          <span class="ttl">まち・ひと・しごとセンター</span>
+          <span class="sum">総合戦略に位置づけた地域・住民主体の世代間交流やＵ・Ｉターンの受け入れ事業の支援体制として検討しているまち・ひと・しごとセンターについて、具体的な役割と機能、組織と運営体制、設置の時期と場所を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・塔村俊介</span>
+          <span class="ttl">定住対策の進捗と次の一手</span>
+          <span class="sum">総合戦略２年目の総括として、ＩＴ企業誘致の進捗と合宿で回線の切断が指摘された高速ネット環境の現状と対応、農と食をつなぐ新たな農家・食産業の育成、起業・創業への人的・組織的支援と実際に起業に至った人数、子育て世代を軸とした古民家改修と新たな住宅用地の整備、町外に出た若者へ情報を届ける仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・大垣照子</span>
+          <span class="ttl">総合戦略の評価と結婚支援</span>
+          <span class="sum">総合戦略のＰＤＣＡサイクルによる平成２７年度の評価と改善策を尋ね、出産年齢人口や結婚をふやす具体策と施策の達成度、子育て支援の町外へのアピール、他自治体との比較による施策の充実、出会いの場や婚姻数の重要業績評価指標の目標値が低過ぎないかと定住しない原因の把握、移住者を担当課へきちんとつなぐ対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・藤原和範</span>
+          <span class="ttl">総合戦略推進の取り組み</span>
+          <span class="sum">本格実施２年目となる新年度の総合戦略の重点的推進事項を尋ね、地方創生加速化交付金で実施したたたらブランドの推進、そろばん産業の再生、たたらを活用した観光振興の現状と成果、地方創生推進交付金による観光や交流人口の拡大、地場産業への具体的な展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・村尾明利</span>
+          <span class="ttl">29年度の成果と新年度の抱負</span>
+          <span class="sum">総合戦略に基づく平成29年度の取組の成果と反省、平成30年度に臨む町政運営の抱負を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・土屋武雄</span>
+          <span class="ttl">U・Iターンの住宅支援</span>
+          <span class="sum">総合戦略のU・Iターン受け入れ環境整備事業の住宅支援について、住宅整備の助成の申請件数と採用件数、不採用の件数を尋ね、両親の存否で補助の採否が分かれたとされる事例の有無と改善の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・川西明徳</span>
+          <span class="ttl">公共施設の再編と町の施策</span>
+          <span class="sum">公共施設は住民の生存権・生活権を保障するものとの立場から、総合戦略と公共施設等総合管理計画の整合性と2018年度の重点施策、三成小学校の仁多中学校敷地内への移転検討を例にまちづくりを優先した統廃合の取組状況、公共施設とインフラ対策の優先順位、旧阿井発電所跡の小水力発電の進捗を問い、有線電話を利用する75歳以上の世帯への無停電電源装置の貸出しを要望するなど、公共施設と町政のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・景山利則</span>
+          <span class="ttl">合計特殊出生率の回復策</span>
+          <span class="sum">総合戦略が2040年に合計特殊出生率2.10を目指すとしていることについて、出生率を回復させるため現在具体的に講じている対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・藤原充博</span>
+          <span class="ttl">合計特殊出生率の数値と対策</span>
+          <span class="sum">本町の合計特殊出生率について、答弁の数値と総合戦略に示された実績値との食い違いの調査を求め、総合戦略の課題解決策で足りるのかと今後の取り組み、より高い目標値の設定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大垣照子</span>
+          <span class="ttl">奨学金返済支援制度</span>
+          <span class="sum">地方創生の総合戦略で推進される奨学金返済支援制度の導入について町の考えを尋ね、医師や看護師の地域枠による学資支援の大学生版として、地域リーダーの育成に向けた大学生への学資支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・藤原充博</span>
+          <span class="ttl">子育て支援の満足度</span>
+          <span class="sum">総合戦略で目標値60%とされる子育て支援の満足度について、子育て世代が支援策をどう感じているかを町がどう把握しているかを尋ね、80%程度の数字が出るような周知徹底を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・糸原壽之</span>
+          <span class="ttl">町政の長期的な方針</span>
+          <span class="sum">予算に込めた町長の考え、総合計画の地域コミュニティーづくりの記述と推進中の事業との関連性や熟度、全国画一的でないまちづくりへの考え、総合戦略の基本理念にいう本物の幸せとはどのようなものかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・景山利則</span>
+          <span class="ttl">総合戦略の評価と公表</span>
+          <span class="sum">合併後12年間で2,746人減少した人口の状況を示し、まち・ひと・しごと創生総合戦略のPDCAサイクルによる平成28年度の評価・検証の実施と、進捗状況の町民への公表の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・土屋武雄</span>
+          <span class="ttl">中山間地農業の振興</span>
+          <span class="sum">冬季の積雪で休農となる中山間地の農業所得向上に向け、積雪に強い大型ハウスの整備助成、ICTを活用した効率農業、農地集積に向けた関係人口の増加対策、農産品の高付加価値化と販売力強化、ブランディング戦略の導入方策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・内田雅人</span>
+          <span class="ttl">地産地消の推進</span>
+          <span class="sum">総合戦略でＣ評価の地産地消について、学校給食の地産地消率３５％の目標達成の具体策と課題、補助金の増額で対応できないか、プレミアム商品券の今後の形と規模や国の施策への対応、直売所の品ぞろえの充実と活性化、道の駅での地元産品の扱いを尋ね、他地域での消費拡大に向けた物流コストの削減策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・川西明徳</span>
+          <span class="ttl">町長施策の事業効果と評価</span>
+          <span class="sum">児童生徒の医療費助成、子ども・子育て支援、保育料の減免、地域福祉計画評価委員会、総合教育会議の開催・公開・議事録、中小企業・小規模企業振興基本条例による施策の検証と公表、総合戦略評価委員会、人事評価制度、ストレスチェック、水道料金の値上げ計画と幹線の耐震化、生活困窮者学習支援、地方創生推進交付金や地域おこし協力隊関連の補助金など、条例・規則等に基づく施策の事業効果と評価を尋ね、効果の上がっていない施策への責任の果たし方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・景山利則</span>
+          <span class="ttl">総合戦略の人口減少対策</span>
+          <span class="sum">最終年度を迎えるまち・ひと・しごと創生総合戦略の評価と取り組みを尋ね、年少人口や出産可能年齢の女性が少ない中での自然減の克服、社会減が続く要因の分析と今後の対応、施策と移住者の思いが合っていないのではないかとの認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・景山利則</span>
+          <span class="ttl">２期目のまちづくり構想</span>
+          <span class="sum">１３年ぶりとなった町長選挙の投票結果をどう受け止め今後の町政運営にどう対応するかを尋ね、人口減少が続く中で総合戦略を進めつつ町民目線で町民が満足するまちづくりをどう進めるかと町の将来像を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・川西明徳</span>
+          <span class="ttl">学校再編計画のあり方</span>
+          <span class="sum">中教審の作業部会や小中一貫教育の法改正以降、再編方針が示されるまでの10年の空白の事情を尋ね、国の補助基準である12から18学級の適正規模や財務省の予算執行調査に基づく財政効率化優先の統廃合が地方創生の縮図ではないかとの所見と、地域を活性化させる取り組みとあわせた学校のあり方の議論、教育長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・糸原壽之</span>
+          <span class="ttl">島根創生計画と学校再編</span>
+          <span class="sum">県が島根創生計画でU・Iターンの促進や関係人口の拡大を掲げる中、町内の小学校を2校にする再編方針は子供の教育を判断材料とする移住の受け皿を狭め県と逆を向くとして、再編をしばらく考え直すべきとの考えへの町長と副町長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・藤原和範</span>
+          <span class="ttl">次期総合戦略の策定</span>
+          <span class="sum">国県の次期地方創生・総合戦略の素案を踏まえ、町のまち・ひと・しごと創生総合戦略の基本方針等の策定スケジュールと、人口減少対策や産業の活性化など特に力を入れる重点的な推進事項への町長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・内田勇</span>
+          <span class="ttl">関係人口の創出</span>
+          <span class="sum">地域づくりの担い手を呼び込む関係人口の創出に向け、都市部の若者を農村に受け入れるインターンシップの募集、若者と地域のつながりを支える仕組みの構築、古民家を活用した農泊の推進、若者を呼び寄せる空き家再生事業を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・糸原壽之</span>
+          <span class="ttl">関係人口の拡大</span>
+          <span class="sum">国の第2期地方創生で柱とされた関係人口について、施策としての考え方、町の今後の施策に生かす具体的な事業、町民との協働の考えを尋ね、関西奥出雲会や東京仁多会など出身者会との幅広い交流による関係人口づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・内田雅人</span>
+          <span class="ttl">関係人口の拡大</span>
+          <span class="sum">総合戦略の5年間で人口減少に歯止めがかからない中、関係人口の定義と地域振興へのつながり、拡大施策の現状と今後の戦略を尋ね、親が町出身の人の掘り起こしや企業・学術研究機関の活用、縦割りの弊害がない庁内体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・村尾明利</span>
+          <span class="ttl">コロナ禍と農村地域の振興</span>
+          <span class="sum">コロナ禍で農村地域の重要性が見直される中、第２次奥出雲町総合計画と第２期まち・ひと・しごと創生総合戦略の策定への影響、デスクワークが増大する営農指導体制の現状、半農半Ｘを含む多様な農業形態の研究提案と助言や指導を行うスタッフの拡充を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・内田雅人</span>
+          <span class="ttl">公共交通の在り方</span>
+          <span class="sum">地域共助による交通支援のお試し運行を踏まえ、交通関係者と各地区の住民が一堂に会して町の公共交通の在り方を話し合う場の必要性と、公共交通の長期的なビジョンが新たな総合計画・総合戦略の策定で話し合われているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・内田雅人</span>
+          <span class="ttl">新総合計画の特徴</span>
+          <span class="sum">4月から始まる新たな総合計画と総合戦略について、策定に関わった職員の思いが込められた奥出雲町ならではの特徴がどこにどう表れるかを尋ね、町長が成し遂げたいことと他にない突き抜けた戦略の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・川西明徳</span>
+          <span class="ttl">第1期総合戦略の達成度</span>
+          <span class="sum">平成27年から平成31年の奥出雲町まち・ひと・しごと創生総合戦略について、町長が実効性のあった施策と評価しているかを尋ね、達成できた施策と達成できなかった施策の要因の分析、次期計画への反映を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・内田雅人</span>
+          <span class="ttl">デジタル田園都市国家構想</span>
+          <span class="sum">政府のデジタル田園都市国家構想にスマート農業や通信インフラ、自動運転、遠隔の医療・教育・防災などが含まれることを挙げ、交付金の活用や先導的なモデル地区などの施策に乗り遅れず早期実現を目指す考えを町長と副町長に質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・内田裕紀</span>
+          <span class="ttl">関係人口の創出と拡大</span>
+          <span class="sum">持続可能な地域づくりに向けた関係人口の現状と、目標が分かりやすくなるよう計数値で定義することの可否を尋ね、関係人口の創出と拡大に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・内田裕紀</span>
+          <span class="ttl">地域資源を生かす産業振興</span>
+          <span class="sum">４億円を超える見込みのふるさと納税の受入れとリピーターによる関係人口への影響の評価を尋ね、返礼品となる特産品の開発と供給体制・担当部署の体制強化、新たな特産品の開発や菌床シイタケ雲太の品質管理向上に向けた産官学連携の可能性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・高橋恵美子</span>
+          <span class="ttl">地方創生臨時交付金の活用</span>
+          <span class="sum">物価高騰による学校給食の値上げが懸念される中、給食の食材費と予算のバランスの状況、地元産食材の活用を含めた今後の見通しを尋ね、地方創生臨時交付金をほかの子育て支援などに活用する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・田食道弘</span>
+          <span class="ttl">町民の暮らしと営業の支援</span>
+          <span class="sum">消費税の引上げ、コロナ禍、ウクライナ危機、円安で暮らしと営業が深刻な中、地方創生臨時交付金を最大限活用した具体策を尋ね、生産費の実態把握と農業への緊急支援策、インボイス制度の導入廃止を政府へ求めること、学校給食の食材費の値上げを保護者負担に転嫁しないこと、給食センターの施設設備の改善、スタッフの過重労働と低賃金の解消を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・糸原文昭</span>
+          <span class="ttl">移住対策の推進</span>
+          <span class="sum">移住に興味があっても仕事面や経済面の不安を抱える人が多い調査結果を挙げてその不安解消への所見を尋ね、定住支援サイト以外での奥出雲町の魅力の発信、行政や町民が広報役となる移住施策の推進、関係人口についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・内田雅人</span>
+          <span class="ttl">総合戦略の見直し</span>
+          <span class="sum">町長が所信表明で述べた総合計画と総合戦略の見直しで具体的に見直すポイントを尋ね、施策分野への追加やＫＰＩの数値の見直しという理解でよいかと、表紙のキャッチフレーズを奥出雲創生などに変える必要はないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・川西明徳</span>
+          <span class="ttl">臨時交付金による生活支援</span>
+          <span class="sum">物価高騰に対し再交付される地方創生臨時交付金の使い勝手への町長の認識を尋ね、引き続きの学校給食費の助成と国の責任による小・中学校給食の無償化、教育の無償化への財政的な裏づけ、時代に見合った学校給食施設の近代化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石原武志</span>
+          <span class="ttl">農業振興と関係人口</span>
+          <span class="sum">農林振興課に新設した三セク経営企画室の職責と権限を尋ねて採算を割るシイタケ栽培の方向転換を促し、奥出雲町全体を博物館のようにしたいとする多根自然博物館との連携と、2拠点居住者など住所のない関係人口の自治会での受入れと理解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石原武志</span>
+          <span class="ttl">木次線の利活用</span>
+          <span class="sum">再構築協議会制度の創設を受けた国の方針への対応策、三段スイッチバックを生かし観光に特化した路線として関係人口や交流人口の増大につなげる考え、駅を住民に開放するマイレールの取組、ラストランを迎えるトロッコ列車を三井野原あたりに展示する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・小田川謙一</span>
+          <span class="ttl">関係人口の拡大策</span>
+          <span class="sum">2050年に町の生産年齢人口が58.7%減るとの予測を踏まえ、つながる地域づくり研究所が自治体と民間企業をつなげて共創する放課後企業クラブへの参加を、鳥取県南部町の例を挙げて提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石原武志</span>
+          <span class="ttl">関係人口の視える化</span>
+          <span class="sum">関係人口の５つの類型のうち本町の特色を生かして特に力を入れて推進したいもの、最終ゴールが見えない・費用対効果が求めにくいといった問題点への考え、ゆかりのある人を奥出雲交流大使や文化大使などとして見える形にする制度を創出する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・小田川謙一</span>
+          <span class="ttl">人口減少への適応策</span>
+          <span class="sum">人口減少の実態を認めたうえで、にぎやかな過疎の考え方やブランドメッセージによる関係人口の呼び込み、コンパクトシティー構想など集住論への懸念を示し、人口減少の適応策として町が検討すべき取組と、包括的な分散型社会への移行を踏まえた適応策への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・糸原文昭</span>
+          <span class="ttl">国際交流と姉妹都市交流</span>
+          <span class="sum">旧横田町のタイへのそろばん教育支援が途絶えたことに触れ、海外へ目を向けた交流の必要性、島根デザイン専門学校の外国人学生と子供や地域との異文化交流、関係人口づくりとしての姉妹都市協定の締結、中高生や新たに町内で就職した青年の海外派遣を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・落合孝行</span>
+          <span class="ttl">ふるさと住民登録制度</span>
+          <span class="sum">関係人口との関係性を可視化するため国内でも早い段階でふるさと住民登録制度を活用することへの町長の見解を尋ね、たたＬＡＢＯの入居状況と企業誘致の現状、誘致が実現に至らなかった理由、企業版ふるさと納税などで関わる企業への同制度を活用した情報発信を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・落合孝行</span>
+          <span class="ttl">若者のＵターン促進</span>
+          <span class="sum">高校卒業後に転出した若者への情報提供やキャリア支援の手だて、公式ＬＩＮＥの登録を促す奨学金などの情報提供、おくいずも登録の登録者数と効果・課題、町民が送るタイミングの検討を尋ね、民間とも連携した若者が町内の中高生や企業に関わる関係人口施策と、高校生の長期休暇中の町内企業などでのアルバイトの後押しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・小田川謙一</span>
+          <span class="ttl">関係人口と地域づくり</span>
+          <span class="sum">国が掲げる関係人口と連携した地域づくりの方向性を紹介し、世界農業遺産認定を受けた関係人口のさらなる創出に向けた町の取組方針を尋ね、おくいずも未来会議の提案プレゼン会で出た提案への行政の支援を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>雲南市<span class="ex-n">52件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H26・深田徳夫</span>
+          <span class="ttl">プラチナ社会の実現</span>
+          <span class="sum">プラチナ社会の根源的な価値と理念、市民の役割、プラチナシティ認定の要件とメリット、総合計画への位置づけ、地域自主組織の法人化やふるさと納税の自主組織への活用、議会との情報共有、地方創生の申請内容や特区、農業と高齢者への施策、平成２７年度予算と都市宣言、中学校の適正規模・適正配置や不登校支援のＮＰＯ法人への委託、農地の荒廃防止と森林の作業道整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・安井誉</span>
+          <span class="ttl">人口減少と定住対策</span>
+          <span class="sum">国の総合戦略を受けた市の人口減少対策、定住人口の拡大を最重要項目とする姿勢と予算配分・組織挙げての取り組み、成果の上がりにくい政策の見直し、耕作放棄地等を活用した住宅団地や菜園つき宅地の整備と低価格での販売を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・堀江眞</span>
+          <span class="ttl">周辺地域の寂れ対策</span>
+          <span class="sum">空き家が増える周辺地域の現状認識と地方創生のイメージ、自治会に譲渡された集落センターの屋根やトイレの改修への支援と譲渡時のルールづくり、吉田町への子育て世帯の呼び込みに向けた公営住宅等の無償提供を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・小林眞二</span>
+          <span class="ttl">国・県補正予算の影響</span>
+          <span class="sum">政府の平成２６年度補正予算と島根県の地方創生関連の補正予算が、雲南市の平成２７年度予算のどの分野にどのような影響を及ぼすかの所見を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐藤隆司</span>
+          <span class="ttl">地方創生とプラチナ社会</span>
+          <span class="sum">所信表明のプラチナ社会と第２次総合計画との整合性やスマートウエルネスシティとの関係、ＰＲパンフレットの作成などによる地方創生の情報発信、市総合計画推進委員会と策定委員会との整合性と役割を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・多賀三雄</span>
+          <span class="ttl">地方創生のあり方</span>
+          <span class="sum">地方が疲弊・衰退した原因、プレミアムつき商品券や選択と集中で地方が再生するかの見解を問い、地域産業を応援して安定雇用を確保する方向を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐藤隆司</span>
+          <span class="ttl">地方創生への対応</span>
+          <span class="sum">まち・ひと・しごと創生本部の設置に対する所感、市としての早期の対応と本部設置、総合計画の独自性、自治体間の施策競争への懸念、ブランド化プロジェクトを生かしたまちづくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・小林眞二</span>
+          <span class="ttl">総合計画と地方創生</span>
+          <span class="sum">第２次雲南市総合計画の策定に地方創生総合戦略がどう関わるか、雲南市総合計画推進委員会の内容、これからの１０年のまちづくりへの所見と市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・土江良治</span>
+          <span class="ttl">ＪＲ木次線の利用促進</span>
+          <span class="sum">木次線の存続に向けた利用促進の取り組みと普通列車への支援、出雲の國・斐伊川サミットでのトロッコ列車の周遊性を持たせたプランづくり、地方創生の総合戦略への機関車の駅前移設の位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐藤隆司</span>
+          <span class="ttl">予算編成の基本方針</span>
+          <span class="sum">毎年同じで具体性に乏しい平成２８年度予算編成の基本的な方針の示し方の意義と対象、見える化との関係、新たな施策や重点施策、新型交付金や一億総活躍社会への考え、自治大学校の移転誘致の見通し、総合戦略の早期策定の評価と市民との共通認識の不足を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・山﨑正幸</span>
+          <span class="ttl">人口の社会増と地方創生</span>
+          <span class="sum">社会減が目標値より少なかった要因と取組強化、プロジェクトごとの目標数値、魅力の情報発信、新規拡充３０事業の効果検証と市民への説明、雇用創出の遅れと企業誘致専門員を選定できなかった理由、日本立地センターへの業務委託、既存のものづくり産業への支援と企業誘致の方針、地域おこし協力隊終了後の支援、地域自主組織との連携、子育て世代の増加と赤ちゃん向けプレミアム商品券、取組に対する市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・細田實</span>
+          <span class="ttl">地方創生と地方分権</span>
+          <span class="sum">国のメニューに沿った地方創生をどう捉え進めるのかと、権限と財源の大幅な移譲による地方分権こそ真の地方創生ではないかとの市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・小林眞二</span>
+          <span class="ttl">安倍政権の政策</span>
+          <span class="sum">アベノミクスの雲南市への効果と市独自の経済対策、中国経済の影響、地方創生総合戦略の現状分析と前計画の踏襲とした新聞報道への見解、安保関連法案に対する市長の所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・松林孝之</span>
+          <span class="ttl">将来の人口設計</span>
+          <span class="sum">総合戦略の人口設計で１０代が増えるとした根拠が市内の人口分布まで考慮したものかを尋ね、自主組織や地区ごとのより細かいシミュレーションを進めるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・小林眞二</span>
+          <span class="ttl">市政運営への決意</span>
+          <span class="sum">任期最後となる平成２８年度の市政運営への市長の決意と、国の地方創生のもとで雲南市が目指す姿を実現するために何が必要かの見解を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・小林眞二</span>
+          <span class="ttl">平成28年度の予算編成</span>
+          <span class="sum">厳しい財政事情のもとで総合戦略を具体化し、財政の優先順位を明確にして重点施策に振り向けるめり張りのある予算編成を求め、平成２８年度予算への市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・深田徳夫</span>
+          <span class="ttl">結婚対策と定住施策</span>
+          <span class="sum">結婚対策への市長の見解と総合戦略での事業の実績、若い女性を雇用した結婚相談の組織化、地元企業や広域との連携、シングルマザーの転居への支援、住宅ローンの金利引き下げなど若者の住宅対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐藤隆司</span>
+          <span class="ttl">総合計画と総合戦略</span>
+          <span class="sum">地方創生の交付金の市民への効果、政府機関や大企業本社の地方移転への対応の成果、３つのチャレンジの連鎖への市民の理解、総合戦略改訂版の重要成果指標の決め方と危機感の共有、市民への取り組みの浸透と情報発信の認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・安井誉</span>
+          <span class="ttl">農業振興施策</span>
+          <span class="sum">ＴＰＰ大筋合意を受けた耕作放棄地への固定資産税引き上げなど国の政策が攻めの農業につながるかの見解と市の対策、遊休農地での有機農業を６次産業に生かす助成制度の創設、畜産農家への支援と新たな方策、地方創生の雲南市版の施策と効果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・白築俊幸</span>
+          <span class="ttl">人口の社会増と地域格差</span>
+          <span class="sum">総合戦略で最重点とする人口の社会増のこれまでの成果と今後の対策を尋ね、Ｕ・Ｉターンが町部に偏る中で町部と周辺部の地域格差とバランスのとれた発展への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・藤原政文</span>
+          <span class="ttl">地域自主組織と関係人口</span>
+          <span class="sum">定住推進住宅改修助成事業で地域自主組織が空き家を運営する場合の高齢者の共同生活の可能性や赤字のリスク、過疎債に頼る自主組織の持続可能な運営と法人化の論点整理、携帯電話の不感地帯の解消、関係人口の拡大への取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐藤隆司</span>
+          <span class="ttl">地方創生と定住基盤</span>
+          <span class="sum">２９年度の地方創生の取り組みで市民にアピールする点、子育て環境の充実の重要性と今後の施策、政府機関等の地方移転など国の地方創生への評価、山陰新幹線を含む国土軸のあり方への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・小林眞二</span>
+          <span class="ttl">市長４期目の課題</span>
+          <span class="sum">市長４期目のスタートに当たっての課題と対応策、第２次雲南市総合計画や総合戦略の施策推進と財政健全化を踏まえた平成２９年度予算編成への所見、これまでの各期と比べた４期目の決意姿勢の違いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・堀江治之</span>
+          <span class="ttl">総合戦略の人口目標</span>
+          <span class="sum">平成３６年の人口目標３万６，５００人に向けた主要な施策と達成の可能性、未達成の場合の交付金へのペナルティーの有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・周藤正志</span>
+          <span class="ttl">人口減少と総合戦略</span>
+          <span class="sum">総合戦略の目標人口を下回る現状への見解、合計特殊出生率の設定の根拠、人口の社会増の実績と若い女性の定住・移住、人口が減っても安心して暮らせる適応策とプラチナ社会の具体像、職員が現場を見て歩くことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐藤隆司</span>
+          <span class="ttl">人口社会増の見通し</span>
+          <span class="sum">所信表明の地方創生へのメッセージの弱さを指摘し、人口の社会増に向けた計画の達成認識、課題解決先進地の意味、社会増６７人と平成３６年の目標人口３万６，５００人の達成見通し、財政健全化の数値目標の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・周藤強</span>
+          <span class="ttl">地域自主組織の取り組み</span>
+          <span class="sum">地域自主組織について、小規模多機能自治ネットワークの活動内容、来訪した地方創生大臣の感想、認可地縁団体の数とできること、地域自主組織のあり方に関する研究会の報告書の要点と求める法人格の違い、コミュニティービジネスを行う組織数と事業内容、法人格を取得しない組織の活動の展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・藤原政文</span>
+          <span class="ttl">地方創生</span>
+          <span class="sum">松江・出雲への流出要因と仕事や雇用の強化、神話やたたらを生かした大学ゼミ合宿の誘致、観光による地方創生、山陰新幹線を待つ中での地方創生への決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・周藤正志</span>
+          <span class="ttl">まちの未来予想図</span>
+          <span class="sum">２０３０年と２０４０年の人口予想と総合戦略の目標との乖離、人口の社会増の施策、将来の財政と借金、インフラと公共施設の維持更新、セーフティーネット、限界集落と地域自主組織の人材育成、多文化共生、地域経済、キャリア教育と第４次教育基本計画の方針を尋ね、どのような未来をつくるかを市長に問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・堀江治之</span>
+          <span class="ttl">人口減対策</span>
+          <span class="sum">合併以来の人口減少を踏まえ、総合計画と総合戦略の２０２４年の目標人口３万６，５００人の達成見込み、人口の社会増の計画達成見込み、後期計画での目標人口変更の考え、有効な人口減対策、県推計人口が３万７，０００人を割ったことへの市長の所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・中林孝</span>
+          <span class="ttl">定住対策の見直し</span>
+          <span class="sum">総合戦略の目標と逆行する人口の社会動態を踏まえた施策の見直し、特定地域づくり事業協同組合構想への取り組みと東京２３区からの移住支援事業との連動、転入者をふやす追加の対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・深田徳夫</span>
+          <span class="ttl">総合戦略と人口対策</span>
+          <span class="sum">首相の所信表明で取り上げられた若者チャレンジの生かし方、社会減の動向分析と他自治体の転入超過要因の調査、働き方改革を含む就労対策、企業誘致のターゲット、移住者へのサポート体制、総合戦略の実績と検証を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・佐藤隆司</span>
+          <span class="ttl">総合計画と総合戦略</span>
+          <span class="sum">人口の社会動態の実績評価と国の評価が実績につながらない理由、若者チャレンジの評価が施策の後押しになるか、新設住宅建設戸数と宅地購入補助金の評価、土地開発公社の分譲宅地確保、大型店進出を踏まえた加茂町の住宅団地形成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・佐藤隆司</span>
+          <span class="ttl">総合計画と総合戦略</span>
+          <span class="sum">第２次総合計画前期計画の人口の社会増への挑戦の実績と評価、進行管理と次期計画策定の手順、総合戦略の進行管理と取り組み、中枢中核都市への支援策の評価、２つの計画を別々に策定する必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・深田徳夫</span>
+          <span class="ttl">まちづくりと地方創生</span>
+          <span class="sum">特定地域づくり事業協同組合の協議の進捗と自主組織の役割、合併後15年のプラチナ社会実現の評価、出生率目標の達成見通し、計画実施の財源確保と財政見通し、多極型のコンパクトシティー、工業団地と住宅政策、再登板の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・深田徳夫</span>
+          <span class="ttl">企業チャレンジ</span>
+          <span class="sum">竹中工務店・ヤマハ発動機・ETIC.との連携協定による企業チャレンジの具体的内容と進め方、企業誘致や移住定住への効果、今後マッチングする市の課題を尋ね、関係人口を増やす市独自の具体策と定住財団等への職員の長期派遣の提案について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・周藤正志</span>
+          <span class="ttl">地方創生と自治制度</span>
+          <span class="sum">地方創生第1期の総括と第2期への生かし方、人口減少への適応策、第32次地方制度調査会での個人情報保護条例の法律による統制とビッグデータ提供の議論への所見、市民憲章の制定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・藤原政文</span>
+          <span class="ttl">特定地域づくり事業組合</span>
+          <span class="sum">特定地域づくり事業推進法の成立を受けた本市での展開と総合戦略への掲載、構成団体との協議状況と設立のスケジュール、木次線活性化のためのコーディネーターの配置が対象となるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・周藤正志</span>
+          <span class="ttl">第２期総合戦略のＰＲ</span>
+          <span class="sum">子育て世代を主なターゲットとする定住施策について、市内在住の若者や市内で働く市外の人へのＰＲ不足と、子育て支援メニューのパンフレットを刷新して対象者へ配付することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原祐二</span>
+          <span class="ttl">総合計画・総合戦略</span>
+          <span class="sum">定住基盤の整備に係る重要成果指数９項目の前期計画の総括と地域間の達成度の差とその要因、後期計画での各分野の目的と指標の設定、地域自主組織エリアごとの目標設定、子ども・子育て支援事業計画など関連計画との策定調整を尋ね、定住基盤の整備に向けた市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・松林孝之</span>
+          <span class="ttl">都市宣言と総合計画</span>
+          <span class="sum">「平和を」・男女共同参画・うんなん健康都市宣言の３つの都市宣言と総合計画・総合戦略との整合性、市民の認知度の把握を尋ね、次期計画で都市宣言を市民の心に根づくよう発信していくことへの市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・周藤正志</span>
+          <span class="ttl">飛躍の１０年の折り返し</span>
+          <span class="sum">合併から１５年を迎え飛躍の１０年の折り返しに当たる市長の中間総括、まちづくりの３本柱とプラチナ社会、総合計画・総合戦略の整合性を尋ね、人口減少下での行政サービスの維持と市民生活の向上に向けた市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・上代和美</span>
+          <span class="ttl">コロナ対策</span>
+          <span class="sum">ＰＣＲ検査の拡充を国へ求めること、医療・介護従事者への社会的検査の実施、業者への持続化給付金の再給付の要請と、地方創生交付金を基金に積まず直接支援に使うことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・深田徳夫</span>
+          <span class="ttl">関係人口の人づくり</span>
+          <span class="sum">２０１９年度のＵ・Ｉターン者が１２６人で社会減が続く中、雲南市にゆかりのある人などがファンとして登録し交流する雲南市コミュニケーションクラブの設立を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・周藤正志</span>
+          <span class="ttl">人口減少への危機感</span>
+          <span class="sum">過疎地域持続的発展計画の令和７年の目標人口３万３，５８３人の根拠、現行の総合戦略からの下方修正と市長の公約との整合、人口減少の悪影響への対処、推計との約１，３００人の差の実現性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・安田栄太</span>
+          <span class="ttl">市内キャンプ場の整備</span>
+          <span class="sum">スポーツ・文化活動による関係人口増加への市長の考え、老朽化したキャンプ場のトイレ洋式化の計画と改修の判断基準、かみくの桃源郷の管理人の人手不足に対する指定管理料の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・安田栄太</span>
+          <span class="ttl">地方創生に向けた課題</span>
+          <span class="sum">若者のＵ・Ｉターンに向けたＳＮＳの活用状況と手応え、高校卒業後の進学先となる学校の誘致、本市の強みと弱み、松江市・出雲市への通勤を生かした定住、子育て世帯住宅地購入支援事業の実績と地域自主組織と連携した宅地購入のニーズ調査を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・上代純子</span>
+          <span class="ttl">関係人口の拡大</span>
+          <span class="sum">吉田町宇山地区の草刈り応援隊の取組の評価と全市への展開、継続のための補助金などの支援、海士町のオフィシャルアンバサダー制度のような関係人口と協働する方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・藤原信宏</span>
+          <span class="ttl">人口減少対策</span>
+          <span class="sum">消滅可能性自治体を脱却できなかった原因の捉え方と取組を修正する考え、東京圏一極集中の是正や就労環境の改善など国を挙げた政策を地方から要望する考え、市街のコンパクト化と県を含む近隣自治体との広域連携、関係人口拡大の取組、若年女性の県外流出を引き止めるため重点化すべき施策と脱却への決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・白築俊幸</span>
+          <span class="ttl">農村の振興施策</span>
+          <span class="sum">改正食料・農業・農村基本法を踏まえ、農村ＲＭＯの有用性と中山間地域直接支払制度の加算との違い、鍋山地区の活動の評価と今後の展開、農泊の推進への考え方、草刈り応援隊など関係人口を増やす交流施策の状況と今後を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・竹部貴博</span>
+          <span class="ttl">保育園留学の導入</span>
+          <span class="sum">保育園留学が子育て世代への魅力発信や関係人口の創出、移住定住の促進につながる可能性、本市で最も効果的な魅力、制度導入の可能性と課題、課題解決時の実施の意向と最も解決すべき点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・原祐二</span>
+          <span class="ttl">総合計画の検証と前期計画</span>
+          <span class="sum">第２期総合戦略の定住基盤や人材育成のＫＰＩの達成状況と社会増が目標を下回った要因、周辺地域への移住定住と集落機能維持の支援策の成果、第３次総合計画前期５か年の目標と若者回復率の低い地域の定住対策、健全財政の指標の乖離と目標の公表時期、地域自主組織の在り方と各町に必要な公共施設を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 自治体くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

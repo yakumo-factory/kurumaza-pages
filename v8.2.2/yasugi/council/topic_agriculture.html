@@ -1,0 +1,3622 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>農林水産業 — 安来市議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">安来市 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../financial/index.html" class="cross-nav-link">財政レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_agriculture.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">農業の担い手と新規就農</a></li>
+                            
+                            <li><a href="#topic-02">耕作放棄地と農地の利用</a></li>
+                            
+                            <li><a href="#topic-03">鳥獣被害</a></li>
+                            
+                            <li><a href="#topic-04">林業と森林の管理</a></li>
+                            
+                            <li><a href="#topic-05">水産業と漁業</a></li>
+                            
+                            <li><a href="#topic-06">地域ブランドと販路拡大</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 市長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">安来市 · 議会レポート / <b>農林水産業</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">農林水産業</h1>
+  <p class="page-subtitle">
+    安来市議会の一般質問・代表質問について、区分「農林水産業」に属する6の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">農業の担い手と新規就農</a></th>
+            <td class="lt10">6</td><td class="lt25">21</td><td class="lt10">7</td><td class="lt25">22</td><td class="lt25">12</td><td class="lt25">11</td><td class="lt10">6</td><td class="lt25">20</td><td class="lt25">21</td><td class="lt25">18</td><td class="ge25">35</td><td class="ge25">35</td><td class="ge25">26</td><td class="ge25">29</td><td class="lt25">19</td><td class="lt25">11</td><td class="ge25">27</td><td class="ge25">25</td><td class="lt10">6</td><td class="lt10">7</td><td class="lt25">15</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">耕作放棄地と農地の利用</a></th>
+            <td class="h0">0</td><td class="ge25">26</td><td class="lt25">20</td><td class="lt10">9</td><td class="lt25">12</td><td class="lt25">11</td><td class="lt10">6</td><td class="ge25">25</td><td class="ge25">33</td><td class="lt25">18</td><td class="lt25">12</td><td class="lt25">12</td><td class="lt25">13</td><td class="lt25">12</td><td class="lt25">19</td><td class="lt10">5</td><td class="lt25">23</td><td class="lt25">12</td><td class="lt25">19</td><td class="ge25">27</td><td class="ge25">25</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">鳥獣被害</a></th>
+            <td class="h0">0</td><td class="lt10">5</td><td class="lt10">7</td><td class="lt10">4</td><td class="h0">0</td><td class="lt25">11</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="lt10">6</td><td class="h0">0</td><td class="lt10">6</td><td class="lt10">9</td><td class="h0">0</td><td class="lt25">12</td><td class="h0">0</td><td class="lt25">18</td><td class="h0">0</td><td class="lt25">19</td><td class="lt25">13</td><td class="lt10">5</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">林業と森林の管理</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="lt10">6</td><td class="lt25">20</td><td class="lt10">4</td><td class="lt25">18</td><td class="ge25">29</td><td class="lt25">18</td><td class="lt10">9</td><td class="lt25">24</td><td class="lt25">19</td><td class="lt25">11</td><td class="lt25">18</td><td class="ge25">25</td><td class="ge25">25</td><td class="lt25">20</td><td class="lt25">10</td><td class="lt10">8</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">水産業と漁業</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">4</td><td class="lt10">4</td><td class="lt10">5</td><td class="h0">0</td><td class="lt10">5</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="lt25">12</td><td class="h0">0</td><td class="lt10">6</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">6</td><td class="lt10">7</td><td class="lt10">5</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">地域ブランドと販路拡大</a></th>
+            <td class="lt10">6</td><td class="lt10">5</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">4</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">5</td><td class="lt10">8</td><td class="h0">0</td><td class="lt10">6</td><td class="lt25">18</td><td class="h0">0</td><td class="lt10">6</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>17</td><td>19</td><td>15</td><td>23</td><td>26</td><td>19</td><td>17</td><td>20</td><td>24</td><td>17</td><td>17</td><td>17</td><td>23</td><td>17</td><td>16</td><td>19</td><td>22</td><td>16</td><td>16</td><td>15</td><td>20</td><td>13</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>農業の担い手と新規就農</h3>
+    <p class="terms">語: 農業の担い手と新規就農・担い手・担い手不足・新規就農者・農業振興</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt25" data-year="H18"><b>4</b><span class="of">/19人</span><span class="q">5件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="lt25" data-year="H20"><b>5</b><span class="of">/23人</span><span class="q">5件</span></td><td class="lt25" data-year="H21"><b>3</b><span class="of">/26人</span><span class="q">3件</span></td><td class="lt25" data-year="H22"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt25" data-year="H24"><b>4</b><span class="of">/20人</span><span class="q">6件</span></td><td class="lt25" data-year="H25"><b>5</b><span class="of">/24人</span><span class="q">5件</span></td><td class="lt25" data-year="H26"><b>3</b><span class="of">/17人</span><span class="q">4件</span></td><td class="ge25" data-year="H27"><b>6</b><span class="of">/17人</span><span class="q">7件</span></td><td class="ge25" data-year="H28"><b>6</b><span class="of">/17人</span><span class="q">6件</span></td><td class="ge25" data-year="H29"><b>6</b><span class="of">/23人</span><span class="q">7件</span></td><td class="ge25" data-year="H30"><b>5</b><span class="of">/17人</span><span class="q">6件</span></td><td class="lt25" data-year="R01"><b>3</b><span class="of">/16人</span><span class="q">4件</span></td><td class="lt25" data-year="R02"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="ge25" data-year="R03"><b>6</b><span class="of">/22人</span><span class="q">6件</span></td><td class="ge25" data-year="R04"><b>4</b><span class="of">/16人</span><span class="q">4件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="lt25" data-year="R07"><b>3</b><span class="of">/20人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">中山間地域農業と農地活用</span><span class="sum">中山間地域農業の振興と農地の活用について、耕作者と耕作放棄地の状況と変化、地域計画と農業振興地域整備計画の性格・策定過程・相互の関係、変更や農振除外の手続とガイドライン、非農地認定の扱い、今後の取組を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・岩崎勉</span><span class="ttl">本市の農業政策</span><span class="sum">本市の農業政策について、認定農業者や集落営農法人など担い手の育成確保と新規就農者へのマナー指導、農業機械助成など小規模農家支援、インボイス制度、農業女子の環境づくり、有害鳥獣や病害虫の対策、耕作放棄地対策と市長の見解を質した。</span></li>
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・一般質問・小松原直樹</span><span class="ttl">農業の担い手不足への対応</span><span class="sum">直近の農業経営体数と新規就農者数の動向、農地の状況、荒れ地を増やさない農地の有効活用の方法、担い手確保に向けた対策を尋ね、高額な農機具の購入支援や新規就農者への支度金など市独自の支援の検討と、専門的な相談体制の確立を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・岩崎勉</span><span class="ttl">来年度の農業政策と予算</span><span class="sum">高温耐性品種の導入支援、認定農業者以外の小規模農家への支援、カメムシ被害を受けた農薬購入への支援、担い手の育成と確保、水田の区画整備事業の予算確保、中海周辺の浸水・塩害対策、安来干拓地の水路の全面改修への見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・岩崎勉</span><span class="ttl">農業振興と大雪被害の復旧</span><span class="sum">中核的農業者の育成・確保、就農・定住パッケージ事業の現状と展開、小規模農家への支援、インボイス制度の見直しの国・県への働きかけ、鳥獣被害対策、災害に強い施設への更新、大雪による農業災害復旧対策事業の進捗と交付決定の状況・今後の対応を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・岩崎勉</span><span class="ttl">農業振興策</span><span class="sum">市内のタマネギの作付・収穫状況と広域的乾燥調整貯蔵施設の状況や販売までの経費、水田収益力強化ビジョンの作付目標の課題、今後の水田園芸の方向性、中山間地域で農業を営む担い手への支援策を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・三原哲郎</span><span class="ttl">農業の担い手支援対策</span><span class="sum">圃場整備を控えた飯梨地区などで若い担い手やＩターン者が未経験でも農業に取り組める支援策、情報や人材を共有する各法人の連携の取組、インボイス制度が農家や法人に及ぼす影響を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・葉田茂美</span><span class="ttl">水田農業の将来と農村集落</span><span class="sum">米価の下落や資材高騰が続く中での市の水田農業の将来の見通しと水稲生産の位置づけ、法人化による生産経費削減の実績値、離農の意向を含む農家戸数の現状、担い手のいない農村集落への対策と支援を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・代表質問・三島静夫</span><span class="ttl">文化芸術の振興</span><span class="sum">文化芸術活動の担い手が高齢者に偏り若い世代の文化芸術離れが進む中、先人の文化芸術を振興し後世に伝えるため行政もしっかり支援すべきではないかと市の見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・三島静夫</span><span class="ttl">定年後の就労と活躍の場</span><span class="sum">定年後の男女別の就業状況、転職に役立つ学習訓練、異業種交流の場の創出への支援、ボランティア参加を促す対策と中高生の担い手育成の事業を質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・中村健二</span><span class="ttl">中山間地域の農業支援</span><span class="sum">草刈りロボットの貸出制度の創設、令和2年度の有害鳥獣の捕獲実績と支援拡充、中山間地域の農地維持と集落営農による担い手確保、鹿の捕獲地域を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・石倉刻夷</span><span class="ttl">農地利用最適化交付金の活用</span><span class="sum">農地利用最適化交付金を活用した担い手への農地集積、遊休農地の発生防止・解消、協力員の活動実績、令和3年度の非農地判断の実績と、目標未達の案件への対策と今後の方針を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・湯浅正志</span><span class="ttl">水田収益強化と農業振興</span><span class="sum">主食用米の需要が減少する中での大区画圃場整備後を見据えた水田収益強化の取組方針と、農山漁村振興交付金による情報通信環境整備事業の今後の進め方を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・福井加代子</span><span class="ttl">切川バイパス周辺の活性化</span><span class="sum">農業振興地域整備計画と都市計画マスタープランの見直しについて令和4年度の考え方を尋ね、令和6年度開通予定の切川バイパス周辺でアルテピア周辺の環境を生かした新たな市街地形成の具体的計画の有無を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・三原哲郎</span><span class="ttl">農振計画と都市マスの見直し</span><span class="sum">将来の安来市農業を踏まえた農業振興地域整備計画の方向性と、切川バイパスと飯島線の完成を見据えた都市計画マスタープランの見直しで今後どのような安来市を描くかについて市長の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・代表質問・石倉刻夷</span><span class="ttl">施政方針の諸施策</span><span class="sum">施政方針のうち、地域包括ケアシステムの進化・推進の具体的内容、農業振興地域の見直しのスケジュールと作業の主体、完了する中海ふれあい公園の今後の管理と使用料・入場料の考え方を質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・代表質問・岩崎勉</span><span class="ttl">農業振興</span><span class="sum">新型コロナウイルス感染症対策農業収益向上事業と経営継続補助金の概略、令和3年度農業政策の基本的な考え方、地域農業の担い手の育成・確保、水田農業高収益化への見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・三島静夫</span><span class="ttl">芸術家支援と担い手確保</span><span class="sum">芸術家が農業や介護、デマンドバスの運転などで働きながら制作できる支援策と芸術家村の考えを尋ね、介護ロボット企業の誘致と開発、関係人口への見解、飯梨川河口のカイトボードの活用と環境整備を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・岩崎勉</span><span class="ttl">安来市の農業振興</span><span class="sum">令和元年度の農業政策の考え方と将来像、高収益作物振興の現状と課題、機械やパイプハウス導入への支援、鳥獣被害防止対策、ＵＩターン新規就農者と農家後継者の確保策を尋ね、産地化と販路確保の主体的な取り組みを質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・岩崎勉</span><span class="ttl">担い手確保と鳥獣被害対策</span><span class="sum">雇用就農へのサポート手法と実績、集落営農組織間の意見交換会や研修会の開催状況、リースハウス事業の後継事業とリース料支援の継続、小規模農家の支援を尋ね、防護柵設置助成とイノシシ捕獲の実績、先進的な捕獲機材の活用状況、狩猟免許取得者への講習会とサポート体制を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・代表質問・中村健二</span><span class="ttl">農業振興の基本方針</span><span class="sum">米の生産調整や直接支払制度の廃止を踏まえた農業振興の基本方針と、職員の育成を含む市の生産普及活動の考え、ＵＩターン者が生活できる農業施策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９５回　６月定例会  06月07日－02号・一般質問・石倉刻夷</span><span class="ttl">地方創生の総合戦略</span><span class="sum">総合戦略の主な7施策として地域おこし協力隊、新規就農研修、みどりの担い手確保緊急対策、地域交流センターの活性化、生活交通ネットワーク再編、イエローバス運行、道路改良の各事業の現状と検証を踏まえた今後の考え方を尋ね、地域ビジョン作成事業を実施した交流センターの有無を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９６回　９月定例会  09月06日－03号・一般質問・岩崎勉</span><span class="ttl">農林水産施策の進捗状況</span><span class="sum">平成30年度の農林水産施策について、地域おこし協力隊の進捗状況と任期を終えた隊員の定住状況、新規就農研修への誘導と新規就農者総合対策事業・農業次世代人材投資事業・就農定住パッケージ事業の進捗、新規就農者の施設整備支援やリース方式の園芸施設整備への補助事業の活用状況、中海のサルボウ貝の養殖調査委託事業と養殖施設整備事業の進捗を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・石倉刻夷</span><span class="ttl">耕作放棄地の有効活用</span><span class="sum">担い手への農地利用集積の実績、荒廃農地の実態調査に当たる委員の手当と調査の進捗・農家への周知、農地法第3条の下限面積の現行要件と空き家と農地をセットにした要件緩和の考え、旧市町村ごとの実績を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・岡本早智雄</span><span class="ttl">外部人材を活用した地域活性化</span><span class="sum">総合戦略の基本目標4のうち地域の担い手確保・拠点づくりの数値目標の根拠と進捗・評価、最終年度に向けた取り組み、地域おこし協力隊の任期後の定住に向けたフォロー体制、外部アドバイザーの招聘、集落支援員16名の目標に対する配置を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・原田貴与子</span><span class="ttl">苦境に立つ農家への支援</span><span class="sum">市の農業振興支援の柱、学校給食での地元産食材の拡大の対応と現状・課題、市による営農指導員の配置と小規模農家・集落営農の支援、農業後継者育成策の支援期間の延長と自立状況の調査、農業・農村での交流によるＰＲ、災害復旧の自己負担の解消を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・代表質問・金山満輝</span><span class="ttl">ほ場整備後の農業振興</span><span class="sum">ほ場整備後の農業振興と成長産業化の考え、農業が地域の基幹産業の役割を担っていけるか、中山間地における農業展開の具体的な施策や計画を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月02日－02号・一般質問・石倉刻夷</span><span class="ttl">農業振興と国の施策の動向</span><span class="sum">今年度で廃止となる米の直接支払交付金の今年度の取り組みと次年度以降の国の施策、米の生産調整廃止後の展開と地域農業再生協議会のあり方の検討状況、中山間地域総合整備事業に対する国・県の動向と早期採択を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９１回　９月定例会  09月06日－03号・一般質問・上廻芳和</span><span class="ttl">地産地消と農業振興</span><span class="sum">給食センターハッピークックと自校方式の学校での地産地消の状況、消費と生産のバランス、病院や福祉施設・スーパーへの販売を仲介する組織の必要性を尋ね、中山間地の野菜づくりなど定住につながる農業振興を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月06日－03号・一般質問・葉田茂美</span><span class="ttl">ほ場整備事業の今後</span><span class="sum">米の生産数量目標配分と直接支払交付金の廃止で農家経営への影響が懸念される中、既に計画されている地区を含めたほ場整備事業の今後についての市の所見と、未整備地区や計画のない地域の水田農業と担い手対策の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月06日－03号・一般質問・作野幸憲</span><span class="ttl">農業と他業種の連携</span><span class="sum">中山間地域の草刈りや防護柵の設置・撤去を建設業者など外部へ委託できるよう中山間地域等直接支払制度で対応できないかを尋ね、農福連携の作業実績と市の考え、新規就農者の過去5年の推移とＵＩターン者・雇用就農と自営就農の比率、半農半Ｘの現状、市長の農業ビジョンを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月07日－04号・一般質問・岩崎勉</span><span class="ttl">農業振興の基本方針と施策</span><span class="sum">安来市の農業に対する基本的な考え方と将来像を尋ね、生産数量目標配分廃止後の地域再生協議会のあり方と米の直接支払交付金廃止への対応、鳥獣被害対策と捕獲の担い手確保、後継者の現状と研修状況、荒廃農地対策と基盤整備、6次産業化の進捗と支援策、就農定住パッケージ事業の新規就農者目標の進捗とアグリ体験セミナーの参加状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月05日－02号・代表質問・澤田秀夫</span><span class="ttl">中山間地域の農業振興</span><span class="sum">大区画ほ場整備が進む一方で中山間地域の小規模農業が継続の危機にあるとし、きぬむすめやつや姫など需要の旺盛な品種への切りかえにも触れ、市長の考える中山間地域の農業の支援策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月08日－05号・一般質問・岩崎勉</span><span class="ttl">農業振興の意気込みと施策</span><span class="sum">平成30年度の農業振興の意気込みと目玉事業を尋ね、水田フル活用の平成29年度作付実績と未達の要因、排水対策と不作付地対策、畜産振興策と全国和牛共進会等への支援、母牛・子牛預かり施設の展開、遊休樹園地の生産継承と後継者育成、雪害等の際の支援、収入保険制度の普及への取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・田淵秀喜</span><span class="ttl">中山間地域の農林業</span><span class="sum">中山間地域で耕作放棄地や担い手不足が課題となる中、農林部局として将来的に中山間地域の農林業をどう進めていくのか、その具体的な取り組みへの見解を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８６回１２月定例会  12月05日－02号・代表質問・遠藤孝</span><span class="ttl">農林業の担い手と雇用確保</span><span class="sum">農業の後継者や新規就農者などの担い手確保の具体策と現状、林業の雇用の場の確保と地域活性化へのつなげ方、ふるさと納税を農家や農村の挑戦に振り向ける仕組みづくりを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８６回１２月定例会  12月07日－04号・一般質問・原田貴与子</span><span class="ttl">介護総合事業と地域づくり</span><span class="sum">介護保険制度の改定による利用者や介護現場への影響の受けとめと国へ反対の声を上げる考え、総合事業での保険給付と多様なサービスの違い、現行相当サービスの単価維持と新たな対象者数、基準緩和・住民主体サービスの有無、ミニデイやサロンなど一般介護予防事業の見直しと老人クラブ等の担い手の容認、高齢者実態調査の拡大と赤屋地区への福祉施設を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月03日－02号・代表質問・石倉刻夷</span><span class="ttl">中山間地域対策</span><span class="sum">新年度予算で中山間地域に特化した予算の内容、国や県の制度改革による中山間地域への支援やＴＰＰ関連の国策の情報、安田地区の農地整備と法人設立を踏まえた安来地域担い手育成総合支援協議会と安来市集落営農組織連絡協議会の活動内容と目的を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・樋野智之</span><span class="ttl">建設業の担い手確保</span><span class="sum">地域の担い手である建設業界の厳しい経営環境と改正品確法を踏まえ、松江市・出雲市・大田市や島根県の格付点数での加点を例に、本市独自の評価・加点による業界育成の施策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・丸山征司</span><span class="ttl">米を軸にした農業振興</span><span class="sum">ロウカット玄米を契機とした安来の米のブランド化と国内外への販路拡大、布部の企業による担い手不足解消の取り組みを他の企業・地域へ広げる考え、朝ごはん条例や日本酒で乾杯条例、米粉の需要拡大、就農・定住パッケージ事業と比田の野菜づくりの現況と展望を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７６回　６月定例会  06月04日－03号・一般質問・田中武夫</span><span class="ttl">次世代の担い手育成</span><span class="sum">ひとり親のＩターン受け入れなど第2次総合計画での次世代の担い手育成について、鳥取県と比べた小児医療費助成の水準と米子市の取り組み、第3子以降保育料無料化の0歳からへの拡充、病児・病後保育の現状、老朽化したつどいの広場の施設整備、認定こども園移行のメリットと私立が含まれない理由、指定管理保育所の民営化の方針を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">中山間地域の農業振興対策</span><span class="sum">第4期中山間地域等直接支払制度の事業計画の提出状況と未提出地区への対策、対象から漏れた緩傾斜地の再調査、多面的機能支払交付金の取り組み状況と未着手地域への対策、耕作放棄地と相続未登記農地の対策、中山間地域総合整備事業の進捗と2地区同時採択の可能性、環境保全型農業直接支払交付金の取り組みと方針を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">林業振興対策</span><span class="sum">平成24〜26年度の林業振興にかかわる決算額と平成27年度の機械導入助成などの予算措置の内容、島根県東部森林組合の労務班と緑の担い手の人数の推移を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月07日－04号・一般質問・原田貴与子</span><span class="ttl">畜産農家への支援</span><span class="sum">担い手の高齢化が進む畜産農家について、子牛価格の高値を踏まえた優良牛保留の補助金引き上げ、飼料高騰に苦しむ酪農家への支援、粗飼料を安価に提供する仕組みの検討、ＴＰＰ交渉の中止と譲歩撤廃の要求を含め市の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・中島隆夫</span><span class="ttl">都市計画と土地利用</span><span class="sum">都市計画や農業振興地域の指定で産業や住宅に使える地域が限られ土地が高いとされる中、企業活動を行える地域を増やす視点から都市計画にどのような考え方で臨むのかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月07日－05号・一般質問・岩田拓郎</span><span class="ttl">農業振興としての地産地消</span><span class="sum">農業振興としての地産地消の推進策を尋ね、岡山県総社市の地食べ事業を紹介しつつ、学校給食の地産地消率の算定基準と、食育やふるさと納税、民間企業との関連施策の進め方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月08日－06号・一般質問・永田巳好</span><span class="ttl">切川バイパスと地区計画</span><span class="sum">市道・橋梁の整備計画に関連し、総合文化ホールと給食センターを建てる中で切川バイパス二工区の整備時期が県の考え次第となっている点を挙げ、地区計画を外して農業振興区域としたことで費用が無駄になったのではないかと質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月05日－02号・一般質問・嶋田豊昭</span><span class="ttl">農政の転換と農村の保全</span><span class="sum">担い手の経営安定交付金法の改正と多面的機能発揮促進法案による農政の転換を踏まえ、大規模化・集約化が進む中で農家戸数の減少による農村環境や集落の崩壊を防ぐ取り組みを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７０回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">林業振興と木材の収益化</span><span class="sum">林業振興に関わる会議や大会への出席状況、試行造林の全体面積と間伐や伐期を迎えた面積の収益化の考え方、樹種別の木材価格、作業道の開設など収益化の施策、総合計画での林業振興の基本方針を尋ね、中山間地域土地境界保全調査事業の実績と計画、木質バイオマス発電への市内材の供給と市民会館への導入、みどりの担い手確保緊急対策事業の見通しを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月04日－03号・一般質問・嶋田豊昭</span><span class="ttl">地域農業と農政の進め方</span><span class="sum">26年産米価の急落に対する認識、担い手以外が対象外となるゲタ・ナラシ対策の下での集落営農組織設立の支援と4年後の減反政策廃止に向けた市の対応と基本方針、日本型直接支払制度の市内全域での取り組み、今後の農政推進の基本的な方向を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月04日－03号・代表質問・上廻芳和</span><span class="ttl">農業振興の方向性</span><span class="sum">平たん地と中山間地域の農業の将来像、不作付地や耕作放棄地の増加への懸念、平成28年4月稼働の給食センターへの地元産野菜の供給方法とＪＡやすぎ・生産農家との協議状況、6次産業化に向けた企業誘致や会社を立ち上げる仕組み、広瀬町・伯太町の集落営農と法人化の現状と対策、農地中間管理機構の推進上の問題点、地域おこし協力隊への考え、中山間地域総合整備事業の状況と今後のスケジュール、全国和牛能力共進会への意気込みと取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月07日－03号・一般質問・丸山征司</span><span class="ttl">菜の花プロジェクトと農業振興</span><span class="sum">転作田や耕作放棄地に菜の花を植えて菜種油やＢＤＦに循環させる菜の花プロジェクトを市として推進する考えと、担い手不足の解消に向けた設備投資や付加価値づけ、販路拡大への国の補助事業を活用した市の援助を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月10日－04号・一般質問・岡田麻里</span><span class="ttl">耕作放棄地の対策</span><span class="sum">耕作放棄地再生利用緊急対策事業が明年3月で終了することを踏まえ、市の耕作放棄地の現状と実態、定年帰農者を含む担い手の育成、新たな耕作放棄地の発生防止、最終年度となる交付金の活用推進と今年度の予定を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月05日－03号・一般質問・作野幸憲</span><span class="ttl">子育て支援を柱にした定住促進</span><span class="sum">人口の現状と将来推計、人口減少の歯止めに必要なもの、次世代育成支援行動計画の庁舎内総合推進体制と点検評価、全国学力テストの結果と独自の学力向上策、農林業の担い手や就学困難者向け奨学金制度の創設、市外向けホームページの改善、定住企画課の役割を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６５回１２月定例会  12月05日－03号・一般質問・田中明美</span><span class="ttl">中山間地域の活性化</span><span class="sum">中山間地域の活性化に向け、集落営農組織の数と中山間地域での組織数、国・県を含む農業振興対策、市独自の集落ビジョン推進事業の内容と支援状況、同事業の拡充の考え、交通手段や買い物弱者対策を含む庁内の中山間地域対策プロジェクトの進行状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月05日－03号・代表質問・中島隆夫</span><span class="ttl">農業の担い手育成</span><span class="sum">農政改革や消費税引き上げで経営環境が変わる中、経営管理能力を備えた担い手をどう育成するかの市の方策と、指導に当たる認定農業士への手当の有無を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５４回　６月定例会  06月07日－03号・一般質問・上廻芳和</span><span class="ttl">中山間地の農業対策</span><span class="sum">中山間地農業の5年後・10年後の見通し、集落営農の推進方法、和牛の飼育戸数減少への支援制度、大規模化や若い担い手の組織化と支援策、定住希望者の住まい、中山間地対策室の設置の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月05日－02号・代表質問・上廻芳和</span><span class="ttl">多彩な魅力あるまちづくり</span><span class="sum">トップセールスによる企業誘致の進め方と企業団地造成の考え、集落営農や担い手確保など農業施策の具体像、中山間地域対策プロジェクトチームの構成と活動、森林資源を生かした再生エネルギー、島田干拓へのメガソーラー誘致の協議内容、中海ふれあい公園の県との協議、小水力発電所の改修計画、都市計画マスタープランの構想と日程、和牛・乳牛飼育支援の具体策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月05日－02号・代表質問・中島隆夫</span><span class="ttl">中山間地域対策</span><span class="sum">担い手育成支援や農林畜産業支援、買い物・移動手段確保支援、定住対策などを総合的に進める中山間地域対策と、ＵＩターンの受け皿づくりを今後どう進めるかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月05日－02号・代表質問・葉田茂美</span><span class="ttl">農業振興とＴＰＰ</span><span class="sum">農業者の高齢化や担い手不足を踏まえ、人・農地プランの進捗状況、新規就農者や認定農業者への市独自の支援策の必要性、ＴＰＰ交渉参加問題への市長の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月07日－04号・一般質問・岩田拓郎</span><span class="ttl">農業の振興策</span><span class="sum">農産物・畜産物の生産額が年々低下する中での生産振興対策、担い手育成対策、耕作放棄地対策と農用地集積対策、教育からの地産地消対策について、積極的な振興策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月05日－02号・代表質問・葉田茂美</span><span class="ttl">中山間地域の農業振興</span><span class="sum">中山間地域の人口減少や高齢化、耕作放棄地の増加で多面的機能の低下が懸念される中、平地の農業もあわせた中山間地域の振興対策をどう考えるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月07日－05号・一般質問・上廻芳和</span><span class="ttl">近藤市長の公約の検証</span><span class="sum">任期最後の年度を迎える市長の公約について、庁舎建設以外の中心市街地活性化策、高速バスの安来停車の進展と利用実態の調査、住民投票条例の制定、南部地区の荒廃田や廃校跡を生かした企業誘致、地域自主制度の組織づくりと活動、介護予防の生涯スポーツと交流センターの役割、市長独自の農業振興策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２３年第　４６回　３月定例会  03月04日－03号・代表質問・遠藤孝</span><span class="ttl">学習訓練センターの運営</span><span class="sum">島根東部地域訓練センターの廃止に伴い名称が変わった安来市学習訓練センターについて、市民の学習活動の促進と地域産業の担い手育成に向け、指定管理でどこまで濃密な運営を考えているかを問うた。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４６回　３月定例会  03月08日－05号・一般質問・上廻芳和</span><span class="ttl">雪害による農業被害への支援</span><span class="sum">大雪による農業被害の旧町・地域別の状況を尋ね、補正予算の支援が南部の小規模なハウスにも及ぶか、復旧しない農家への支援と期限、その農地を借りる新規就農者への対応、復旧を目指す農家の数を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３２回　６月定例会  06月08日－03号・一般質問・上廻芳和</span><span class="ttl">農業振興</span><span class="sum">戸数・頭数の減少と子牛価格の下落が続く和牛繁殖農家への支援として精液代や飼育頭数に応じた補助、導入資金の金利補てんを尋ね、経済危機対策予算への農業分野の対処と農家への周知、バイオマスリサイクルセンターの稼働に向けたＪＡやすぎとの協議状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３２回　６月定例会  06月09日－04号・一般質問・永田巳好</span><span class="ttl">農業振興と認定農業者</span><span class="sum">21年度で終わる地域担い手経営基盤強化総合対策事業の後継と利用実績、不採択の理由を尋ね、事業情報の早期提示や農業経営基盤強化促進基本構想の推進、認定農業者への中間確認と市の助成を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　３９回　３月定例会  03月08日－06号・一般質問・田中武夫</span><span class="ttl">農業振興地域整備計画の策定</span><span class="sum">土地改良予算が削減され交付金化する中、県内の整備計画の現況、合併後5年を過ぎても安来市農業振興地域整備計画が策定されていないことへの市長の認識、農用地除外の運用、県単事業で使える基盤整備事業があるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２０年第　２８回　９月定例会  09月10日－03号・一般質問・中村健二</span><span class="ttl">災害時要援護者の支援</span><span class="sum">少子・高齢化が進む中での災害時要援護者、とくに高齢者の支援体制の取り組みについて、具体的な支援内容と誘導の担い手、消防団員や民生児童委員へ個人情報を提供する際の取り扱いを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　３０回１２月定例会  12月09日－02号・一般質問・梶谷厚</span><span class="ttl">農業の現状と振興策</span><span class="sum">農業生産額が減り続ける原因と現状、農業振興施策の再構築、肥料・飼料・燃料の高騰に対する生産コスト低減の支援と耕畜連携による有機肥料の活用、耕作放棄地の現状と協議会を受け皿にした国の交付金の活用、有害鳥獣被害対策の資材購入費の上限撤廃や猟友会の支援を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月06日－04号・一般質問・上廻芳和</span><span class="ttl">中山間地農業の担い手</span><span class="sum">農業従事者の高齢化と後継者不足を背景に、集落営農の進捗状況と促進の取り組み、退職者や離職者など新たに農業につく人への支援、緊急雇用対策を活用したふるさと公社の充実と担い手育成の考え方を尋ね、21年度のＵ・Ｊ・Ｉターン者の受け入れ見込みも質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月09日－05号・一般質問・永田巳好</span><span class="ttl">農業振興の予算措置</span><span class="sum">マニフェストに掲げながら予算措置がないとして、中核農家や認定農家を救済するためのハード・ソフト両面の予算づけを求めた。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月09日－05号・一般質問・田中武夫</span><span class="ttl">農業振興地域整備計画</span><span class="sum">農業振興地域整備計画の策定状況と時期、切川地区の地区計画の法的な考え方と経過、安来一中改築と都市計画法・農振法の関係、計画未策定時の大規模開発と農振除外への影響、プロセスを経た庁舎計画を凍結できるのかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２２回　９月定例会  09月07日－04号・一般質問・嘉本祐一</span><span class="ttl">外部監査の導入</span><span class="sum">夕張市の財政破綻や自治体破綻法制の見直しを受け、企業会計や公会計、経営の専門家による外部監査について市の考えを尋ね、導入時の条例改正の要否や監査の担い手、職員の監査能力向上に向けた専門家の指導を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１８年第　１５回　６月定例会  06月05日－03号・一般質問・嶋田豊昭</span><span class="ttl">団塊世代への対応</span><span class="sum">地域社会の重要な担い手と位置づける団塊世代について、市内勤労者の退職に伴う税収減少の見通しと、人口増に向けた住宅団地の販売促進や各事業所での定年後の再雇用などの施策を尋ね、定住対策の具体的な方策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１９回１２月定例会  12月05日－02号・一般質問・梶谷厚</span><span class="ttl">農業振興の基本的な考え方</span><span class="sum">品目横断的経営安定対策など新たな農業政策を踏まえ、農業政策の基本的な考え方と農業ビジョンの策定時期、集落営農組織や認定農業者など担い手対策、兼業農家や中山間地域の小規模生産者への独自の支援、生産調整への市の関わり方、行政と関係機関によるワンフロア的な総合窓口の設置を質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１９回１２月定例会  12月06日－03号・一般質問・田中武夫</span><span class="ttl">品目横断的経営安定対策</span><span class="sum">平成19年度から担い手に支援を絞る品目横断的経営安定対策について、主な転作作物である大豆の交付金で支援対象となる最低限の基準を満たした団体の扱いについての市の考え方と、一般農家への周知の徹底を質した。</span></li>
+          
+          <li><span class="who">安来市  平成１９年第　２０回　３月定例会  03月07日－04号・一般質問・梶谷厚</span><span class="ttl">有害鳥獣の被害防止対策</span><span class="sum">有害鳥獣被害への基本認識、鳥獣別・作物別の被害と予算措置の現状、指導員の配置と防除方法、県の交付金制度の活用、狩猟期間後の駆除対策、自然災害に準じた総合対策としての位置づけ、年々減る予算の評価、免許取得や保険料の助成による担い手対策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成１９年第　２０回　３月定例会  03月07日－04号・一般質問・金山満輝</span><span class="ttl">農地・水・環境保全向上対策</span><span class="sum">担い手を絞る品目横断的経営安定対策と対をなす農地・水・環境保全向上対策について、担い手以外の住民も含め集落全体で環境と資源を保全する市の今後の対策と、集落営農のリーダーが育つまでの行政の支えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１８年第　１３回　３月定例会  03月06日－04号・一般質問・河津清</span><span class="ttl">品目横断的経営安定対策</span><span class="sum">2007年から担い手に絞って実施される品目横断的経営安定対策に対する市の考えと、市内で対象となる農家や集落営農組織、耕地面積の状況、市の対応を尋ね、要件に合わない集落営農組合への支援も求めつつ見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>農業経営体の育成・確保（農地保有合理化・後継者育成・作業受委託）</summary><p>担い手となる農業経営体の育成・確保とその経営安定を図るため、農地保有合理化事業、農林業の後継者育成事業、作業の受委託などを引き続き推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成19年度</td>
+            <td><details class="it"><summary>産地育成・担い手育成・新規就農支援</summary><p>たち上がる産地育成支援事業、新規就農円滑化対策事業、いきいき集落営農推進事業などにより、農産物の生産・流通・販売への支援、集落営農と担い手の育成、新規就農者の確保を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>全国農業担い手サミットの受入れ</summary><p>11月開催の「第13回全国農業担い手サミットinしまね」で約100名を受け入れ、現地視察と交流会を開催し、安来市農業のPRと市内担い手農業者の機運向上に役立てる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>地域コミュニティー活動の支援（交流センター職員育成・地域トライアングル事業・中山間地域元気いきいき補助事業）</summary><p>地区交流センターの職員が地域の担い手として活躍できるよう人材育成と研修を充実させる。あわせて自活と共助のまちづくりを推進するため、主体的・創造的な市民活動を支援する地域トライアングル事業と中山間地域元気いきいき補助事業を引き続き実施する。同一段落の3要素を統合した。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">10</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>ほ場整備事業（能義第2地区継続・大塚地区着手）</summary><p>「能義第2地区経営体育成基盤整備事業」を継続して推進するとともに、新たに「大塚地区経営体育成基盤整備事業」に着手する。農業従事者の高齢化に伴う後継者不足の解消と担い手育成に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>安来市学習訓練センターの開設</summary><p>島根東部地域職業訓練センターの廃止に伴い同センターを無償で譲り受け、「安来市学習訓練センター」として活用する。市民の学習活動の促進と地域産業の担い手育成を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>新規就農支援</summary><p>新規就農支援を定住対策の一環と位置づけ、国と島根県の支援制度の拡充を受けて、自営就農にこだわらず担い手確保を最優先にさまざまな就農形態に対応できるよう事業を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>結婚活動支援・出会いの場創出事業</summary><p>境港市との共同開催による結婚活動支援事業に加え、独身男女の出会いの場を創出するイベントと農業の担い手を対象とした支援事業を新たに行う。未婚・晩婚化の解消、住民の交流促進と地域の担い手確保を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>安来市農林振興協議会の新事業（農業集落活動支援・担い手確保）</summary><p>農村集落の活性化と農産物の生産拡大のため、農業関係機関などが連携する安来市農林振興協議会に新しく事業を創設する。農業集落活動の支援と担い手確保に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>農地集約化（農地中間管理機構・人・農地プラン）</summary><p>担い手への農地集約により農業構造の改革と生産コスト削減を進めるため、農地中間管理機構の本格始動にあわせた体制を整え、「人・農地プラン」を推進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>安来農林振興協議会による農業支援</summary><p>市と農業関係機関等で構成する安来農林振興協議会で、農業集落活動への支援、担い手確保、特産振興などに引き続き取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>新規就農支援の拡大・企業の農業参入支援</summary><p>農業の担い手対策として新規就農支援を拡大するとともに、農業部門への企業参入を支援して雇用を創出する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>農地中間管理事業・人・農地プランの推進</summary><p>担い手への農地の集約化により生産コストの削減等を進めるため、引き続き農地中間管理事業を活用する。人・農地プランの推進とともに積極的な農業振興に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>就農と定住のパッケージ事業</summary><p>UIターンの新規就農者の定住支援として、農地、住居、受け入れ集落、師匠といった受け入れ態勢を一体的に整備する。農業の担い手の確保・育成と効率的な生産体制を構築し、安心して就農に迎えられるようにする。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>就農定住賃貸住宅の建設</summary><p>優秀な就農希望者を確保するため、受け入れ集落・農業の師匠・農地等の条件整備に住居をパッケージ化し、農地の近隣に就農に向けた定住賃貸住宅を建設して多様な担い手の育成・確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>大塚・安田地区の県営ほ場整備事業</summary><p>農業従事者の高齢化・後継者対策とあわせて担い手を育成し、農地の大区画ほ場整備を図るため、大塚地区・安田地区の県営ほ場整備事業を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>就農定住パッケージ事業と地域おこし協力隊</summary><p>就農定住パッケージ事業による担い手の確保と園芸産地の活性化を図るとともに、地域おこし協力隊員による地域おこし活動を支援し、農業・農村の活性化と定住促進を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>地域コミュニティ育成（がんばる地域おこし支援事業・地域づくり推進事業・交流センター改修）</summary><p>交流センターが住民とともに地域課題解決の学習実践活動を行うがんばる地域おこし支援事業と、担い手育成や地域活動助成を行う地域づくり推進事業を実施する。あわせて地区交流センターの改修工事等の環境整備を行い、交流センターを中心とした特色ある地域づくりを支援する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>地域おこし協力隊を活用した担い手育成とUIターン新規就農者の誘致</summary><p>国の地域おこし協力隊制度を活用し、集落・地域の特性に合わせた施策を展開して、地域農業の振興と地域活性化・定住化につなげる。受け入れ集落・指導者・農地に住居を加えてパッケージ化し、UIターンによる新規就農者を誘致する仕組みで集落ビジョンの達成と定住を促進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>中山間地域等の農業振興と多面的機能の維持</summary><p>条件の不利な中山間地域等の農業を振興し、共同活動を通して農地等の持つ多面的機能を維持する。集落の体制整備と活性化を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>就農・定住パッケージ事業</summary><p>就農・定住パッケージ事業で新たに2棟の建設を予定し、ＵＩターンによる新規就農者の誘致と定住の促進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>農地の現状調査と農業振興地域整備計画の見直し検討</summary><p>担い手不足・後継者不足で耕作が続けられない農地があることから、令和3年度に現状を把握する調査を行い、必要に応じて農業振興地域整備計画の見直しを検討し、都市計画マスタープランとの整合を図りながら土地利用の円滑化を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>安来市特定地域づくり事業協同組合の運営支援</summary><p>本年1月に創設された安来市特定地域づくり事業協同組合は、地域の雇用資源を組み合わせて仕事を生み出し若者の活躍の場を創出する取組であり、市は組合の運営を支援し、地域の担い手確保や人材育成を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>飯梨地区の大区画圃場整備とスマート農業</summary><p>農地集積と担い手確保を目的とした大区画圃場整備に令和4年度は飯梨地区で着手する。スマート農業に適した大型圃場整備区域では、令和3年度に整備した基地局と自動操舵システムを利用し、作業の効率化と生産性の向上を図る。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>農業の担い手確保</summary><p>農業者の高齢化などで担い手不足が進む中、持続可能な農業のため、地元農家や転職者に加えUIターン者による就農者を誘致する各種支援などにより担い手を確保する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>農業振興地域整備計画の見直し</summary><p>令和3年度の基礎調査の結果を基に平成23年策定の現行計画を総合的に見直し、都市計画の土地利用調整との調和を図りながら農用地の区域を設定し、将来にわたり面的な農地の保全を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>新規就農者・認定農業者等への支援</summary><p>新たな農業の担い手確保と中核的な担い手への発展を推進するため、中核的な経営体を目指す新規就農者、認定農業者、農業経営体等に対し、引き続き必要な支援に取り組む。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>安来市権利擁護センターの機能強化</summary><p>令和4年6月に設置した成年後見制度利用促進の中核機関・安来市権利擁護センターについて、制度の周知、相談窓口・手続支援、市民後見人や法人後見の担い手育成と後見人支援など、機能強化を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>中海干拓地のイチゴ収穫体験農園整備支援</summary><p>特産品イチゴの産地力・販売力の強化、新たな担い手確保、交流人口の増加を図るため、中海干拓地での収穫体験農園等の施設整備事業を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>特定地域づくり事業の推進</summary><p>令和6年度は安来市特定地域づくり事業協同組合が雇用する職員を1名増員し、職員の受入先となる事業者の拡大にも力を入れる。企業や地域の担い手確保と移住者数の増加を目指す。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>農業の担い手支援と新規就農者育成</summary><p>新規就農者・認定農業者・農業経営体等の施設・機械整備やハウス等の園芸資材整備を支援する。また安来市新規就農研修制度で研修期間中の傷害保険契約や滞在施設の貸与を行い、就農準備と経営開始に必要な資金を給付する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>農業の担い手への施設・機械整備支援</summary><p>新たな担い手の確保と中核的な担い手への発展のため、新規就農者・認定農業者・農業経営体等が施設・機械・ハウス等を整備する費用を、島根県・JA等と連携して支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>就農の総合的なサポート</summary><p>農業後継者の高齢化や担い手不足の解消に向け、就農に向けた各種資金の交付や、就農前から就農後までをトータルでサポートできるよう島根県・JA等と連携した支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>林業人材育成拠点の整備</summary><p>林業従事者の育成・技術力向上と担い手確保のため、伯太町地内の山林で林業人材育成拠点整備に係る道路改良・駐車場設置等の工事を行い、令和8年度の供用開始に向けて準備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>宇賀荘あいのりタクシーの担い手確保と事業拡大</summary><p>令和5年度から実施している宇賀荘あいのりタクシーに二種免許を持たない一般ドライバーも参加できる仕組みを導入して担い手を確保し、事業を拡大する。宇賀荘地区の取組を他地区にも活用して公共交通の利便性向上を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>耕作放棄地と農地の利用</h3>
+    <p class="terms">語: 耕作放棄地と農地の利用・耕作放棄地・農地</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="ge25" data-year="H18"><b>5</b><span class="of">/19人</span><span class="q">6件</span></td><td class="lt25" data-year="H19"><b>3</b><span class="of">/15人</span><span class="q">3件</span></td><td class="lt10" data-year="H20"><b>2</b><span class="of">/23人</span><span class="q">3件</span></td><td class="lt25" data-year="H21"><b>3</b><span class="of">/26人</span><span class="q">5件</span></td><td class="lt25" data-year="H22"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="ge25" data-year="H24"><b>5</b><span class="of">/20人</span><span class="q">8件</span></td><td class="ge25" data-year="H25"><b>8</b><span class="of">/24人</span><span class="q">10件</span></td><td class="lt25" data-year="H26"><b>3</b><span class="of">/17人</span><span class="q">7件</span></td><td class="lt25" data-year="H27"><b>2</b><span class="of">/17人</span><span class="q">2件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/17人</span><span class="q">3件</span></td><td class="lt25" data-year="H29"><b>3</b><span class="of">/23人</span><span class="q">4件</span></td><td class="lt25" data-year="H30"><b>2</b><span class="of">/17人</span><span class="q">4件</span></td><td class="lt25" data-year="R01"><b>3</b><span class="of">/16人</span><span class="q">6件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt25" data-year="R03"><b>5</b><span class="of">/22人</span><span class="q">7件</span></td><td class="lt25" data-year="R04"><b>2</b><span class="of">/16人</span><span class="q">2件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/16人</span><span class="q">5件</span></td><td class="ge25" data-year="R06"><b>4</b><span class="of">/15人</span><span class="q">5件</span></td><td class="ge25" data-year="R07"><b>5</b><span class="of">/20人</span><span class="q">6件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・三島静夫</span><span class="ttl">日本遺産の構成文化財の活用</span><span class="sum">安来の魅力を生かしたまちづくりとして、日本遺産構成文化財の内容とまちづくりへの生かし方、安来港と街並みの認定理由と空き家が増える町並みの維持、空き家のオーダーメードリフォーム、卜蔵新田の耕作放棄地と認定解除の懸念を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">中山間地域農業と農地活用</span><span class="sum">中山間地域農業の振興と農地の活用について、耕作者と耕作放棄地の状況と変化、地域計画と農業振興地域整備計画の性格・策定過程・相互の関係、変更や農振除外の手続とガイドライン、非農地認定の扱い、今後の取組を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・岩崎勉</span><span class="ttl">本市の農業政策</span><span class="sum">本市の農業政策について、認定農業者や集落営農法人など担い手の育成確保と新規就農者へのマナー指導、農業機械助成など小規模農家支援、インボイス制度、農業女子の環境づくり、有害鳥獣や病害虫の対策、耕作放棄地対策と市長の見解を質した。</span></li>
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・一般質問・小松原直樹</span><span class="ttl">農業の担い手不足への対応</span><span class="sum">直近の農業経営体数と新規就農者数の動向、農地の状況、荒れ地を増やさない農地の有効活用の方法、担い手確保に向けた対策を尋ね、高額な農機具の購入支援や新規就農者への支度金など市独自の支援の検討と、専門的な相談体制の確立を質した。</span></li>
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・一般質問・永田巳好</span><span class="ttl">中海周辺農地の高潮対策</span><span class="sum">中海周辺農地への浸水と高潮防止対策について、市の対応を質した。</span></li>
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・代表質問・三島静夫</span><span class="ttl">農地を守る人材の確保</span><span class="sum">専従就農者以外にも農地を耕す人材を獲得するため、兼業農家の促進や体験型農業の創設、農業機械のレンタル事業支援の見解を含め、農業人材確保への取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・岩崎勉</span><span class="ttl">恵乃島工業団地北側農地</span><span class="sum">安来商工会議所等の要望や地域未来投資促進法による転用検討の経過を踏まえ、恵乃島工業団地北側農地の市街化区域編入をめぐるこの4年間の状況の変化と今後の対応を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・内田卓実</span><span class="ttl">遊休農地・荒廃農地</span><span class="sum">市の遊休農地・荒廃農地の近年の推移と原因、増加を抑えるための考え方、千葉県匝瑳市の事例を踏まえた市の営農型太陽光発電の状況を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・湯浅正志</span><span class="ttl">農地制度の改正と地域計画</span><span class="sum">改正農業経営基盤強化促進法により廃止される農用地利用集積計画（相対契約）の制度と廃止によるメリット、期限が迫る地域計画の策定状況を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・石倉刻夷</span><span class="ttl">所有者不明農地と森林管理</span><span class="sum">地域計画を条件とする所有者不明農地制度の直近の事例と、森林経営管理制度で市町村が管理する市内・県内の事例を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・石倉刻夷</span><span class="ttl">中山間地域等直接支払</span><span class="sum">第6期中山間地域等直接支払制度の改正内容と説明会の参加状況、今後の申請日程、農地中間管理事業の推進制度を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・石倉刻夷</span><span class="ttl">農業の地域計画策定</span><span class="sum">中山間地域等直接支払制度の見直しに触れつつ、耕作放棄地が増える中で将来の農地の維持利用を定める地域計画の策定状況を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・石倉刻夷</span><span class="ttl">中山間地域農業対策</span><span class="sum">令和5年度中途に生じた中山間地域等直接支払制度の見直しの実情と対策、令和6年度の予算要望状況を尋ね、地域計画の策定状況と今後の方針、遊休農地解消事業の調査検討を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・湯浅正志</span><span class="ttl">農地の継承と地域計画</span><span class="sum">10年後に向けた農地の継承に関し、人・農地プランの進行状況と地域計画との違いを尋ね、地域計画を作るメリットと具体的な進め方を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・湯浅正志</span><span class="ttl">円滑な土地の利用と管理</span><span class="sum">所有者不明土地と空き家の現状、所有者不明土地関連法改正の概要と市の周知方法を尋ね、農業経営基盤強化促進法等の改正の概要と所有者不明農地への市の対応と周知を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・代表質問・清水保生</span><span class="ttl">産業・観光の振興</span><span class="sum">中山間地域の圃場整備の現状と今後、耕作放棄地を含む農地の維持・利活用と農地法緩和、地元産材を地域で流通させる仕組みを森林ビジョンに盛り込むこと、本市独自の戦略的な観光振興を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・湯浅正志</span><span class="ttl">農業従事者の確保と農地</span><span class="sum">定年延長に伴う農業従事者の減少についての見解と、農地の相続登記の推進状況及び未相続農地を貸借する方法を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・石倉刻夷</span><span class="ttl">耕作放棄地対策</span><span class="sum">過去3か年の田畑の耕作放棄地の状況を尋ね、耕作放棄地対策への農業委員会としての取組と、農業関係団体と連携した市の具体的な施策と今後の方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・石倉刻夷</span><span class="ttl">相続未登記の土地と国土調査</span><span class="sum">相続に伴う土地の未登記問題について国の方針の捉え方、令和3年1月1日時点の農地・山林等の未登記状況、国土調査の対象地の指針を質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・原瀬清正</span><span class="ttl">豪雨の浸水被害と復旧支援</span><span class="sum">7月7日と12日の住宅地・農地の浸水被害の状況と通報への対応、過去の事例に基づく事前の注意喚起とポンプ情報の伝達、今後の対策、農地浸水被害への復旧支援策と今後の考えを質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・中村健二</span><span class="ttl">中山間地域の農業支援</span><span class="sum">草刈りロボットの貸出制度の創設、令和2年度の有害鳥獣の捕獲実績と支援拡充、中山間地域の農地維持と集落営農による担い手確保、鹿の捕獲地域を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・石倉刻夷</span><span class="ttl">中山間地農業への支援</span><span class="sum">中山間地域等直接支払交付金事業の令和3年度実績と今後の対策、多面的機能支払交付金事業の協定組織による農地維持・資源向上等の実績と今後の対策を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・石倉刻夷</span><span class="ttl">農地利用最適化交付金の活用</span><span class="sum">農地利用最適化交付金を活用した担い手への農地集積、遊休農地の発生防止・解消、協力員の活動実績、令和3年度の非農地判断の実績と、目標未達の案件への対策と今後の方針を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・岡本早智雄</span><span class="ttl">中山間地域の振興</span><span class="sum">中山間地域振興への市長の基本的な考えを尋ね、地域包括ケアシステムの状況と今後、こども園・学校の体制、自治会の統合・再編や人手不足の補完、空き家活用、防災の観点を含む耕作放棄地対策、イノシシを中心とした有害鳥獣対策を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・代表質問・澤田秀夫</span><span class="ttl">中山間地域の農業支援</span><span class="sum">小規模農業の稲作断念による耕作放棄地の増加を踏まえ、耕作放棄地の推移の状況と、中山間地域で高齢者でもできる軽労働・高収入の農産物の作付支援の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９８回安来市議会定例会・一般質問・石倉刻夷</span><span class="ttl">農地取得の下限面積の見直し</span><span class="sum">農業委員会が定める農地法第3条の下限面積について、合併後50アール以上としてきた状況と農地を新規に求めた人の実態、3月の農業委員会で見直しとなった理由と面積を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・石倉刻夷</span><span class="ttl">農業委員会への権限移譲</span><span class="sum">県から市の農業委員会へ移譲された権限の内容を尋ね、4ヘクタール未満の転用許可では提出書類を必要最小限にするよう述べたうえで、農地法3条の下限面積50アールのその後の状況を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・石倉刻夷</span><span class="ttl">農地中間管理機構の活用</span><span class="sum">農地の推移、認定農業者と営農組織の動向、大区画基盤整備と作付の状況、旧市町ごとの離農状況を尋ね、農地中間管理機構の役割、中山間地域の課題、農家への支援策、機構関連の基盤整備の課題、高収益の産地振興の動きを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・三島静夫</span><span class="ttl">耕作放棄地の資源化</span><span class="sum">主食米の生産量と目標、耕作放棄地の原状回復の費用と時間、農業以外への転用と解消の時期を尋ね、農山漁村再生エネルギー法の評価と、行政が主導して基本計画をつくる考えを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・岩崎勉</span><span class="ttl">恵乃島干拓農地の市街化編入</span><span class="sum">意見交換会に企業側が不在だった理由、議事録の送付と情報提供の状況、今後の協議の進め方、公共用地取得の可否、固定資産税を巡る答弁の姿勢、干拓地農業の将来像、市長の出席を尋ね、新規事業のプロジェクトチームの考えを質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・石倉刻夷</span><span class="ttl">非農地の地目変更登記</span><span class="sum">荒廃農地調査の進捗と非農地と判断した土地の関係各課や土地改良区への情報提供の状況を尋ね、非農地の地目変更登記を税務課と農業委員会の連携で推進する他自治体の取り組みに対する所見を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・三島静夫</span><span class="ttl">耕作放棄地の有効活用</span><span class="sum">災害時対策としての発電施設の分散設置や再生可能エネルギーの推進への見解、林業振興と支援策、伯太地域での木材チップ工場誘致とバイオマス発電を尋ね、耕作放棄地を農林業や畜産振興に使う場合や家畜排せつ物によるバイオマス発電、クルミ栽培での農地転用の可否を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９６回　９月定例会  09月05日－02号・一般質問・石倉刻夷</span><span class="ttl">耕作放棄地の実態と対策</span><span class="sum">平成28・29年度の耕作放棄地や遊休農地のカウントの仕方、農業委員と農地利用最適化推進委員による荒廃農地の実態調査の状況、調査を踏まえた耕作放棄地・遊休農地対策への農業委員会としての指導・助言の考えを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・石倉刻夷</span><span class="ttl">耕作放棄地の有効活用</span><span class="sum">担い手への農地利用集積の実績、荒廃農地の実態調査に当たる委員の手当と調査の進捗・農家への周知、農地法第3条の下限面積の現行要件と空き家と農地をセットにした要件緩和の考え、旧市町村ごとの実績を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・石倉刻夷</span><span class="ttl">空き家対策と空き家バンク</span><span class="sum">空き家の直近の調査と旧市町別の実態、空き家バンクの登録状況と平成28〜30年の利活用実績、情報発信、定住相談窓口の体制と地域センターでの情報共有、納税通知に合わせた登録協力要請、宅建業者との連携を尋ね、再質問で農地法第3条の下限面積の見直し状況と周知方法を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・岩崎勉</span><span class="ttl">恵乃島干拓農地の市街化編入</span><span class="sum">恵乃島干拓事業と安来鉄工団地整備の経過、農用地区域の変更方針と農地転用の許可方針、農林水産部と政策推進部の考え方、公共用地取得でなく市街化区域編入を選んだ理由、公共用地売買時の税控除と立ち木補償、意見交換会を受けた今後の進め方、固定資産税の上昇と企業が買わなかった場合の税、市長の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　９１回　９月定例会  09月05日－02号・一般質問・石倉刻夷</span><span class="ttl">相続未登記の土地への対策</span><span class="sum">固定資産税に関連して相続未登記の宅地・農地・山林の安来・広瀬・伯太別の実態を尋ね、徴収や用地買収、基盤整備の支障となる未登記農地の発生について、市と農業委員会の今後の対策の考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９１回　９月定例会  09月05日－02号・一般質問・石倉刻夷</span><span class="ttl">県政課題と市の施策</span><span class="sum">県政課題に絡め、人口減少対策での小さな拠点づくりと県との共同施策、農地中間管理事業の実績と今後の取り組み、新工業団地の取り組み状況、月山誘客に向けた富田山荘の国民宿舎化構想と山中鹿介の大河ドラマ放映運動のさらなる取り組みを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月07日－04号・一般質問・岩崎勉</span><span class="ttl">農業振興の基本方針と施策</span><span class="sum">安来市の農業に対する基本的な考え方と将来像を尋ね、生産数量目標配分廃止後の地域再生協議会のあり方と米の直接支払交付金廃止への対応、鳥獣被害対策と捕獲の担い手確保、後継者の現状と研修状況、荒廃農地対策と基盤整備、6次産業化の進捗と支援策、就農定住パッケージ事業の新規就農者目標の進捗とアグリ体験セミナーの参加状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月05日－02号・代表質問・金山満輝</span><span class="ttl">人口減少と過疎化</span><span class="sum">豪雪時の高齢者の安否確認や屋根の雪おろし、倒木への対応と各部署の連携、限界集落と言われる自治会や地域が抱える問題、中山間地の農地活用を含む産業基盤の整備の方策、定住につながる施策をプロデュースし一丸となって遂行する体制の有無を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月05日－02号・一般質問・石倉刻夷</span><span class="ttl">農業委員の制度改正への対応</span><span class="sum">農業委員会の制度改正に伴い、条例改正のスケジュールと農業委員の定数・選出のあり方、農地利用最適推進委員の選任方法、協力員制度の今後、定数半減後の報酬や推進委員の手当、協力員の業務を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・田淵秀喜</span><span class="ttl">中山間地域の農林業</span><span class="sum">中山間地域で耕作放棄地や担い手不足が課題となる中、農林部局として将来的に中山間地域の農林業をどう進めていくのか、その具体的な取り組みへの見解を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月03日－02号・代表質問・石倉刻夷</span><span class="ttl">中山間地域対策</span><span class="sum">新年度予算で中山間地域に特化した予算の内容、国や県の制度改革による中山間地域への支援やＴＰＰ関連の国策の情報、安田地区の農地整備と法人設立を踏まえた安来地域担い手育成総合支援協議会と安来市集落営農組織連絡協議会の活動内容と目的を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">中山間地域の農業振興対策</span><span class="sum">第4期中山間地域等直接支払制度の事業計画の提出状況と未提出地区への対策、対象から漏れた緩傾斜地の再調査、多面的機能支払交付金の取り組み状況と未着手地域への対策、耕作放棄地と相続未登記農地の対策、中山間地域総合整備事業の進捗と2地区同時採択の可能性、環境保全型農業直接支払交付金の取り組みと方針を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・中島隆夫</span><span class="ttl">農地集積の目標と課題</span><span class="sum">大型ほ場整備を進めても県の目標とする集積化比率に遠いとされる中、市の農地集積化率の目標と現状、集積の課題と、課題克服に向けた市・県・国の役割を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月05日－02号・一般質問・石倉刻夷</span><span class="ttl">耕作放棄地の実態と対策</span><span class="sum">課税対象の水田面積、平成25・26年度の主食用水稲の配分面積達成率と生産調整・転作率、不作付地476ヘクタールの地域別数値、耕作放棄地の実態と対策に加え、課税台帳で納税者が存在しない案件の有無と対策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・田淵秀喜</span><span class="ttl">豪雨災害の復旧状況</span><span class="sum">昨年7月15日の豪雨災害について、道路・河川と農地災害の復旧状況、手続上の国や県との課題や地権者協議など復旧が遅れる要因と改善策、水道施設の応急復旧後の対応、復旧対応に伴う職員の負荷と全庁的な応援体制を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７０回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">農業委員会の現状と見直し</span><span class="sum">農業委員の定数と推薦委員の定義、平成24・25年度の許認可案件の内容別件数、常任委員会の活動と担当部局との連携、公選制を廃止する制度見直しへの市長の所見を尋ね、集落ビジョン策定や中山間地域等直接支払制度、多面的機能支払交付金、農地維持支払制度の取り組み状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　７２回１２月定例会  12月03日－02号・一般質問・石倉刻夷</span><span class="ttl">平成27年度の予算編成方針</span><span class="sum">主要3事業の事業費拡大と合併特例債の段階的廃止を踏まえ、新年度予算編成に向けた市長の具体的な方針を尋ね、米価下落を受けた農政会議の緊急要望5項目への市の対処、利弘カントリーエレベーター増強への支援、耕作放棄地対策本部の設置を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月04日－03号・代表質問・上廻芳和</span><span class="ttl">農業振興の方向性</span><span class="sum">平たん地と中山間地域の農業の将来像、不作付地や耕作放棄地の増加への懸念、平成28年4月稼働の給食センターへの地元産野菜の供給方法とＪＡやすぎ・生産農家との協議状況、6次産業化に向けた企業誘致や会社を立ち上げる仕組み、広瀬町・伯太町の集落営農と法人化の現状と対策、農地中間管理機構の推進上の問題点、地域おこし協力隊への考え、中山間地域総合整備事業の状況と今後のスケジュール、全国和牛能力共進会への意気込みと取り組みを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月05日－04号・一般質問・石倉刻夷</span><span class="ttl">少子化対策と農地制度</span><span class="sum">地方創生・地方分権改革の推進に関して、目指せ出生率アップ戦略など少子化対策の抜本的な強化を図る市の施策、農地の総量確保の実効性を確保する市の考え、農地転用の迅速化と農業委員会改革への農業委員会の所見を尋ね、小規模な転用は市の農業委員会で許可する改革を望む立場から改めて所見を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月05日－04号・一般質問・石倉刻夷</span><span class="ttl">農地中間管理事業の状況</span><span class="sum">農地中間管理機構の事業について、施設園芸へ経営転換する農業者やリタイアする農業者などを対象に周知された平成27年度事業の取りまとめ状況と、次年度以降に事業を進めるための課題、現場の声を集約した具体的な対応を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月07日－03号・一般質問・丸山征司</span><span class="ttl">菜の花プロジェクトと農業振興</span><span class="sum">転作田や耕作放棄地に菜の花を植えて菜種油やＢＤＦに循環させる菜の花プロジェクトを市として推進する考えと、担い手不足の解消に向けた設備投資や付加価値づけ、販路拡大への国の補助事業を活用した市の援助を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月07日－03号・一般質問・田中明美</span><span class="ttl">切川地区開発事業</span><span class="sum">給食センターの建設方式の進捗とリース方式で農地転用許可が得られないと判明した時期、市民会館の検討委員会の検討事項と市民の意見聴取、市民参画による運営、工程より内容を重視する姿勢、切川バイパス周辺のまちづくりの考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月10日－04号・一般質問・岡田麻里</span><span class="ttl">耕作放棄地の対策</span><span class="sum">耕作放棄地再生利用緊急対策事業が明年3月で終了することを踏まえ、市の耕作放棄地の現状と実態、定年帰農者を含む担い手の育成、新たな耕作放棄地の発生防止、最終年度となる交付金の活用推進と今年度の予定を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・梶谷厚</span><span class="ttl">7月豪雨災害と農地復旧</span><span class="sum">7月15日の豪雨災害について市の被災状況、災害復旧の対応と国・県への要請活動、地元負担を尋ね、激甚災害指定の対象外となる40万円以下の小規模農地災害の件数と農家負担について、松江市や出雲市の例を挙げ12月補正も含めた負担軽減策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・田淵秀喜</span><span class="ttl">産業の振興策</span><span class="sum">特殊鋼産業の特区認定の現状と市の支援、企業立地に向けた工業用地・商業用地の考え方と中海の干拓農地の転用の可否、農業政策の方向性と農産物のブランド化、研究機関との連携を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月06日－04号・一般質問・田中武夫</span><span class="ttl">定住化に必要な施策</span><span class="sum">定住化に必要な施策の考えと、若者が安来は税金が高いと受け止めている市県民税の実情、住宅地や商業地の不足、宿泊施設が足りない中での観光振興、駅に近い市街化農地の開発に行政が関わる必要性を挙げ、政策企画部局による長期的な方針づくりを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月06日－04号・一般質問・永田巳好</span><span class="ttl">都市計画マスタープラン</span><span class="sum">都市計画マスタープランにおける市民会館と給食センターの建設の経過、切川バイパス周辺のまちづくりへの市長の考え、市街化区域内の農地面積、区画整理への市の補助の有無、切川バイパスの供用開始と県が整備する区間の完了時期や事業費を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６５回１２月定例会  12月04日－02号・一般質問・石倉刻夷</span><span class="ttl">農地災害復旧への市の支援</span><span class="sum">合併協議で申し送りとなっていた補助対象外となる40万円以下の小規模な農地災害への支援について、7月の伯太小竹地区の局地的災害も踏まえ、市単独支援のその後の検討状況を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月06日－04号・一般質問・石倉刻夷</span><span class="ttl">農業改革への市の考え</span><span class="sum">農地中間管理機構の創設、経営所得安定対策の見直し、水田活用と米政策の見直し、日本型直接支払制度の創設という4つの改革について、水稲が基幹の中山間地域の後継者問題を踏まえた市の基本的な考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月10日－06号・一般質問・田中武夫</span><span class="ttl">農地中間管理機構の運営</span><span class="sum">新しい農業政策で設置される農地中間管理機構の実務を市町村や農業委員会・土地改良区・JAが担うことから、それらの機関の重要な役割を市長が認識し目を向けるよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月06日－03号・一般質問・石倉刻夷</span><span class="ttl">人・農地プランの推進</span><span class="sum">農業委員会が推進に関わるとした人・農地プランについて、全国で動きがある中での安来市のプラン推進に対する基本的な考えと、看板倒れにならない具体的な指導体制を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月05日－02号・代表質問・葉田茂美</span><span class="ttl">農業振興とＴＰＰ</span><span class="sum">農業者の高齢化や担い手不足を踏まえ、人・農地プランの進捗状況、新規就農者や認定農業者への市独自の支援策の必要性、ＴＰＰ交渉参加問題への市長の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月07日－04号・一般質問・岩田拓郎</span><span class="ttl">農業の振興策</span><span class="sum">農産物・畜産物の生産額が年々低下する中での生産振興対策、担い手育成対策、耕作放棄地対策と農用地集積対策、教育からの地産地消対策について、積極的な振興策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月07日－04号・一般質問・田中武夫</span><span class="ttl">市独自の農林業政策</span><span class="sum">人・農地プラン作成への市独自の助成や、花卉・イチゴなど特産品のビニールハウス資材高騰に対する独自支援を求め、後継者育成の観点から地元幼稚園の4名以下での廃止方針が議会への説明なく進められたことへの市長の所見を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月07日－04号・一般質問・田中武夫</span><span class="ttl">市街化農地の活用</span><span class="sum">約60ヘクタールの市街化農地のうち和田北・南地区が開発されない原因としてＪＲ線路の南側からの排水や道路の進入を挙げ、開発に向けた考えと政策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月05日－02号・代表質問・中村健二</span><span class="ttl">主要施策の具体策</span><span class="sum">多様なメディアでの情報発信と行政告知放送の臨時放送の聞き取りにくさ、目で見てわかる情報告知システム、農林振興協議会の新事業と人・農地プラン、竹粉砕器、企業立地促進条例改正、市営住宅のあり方、地域防災計画と自主防災組織、防犯カメラ、自治会親善野球60周年とスポーツ活動激励金の見直しを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月05日－02号・代表質問・葉田茂美</span><span class="ttl">中山間地域の農業振興</span><span class="sum">中山間地域の人口減少や高齢化、耕作放棄地の増加で多面的機能の低下が懸念される中、平地の農業もあわせた中山間地域の振興対策をどう考えるかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　５９回　３月定例会  03月06日－03号・一般質問・石倉刻夷</span><span class="ttl">人・農地プランの進捗</span><span class="sum">農業委員会の要望書で現場に話し合いの機会がないとの声が上がっていることを踏まえ、人・農地プランの推進状況を尋ね、先進的な団体や集落の取り組みを広くＰＲして策定の機運を市内全域に広げることを含めて質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月05日－03号・代表質問・勝部幸治</span><span class="ttl">農林業の振興</span><span class="sum">農地・水・環境保全向上対策の向上活動が他市町より1年おくれのスタートとなったことによる進捗や利用者への不利の有無と、特産物を生かした安来市独自の農林業振興策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４４回１２月定例会  12月03日－02号・一般質問・田中武夫</span><span class="ttl">農地法見直しと本市の農業</span><span class="sum">農地法改正の要旨を確かめたうえで、TPP交渉に伴う農地取得の緩和で虫食い状態や企業撤退が懸念される中、今後の安来市の農家・農業についての市長の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２３年第　４６回　３月定例会  03月08日－05号・一般質問・上廻芳和</span><span class="ttl">雪害による農業被害への支援</span><span class="sum">大雪による農業被害の旧町・地域別の状況を尋ね、補正予算の支援が南部の小規模なハウスにも及ぶか、復旧しない農家への支援と期限、その農地を借りる新規就農者への対応、復旧を目指す農家の数を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３２回　６月定例会  06月05日－02号・一般質問・田中武夫</span><span class="ttl">農地有効利用支援整備事業</span><span class="sum">経済危機対策で200億円が追加された農地有効利用支援整備事業について、本市の考え方と取り組み、臨時交付金の措置を踏まえた農家負担の軽減、経済危機対策臨時交付金の該当事業への盛り込み、国の事業の情報収集を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３４回　９月定例会  09月04日－04号・一般質問・田中武夫</span><span class="ttl">経済危機対策臨時交付金</span><span class="sum">地域活性化・経済危機対策臨時交付金の執行状況を尋ね、農地有効利用支援整備事業の申込件数と事業規模、補正予算2,500万円を超える申込に対する補助の増額や補正予算の措置、事業に対する市長の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３８回１２月定例会  12月07日－03号・一般質問・石倉刻夷</span><span class="ttl">市長権限の許認可</span><span class="sum">市民や団体の申請を市長の決裁で許可・認可できる事項を尋ね、墓地の移転・改葬の最近の実態と基本的考え、耕作放棄地や不法転用が危惧される中での農用地の軽微な転用手続に対する行政指導の基本的考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３８回１２月定例会  12月07日－03号・一般質問・田中武夫</span><span class="ttl">農地有効利用事業</span><span class="sum">国の経済危機対策である農地有効利用の事業の申込みと採択、執行の状況を尋ね、周知が間に合わず申請できなかった中山間地などの希望箇所や採択から漏れた用排水路・農道の改修を市の予算で進める考えと、国や県の情報をいち早く得て事業を先取りする姿勢を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　３９回　３月定例会  03月08日－06号・一般質問・上廻芳和</span><span class="ttl">戸別所得補償と農業支援</span><span class="sum">政策転換を機に平場と中山間地それぞれの農業のあり方を行政が示す考え、復元できない自己保全管理田の非農地化が簡単にできるか、認定農業者と認定農業者ネットワークへの支援をどう考えるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２０年第　２６回　６月定例会  06月06日－02号・一般質問・石倉刻夷</span><span class="ttl">農用地保全と環境対策</span><span class="sum">中山間地域等直接支払制度について会計検査院の検査の該当地区と県下の状況、対象農地の面積確認の基準、国土調査の実績と今後の予定、3期目への継続に向けた市の姿勢を尋ね、農地・水・環境保全向上対策の19年度実績と指導助言体制、20年度の新規着手地区、紹介できる協定地区を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　３０回１２月定例会  12月09日－02号・一般質問・梶谷厚</span><span class="ttl">農業の現状と振興策</span><span class="sum">農業生産額が減り続ける原因と現状、農業振興施策の再構築、肥料・飼料・燃料の高騰に対する生産コスト低減の支援と耕畜連携による有機肥料の活用、耕作放棄地の現状と協議会を受け皿にした国の交付金の活用、有害鳥獣被害対策の資材購入費の上限撤廃や猟友会の支援を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月06日－04号・一般質問・梶谷厚</span><span class="ttl">県施策との連携と予算編成</span><span class="sum">国・県の経済対策と連携した20年度補正予算と21年度予算への見解を尋ね、重点要望する県道整備の予算状況と切川バイパス・安来伯太線の改良促進、雪害に備えた市道の事前点検と伐採、プレミアムつき地域振興券、耕作放棄地や有害鳥獣対策での交付金の活用、ふるさと雇用再生特別交付金事業、がん検診受診率の向上と人間ドックや肺炎球菌ワクチン接種の助成、高齢者の移送など県の新制度の活用、米食給食とふるさと教育・図書司書配置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２１回　６月定例会  06月04日－02号・一般質問・河津清</span><span class="ttl">市街化区域農地の課税</span><span class="sum">市街化区域の農地の宅地並み課税について、対象戸数と面積、10アール当たりの課税額、重い税負担への市長の見解を尋ね、農業を守るため生産緑地制度を導入し他市の例を研究する考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１９年第　２４回１２月定例会  12月05日－02号・一般質問・上廻芳和</span><span class="ttl">中山間地域の農業施策</span><span class="sum">高齢化が進む中山間地域の農業について、直接支払制度の8年間の評価と協定未締結集落を含む現状と課題、制度の見通しと改正点、品目横断的経営安定対策の現状と水田の利用権設定の動向、農地・水・農村環境保全向上活動支援事業の交流センター単位での取り組み、市独自の振興計画を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月11日－05号・一般質問・田淵秀喜</span><span class="ttl">中山間地域の課題と施策</span><span class="sum">限界集落のここ10年の状況と将来予想、集落維持に向けた人的支援や集落再編の認識、農業従事者の高齢化と委託できる大規模農家の数、耕作放棄地の面積と鳥獣被害の状況、専門コーディネーターによる集落営農など中山間地農業の新たな施策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１８年第　１６回　９月定例会  09月05日－02号・一般質問・上廻芳和</span><span class="ttl">ふるさと公社の運営展開</span><span class="sum">ふるさと公社について、職員3名で作業の受託ができるかと今後の体制、研修生の受け入れ、伯太町での拠点の考え方、遊休農地を借りて生産した農産物を温泉施設やグリーンセンターで販売することを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１９回１２月定例会  12月05日－02号・一般質問・梶谷厚</span><span class="ttl">農地・水・環境保全向上対策</span><span class="sum">平成19年度から実施される農地・水・環境保全向上対策について、農業者だけでなく地域全体が一体となって取り組み、地域の環境保全やコミュニティーの形成を目指すこの政策を推進する市の基本的な考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１９回１２月定例会  12月05日－02号・一般質問・梅林守</span><span class="ttl">豪雨災害復旧と除雪対策</span><span class="sum">7月豪雨による農業用施設・農地・林道・治山・土木施設の災害の復旧と進捗状況、今期の除雪計画と対策を尋ね、通行止め箇所の除雪への影響や布部ダム周辺など主要道路沿いの樹木の事前伐採を質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１９回１２月定例会  12月06日－03号・一般質問・田中武夫</span><span class="ttl">空き家のＩ・Ｕターン活用</span><span class="sum">農地を持つ農家の空き家が増える中、団塊の世代などのＩターン・Ｕターンの受け皿として空き家を活用できないかと市全体の空き家状況を尋ね、空き家になった段階で早く住める体制づくりを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１８年第　１９回１２月定例会  12月06日－03号・一般質問・田中武夫</span><span class="ttl">ほ場整備完了後の支援</span><span class="sum">宇賀荘地区などで進むほ場整備について、事業採択時に県から示されたとされる完了後の農地の集積利用や連担化の実績に応じた支援が三位一体改革後に見えなくなっていることへの市の考えと、土地改良区と協議のうえ県へ申し入れることを質した。</span></li>
+          
+          <li><span class="who">安来市  平成１９年第　２０回　３月定例会  03月07日－04号・一般質問・金山満輝</span><span class="ttl">農地・水・環境保全向上対策</span><span class="sum">担い手を絞る品目横断的経営安定対策と対をなす農地・水・環境保全向上対策について、担い手以外の住民も含め集落全体で環境と資源を保全する市の今後の対策と、集落営農のリーダーが育つまでの行政の支えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>農業経営体の育成・確保（農地保有合理化・後継者育成・作業受委託）</summary><p>担い手となる農業経営体の育成・確保とその経営安定を図るため、農地保有合理化事業、農林業の後継者育成事業、作業の受委託などを引き続き推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>短期滞在体験交流型地域活性化事業（農地オーナー制度）</summary><p>農地のオーナー制度を利用し、生産者と消費者が共同で農林作物の生産活動を行う事業を新たに実施する。人的交流で農林作物への理解を深めつつ中山間地などの活性化を図り、遊休農地・耕作放棄地の増加防止にも役立てる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成19年度</td>
+            <td><details class="it"><summary>農地・水・環境保全向上活動支援事業</summary><p>中山間地等直接支払制度に加え、市内全域を対象とした農地・水・環境保全向上活動支援事業を地域の要望により実施し、農業者と地域住民の共同参画による農地資源の管理と農村環境の保全向上を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>中山間地域等直接支払・農地水保全の活動支援</summary><p>集落営農の推進、農地の荒廃防止、農村環境の保全向上のため、中山間地域等直接支払事業第3期対策及び農地・水保全向上活動支援事業第2期対策を通じて活動組織への支援を拡充する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>「人・農地プラン」の推進</summary><p>「人・農地プラン」を推進し、中心的農業経営体へ農地を集積して農産物の生産体制を強化する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>竹粉砕機の無料貸し出しによる放置竹林対策</summary><p>森林や農地に悪影響を及ぼす竹の伐採処理を行う地域の取り組みを支援するため、新たに竹粉砕機の無料貸し出しを行い、放置竹林の拡大防止を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>中山間地域等直接支払・農地・水保全管理支払交付金事業</summary><p>中山間地を初めとする農地の荒廃防止と農村環境の保全のため、「中山間地域等直接支払事業第3期対策」と「農地・水保全管理支払交付金事業」を推進し、活動組織への支援を続ける。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>農地集約化（農地中間管理機構・人・農地プラン）</summary><p>担い手への農地集約により農業構造の改革と生産コスト削減を進めるため、農地中間管理機構の本格始動にあわせた体制を整え、「人・農地プラン」を推進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>農地中間管理事業・人・農地プランの推進</summary><p>担い手への農地の集約化により生産コストの削減等を進めるため、引き続き農地中間管理事業を活用する。人・農地プランの推進とともに積極的な農業振興に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>就農と定住のパッケージ事業</summary><p>UIターンの新規就農者の定住支援として、農地、住居、受け入れ集落、師匠といった受け入れ態勢を一体的に整備する。農業の担い手の確保・育成と効率的な生産体制を構築し、安心して就農に迎えられるようにする。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>多面的機能支払交付金事業</summary><p>平成27年度から法制化される多面的機能支払交付金事業を活用する。農地の維持管理、農業用施設の長寿命化、農村環境の保全活動を行う活動組織を引き続き支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>就農定住賃貸住宅の建設</summary><p>優秀な就農希望者を確保するため、受け入れ集落・農業の師匠・農地等の条件整備に住居をパッケージ化し、農地の近隣に就農に向けた定住賃貸住宅を建設して多様な担い手の育成・確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>農地・農業用排水路等の保全活動組織への支援</summary><p>農地や農業用排水路等の長寿命化のための補修・更新、水質・土壌等の保全活動を行う活動組織を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>大塚・安田地区の県営ほ場整備事業</summary><p>農業従事者の高齢化・後継者対策とあわせて担い手を育成し、農地の大区画ほ場整備を図るため、大塚地区・安田地区の県営ほ場整備事業を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>ほ場整備・農地整備事業</summary><p>大塚地区及び安田地区のほ場整備を継続して推進するとともに、平成29年度新規採択地区として吉田地区及び宇賀荘第3地区の農地整備事業に着手する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>農地・農業用排水路等の保全活動組織への支援</summary><p>農地や農業用排水路等の長寿命化のための補修・更新、水質・土壌等の保全活動を行う活動組織を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>地域おこし協力隊を活用した担い手育成とUIターン新規就農者の誘致</summary><p>国の地域おこし協力隊制度を活用し、集落・地域の特性に合わせた施策を展開して、地域農業の振興と地域活性化・定住化につなげる。受け入れ集落・指導者・農地に住居を加えてパッケージ化し、UIターンによる新規就農者を誘致する仕組みで集落ビジョンの達成と定住を促進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>中山間地域等の農業振興と多面的機能の維持</summary><p>条件の不利な中山間地域等の農業を振興し、共同活動を通して農地等の持つ多面的機能を維持する。集落の体制整備と活性化を支援する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>圃場整備による農地集積とスマート農業の推進</summary><p>圃場整備による農地集積を継続するとともに、大区画圃場整備実施区域で基地局の設置や自動操舵システム等を導入し、先進的な省力化技術を推進して作業の効率化と生産性の向上を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>農地の現状調査と農業振興地域整備計画の見直し検討</summary><p>担い手不足・後継者不足で耕作が続けられない農地があることから、令和3年度に現状を把握する調査を行い、必要に応じて農業振興地域整備計画の見直しを検討し、都市計画マスタープランとの整合を図りながら土地利用の円滑化を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>飯梨地区の大区画圃場整備とスマート農業</summary><p>農地集積と担い手確保を目的とした大区画圃場整備に令和4年度は飯梨地区で着手する。スマート農業に適した大型圃場整備区域では、令和3年度に整備した基地局と自動操舵システムを利用し、作業の効率化と生産性の向上を図る。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>農業振興地域整備計画の見直し</summary><p>令和3年度の基礎調査の結果を基に平成23年策定の現行計画を総合的に見直し、都市計画の土地利用調整との調和を図りながら農用地の区域を設定し、将来にわたり面的な農地の保全を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>県営圃場整備事業</summary><p>県営事業により、吉田地区、宇賀荘第三地区、下山佐地区、飯梨地区で農地の大区画化や排水対策、水管理の省力化の整備を引き続き行い、中山間地域の農地・農業用施設の整備も継続する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>多面的機能発揮促進の活動組織支援</summary><p>農業・農村の多面的機能の発揮を促進するため、農地維持活動や農業生産資源・農村環境資源の向上活動を行う組織を支援する。令和5年度中に新たに1組織が加わり、全体で96組織が取り組む予定。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>県営圃場整備の推進</summary><p>吉田地区、宇賀荘第三地区、下山佐地区、飯梨地区で農地の大区画化、排水対策、水管理の省力化のための整備や、中山間地域の農地・農業用施設の整備を県営事業で継続する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>圃場整備・農業農村基盤の整備</summary><p>県営事業による大区画圃場整備を吉田・宇賀荘第三・下山佐・飯梨地区で継続し、中山間地域農業農村総合整備事業による農地・農業用施設の整備、農村防災施設整備事業による大郷農道の整備、農村地域防災減災事業による山辺大堤の改修も継続する（統合前の要素: 県営圃場整備、中山間地域農業農村総合整備、大郷農道、山辺大堤）。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>中山間地域・農村防災の基盤整備</summary><p>中山間地域農業農村総合整備事業により中山間地域の農地や農業用施設の整備を継続する。あわせて農村防災施設整備事業による大郷農道の整備と、農村地域防災減災事業による山辺大堤の改修を引き続き実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>鳥獣被害</h3>
+    <p class="terms">語: 鳥獣被害・有害鳥獣・イノシシ・シカ</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="lt10" data-year="H20"><b>1</b><span class="of">/23人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/26人</span><span class="q">0件</span></td><td class="lt25" data-year="H22"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/20人</span><span class="q">0件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/24人</span><span class="q">2件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt10" data-year="H29"><b>2</b><span class="of">/23人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt25" data-year="R01"><b>2</b><span class="of">/16人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt25" data-year="R03"><b>4</b><span class="of">/22人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/16人</span><span class="q">3件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/15人</span><span class="q">3件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/20人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・岩崎勉</span><span class="ttl">本市の農業政策</span><span class="sum">本市の農業政策について、認定農業者や集落営農法人など担い手の育成確保と新規就農者へのマナー指導、農業機械助成など小規模農家支援、インボイス制度、農業女子の環境づくり、有害鳥獣や病害虫の対策、耕作放棄地対策と市長の見解を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・清水保生</span><span class="ttl">農林業の振興</span><span class="sum">受益者の確認が難しい用水路改修での事業実施の判断と受益者負担相当部分の市負担、今シーズンの有害鳥獣被害と捕獲頭数、ＤＸを活用したわな監視装置の導入、森林ビジョンの内容と策定状況、林業振興への市長の所見を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・内田卓実</span><span class="ttl">有害鳥獣対策</span><span class="sum">有害鳥獣に指定されている野生動物の種類と農作物やそれ以外の被害の状況、被害防止対策、捕獲した有害鳥獣のジビエ利用の現状と考え方を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">山間地域の農林業振興</span><span class="sum">南部山間地域の用水路・農道改修への市独自の支援、鳥獣被害対策と猟友会への支援の拡充、荒廃した山林の復活と森林ビジョンを挙げ、山間地域の農林業の課題解決への取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・岩崎勉</span><span class="ttl">農業振興と大雪被害の復旧</span><span class="sum">中核的農業者の育成・確保、就農・定住パッケージ事業の現状と展開、小規模農家への支援、インボイス制度の見直しの国・県への働きかけ、鳥獣被害対策、災害に強い施設への更新、大雪による農業災害復旧対策事業の進捗と交付決定の状況・今後の対応を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・石倉刻夷</span><span class="ttl">有害鳥獣駆除対策</span><span class="sum">狩猟免許の旧市町ごとの所持実態と傾向、令和3・4年度のイノシシ等の捕獲状況と農産物被害、鳥獣ごとの捕獲報償金と見直しの考えを尋ね、岡山県吉備中央町の鳥獣対策デジタル実装の検討を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・作野幸憲</span><span class="ttl">先進的な鳥獣対策</span><span class="sum">有害鳥獣捕獲の補助金業務の方法と年間業務時間、捕獲場所や頭数のデータ化を尋ね、吉備中央町の事例を挙げて国の情報通信環境整備計画策定事業によるわな監視装置の導入を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・中村健二</span><span class="ttl">中山間地域の農業支援</span><span class="sum">草刈りロボットの貸出制度の創設、令和2年度の有害鳥獣の捕獲実績と支援拡充、中山間地域の農地維持と集落営農による担い手確保、鹿の捕獲地域を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・岡本早智雄</span><span class="ttl">中山間地域の振興</span><span class="sum">中山間地域振興への市長の基本的な考えを尋ね、地域包括ケアシステムの状況と今後、こども園・学校の体制、自治会の統合・再編や人手不足の補完、空き家活用、防災の観点を含む耕作放棄地対策、イノシシを中心とした有害鳥獣対策を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・清水保生</span><span class="ttl">少子高齢化対策</span><span class="sum">中山間地域直接支払交付金などを活用した先進的な取組と課題、イノシシなど有害鳥獣の捕獲計画数と実績、対策費の予算措置と執行状況を尋ね、米価下落への市長の所感、小学校の児童数や複式学級の現状と見通し、将来に向けた市の見解を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・代表質問・岩崎勉</span><span class="ttl">農林業と観光の振興</span><span class="sum">狩猟期間中の有害鳥獣の集中捕獲に向けた本市独自の推進策、令和4年度の県営農業農村整備事業とスマート農業の考え方と事業内容、湯田山荘改修事業の必要性と内容、観光振興や比田地区への波及効果を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）・一般質問・岩崎勉</span><span class="ttl">安来市の農業振興</span><span class="sum">令和元年度の農業政策の考え方と将来像、高収益作物振興の現状と課題、機械やパイプハウス導入への支援、鳥獣被害防止対策、ＵＩターン新規就農者と農家後継者の確保策を尋ね、産地化と販路確保の主体的な取り組みを質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・岩崎勉</span><span class="ttl">担い手確保と鳥獣被害対策</span><span class="sum">雇用就農へのサポート手法と実績、集落営農組織間の意見交換会や研修会の開催状況、リースハウス事業の後継事業とリース料支援の継続、小規模農家の支援を尋ね、防護柵設置助成とイノシシ捕獲の実績、先進的な捕獲機材の活用状況、狩猟免許取得者への講習会とサポート体制を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・代表質問・中村健二</span><span class="ttl">林業と鳥獣被害対策</span><span class="sum">森林環境譲与税の活用状況と来年度の増額に伴う使途の見通し、鳥獣被害防止対策の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月05日－02号・一般質問・石倉刻夷</span><span class="ttl">鳥獣被害防止対策</span><span class="sum">イノシシによる平成27年から29年の安来・広瀬・伯太各地区の被害状況、銃・わなの狩猟免許取得者の実績と人材確保対策、侵入防止柵や捕獲わな・捕獲おりの設置への支援を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月07日－04号・一般質問・岩崎勉</span><span class="ttl">農業振興の基本方針と施策</span><span class="sum">安来市の農業に対する基本的な考え方と将来像を尋ね、生産数量目標配分廃止後の地域再生協議会のあり方と米の直接支払交付金廃止への対応、鳥獣被害対策と捕獲の担い手確保、後継者の現状と研修状況、荒廃農地対策と基盤整備、6次産業化の進捗と支援策、就農定住パッケージ事業の新規就農者目標の進捗とアグリ体験セミナーの参加状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月03日－02号・代表質問・石倉刻夷</span><span class="ttl">有害鳥獣駆除の対策</span><span class="sum">ひろせマタギ倶楽部のシシ肉販売への支援、近隣自治体との共同による有害鳥獣専用焼却処理施設の検討、狩猟者登録手数料の無料化を県への要望に加えること、部局横断の対策会議の設置のほか、再質問で奥出雲と差のある捕獲手当の額や駆除対象期間の改善を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　６８回　６月定例会  06月06日－03号・一般質問・岩田拓郎</span><span class="ttl">鳥獣被害対策</span><span class="sum">イノシシやカラスによる農作物被害について、25年度の被害状況と被害防止・駆除の補助金、国の鳥獣被害防止総合対策交付金への取り組み、アユ等を捕食するカワウの効果的な駆除対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月06日－02号・一般質問・梶谷厚</span><span class="ttl">鳥獣被害防止対策</span><span class="sum">被害防止計画の実績とイノシシ捕獲が計画を下回る原因、実施隊の身分・補償の条例化、緊急捕獲対策の取り組みと専門職員の雇用など体制強化、狩猟期間中の有害駆除としての支給、猟友会員の減少と経費負担の軽減を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・梶谷厚</span><span class="ttl">鳥獣被害対策</span><span class="sum">鳥獣対策隊員の身分・報酬・災害補償の明文化、狩猟期間を含めた通年の捕獲金支給、猟友会会員の減少と免許取得・登録費用の負担軽減、緊急捕獲交付金の取り扱いを含む市の体制強化の検討状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４４回１２月定例会  12月03日－02号・一般質問・井上峯雄</span><span class="ttl">有害鳥獣対策と猟友会支援</span><span class="sum">クマ出没やイノシシ捕獲の急増への所見、猟友会の会員減少への対策と免許取得費用の支援、捕獲補助金不足分の補正の額と時期、鳥獣被害防止特措法に基づく被害防止計画と財政措置の実施状況、市職員やJA職員を含む実施隊の人員確保を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２２年第　４４回１２月定例会  12月03日－02号・一般質問・田淵秀喜</span><span class="ttl">農業政策と有害鳥獣対策</span><span class="sum">戸別所得補償制度と水田利活用自給力向上事業の結果と問題点、今後の問題提起の進め方を尋ね、中山間地農業を守る観点から有害鳥獣の被害面積と猟友会の年齢構成、今後の駆除の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２０年第　２８回　９月定例会  09月10日－03号・一般質問・梶谷厚</span><span class="ttl">鳥獣被害防止計画の策定</span><span class="sum">鳥獣被害防止特別措置法に基づく被害防止計画の策定状況と財政支援を活用した計画の内容、事業主体となる地域対策協議会の設置時期、猟友会以外にも広げた鳥獣被害対策実施隊の設置と人材確保、隊員の待遇や補償に関する条例制定の考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２０年第　３０回１２月定例会  12月09日－02号・一般質問・梶谷厚</span><span class="ttl">農業の現状と振興策</span><span class="sum">農業生産額が減り続ける原因と現状、農業振興施策の再構築、肥料・飼料・燃料の高騰に対する生産コスト低減の支援と耕畜連携による有機肥料の活用、耕作放棄地の現状と協議会を受け皿にした国の交付金の活用、有害鳥獣被害対策の資材購入費の上限撤廃や猟友会の支援を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月06日－04号・一般質問・梶谷厚</span><span class="ttl">県施策との連携と予算編成</span><span class="sum">国・県の経済対策と連携した20年度補正予算と21年度予算への見解を尋ね、重点要望する県道整備の予算状況と切川バイパス・安来伯太線の改良促進、雪害に備えた市道の事前点検と伐採、プレミアムつき地域振興券、耕作放棄地や有害鳥獣対策での交付金の活用、ふるさと雇用再生特別交付金事業、がん検診受診率の向上と人間ドックや肺炎球菌ワクチン接種の助成、高齢者の移送など県の新制度の活用、米食給食とふるさと教育・図書司書配置を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月11日－05号・一般質問・田淵秀喜</span><span class="ttl">中山間地域の課題と施策</span><span class="sum">限界集落のここ10年の状況と将来予想、集落維持に向けた人的支援や集落再編の認識、農業従事者の高齢化と委託できる大規模農家の数、耕作放棄地の面積と鳥獣被害の状況、専門コーディネーターによる集落営農など中山間地農業の新たな施策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２０回　３月定例会  03月07日－04号・一般質問・梶谷厚</span><span class="ttl">有害鳥獣の被害防止対策</span><span class="sum">有害鳥獣被害への基本認識、鳥獣別・作物別の被害と予算措置の現状、指導員の配置と防除方法、県の交付金制度の活用、狩猟期間後の駆除対策、自然災害に準じた総合対策としての位置づけ、年々減る予算の評価、免許取得や保険料の助成による担い手対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成21年度</td>
+            <td><details class="it"><summary>鳥獣被害対策実施隊の組織</summary><p>有害鳥獣対策のため、安来市猟友会を中心に鳥獣被害対策実施隊を新たに組織する。一般駆除に加え緊急駆除にも迅速に対応できるよう駆除体制を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>有害鳥獣対策</summary><p>イノシシに加え鹿による被害も市内で確認されるようになったため、有害鳥獣による農作物被害を軽減するよう防護と捕獲の両軸で対策を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>有害鳥獣対策の強化</summary><p>イノシシ・鹿などによる農林作物被害や捕獲数の増加を受け、捕獲技術向上や捕獲従事者の拡大等を支援し、防護と捕獲の両軸で対策を強化して農作物の被害軽減を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>有害鳥獣対策</summary><p>安来市鳥獣被害防止対策協議会の取組の支援や安来市猟友会への捕獲業務の委託を行い、防護柵や爆音機等の購入への補助も行う。防護と捕獲の両軸で対策を推進する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>緊急銃猟の体制整備（鳥獣被害対策）</summary><p>熊による人身被害の全国的な増加と、令和7年9月から一定要件下で緊急銃猟が可能になったことを踏まえ、熊をはじめとする危険鳥獣対策として緊急銃猟に向けた体制整備や訓練を積極的に進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>林業と森林の管理</h3>
+    <p class="terms">語: 林業と森林の管理・林業・森林・森林環境譲与税</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt10" data-year="H21"><b>2</b><span class="of">/26人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt25" data-year="H24"><b>4</b><span class="of">/20人</span><span class="q">4件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/24人</span><span class="q">2件</span></td><td class="lt25" data-year="H26"><b>3</b><span class="of">/17人</span><span class="q">3件</span></td><td class="ge25" data-year="H27"><b>5</b><span class="of">/17人</span><span class="q">5件</span></td><td class="lt25" data-year="H28"><b>3</b><span class="of">/17人</span><span class="q">3件</span></td><td class="lt10" data-year="H29"><b>2</b><span class="of">/23人</span><span class="q">3件</span></td><td class="lt25" data-year="H30"><b>4</b><span class="of">/17人</span><span class="q">5件</span></td><td class="lt25" data-year="R01"><b>3</b><span class="of">/16人</span><span class="q">3件</span></td><td class="lt25" data-year="R02"><b>2</b><span class="of">/19人</span><span class="q">2件</span></td><td class="lt25" data-year="R03"><b>4</b><span class="of">/22人</span><span class="q">4件</span></td><td class="ge25" data-year="R04"><b>4</b><span class="of">/16人</span><span class="q">4件</span></td><td class="ge25" data-year="R05"><b>4</b><span class="of">/16人</span><span class="q">5件</span></td><td class="lt25" data-year="R06"><b>3</b><span class="of">/15人</span><span class="q">5件</span></td><td class="lt25" data-year="R07"><b>2</b><span class="of">/20人</span><span class="q">2件</span></td><td class="lt10" data-year="R08"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・一般質問・向田聡</span><span class="ttl">物価高対策と市民の暮らし</span><span class="sum">ホルムズ海峡の事実上の封鎖による物価高騰と供給不足について、市内の商工業・農林業・医療・介護・福祉への影響、市民と事業者・生産者への重点支援の考えを尋ね、国へ停戦に向けた外交努力と補正予算など抜本的対策を求めるべきではないかと質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">農林業の振興</span><span class="sum">農林業の振興について、国・県への要望活動の状況、農林振興協議会の構成員と実践的な取組、畜産や林業の取組を尋ね、川上から川下までを通した林業振興のための協議会の設置への所見を質した。</span></li>
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・一般質問・石倉刻夷</span><span class="ttl">林業振興の取り組み</span><span class="sum">旧緑資源機構や林業公社、市行・旧町行造林の分収造林地の契約面積、令和元年から令和7年までの市の分収収入、伐採・造林計画、森林・林業・木材産業振興ビジョン（案）の概要とパブリックコメントの参加状況、山林の地籍調査の現状と計画、森林整備地域活動支援交付金事業の活用実績と今後の方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・清水保生</span><span class="ttl">農林業の振興</span><span class="sum">受益者の確認が難しい用水路改修での事業実施の判断と受益者負担相当部分の市負担、今シーズンの有害鳥獣被害と捕獲頭数、ＤＸを活用したわな監視装置の導入、森林ビジョンの内容と策定状況、林業振興への市長の所見を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">山間地域の農林業振興</span><span class="sum">南部山間地域の用水路・農道改修への市独自の支援、鳥獣被害対策と猟友会への支援の拡充、荒廃した山林の復活と森林ビジョンを挙げ、山間地域の農林業の課題解決への取組を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・清水保生</span><span class="ttl">林業振興と地域の成長</span><span class="sum">刷新された森林整備計画の変更点と理由、森林経営管理制度の運用状況、循環型林業を見据えた林業振興基本計画の考え方、林業人材育成拠点の概要・研修の内容・人材の活用の場・最小限度とする整備方針、森林環境譲与税の活用、スマート林業の推進を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・作野幸憲</span><span class="ttl">施政方針と市政全般</span><span class="sum">国政の影響と総合計画（年収の壁引上げの市財政への影響、新たな交付金の使途、人口ビジョンの見直し）、保健・医療・福祉（市立病院の建て替え方針、医師の働き方改革の影響、健康増進アプリ、介護のデジタル化、交通弱者・買物弱者支援）、子育て・教育・スポーツ（公立保育施設の定員減、小中学校適正配置、高校魅力化、スポーツ拠点とスケートボード場の整備）、防災の情報共有、産業・観光（スマート農業、鳥獣害対策、中山間地農業、林業人材育成拠点、安来節演芸館とネオ安来節）、都市計画・土地利用（切川地区とスマートインターチェンジ、線引き制度、空き家対策、中海ふれあい公園の利活用）、ＤＸ推進リーダーの研修と推進会議への民間・外部有識者の参画を質した。</span></li>
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・石倉刻夷</span><span class="ttl">所有者不明農地と森林管理</span><span class="sum">地域計画を条件とする所有者不明農地制度の直近の事例と、森林経営管理制度で市町村が管理する市内・県内の事例を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・岡本早智雄</span><span class="ttl">森林整備と林業振興</span><span class="sum">合併以降の森林整備の実績と評価、森林環境と林業の現状、森林基礎データの状況、林業ＤＸ推進事業の概要と経緯・地籍調査への活用、林業人材育成拠点、森林ビジョン、森林整備の進め方と効果を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・清水保生</span><span class="ttl">再エネ地産地消ビジョン</span><span class="sum">安来市再生可能エネルギー地産地消ビジョンの各種取組を検討・調整する体制を尋ね、森林資源を活用した市内循環型の新たな産業を森林ビジョンや林業構想に盛り込めないかを質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・一般質問・湯浅正志</span><span class="ttl">林業従事者の育成</span><span class="sum">林野率71％の資源を生かすため、林業従事者の育成と人材確保に向けた市の育成方針を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・代表質問・清水保生</span><span class="ttl">産業・観光の振興</span><span class="sum">中山間地域の圃場整備の現状と今後、耕作放棄地を含む農地の維持・利活用と農地法緩和、地元産材を地域で流通させる仕組みを森林ビジョンに盛り込むこと、本市独自の戦略的な観光振興を質した。</span></li>
+          
+          <li><span class="who">第１０２回安来市議会定例会（令和５年・令和６年）・代表質問・飯橋由久</span><span class="ttl">林業人材育成拠点の整備</span><span class="sum">伯太町の山林での林業人材育成拠点整備事業で目指すものと、基本計画に基づく今後の事業の進め方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・石倉刻夷</span><span class="ttl">農林業応援プロジェクト</span><span class="sum">3月議会で水稲栽培の生産者への支援を求めたことを受け、オールやすぎ農林業応援プロジェクト事業の新たな取組とその状況を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・岡本早智雄</span><span class="ttl">新工業団地中止と伯太振興</span><span class="sum">新工業団地整備事業について、令和2年3月の休止を含む経緯と中止の理由、中止後の計画地の活用とその必要性、市の林業振興と当該地の利用、代替となる企業誘致の考え方、伯太地域の振興策と市長も参加する座談会の実施を質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・清水保生</span><span class="ttl">森林資源の活用と林業振興</span><span class="sum">バイオマスタウン構想の近年の取組状況、アルテピアのバイオマス燃料の調達先と設備の利用状況、森林ビジョンの策定状況を尋ね、伯太町の旧工業団地計画地での林業関連事業計画について市長の考えを質した。</span></li>
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・作野幸憲</span><span class="ttl">林業政策</span><span class="sum">森林整備計画書の重点推進事項の進捗、仮称森林ビジョンの策定状況と人材育成拠点基本構想との整合、林業振興の要望書への対応、スマート林業、新安来工業団地計画地の用地交渉の経緯と取得額・スケジュール、人材育成拠点の整備内容と予算規模、雇用のターゲット、森林組合との連携、森林環境譲与税の使い方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・石倉刻夷</span><span class="ttl">森林整備の充実</span><span class="sum">森林組合の組合員資格が高齢者に偏る中で若者の山林離れについて市長の所見を尋ね、森林環境譲与税を踏まえた市の森林整備の充実の方針を質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・原田貴与子</span><span class="ttl">雇用の場と地場産業の支援</span><span class="sum">企業誘致の考え、米価下落への市の支援策、地籍調査の進捗と促進、森林環境税を生かした森林整備の強化を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・一般質問・清水保生</span><span class="ttl">森林環境譲与税と林業振興</span><span class="sum">森林環境譲与税を財源とする森林整備総合支援事業などの令和3年度の執行状況を尋ね、ハード・ソフト両面での本市の林業振興に向けた将来計画策定の現状と今後の取組を質した。</span></li>
+          
+          <li><span class="who">第１００回安来市議会定例会（令和３年・令和４年）・代表質問・岩崎勉</span><span class="ttl">農林業と観光の振興</span><span class="sum">狩猟期間中の有害鳥獣の集中捕獲に向けた本市独自の推進策、令和4年度の県営農業農村整備事業とスマート農業の考え方と事業内容、湯田山荘改修事業の必要性と内容、観光振興や比田地区への波及効果を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・石倉刻夷</span><span class="ttl">中山間地対策の施策</span><span class="sum">採択要望から10年近くたつ中山間地域総合整備事業の進捗状況と、中山間地対策の目玉と位置づける森林環境譲与税の当面の活用方針を質した。</span></li>
+          
+          <li><span class="who">第９９回安来市議会定例会（令和２年・令和３年）・一般質問・岩崎勉</span><span class="ttl">農林業政策等</span><span class="sum">コロナの農業への影響の現状認識、経営継続補助金などの申請状況と市独自の対策、高収益作物次期作支援交付金の申請と要件変更の影響、鳥獣害対策の実績と狩猟免許取得者の支援、鳥インフルエンザ対策、特定地域づくり事業協同組合制度への取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・岡本早智雄</span><span class="ttl">地方財政計画への市の対応</span><span class="sum">令和2年度地方財政計画の防災・減災対策を中心に、緊急防災・減災事業費の事業実績と予定、緊急しゅんせつ推進事業費の活用、森林環境譲与税の金額と事業計画、県が採用し派遣する技術職員への対応、会計年度任用職員制度への移行状況を尋ね、公立病院への特別交付税措置の影響額と診療報酬加算や増患対策の取り組みを質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・一般質問・三島静夫</span><span class="ttl">耕作放棄地の有効活用</span><span class="sum">災害時対策としての発電施設の分散設置や再生可能エネルギーの推進への見解、林業振興と支援策、伯太地域での木材チップ工場誘致とバイオマス発電を尋ね、耕作放棄地を農林業や畜産振興に使う場合や家畜排せつ物によるバイオマス発電、クルミ栽培での農地転用の可否を質した。</span></li>
+          
+          <li><span class="who">第９８回安来市議会定例会（令和元年・令和２年）・代表質問・中村健二</span><span class="ttl">林業と鳥獣被害対策</span><span class="sum">森林環境譲与税の活用状況と来年度の増額に伴う使途の見通し、鳥獣被害防止対策の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９５回　６月定例会  06月07日－02号・一般質問・足立喜信</span><span class="ttl">山林の活用ときこり隊</span><span class="sum">市の面積に占める山林の割合と戦後植林した杉・ヒノキの量を尋ね、木を切る人の不足を踏まえて東部森林組合とタイアップしたきこり隊の立ち上げとチェーンソー講習の実施を求めた。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・石倉刻夷</span><span class="ttl">林業振興と公社造林</span><span class="sum">森林環境譲与税（仮称）の安来市への譲与額と使途に関する市の方針、市内の公社造林の契約地の実態と県の林業公社が存続するに当たっての市への影響を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・足立喜信</span><span class="ttl">森林環境税の活用計画</span><span class="sum">来年度から入る森林環境税（安来市は1,200万円余り）の活用計画と、他の市町村が行っている事業の内容を質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・岡本早智雄</span><span class="ttl">森林環境譲与税の使途とあり方</span><span class="sum">安来市での森林環境譲与税の使途と、人口割により森林の少ない大都市に多く配分される制度のあり方への見解、市長会や県を通じて国へ問題提起する考えを質した。</span></li>
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・代表質問・佐伯直行</span><span class="ttl">森林環境譲与税の施策実施</span><span class="sum">森林環境譲与税による施策の実施に向けた庁内や関係者との協議と準備、荒廃山林の解消に向けた新たな森林管理の仕組み、森林環境税の市民への事前の周知を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２９年第　８９回　６月定例会  06月02日－02号・一般質問・石倉刻夷</span><span class="ttl">森林組合への支援</span><span class="sum">しまね東部森林組合の経営が厳しい状況にある中で、農林中央金庫の森林再生基金による荒廃森林の再生事業を市として調査し、支援の形で指導・助言する考えはないかを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　９３回１２月定例会  12月05日－02号・一般質問・石倉刻夷</span><span class="ttl">林業振興と市行造林</span><span class="sum">森林環境税の創設や林業改革が進み、しまね東部森林組合が合併後初の赤字決算となる中、市産材増産事業の支援状況と伐期を迎えつつある市行造林の現状と今後の方針を尋ね、再質問で施業集約化に対する市の考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成３０年第　９４回　３月定例会  03月05日－02号・代表質問・金山満輝</span><span class="ttl">森林環境税の活用</span><span class="sum">創設される森林環境税について安来市へ交付される額の見込み、譲与税を充てる事業、市の森林の課題と森林資源の維持・活用の施策、竹の駆除や荒れた山の管理に充当できるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月06日－03号・一般質問・田淵秀喜</span><span class="ttl">中山間地域の農林業</span><span class="sum">中山間地域で耕作放棄地や担い手不足が課題となる中、農林部局として将来的に中山間地域の農林業をどう進めていくのか、その具体的な取り組みへの見解を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８６回１２月定例会  12月05日－02号・代表質問・遠藤孝</span><span class="ttl">農林業の担い手と雇用確保</span><span class="sum">農業の後継者や新規就農者などの担い手確保の具体策と現状、林業の雇用の場の確保と地域活性化へのつなげ方、ふるさと納税を農家や農村の挑戦に振り向ける仕組みづくりを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・丸山征司</span><span class="ttl">循環型林業の推進</span><span class="sum">伯太町西母里の中間土場周辺と林業振興の展望、雲南市・奥出雲町と連携した全国植樹祭の誘致、たたらのような循環型林産業や合板加工による雇用創出への支援、市産材の住宅・公共施設での利用、市産材のおもちゃ等による木育の推進を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２７年第　７６回　６月定例会  06月04日－03号・一般質問・岩田拓郎</span><span class="ttl">森林行政の取り組み</span><span class="sum">国・県の制度を活用した本市の森林行政の取り組み、伐期を迎えた人工林の主伐と再造林の循環に向けた計画、山間部の地籍調査の進捗と課題、今後の進め方を尋ね、森林行政に対する市長の所見を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">林業振興対策</span><span class="sum">平成24〜26年度の林業振興にかかわる決算額と平成27年度の機械導入助成などの予算措置の内容、島根県東部森林組合の労務班と緑の担い手の人数の推移を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７９回　９月定例会  09月07日－04号・一般質問・作野幸憲</span><span class="ttl">農林業と地方創生</span><span class="sum">安来版総合戦略における農林業の位置づけと新たな施策、木材ストックヤードの整備と林業の方針、地域おこし協力隊の応募状況と現状、安来独自の受け入れ要件、市内全域・多職種での受け入れ、退任後の定住対策、県の半農半Ｘの活用を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・金山満輝</span><span class="ttl">農林業の振興</span><span class="sum">農林業振興について、ＴＰＰに対応した農産物・畜産それぞれの競争力強化の取り組み、生産者の高齢化で出荷量が減るイチゴを特産品として安定供給する具体策、伐採期を迎えた森林を生かす持続可能な循環型林業施策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・中島隆夫</span><span class="ttl">6次産業化とブランド化</span><span class="sum">イチゴを素材とした取り組みを踏まえ、農林業全般にわたる6次産業化と1次産品を含めたブランドづくりの現状、支援の方向性と雇用の創出に向けた取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２６年第　７０回　９月定例会  09月03日－02号・一般質問・石倉刻夷</span><span class="ttl">林業振興と木材の収益化</span><span class="sum">林業振興に関わる会議や大会への出席状況、試行造林の全体面積と間伐や伐期を迎えた面積の収益化の考え方、樹種別の木材価格、作業道の開設など収益化の施策、総合計画での林業振興の基本方針を尋ね、中山間地域土地境界保全調査事業の実績と計画、木質バイオマス発電への市内材の供給と市民会館への導入、みどりの担い手確保緊急対策事業の見通しを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月04日－03号・代表質問・上廻芳和</span><span class="ttl">林業と木質バイオマス</span><span class="sum">バイオマスタウン構想や温泉施設での木質ボイラーの可能性を踏まえ、東部森林組合や地元木材業者の協力によるチップ工場・ペレット工場を地元で立ち上げる考えと、山林の地籍調査の現状と今後の計画を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２７年第　７４回　３月定例会  03月06日－05号・一般質問・岩田拓郎</span><span class="ttl">森林資源と林業の活性化</span><span class="sum">岡山県西粟倉村の視察を踏まえ、本市の森林資源の認識と、林野庁が示す森林資源を成長産業へ導く施策への市の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月05日－03号・一般質問・作野幸憲</span><span class="ttl">子育て支援を柱にした定住促進</span><span class="sum">人口の現状と将来推計、人口減少の歯止めに必要なもの、次世代育成支援行動計画の庁舎内総合推進体制と点検評価、全国学力テストの結果と独自の学力向上策、農林業の担い手や就学困難者向け奨学金制度の創設、市外向けホームページの改善、定住企画課の役割を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２６年第　６７回　３月定例会  03月05日－03号・代表質問・作野幸憲</span><span class="ttl">多彩な魅力のまちづくり</span><span class="sum">国の農政の4つの改革に対する市の考えと影響および市独自の農業政策、木質バイオマスを契機とした林業へのバックアップ、観光入り込み客150万人目標に向けた事業ごとの目標設定、無料公共無線ＬＡＮの設置計画、大河ドラマを生かした観光振興、100万円での工業団地適地選定調査の成果、安来どじょうの生産組織強化策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５６回　９月定例会  09月06日－03号・一般質問・石倉刻夷</span><span class="ttl">森林整備の推進</span><span class="sum">平成21〜23年度の造林・下刈り・除伐・間伐の実績と今年度の計画面積、林業労務班と作業員の実態と支援体制、簡易な境界調査と完全委託による山林の地籍調査、林業専用道の整備計画、木材関係事業体との連携、境界確認の実数を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月05日－02号・代表質問・上廻芳和</span><span class="ttl">多彩な魅力あるまちづくり</span><span class="sum">トップセールスによる企業誘致の進め方と企業団地造成の考え、集落営農や担い手確保など農業施策の具体像、中山間地域対策プロジェクトチームの構成と活動、森林資源を生かした再生エネルギー、島田干拓へのメガソーラー誘致の協議内容、中海ふれあい公園の県との協議、小水力発電所の改修計画、都市計画マスタープランの構想と日程、和牛・乳牛飼育支援の具体策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月05日－02号・代表質問・中村健二</span><span class="ttl">総合計画に沿った施策</span><span class="sum">どじょっこテレビの魅力向上と告知端末・放送通信の加入率、ブロードバンドの利活用、中海・宍道湖・大山圏域の振興ビジョンと中海巡回バス、特殊鋼・金属産業の集積・拠点化と中小企業支援、農林業振興と竹のチップ化の粉砕器導入、定住環境整備とコンパクトシティー、切川バイパスと安来インター線、メガソーラー、教育支援センター、社日小学校プールの現状と工事費、体育施設の整備を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月07日－04号・一般質問・田中武夫</span><span class="ttl">市独自の農林業政策</span><span class="sum">人・農地プラン作成への市独自の助成や、花卉・イチゴなど特産品のビニールハウス資材高騰に対する独自支援を求め、後継者育成の観点から地元幼稚園の4名以下での廃止方針が議会への説明なく進められたことへの市長の所見を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５２回　３月定例会  03月05日－03号・代表質問・勝部幸治</span><span class="ttl">農林業の振興</span><span class="sum">農地・水・環境保全向上対策の向上活動が他市町より1年おくれのスタートとなったことによる進捗や利用者への不利の有無と、特産物を生かした安来市独自の農林業振興策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３４回　９月定例会  09月03日－03号・一般質問・田中明美</span><span class="ttl">森林整備と緑化普及事業</span><span class="sum">市全体の面積と山林・耕作地・宅地等・中海の土地利用の面積と割合、山林の保有者別面積を尋ね、森林保全のための森林整備と市民への緑化普及事業の取り組みと、下流に住む市民が上流で植林体験などを行う森づくりの普及活動の検討を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２１年第　３８回１２月定例会  12月08日－04号・一般質問・嘉本祐一</span><span class="ttl">産業振興計画の策定</span><span class="sum">商工業や農林業など産業全般の産業振興ビジョンや計画の有無と、数値目標と事業相互の関係を示した総合計画より具体的な産業振興計画づくりへの考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２０年第　２５回　３月定例会  03月10日－04号・一般質問・中島隆夫</span><span class="ttl">中山間地の活性化</span><span class="sum">森林整備に企業の支援を受ける制度や二酸化炭素吸収量を認証する制度の創設、整備した森林の木を使った建築への助成を尋ね、再質問で市長や職員が率先して山間地に入ることや行政主導の森づくりを全体に広げる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>農業経営体の育成・確保（農地保有合理化・後継者育成・作業受委託）</summary><p>担い手となる農業経営体の育成・確保とその経営安定を図るため、農地保有合理化事業、農林業の後継者育成事業、作業の受委託などを引き続き推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成19年度</td>
+            <td><details class="it"><summary>林業の振興（造林・森林整備）</summary><p>市行・公社造林事業、斐伊川水系水源の森づくり事業、森林整備地域活動支援事業などにより、森林の保全と活用、多面的環境機能の保全に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>竹粉砕機の無料貸し出しによる放置竹林対策</summary><p>森林や農地に悪影響を及ぼす竹の伐採処理を行う地域の取り組みを支援するため、新たに竹粉砕機の無料貸し出しを行い、放置竹林の拡大防止を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>林業振興（木材搬出・高性能林業機械の支援）</summary><p>松江バイオマス発電所の稼働によるチップ用材の需要増加に対応し、市内森林資源の積極的な活用と中山間地域の林業の雇用拡大を図る。森林組合に対し、木材搬出経費の補助と高性能林業機械の導入支援を新たに行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>循環型林業の推進（原木搬出支援・中間土場整備）</summary><p>同一段落の2要素を統合: (1)中山間地域での雇用創出に向け原木搬出経費を支援し市産材を増産、(2)搬出木材の集積地となる中間土場を整備し効率的な出荷体制を整え、バイオマス材の増産につなげる。切って使って植えて育てる循環型林業を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>循環型林業の推進と中海の水産資源再生支援</summary><p>伐って使って植えて育てる循環型林業の推進による雇用の創出と、中海における水産資源の再生支援に引き続き取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>森林環境譲与税による新たな森林管理システム</summary><p>森林環境譲与税を財源として、新たな森林管理システム業務を支援する組織を設置し、経営可能な山林の集積と、未間伐林など管理されていない森林の解消を進める。</p></details></td>
+            <td class="c">4</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>森林ビジョンの策定</summary><p>しまね東部森林組合・島根大学・安来市の産学官連携により森林ゾーニング等を見直し、維持可能な循環型林業の実現に向けた指針となる森林ビジョンの策定に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>スマート林業の推進</summary><p>林業の低コスト化・高付加価値化に向け、森林の地形や資源量をデジタル情報化し、林業事業体の施業計画や路網整備計画の策定に活用する。林業事業体との情報共有をオンライン化し、デジタル情報を利活用しやすい環境を整える。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>島根大学と連携した林業振興</summary><p>林業ＤＸや林業人材育成を含む諸課題について島根大学の助言・指導を求め、リモートセンシングを活用した森林管理など地域林政全般に大学の専門的知見を生かす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>林業人材育成拠点の基本計画策定</summary><p>伯太町東母里、安田中地内の山林における林業人材育成拠点の整備について、基本構想に基づく基本計画を策定する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>森林ビジョンの策定と林業振興</summary><p>森林の多面的機能の発揮と持続可能な林業経営の両立に向けて森林ビジョンを策定する。また林業事業体の高性能林業機械・路網整備・人材育成を支援し、市産木材を使った住宅の新築・増改築を行う施主を支援する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>林業DXの推進</summary><p>森林航空レーザ計測・解析の成果データを活用し、林政業務や公有林管理に役立つシステムを導入する。森林施業に係る計画策定・認定業務を効率化し、J-クレジット制度の活用も含めた取組を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>林業人材育成拠点の整備</summary><p>伯太町地内の山林で林業人材育成拠点の整備に向け、基本計画に基づく道路改良と整地の詳細設計、用地取得を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>島根大学と連携した林業振興の研究・実証</summary><p>包括連携協定を結ぶ島根大学の学術技術指導制度を活用し、林業DXや林業人材育成を含む諸課題に教員の助言・指導を求め、林業事業体等と連携して森林整備や木材流通・用途拡大の研究と実証を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>林業人材育成拠点の整備</summary><p>林業従事者の育成・技術力向上と担い手確保のため、伯太町地内の山林で林業人材育成拠点整備に係る道路改良・駐車場設置等の工事を行い、令和8年度の供用開始に向けて準備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>林業人材育成拠点の活用</summary><p>伯太町内に整備した林業人材育成拠点で、林業従事者向けの技能講習や市民参加型の森林教室を開催する。林業事業体と連携して拠点内にモデル林を整備し、総合的な人材育成につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>水産業と漁業</h3>
+    <p class="terms">語: 水産業と漁業・水産業・漁業・漁協・養殖・栽培漁業・シジミ・宍道湖シジミ</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="lt10" data-year="H19"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="lt10" data-year="H20"><b>1</b><span class="of">/23人</span><span class="q">1件</span></td><td class="lt10" data-year="H21"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/20人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/24人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/17人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/22人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/16人</span><span class="q">1件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/20人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０４回安来市議会定例会（令和７年・令和８年）・代表質問・原瀬清正</span><span class="ttl">持続可能なまちの主要施策</span><span class="sum">活力あふれる持続可能なまちづくりとして、地域医療提供体制と市立病院の老朽化対策、無医地区での医療ＤＸ、介護人材の確保と定着、妊婦・出産支援、中学校部活動の地域移行、島根かみあり国スポ・全スポの準備、農林水産業の対策、雇用の創出と定着、定住に向けた住宅政策、道路整備構想、公共交通の利用促進、中海のマイクロプラスチックを含む自然環境保全への考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・代表質問・原瀬清正</span><span class="ttl">市長が描く本市の未来予想図</span><span class="sum">地域医療提供体制と市立病院の5年後・10年後の姿と老朽化対策、2025年問題に向けた介護の支え方、少子化対策と産科病院の設置、学校再編後の交流センターの在り方、地域消防と防災活動、農林水産業の課題と将来像、定住対策と住宅地開発、渋滞緩和と道路整備・維持管理、公共交通、公共施設の在り方、廃棄物処理と災害廃棄物処理について市長の未来予想図を問うた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０１回安来市議会定例会（令和４年・令和５年）・一般質問・福井加代子</span><span class="ttl">安来どじょうの振興</span><span class="sum">どじょう養殖の歴史と養殖事業の取組状況、安来節保存会と地域ブランド安来どじょうの観光振興に向けた共助発展の現状を尋ね、安来節演芸館の再開を含む今後の在り方を市長に質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成３０年第　９６回　９月定例会  09月06日－03号・一般質問・岩崎勉</span><span class="ttl">農林水産施策の進捗状況</span><span class="sum">平成30年度の農林水産施策について、地域おこし協力隊の進捗状況と任期を終えた隊員の定住状況、新規就農研修への誘導と新規就農者総合対策事業・農業次世代人材投資事業・就農定住パッケージ事業の進捗、新規就農者の施設整備支援やリース方式の園芸施設整備への補助事業の活用状況、中海のサルボウ貝の養殖調査委託事業と養殖施設整備事業の進捗を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８４回　９月定例会  09月05日－02号・一般質問・澤田秀夫</span><span class="ttl">水産事業の方針と体制</span><span class="sum">農林水産部への改編後も水産分野はサルボウガイ養殖支援のみで専門の係が無いとして、今後の水産事業の方針と、農林振興課内への水産振興係の新設など専門セクションの考え方を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・丸山征司</span><span class="ttl">サルボウガイと魚々市</span><span class="sum">サルボウガイ養殖の現況と生産量増加への考えを尋ね、道の駅のやすぎ魚々市で松江のカニ小屋のように魚介類を自分で焼いて食べられるようにする考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月08日－06号・一般質問・丸山征司</span><span class="ttl">強みを生かしたまち育て</span><span class="sum">王将戦2年間の評価と今後の棋戦誘致、月山富田城整備と富田山荘の改修を含む展望、たたら侍の公開とたたら日本遺産登録運動を生かした和鋼博物館やたたら跡の観光活用、境港のクルーズ客船寄港や米子鬼太郎空港の定期便を生かしたインバウンド誘致、安来産農産物の輸出、サルボウガイやカキ、うなぎの養殖など水産振興の展望と部署の新設・改名、道の駅あらエッサ水産加工場での6次産業化、中海ふれあい公園をマリンエコパークとする案と中海フルマラソンの企画を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月06日－03号・一般質問・石倉刻夷</span><span class="ttl">安来どじょうの振興</span><span class="sum">どじょう生産組合の組合員数・養殖池の面積・出荷量・販売額と振興目標、後継者対策、養殖池の老朽化への対策と養殖技術、宣伝や養殖池整備への支援、販路拡大と安定した消費の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　４４回１２月定例会  12月06日－03号・一般質問・中村健二</span><span class="ttl">安来節とどじょうの振興</span><span class="sum">安来節保存会100周年への市長の考えと取り組み、支部数と会員数の推移、若年層の確保策を尋ね、伝統芸能の記録保存を要望したうえ、どじょう養殖の生産者数・面積・生産量・単価、事業の問題点と今後の方向性を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３２回　６月定例会  06月08日－03号・一般質問・田淵秀喜</span><span class="ttl">どじょう振興</span><span class="sum">全国区の地域ブランドである安来どじょうについて、養殖事業の状況と技術改善、生産組織の強化、出荷・販売の状況と市内外の需要や価格、市内飲食業者への販売の課題、行政支援と過去の衰退を踏まえた今後の展望を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H20">
+        <summary>平成20年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２１年第　３１回　３月定例会  03月09日－05号・一般質問・田淵秀喜</span><span class="ttl">景気悪化下の経済と雇用</span><span class="sum">農林水産業や商業・サービス業、医療福祉など産業別の経済状況と新規進出事業者の状況、雇用状況と有効求人倍率、市職員の臨時的採用、中小企業金融対策事業、医療福祉分野の雇用、メンタルヘルス対策、盆や正月のお迎えバスなどＵＩターンの取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H19">
+        <summary>平成19年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２４回１２月定例会  12月05日－02号・一般質問・石倉刻夷</span><span class="ttl">市の花・木・鳥・魚の活用</span><span class="sum">合併3周年で発表された市の花・木・鳥・魚について、市内の桜の名所や銘木の選定、竹と土壁を使う新築家屋への税の減免、白鳥サミットの開催を提案し、どじょう料理ポスターの効果と養殖の生産量・販売額・養殖者の実績と今後の方針、竹の加工センター設置の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成18年度</td>
+            <td><details class="it"><summary>どじょう振興</summary><p>転作水田を有効活用した地域の特色ある特産品づくり事業として、どじょうの養殖技術の向上と出荷体制の確立に引き続き取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>地域ブランドと販路拡大</h3>
+    <p class="terms">語: 地域ブランドと販路拡大・ブランド化・販路拡大・仁多米</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成17年度</th><th scope="col">平成18年度</th><th scope="col">平成19年度</th><th scope="col">平成20年度</th><th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H17"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt10" data-year="H18"><b>1</b><span class="of">/19人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/15人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt10" data-year="H21"><b>1</b><span class="of">/26人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/20人</span><span class="q">1件</span></td><td class="lt10" data-year="H25"><b>2</b><span class="of">/24人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/17人</span><span class="q">0件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="lt25" data-year="H28"><b>3</b><span class="of">/17人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/23人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/17人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/19人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/22人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/16人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/15人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/20人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第１０３回安来市議会定例会（令和６年・令和７年）・一般質問・原瀬清正</span><span class="ttl">農作物の安来ブランド維持</span><span class="sum">安来ブランド品とブランド化注力品の現状、安来いちごの生産状況を尋ね、生産者の高齢化と後継者不足の課題把握とブランド維持の対策、将来を見据えた農作物全体のブランドと後継者の維持の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">第９７回安来市議会定例会（平成３０年・平成３１年）・一般質問・作野幸憲</span><span class="ttl">農産物のブランド化とスマート農業</span><span class="sum">市が先頭に立った県・ＪＡ・営農組織の連携による農産物のブランド化、スマート農業推進の考え、国のスマート実証農場の説明会への参加と生産者への情報提供、実証農場の選定の流れと今後の展開を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８６回１２月定例会  12月06日－03号・一般質問・佐伯直行</span><span class="ttl">ふるさと納税の返礼品</span><span class="sum">市内事業者の販路拡大を図るふるさと納税の返礼品目数を平成26年の41品目から平成31年に70品目とする目標の現状、上位品目、特定の販路を持たない市内事業者の反響を尋ね、寄附件数についての考えを質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月03日－02号・代表質問・石倉刻夷</span><span class="ttl">西谷米のブランド化支援</span><span class="sum">テレビで紹介され全日空の機内食にも採用された広瀬町西谷地区の米について、食味の高い評価や集落営農・法人化の動きを踏まえ、品質と量を安定させ一般消費者に届けるブランド米としての市の政策を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・丸山征司</span><span class="ttl">米を軸にした農業振興</span><span class="sum">ロウカット玄米を契機とした安来の米のブランド化と国内外への販路拡大、布部の企業による担い手不足解消の取り組みを他の企業・地域へ広げる考え、朝ごはん条例や日本酒で乾杯条例、米粉の需要拡大、就農・定住パッケージ事業と比田の野菜づくりの現況と展望を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２９年第　８８回　３月定例会  03月06日－03号・一般質問・丸山征司</span><span class="ttl">話題を生かす観光振興</span><span class="sum">足立美術館の庭園日本一や月山富田城の整備、映画「たたら侍」、瑞風の運行開始などを好機とした積極的な観光振興の所見を尋ね、刃物と葉物をかけた比田の葉物野菜のブランド化の後押しを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２８年第　８２回　３月定例会  03月03日－03号・代表質問・中島隆夫</span><span class="ttl">6次産業化とブランド化</span><span class="sum">イチゴを素材とした取り組みを踏まえ、農林業全般にわたる6次産業化と1次産品を含めたブランドづくりの現状、支援の方向性と雇用の創出に向けた取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２５年第　６１回　６月定例会  06月07日－03号・一般質問・丸山征司</span><span class="ttl">菜の花プロジェクトと農業振興</span><span class="sum">転作田や耕作放棄地に菜の花を植えて菜種油やＢＤＦに循環させる菜の花プロジェクトを市として推進する考えと、担い手不足の解消に向けた設備投資や付加価値づけ、販路拡大への国の補助事業を活用した市の援助を質した。</span></li>
+          
+          <li><span class="who">安来市  平成２５年第　６３回　９月定例会  09月04日－02号・一般質問・田淵秀喜</span><span class="ttl">産業の振興策</span><span class="sum">特殊鋼産業の特区認定の現状と市の支援、企業立地に向けた工業用地・商業用地の考え方と中海の干拓農地の転用の可否、農業政策の方向性と農産物のブランド化、研究機関との連携を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２４年第　５８回１２月定例会  12月06日－03号・一般質問・石倉刻夷</span><span class="ttl">安来どじょうの振興</span><span class="sum">どじょう生産組合の組合員数・養殖池の面積・出荷量・販売額と振興目標、後継者対策、養殖池の老朽化への対策と養殖技術、宣伝や養殖池整備への支援、販路拡大と安定した消費の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成２２年第　３９回　３月定例会  03月04日－04号・代表質問・遠藤孝</span><span class="ttl">道の駅の集客とブランド化</span><span class="sum">安来道の無料化で中海ふれあい公園整備事業（道の駅）の利用客減が懸念される中での手だてと、バイオマスリサイクルセンターの有機質肥料を生かした有機無農薬産物を安来ブランドとして販売する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H18">
+        <summary>平成18年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１９年第　２０回　３月定例会  03月07日－04号・一般質問・金山満輝</span><span class="ttl">地産地消とブランド化</span><span class="sum">市外への購買力の流出を踏まえた市産農産物の地産地消の取り組み、市内企業に向けた地産地消の働きかけ、栽培履歴を管理した農産物に市統一のシンボルマークを付けるブランド化の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H17">
+        <summary>平成17年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">安来市  平成１７年第　１１回１２月定例会  12月06日－03号・一般質問・田中武夫</span><span class="ttl">安来市の農業ビジョン</span><span class="sum">有機農法の米や「どじょう舞」など地域特性を生かした農産物のブランド化の取り組みを踏まえ、こだわりの農畜産物を生産する農家やＪＡに対し市がブランド化を拡大していく意思の有無と、農産物の販売を今後どう考えるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>中小企業・特殊鋼関連産業の支援</summary><p>産業サポートネットやすぎを活用して中小企業者の新製品開発・販路拡大を支援し、産業振興セミナーを開催する。特に基幹産業である特殊鋼関連事業について、専門家の指導を通じ日立関連企業と市内製造業の製造技術高度化・販路拡大を支援する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>企業立地・販路拡大支援（企業立地雇用促進事業・産業サポートネットやすぎ事業）</summary><p>企業立地雇用促進事業と産業サポートネットやすぎ事業により、工業用地確保や販路拡大の支援を引き続き行い、地域経済の発展と雇用の促進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>産業サポートネットやすぎ事業</summary><p>産業サポートネットやすぎ事業に国際規格認証取得促進支援のメニューを追加する。さらなる販路拡大を支援し、地域経済の発展を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>産業サポートネットやすぎとものづくり企業支援</summary><p>産業サポートネットやすぎによる新規事業・技術・商品開発・販路拡大の支援と、特殊鋼関連産業をはじめとするものづくり企業の新製品・新技術開発及び取引拡大の支援により、市内商工業を活性化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>やすぎ和牛のブランド化（全国和牛能力共進会への出品支援）</summary><p>令和4年に鹿児島県で5年に1度の全国和牛能力共進会が開催されることから、やすぎ和牛のブランド化を推進するため候補牛の出品対策を支援する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.2.2</p>
+                    
+                    <p class="project-credit">
+                        安来市議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
