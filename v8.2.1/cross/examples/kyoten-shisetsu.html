@@ -1,0 +1,4258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地域の拠点施設 — 当たった論点の全件 | 自治体くらべ</title>
+<style>
+/* 自治体くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share-part:#eef1f9;  /* shared by some of the municipalities that hold data */
+  --share-all:#d9e0f4;   /* shared by all of them (stronger than --share-part) */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×自治体（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh-part{background:var(--share-part);border-radius:3px;padding:0 4px}
+table.years li.sh-all{background:var(--share-all);border-radius:3px;padding:0 4px;font-weight:600}
+/* How many municipalities a shared bucket appeared in, printed as text beside the
+   bucket. The two tints alone cannot say "all" without the reader knowing how many
+   municipalities held data that year, so the number is written out - the same move
+   as design-convention 3 "read it by length *and* number". */
+table.years .shn{color:var(--ink-faint);font-size:.85em;margin-left:4px}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+/* The three kinds of empty cell (Req 3.5). They must not look alike, and the
+   difference has to survive colour blindness and a greyscale print, so all three
+   keep one colour and differ by marker glyph and rule style instead:
+     none-zero        measured zero - no marker, no rule
+     none-source      the minutes are not in the source - U+203B + dashed rule
+     none-unpublished the term is left out of the reports - U+25C7 + dotted rule
+   The wording differs as well, but that comes from the data (`notices`); the marks
+   here are a second channel, not the only one. Glyphs, never emoji (file header).
+
+   These three are keyed on the class alone, not on `table.years`, so the legend can
+   show the reader what the two marks mean by carrying the very same classes on an
+   empty span - the glyph is written once, here, and cannot drift from the table. */
+.none-zero{border-bottom:0}
+.none-source{border-bottom:1px dashed currentColor}
+.none-source::before{content:"\203B";margin-right:3px}
+.none-unpublished{border-bottom:1px dotted currentColor}
+.none-unpublished::before{content:"\25C7";margin-right:3px}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;min-width:30px;text-align:center;border-radius:3px;margin:0 4px;padding:0 6px;font-size:.8rem}
+.legend .c-part{background:var(--share-part)}
+.legend .c-all{background:var(--share-all);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">自治体くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">自治体くらべ</a> ／ 地域の拠点施設</nav>
+
+  <h1 class="page-title">地域の拠点施設 — 当たった論点</h1>
+  <p class="page-subtitle">
+    話題の束「地域の拠点施設」に当たった論点の全件です（全657件）。
+    1つの質問は、題と要約の組（論点）に分けて読み取っているため、件数は質問の数ではなく論点の数です。
+    自治体ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">178件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・勝部加代</span>
+          <span class="ttl">介護保険と子育て支援</span>
+          <span class="sum">介護保険の改正点の市民への周知と在宅介護支援センターのあり方、保健福祉総合センターへのバス・駐車料金割引、ファミリーサポートの料金や病児保育の改善、公民館への座いす整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・後藤睆一</span>
+          <span class="ttl">合併1年の感想と調整状況</span>
+          <span class="sum">合併から1年を振り返る市長の感想とともに、調整項目の繰り延べ状況、自治会支援や幼稚園保育料の激減緩和、公共交通・学校給食・公民館や上下水道料金の調整、地域別の課題と総合計画の策定手順を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・吉金隆</span>
+          <span class="ttl">所信表明の重点施策</span>
+          <span class="sum">市長の所信表明に関連し、松江市が目指すまちづくりの方向性、教育力日本一の徳育・知育・体育、単身アパートのごみ分別を転入者に伝える仕組み、災害弱者の支援マニュアルの全市展開、公民館の人員配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西村びん</span>
+          <span class="ttl">漁業振興構想と公民館バス</span>
+          <span class="sum">施政方針に触れられていない宍道湖・中海の漁業振興構想への市長の意気込みと、交通弱者の足を確保するため全公民館と学校を結ぶバス路線の拡充の検討状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・西村びん</span>
+          <span class="ttl">一畑バス廃止と路線拡充</span>
+          <span class="sum">一畑バス路線廃止問題を契機とした協議で全公民館を結ぶバス路線の拡充がどう変わるかを問い、法吉と城北の学校・公民館を結ぶ路線の実現を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・篠原栄</span>
+          <span class="ttl">公民館での職員研修</span>
+          <span class="sum">業務が多岐にわたる公民館を行政の最前線と位置づけ、市職員が住民の生の声を吸収できるよう公民館での研修・交流や派遣などを行うことを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中豊昭</span>
+          <span class="ttl">公民館と図書館の整備</span>
+          <span class="sum">施政方針で島根町の公民館を図書館併設の複合施設として整備するとしたことに関し、他町の公民館と図書館の建設計画の詳細を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・渡部美津子</span>
+          <span class="ttl">公民館の自主運営と住民負担</span>
+          <span class="sum">旧市と旧町村の公民館制度の統一に関し、旧市の自主運営方式における行政支援と住民負担の考え方、管理費に占める世帯負担のばらつきや自治会経由の徴収による不公平感を踏まえた再点検を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・森脇幸好</span>
+          <span class="ttl">合併後の諸課題の解決方向</span>
+          <span class="sum">旧町村のマイクロバスや補助金、保育料、公民館制度など合併後の調整事項が地域への十分な説明なく決められているとして、部局統一の住民意見の把握方法の構築、地域協議会への思いと対応、公民館制度検討委員会の中間答申前に地域協議会へ報告すべきだったかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・勝部加代</span>
+          <span class="ttl">地域の健康推進体制づくり</span>
+          <span class="sum">公民館区で行う市民主体の健康増進活動について、公民館だけでは集まる場所の確保が難しいことへの考えを質し、専門職ボランティアは行政が組織するのでなく自発的に生まれる方策をとるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・森脇勇人</span>
+          <span class="ttl">地域協議会のあり方</span>
+          <span class="sum">地域協議会が要望や提言を控えるよう指導されている実態や公民館の中間答申が事前に諮られなかったことを指摘し、市長から諮問するなど地域協議会のあり方への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・斎藤菊市</span>
+          <span class="ttl">地域防災と水害対策</span>
+          <span class="sum">昭和47年水害の教訓の生かし方、災害対策本部の情報連絡と機能、被害と課題の把握と防災計画への反映、公民館の位置づけ、自主防災組織や災害弱者支援、ボランティアの状況を尋ね、土のうの備蓄や私道復旧の助成、ＦＭ放送の活用、第５大橋道路の工事促進など７項目を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・篠原栄</span>
+          <span class="ttl">放課後子どもプラン</span>
+          <span class="sum">放課後子どもプランの事業計画と次世代育成支援行動計画との位置関係を問い、3年間の子どもの居場所づくり事業のノウハウと人材を生かすことと、公民館などで行う同事業の来年度の扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・森脇勇人</span>
+          <span class="ttl">頑張る地方応援プログラム</span>
+          <span class="sum">頑張る地方応援プログラムの特別交付税と普通交付税の算定が3カ年なのか、最大3,000万円の特別交付税が事業費を全額措置するのか、公民館や自治連との協議調整、今後取り組む事業の予定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・中村晴洋</span>
+          <span class="ttl">７月豪雨の被害と対策</span>
+          <span class="sum">７月豪雨の被害を34年前と比較し、天神川への水門や逆流防止施設の設置、橋北地域の排水ポンプ増強と水門・築堤、情報提供や水位表示、土のうの公民館配置、避難勧告・指示の周知と避難基準、災害時の交通整理への自主防災隊などの出動を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・加藤富章</span>
+          <span class="ttl">今後の地域協議会</span>
+          <span class="sum">合併時に合意された地域協議会を今後どう継続させるかの再検討と、自治会や公民館の相互交流・研修のための予算、これまでの地域協議会で参考となった意見や提案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・畑尾幸生</span>
+          <span class="ttl">公民館のあり方</span>
+          <span class="sum">指定管理者制度を導入した公民館について、館長や役員の責任の明確化、館長選任や職員人事の規定の明文化と館長公募制度、有料のカルチャー教室の開設、小学校区と異なる所管区域の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・吉金隆</span>
+          <span class="ttl">公民館の体制と施設</span>
+          <span class="sum">旧市方式に一本化される公民館について、人口と面積を考慮した職員配置と市職員の出向、旧町村職員の資格への配慮、宍道町の職員体制、老朽化した施設の今後、事務連絡会で現場の声を聞く機会を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・角田正紀</span>
+          <span class="ttl">島根原発と防災の取り組み</span>
+          <span class="sum">経済産業省への申し入れに対する国の回答と立地市町村による働きかけ、１・２号機の耐震補強の早期着手の申し入れ、宍道断層と鹿島断層の活動履歴の徹底調査、緊急地震速報と公民館単位の災害対策本部の取り組み、自然エネルギー重視の政策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・飯塚悌子</span>
+          <span class="ttl">平和都市宣言の掲示</span>
+          <span class="sum">議会で決議した地球環境保全と平和都市宣言の普及啓発がほとんど進んでいないとして、宣言を市役所・各支所・公民館に掲げるよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・森脇勇人</span>
+          <span class="ttl">社会教育と公民館のあり方</span>
+          <span class="sum">公設自主運営方式への一本化を踏まえた社会教育・社会体育の推進目標、公民館に委託する事業の線引き、移行までの支所の支援、職員の地域参加の意識啓発、広域な地域に見合った運営を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・篠原栄</span>
+          <span class="ttl">豪雨の教訓と防災</span>
+          <span class="sum">昨年7月豪雨を踏まえた災害対策本部設置運営訓練や防災訓練の実施状況と機能班の役割、公民館区での自主防災組織化の現状と行政支援、少雨による夏の水供給の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・立脇通也</span>
+          <span class="ttl">開府400年祭の取り組み</span>
+          <span class="sum">開府400年祭について、市民が歴史・文化を再認識する精神面の取り組みを学校・公民館・諸団体へ呼びかけることや市長部局・教育委員会の取り組み、400年バッジの販売など市民募金の実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・川井弘光</span>
+          <span class="ttl">指定管理者制度の検証</span>
+          <span class="sum">運用開始から２年半を経た指定管理者制度について、利用者満足度など検証・評価の視点、非公募施設を含む評価の状況、市民の声の集約と反映、公民館や児童クラブが制度になじむかと契約内容の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・三島進</span>
+          <span class="ttl">旧八束郡地域のまちづくり</span>
+          <span class="sum">公民館問題など地域の課題がある中、旧八束郡の各地域で特性を生かした活力と魅力のあるまちづくりのため重点的に考えていることと、地元に求めることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・加藤富章</span>
+          <span class="ttl">突発重大事故への対策</span>
+          <span class="sum">駅周辺の硫化水素ガス発生事故を教訓に、事案への所感と関係業界への対策、現場指揮車両の導入、公民館の人員配置、災害教育と避難訓練、危機管理の機構改革、広報車の運用と市街地への緊急通報システムの整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・三島進</span>
+          <span class="ttl">視覚障害者への支援</span>
+          <span class="sum">視覚障害者の声を受け、全ページＳＰコードの音声広報、ホームページの読み上げ対応、公民館のＩＴ講習会の再開と障害者パソコン講習の補助、誘導ブロックや歩道の点検、避難施設の誘導設備、バスカード、盲導犬の維持費補助、ガイドヘルパーの即日派遣を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・川井弘光</span>
+          <span class="ttl">都市経営と支所・公民館</span>
+          <span class="sum">自治体内分権の観点から支所・包括支援センター・公民館の配置と役割を合併後の都市経営として検証・研究する体制と成果、公民館を行政サービスの拠点とするための体制整備や市職員の配置、若手職員の研修の場としての活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・福間俊夫</span>
+          <span class="ttl">ＡＥＤの設置とマップ</span>
+          <span class="sum">ＡＥＤについて、公共施設への設置状況と、各公民館及び全小中学校への早急な設置、設置場所が一目でわかる公民館単位のＡＥＤマップを作成し各家庭に配布する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・畑尾幸生</span>
+          <span class="ttl">姉妹都市との経済交流</span>
+          <span class="sum">益田市と高槻市の姉妹都市交流センターの例を挙げ、姉妹都市の宝塚市との間で特産品のＰＲや販売などの経済交流を提案する考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中明子</span>
+          <span class="ttl">小中一貫教育の推進</span>
+          <span class="sum">来年度から全市で取り組む小中一貫教育について、中学校長の立場と教員の配置転換による現場の混乱への懸念、代表校長の役割、中学校区と複数の公民館との連携、八束中学校区の３年間の成果と課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・畑尾幸生</span>
+          <span class="ttl">鼕の後継者育成</span>
+          <span class="sum">後継者不足に悩む鼕行列について、公民館を活用したネットワークで各町内の後継者を育てることや郊外の子供に伝統行事を味わわせる施策に教育委員会が具体的に取り組めるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・川島光雅</span>
+          <span class="ttl">公民館の指定管理者制度</span>
+          <span class="sum">公民館運営協議会が負う管理・運営リスクと市との責任分担、館長と職員の雇用元が異なる二元的管理体制と館長の常勤化、職員の就業規則と福祉職員正職員化後の待遇、決裁規程と指導・検査体制、今後の公民館のあり方と人的体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・三島良信</span>
+          <span class="ttl">公民館の職員体制</span>
+          <span class="sum">旧松江市21公民館と支所のある地域の人員体制や仕事量の違い、公民館業務の把握、現体制の妥当性と市職員研修のあり方、公民館への職員配置による住民票発行など市民サービスの提供を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・松蔭嘉夫</span>
+          <span class="ttl">公民館の運営体制</span>
+          <span class="sum">旧町村でも公設民営の指定管理者制度への移行が進む公民館について、館長以下３人体制の職員配置への認識、分館・地区館の地元移管の状況、移管後の遠距離利用への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉茂美</span>
+          <span class="ttl">公民館執務室の環境改善</span>
+          <span class="sum">市内28カ所の公民館の執務室が狭いなかで館長の机が職員より18センチから49センチ長いことを指摘し、館長の机を必要最小限の大きさにすべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・石倉徳章</span>
+          <span class="ttl">国民健康保険事業の運営</span>
+          <span class="sum">10年間の保険料据え置き、財政調整基金の額、財政安定化支援事業の繰り入れ、医療費が低いのに保険料が高い理由を問い、医療費８％削減目標への意気込み、公民館等と連携した医療費削減、国保広域化の進展を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・森脇勇人</span>
+          <span class="ttl">少子化と高齢者対策</span>
+          <span class="sum">人口減少対策の内容と効果、公民館区別の人口減少の原因調査、企業誘致による雇用対策の検証と定住雇用推進課の取り組み、老人クラブの運営困難の把握と活動支援、職員の地区担当制や集落支援員の配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・飯塚悌子</span>
+          <span class="ttl">指定管理者制度の見直し</span>
+          <span class="sum">指定管理者制度の適切な運用を求める総務省通知の受け止めと、松江城や公民館、児童クラブなどへの指定について制度本来の目的に照らした総点検と見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇幸好</span>
+          <span class="ttl">AEDの設置と管理</span>
+          <span class="sum">幼稚園や小中学校、公民館や体育館などへのAEDの設置状況、学校から離れた児童クラブへの設置、電池切れを防ぐ管理点検の体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・貴谷麻以</span>
+          <span class="ttl">人にやさしい施設整備</span>
+          <span class="sum">ひとにやさしいまちづくり条例の趣旨を踏まえ、学校や公民館、消防機庫、研修施設や観光施設の洋式・男女別トイレやスロープ、エレベーターを年間計画を立てて整備するよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇勇人</span>
+          <span class="ttl">住みやすさ日本一の実現</span>
+          <span class="sum">公民館単位での災害訓練の実施状況、自治会と消防団の役割分担、独居世帯の見守り体制、雪害時の除雪など自治会活動への助成、保育所増設など子育て支援の充実、松江らしい健康づくりメニュー、焼肉店の食中毒事件を受けた生食用食肉の安全対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・片寄直行</span>
+          <span class="ttl">同和問題とコミュニティー</span>
+          <span class="sum">同和対策事業終了後の基本スタンス、同和地区という言葉の法的な存否、例規集の同和対策の表現の削除、公民館使用料の無料化と隣保館との整合、隣保館アンケートへの回答、同和問題を初めとするという表現の見直し、人権尊重宣言の制定校と同和教育指導資料の撤廃を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇幸好</span>
+          <span class="ttl">告知端末と屋外スピーカー</span>
+          <span class="sum">公民館や旧町村部の一時避難所への告知端末の設置、ケーブルテレビの負担が困難な低所得者への対応、屋外スピーカー設置での地域状況の把握と協議を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森脇勇人</span>
+          <span class="ttl">地震・津波への備え</span>
+          <span class="sum">庁舎・学校・公民館など避難所施設と住宅の耐震化、ライフライン対策、松江大橋など避難路となる橋の耐震性、港湾・防波堤が想定する津波の規模と過去のデータ、大橋川改修の堤防の津波想定、沿岸部や河川沿いの避難誘導と避難指示の連絡体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・野津直嗣</span>
+          <span class="ttl">子育て施策の情報発信</span>
+          <span class="sum">子育て施策の情報や行政用語がわかりにくいとの若い親の声への対応と全庁を挙げた子育て支援の徹底、子育て支援の広報の新たな方法、子育て世代が使いやすい公民館の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・森本秀歳</span>
+          <span class="ttl">支所・公民館のあり方</span>
+          <span class="sum">旧八束郡の支所と公民館を統合する案が決定事項のように報道されたことの確認と情報管理、防災拠点としての支所や公民館運営方式の統一、職員の立場などの課題を踏まえ、合併検証にあわせ慎重に進めるべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・貴谷麻以</span>
+          <span class="ttl">職員の人事評価</span>
+          <span class="sum">地元の祭りやPTA、公民館活動など広い意味での市民活動の経験を職員の人事評価に加えるよう提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">人権施策とコミュニティー</span>
+          <span class="sum">ホームページ等に残る同和対策の表現の是正、支所と公民館の運営方式の検証と使用料の統一時期、隣保館の扱い、県への申し入れ、差別事象の実態、同和教育の定義、人権施策推進基本方針改定の基本的スタンスを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・川島光雅</span>
+          <span class="ttl">公民館と支所のあり方</span>
+          <span class="sum">合併時に懸念された住民サービスの低下や周辺部の衰退に融合一体化でどう対処してきたか、減少する地域商工業者への支援の考え、支所縮小後の伺います係との兼ね合いと分散による利便性の向上を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森本秀歳</span>
+          <span class="ttl">公民館のあり方</span>
+          <span class="sum">自主運営方式と東出雲の直営方式の運営上の違い、公設自主運営にこだわる理由、旧八束郡の公民館を支所単位で1つにする理由と急ぐ必要性、市域全体の行政サービスのあり方の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・片寄直行</span>
+          <span class="ttl">原発問題と地域防災計画</span>
+          <span class="sum">再稼働をめぐる市長答弁の後退、原発に依存しない決意を政府に求めること、再生可能エネルギーと公民館・集会所への導入、宍道断層と鳥取沖断層の連動の再調査、水道局プランの事故原因の記述を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉徳章</span>
+          <span class="ttl">合併旧町村の地域振興</span>
+          <span class="sum">合併8年目で旧町村部が寂しさを感じている中、支所と公民館の一体化計画で支所が縮小されることを踏まえ、地域振興に向けた施策についての市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・畑尾幸生</span>
+          <span class="ttl">学習指導要領と児童クラブ</span>
+          <span class="sum">新学習指導要領による学校運営や行事、長期休業への影響と教育効果、児童クラブの基本理念と施設規模、指導員の処遇と研修、防災措置、児童クラブと公民館を指定管理者制度から外すことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・川島光雅</span>
+          <span class="ttl">宍道の支所・公民館複合施設</span>
+          <span class="sum">宍道の支所と公民館の複合施設で提示された会議室の面積が地元の想定より狭いなか、旧宍道町の文化施設等整備基金4億5,800万円を公民館機能に充てることと合併特例債の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森本秀歳</span>
+          <span class="ttl">支所と公民館のあり方</span>
+          <span class="sum">融合一体化を進めるなかでも地域の風土や特性を尊重し、東出雲の4公民館の運営形態や支所の見直しを強引に進めず、課題を共通認識したうえで解決策を見出すべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中明子</span>
+          <span class="ttl">教育委員会会議の公開</span>
+          <span class="sum">初めて庁舎外の城西公民館で開かれた教育委員会の会議について、開催の経緯とねらいどおりだったか、当日の状況や傍聴者の声、今後もこうした開催を続けるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・森脇勇人</span>
+          <span class="ttl">自治集会所化後の公民館活動</span>
+          <span class="sum">公民館を廃止し自治集会所とする地域の公民館活動の考え方、予算の中央公民館への集約、島根町など他地区の扱い、中央公民館が地域に出向く活動の状況と、半島部の特性に応じたサポートを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・斎藤菊市</span>
+          <span class="ttl">行政改革と職員の意欲</span>
+          <span class="sum">叱咤激励型の限界を指摘し、協働のまちづくり宣言後の具体的行動、ワークプレイス改革への取り組み、若手職員の意見を反映する仕組み、新入職員の消防団入団や公民館配置、累積赤字が100億円を超えた市立病院の独立行政法人化の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・石倉茂美</span>
+          <span class="ttl">被災地への支援</span>
+          <span class="sum">東日本大震災の被災地に対する今年の松江市の行動や援助の状況と、安来節や関乃五本松節など公民館の芸能クラブによる心の癒やしを被災地へ送る取り計らいを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩本雅之</span>
+          <span class="ttl">オープンデータの活用</span>
+          <span class="sum">統計データなどオープンデータの活用に向けた取り組みと、地域福祉活動計画などを参考に公民館単位で情報を集約・公開する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・貴谷麻以</span>
+          <span class="ttl">城西地区の福祉まちづくり</span>
+          <span class="sum">城西幼保園や児童クラブ、公民館の整備で福祉まちづくりゾーンとなりつつある地区について、交通対策と駐車場、末次保育園跡地、内中原幼稚園周辺の排水・地盤の見通し、保育園と児童クラブの連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・森本秀歳</span>
+          <span class="ttl">小中一貫教育と公民館</span>
+          <span class="sum">たての一貫教育として小学校と中学校の間の教職員の人事交流を、よこの一貫教育として学校と地域を結ぶ公民館を小学校区に最低1つ置く必要性と今後の公民館のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・岩本雅之</span>
+          <span class="ttl">認知症の見守りネットワーク</span>
+          <span class="sum">市内の認知症と軽度認知障がいの状況、徘回の実態把握、かかりつけ病院や社会福祉法人、公民館との連絡網による見守りネットワーク強化の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・森本秀歳</span>
+          <span class="ttl">合併の検証</span>
+          <span class="sum">合併10年の検証結果への市長の所感、地域まちづくり指針を今後も検証するか、地域協議会がなくなった後の推進主体と、公民館運営協議会に担わせる場合の連携や負担を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・岩本雅之</span>
+          <span class="ttl">地域福祉活動計画の活用</span>
+          <span class="sum">公民館と地区社会福祉協議会が策定した第4次地域福祉活動計画が、市の福祉施策と今後のまちづくりにどのように生かされるかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・長谷川修二</span>
+          <span class="ttl">学校と地域の連携</span>
+          <span class="sum">光市のコミュニティ・スクールと比較し、本市の小中一貫教育と公民館単位の青少年健全育成協議会の取り組み状況、よい点と改善点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・野々内誠</span>
+          <span class="ttl">支所管内の公民館体制</span>
+          <span class="sum">支所機能を併せ持つ公民館を旧町村に1館とする方針について、鹿島町や宍道町の地区公民館や、十分な人口規模と活動実績を持つ東出雲町の公民館の存続を求める立場から市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・橘祥朗</span>
+          <span class="ttl">旧町村の支所と地域協議会</span>
+          <span class="sum">支所機能の縮小を心配する声を受けた来年度の支所の地域振興課の扱いと、地域協議会にかわる公民館運営協議会の根拠、地域協議会10年の総括、全住民の代表となる委員の選考に対する市の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉徳章</span>
+          <span class="ttl">介護保険制度と介護予防</span>
+          <span class="sum">本市の介護認定率と給付費抑制策の主眼、介護報酬引き下げによるサービス低下や施設経営への影響の実態把握、公民館任せの健康・介護予防対策に行政が主体性を発揮すべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・川島光雅</span>
+          <span class="ttl">体育施設の老朽化対策</span>
+          <span class="sum">森山地区体育館や宍道体育センターなど老朽化した体育施設の計画的な耐震補強と改修、公民館の移転で教室が開けなくなる宍道体育センターでの代替の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">公共施設適正化の進め方</span>
+          <span class="sum">公共施設適正化計画案で示したメテオプラザのプールとホットランドやくもの廃止を教育委員会が事前に聞いていたかとその対処、自校プールの有無による格差のない水泳・着衣泳指導、東出雲町の老人福祉センターや４公民館の統合を関係者の納得を得てから公表・決定すべきとの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">公民館とまちづくり</span>
+          <span class="sum">行政の下請とも受け取られかねない業務が増える公民館について、職員の配置や職員・館長の処遇改善、時間外・休日の会合に代休で対応することの再検討、地域行事への市職員の参加と地区担当制の機能状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉金隆</span>
+          <span class="ttl">公民館の人員配置</span>
+          <span class="sum">面積や人口の格差が大きい29地区の公民館で一律となっている人員配置の見直しと、人口の多い地区や面積の広い地区の公民館への市職員の配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・野々内誠</span>
+          <span class="ttl">公民館の拠点機能</span>
+          <span class="sum">地方創生に向け公民館の役割を見直す国の動きを踏まえ、公共施設適正化計画素案で統合の検討対象とされた東出雲町内の４公民館について、本市の公民館の拠点機能の考え方と小学校区に機能を残す考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">合併10年の検証と住民自治</span>
+          <span class="sum">人口が10％以上減った島根町など4町の要因、地域協議会廃止後の住民自治組織の育成と職員配置、地域おこし協力隊等の活用、東出雲町の地域協議会と4公民館の扱い、民生児童委員の活動費、高齢者バス代半額の復活、非正規職員の任用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・柳原治</span>
+          <span class="ttl">安全・安心なまちづくり</span>
+          <span class="sum">生馬が丘団地の調整池擁壁の崩落を受け、防災メールの配信基準、自主避難指示の判断基準、冷暖房が故障中だった生馬公民館など指定避難所の点検、住民への随時の説明、市内35カ所の調整池の調査を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・森本秀歳</span>
+          <span class="ttl">小中一貫教育と公民館</span>
+          <span class="sum">よこの一貫教育で小学校と地域をつなぐ公民館の役割を踏まえ、旧町村の支所単位1館の方針により小学校区の公民館がなくなることへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・三島良信</span>
+          <span class="ttl">支所と公民館の複合施設</span>
+          <span class="sum">宍道複合施設の完成を受け、八雲町の複合施設に対する市民の声、支所のある地域での複合施設整備の考えと市民に望むこと、古江公民館の整備を機に旧松江市内でも身近な行政サービスができる整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">総合戦略と住民自治</span>
+          <span class="sum">総合戦略の策定に当たり、海士町や邑南町など人口が増えた中山間地域の実践に学ぶこと、公民館単位で住民が地域を点検・評価して5カ年計画をつくる住民自治、中小企業振興条例の制定、農業・食料・エネルギーの地域内循環、原発を動かさない前提での戦略づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉金隆</span>
+          <span class="ttl">観光の受け入れ体制</span>
+          <span class="sum">観光駐車場の不足への考えとパーク・アンド・ライドや堀川の乗船場、松江国際観光案内所の外国人案内件数と駅前という立地、まちなかの公民館を高層化したゲストハウスなど宿泊機能を含む抜本的な手だてを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・柳原治</span>
+          <span class="ttl">農地集積と地域農業振興</span>
+          <span class="sum">農地中間管理機構の目標面積と実績、農地集積の課題と対策、公民館地域で地域農業や担い手問題を提議する考え、米選機の経費がかかる酒米への支援、地元で需要のある農産物や加工食品の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・篠原栄</span>
+          <span class="ttl">防災士の育成</span>
+          <span class="sum">防災士の資格取得講座への市の補助の現状と実績、市内の資格保持者数、各自治会や公民館区で資格を取得しやすくする機会の提供を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・岩本雅之</span>
+          <span class="ttl">高齢者の生きがい事業</span>
+          <span class="sum">高齢者の生きがい事業の拡充に向け地域で必要な取り組み、福祉施設等でのボランティアポイントの環境整備、社会福祉法人に期待する社会貢献活動、社会福祉士を福祉コンシェルジュとして公民館に配置する総合的な相談窓口を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・野々内誠</span>
+          <span class="ttl">地域包括ケアの環境整備</span>
+          <span class="sum">地域包括ケアシステムを支える公民館・町内会・隣近所のネットワークづくりと全庁的な取り組み体制、医療と介護の連携の体制と課題、ふえ続ける認知症高齢者への対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・南波巖</span>
+          <span class="ttl">地域版総合戦略の意見交換会</span>
+          <span class="sum">地域版総合戦略の策定に向け全公民館を回って行っている意見交換会で出された地域の意見と、今後の進め方や目指すところを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・川島光雅</span>
+          <span class="ttl">指定管理団体の人事体制</span>
+          <span class="sum">長期にわたり有償の管理ポストにとどまり組織のマンネリ化を招く指定管理団体について、定年のガイドラインや市の指導の必要性と、公民館長の在任10年までの原則の例外の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・森脇勇人</span>
+          <span class="ttl">支所と公民館のあり方</span>
+          <span class="sum">市の出先機関の役割が増え負担が増している公民館への規模に応じた市職員の常駐や派遣と、将来支所は要らないとの発言を踏まえた今後の支所のあり方について所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・橘祥朗</span>
+          <span class="ttl">支所と公民館の統合</span>
+          <span class="sum">支所と公民館の統合で、かつての支所縮小方針は中止・凍結され、おおむね現在の規模と人数を維持すると考えてよいかを問い、八束支所と公民館の複合施設の工事期間とその間の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・柳原治</span>
+          <span class="ttl">文化財センターの設置</span>
+          <span class="sum">松江城天守の国宝指定を支えた文化財部門が３カ所にばらばらに存在する現状を踏まえ、これらを集約した文化財センターを、移転新築される古江公民館の跡に歴史館を補完する施設として設置することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・吉儀敬子</span>
+          <span class="ttl">東出雲町の合併後の課題</span>
+          <span class="sum">東出雲町について、都市計画道路揖屋馬潟線の残り1,200メートルの完成見通し、公民館問題での十分な話し合い、南部分署からの救急到着時間と農道ルートへの切りかえ、携帯電話からの119番通報体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・新井昌禎</span>
+          <span class="ttl">交通事故防止の取り組み</span>
+          <span class="sum">日本一交通事故の少ない県都を目指し、市役所北側や黒田町、北公園南の交差点、白潟公民館前の速度規制など危険箇所の対策、わかりやすい標示、ヒヤリ・ハット体験を集約する仕組みの構築を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島伸夫</span>
+          <span class="ttl">公民館の運営</span>
+          <span class="sum">市長部局の業務が増える公民館の業務増加への所見と、規模に応じた運営方法や職員配置の見直しと待遇改善、地元費を負担しない町内会未加入世帯との関わりと町内会加入促進への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・細木明美</span>
+          <span class="ttl">半島部の地域振興</span>
+          <span class="sum">山陰合同銀行の鹿島支店と片江代理店の閉鎖に対する市長の見解を問い、高齢者の不安解消に向けた支所や公民館へのＡＴＭ設置の提案とともに、鹿島、島根、美保関の半島部の現状と課題、今後の振興策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・吉儀敬子</span>
+          <span class="ttl">東出雲町の公民館統合</span>
+          <span class="sum">東出雲町の４公民館を１つにする説明会に町民が納得していない中、地域が将来ビジョンを示せるまでの時間を保障すること、地域の自治の力をつけるための市の取り組み、下意東地域の住民活動への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・出川桃子</span>
+          <span class="ttl">松江てらこや事業の拡充</span>
+          <span class="sum">７月に始まった松江てらこや事業について、実施期間や対象年次、対象地域の拡充と、図書館や学校の空き教室、空き家など公民館以外の実施場所の活用の展望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・貴谷麻以</span>
+          <span class="ttl">看取りと地域包括ケア</span>
+          <span class="sum">本庄地区の看取りをテーマにした研修のような医療・介護・公民館の連携を市全体に広げる展望と、健康やヘルスツーリズムでの女性経営者や地元生産者との連携、地元の食の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・長谷川修二</span>
+          <span class="ttl">避難の指揮命令系統</span>
+          <span class="sum">大災害時の避難の指示や誘導で現場の指揮系統が不明確との消防団の声を踏まえ、避難に関する指示・指揮命令系統の再確認と、町内会・自治会、公民館、消防団への周知徹底を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・太田哲</span>
+          <span class="ttl">防災士の育成</span>
+          <span class="sum">市内で初めて開催された防災士の講座の受講者数と周知方法、現在の資格保持者数、公民館への配置などを目指した県と連携した資格取得支援の拡充を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・太田哲</span>
+          <span class="ttl">高齢者の見守り</span>
+          <span class="sum">川津公民館が新聞販売店と協定を結んだ高齢者見守りの取り組みへの市の見解と、市内の孤独死の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・橘祥朗</span>
+          <span class="ttl">八束町の閉鎖施設の今後</span>
+          <span class="sum">適正化計画にないグリーンステラと中国牡丹園の閉鎖と地元の理解、グリーンステラや旧公民館、江島の旧保育所の今後、施設の劣化度の意味と対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・米田ときこ</span>
+          <span class="ttl">公共施設適正化の進め方</span>
+          <span class="sum">公共施設適正化計画の進捗と廃止・譲渡等の内訳、対象施設の判断根拠、公民館統合で向上した公共サービス、譲渡・廃止地域での地域創生策と周辺部への配慮、財政再建に偏っていないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島伸夫</span>
+          <span class="ttl">地域の防災対策</span>
+          <span class="sum">避難所予定地で自主避難ができるとの誤解の周知と行政の援助、公民館の合い鍵の準備、地区防災訓練への補助増額やリーダー育成を含む指導方針、公民館単位の自主防災組織の結成と支援、要配慮者支援事業の状況と問題点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・細木明美</span>
+          <span class="ttl">地域版まちづくり総合戦略</span>
+          <span class="sum">地域版まちづくり総合戦略の予算執行状況と使途、美保関町のアンケートなどを踏まえた実現に向けた取り組み、各支所や公民館へのまちづくり総合戦略推進室の設置、行政の立ち位置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・貴谷麻以</span>
+          <span class="ttl">大橋川下流部と意宇川対策</span>
+          <span class="sum">立ち退きが進む矢田地区を含む大橋川下流部のまちづくりの進め方、２年続けて避難勧告が出た意宇川流域での住民説明会、浸水被害を受けた出雲郷公民館の避難所指定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島伸夫</span>
+          <span class="ttl">指定管理者制度</span>
+          <span class="sum">指定管理施設数と公募・非公募の区分や評価、公募・非公募を決める検討委員会と選定審議会、集会所の指定管理の方向性、児童クラブの運営形態、公民館職員の位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・津森良治</span>
+          <span class="ttl">指定管理者制度の検証</span>
+          <span class="sum">導入から15年を経た指定管理者制度について、公の施設の役割と指定管理者に求めるものを検証し、公民館など制度になじまない施設を適用から外すべきではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・吉儀敬子</span>
+          <span class="ttl">東出雲町の公民館問題</span>
+          <span class="sum">東出雲町の公民館検討委員会の中間報告を受け、市が庁舎建設までに結論を出すようなスケジュールを提示したのかを尋ね、地区ごとに十分話し合う時間の保障を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・田中肇</span>
+          <span class="ttl">災害レベルの猛暑対策</span>
+          <span class="sum">生活保護世帯のエアコン設置状況と一時扶助の支給実績、電気をとめられた世帯の把握と中国電力の停止基準、高齢者向け料金プランの要請、真夏日の送電継続、公民館の避難所としての開放を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・新井昌禎</span>
+          <span class="ttl">超高齢社会と金融教育</span>
+          <span class="sum">超高齢社会への備えとして、公民館等の生涯教育と学校教育における金融教育の必要性と、将来の自主財源として自治体の公金を運用する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・立脇通也</span>
+          <span class="ttl">近未来を見据えた市役所改革</span>
+          <span class="sum">ＡＩ・ＩｏＴやキャッシュレス化、国際情勢などの課題を挙げ、若手研究者らと協働する新組織機構、県庁の専門機関の活用、支所の機能強化、公民館制度の充実、行政改革、教育目標の転換、市役所のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・太田哲</span>
+          <span class="ttl">防災の備えと自助・共助</span>
+          <span class="sum">平常時からの災害への備えの内容、真備町への市職員派遣の応援内容、防災士養成講座の助成受講者数、西日本豪雨の検証を踏まえた今後の取り組み、自主防災組織の結成率、要配慮者支援名簿の開示の指針、地区防災計画の作成状況と公民館単位とした根拠を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・長谷川修二</span>
+          <span class="ttl">防災ハンドブックの活用</span>
+          <span class="sum">補正予算で更新される防災ハンドブックを家庭や地域で日ごろから確認し保管してもらう工夫と、町内会・自治会連合会や支所、公民館への防災マップの掲示などによる日ごろからの啓発を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・森本秀歳</span>
+          <span class="ttl">防災面からの支所のあり方</span>
+          <span class="sum">公民館との複合化や職員減員が進むなか、有事の際に地元に精通した職員が即応できるよう、旧郡部の支所のあり方を防災の面から再検討すべきと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島伸夫</span>
+          <span class="ttl">人口減少時代のまちづくり</span>
+          <span class="sum">立地適正化計画の目的と基本方針、松江らしさや公共交通網整備の具体策、県との広域調整、支所と公民館のあり方の進捗、公民館への市職員の出向、自治会加入率とその促進策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島良信</span>
+          <span class="ttl">公民館運営と職員体制</span>
+          <span class="sum">公設民営の公民館が行政の下請けのように多くの業務を担う現状の認識、職員数と業務内容の見直し、職員の休暇が取りにくい働き方と処遇について、人件費を握る市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・三島良信</span>
+          <span class="ttl">合併後のまちづくり</span>
+          <span class="sum">合併から14年半のまちづくりの進捗と課題、昭和の合併以来の周辺地域を含む融合一体化、第２次総合戦略への考え、公民館区別の人口減少と高齢化の現状認識と対策、拠点づくりと将来像を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・吉儀敬子</span>
+          <span class="ttl">東出雲の公民館複合施設</span>
+          <span class="sum">東出雲の公民館複合施設を保健相談エリアに建てる方針について、建設費の試算と３案の比較提示、公民館運営協議会準備会の議論を場所の決定より先行させるべきことを挙げ、市長名で場所を判断した理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・吉儀敬子</span>
+          <span class="ttl">東出雲の複合施設建設</span>
+          <span class="sum">公民館と支所の複合施設を保健相談センターの場所に建設する根拠を町民に示すべきとし、建設費用、既存施設のパイルの状況、Ｉｓ値、解体とパイル撤去の費用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・吉儀敬子</span>
+          <span class="ttl">東出雲公民館の建設場所</span>
+          <span class="sum">東出雲公民館と支所の複合施設を保健相談センターに建設するとして混乱した８月２日の会議の原因、教育委員会の支援の役割、町民の議論を保障し白紙から論議することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・太田哲</span>
+          <span class="ttl">コロナ下の避難所運営</span>
+          <span class="sum">防災基本計画の修正に基づく３密回避の避難所運営、マスクや消毒液、段ボールベッドなどの備蓄、公民館などのＷｉ－Ｆｉ環境、分散避難の市民への周知とホテル避難の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・吉金隆</span>
+          <span class="ttl">前回代表質問答弁のその後</span>
+          <span class="sum">第２回定例会の代表質問への答弁のその後として、消費税減税やベーシックインカムの効果と生活保護申請の状況、医療従事者の宿泊施設確保と国のクラスター班の役割、平林副市長が現場を歩いた感想、プレミアム付商品券の発行と代行運転業への支援、授業の遅れの確認と少人数学級、コロナ禍の公民館と社会教育を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・細木明美</span>
+          <span class="ttl">市の防災体制</span>
+          <span class="sum">防災ガイドブックによる地域防災計画の市民周知、職員向けの概要版や研修、人事異動時の引継ぎ、職員による大規模な防災訓練の実施状況、コロナによる計画や訓練の変化、県との連携、防災の観点からの支所、公民館、自治会への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・米田ときこ</span>
+          <span class="ttl">性の多様性とトイレ整備</span>
+          <span class="sum">学校や体育館、公民館、公園などの公共施設における性の多様性に応じたジェンダーフリートイレの整備状況と整備方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・太田哲</span>
+          <span class="ttl">新型コロナへの支援策</span>
+          <span class="sum">商業・サービス業感染症対応支援補助金の受付期間延長と予算状況、雇用調整助成金の利用状況と代行申請手数料の支援、貸切バスの補助事業の延長、くらし相談支援センターの相談件数と生活福祉資金の利用状況、公民館と集会所のＷｉ－Ｆｉ環境の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・川島光雅</span>
+          <span class="ttl">新庁舎建設問題の検証</span>
+          <span class="sum">公民館区での住民説明会の感触と市長自ら出向いて理解を得る努力、旧県立プール跡地やホテル宍道湖跡地の活用と現地建て替えにこだわる理由、120億円から150億円に増えた建設費と地方交付税措置や建設基金の確保、事業を一時停止して市民と話し合うことの可否と影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・吉儀敬子</span>
+          <span class="ttl">東出雲の複合施設</span>
+          <span class="sum">東出雲公民館との複合施設について、複合施設建設委員会の論議の状況を町民に中間報告すべきではないか、保健相談センターの場所が災害対策本部となる支所に適するか、跡地を災害時の多目的公園として残すべきではないか、意東公民館が耐震基準を満たし避難所に指定されていることを正しく伝えるべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・吉儀敬子</span>
+          <span class="ttl">東出雲の複合施設</span>
+          <span class="sum">閉館する下意東・出雲郷両公民館から移行する児童クラブの避難所指定の継続と地域の自治活動への利用、保健相談センターを残す案の建設費試算と建設委員会での議論の町民への公開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・吉儀敬子</span>
+          <span class="ttl">東出雲の複合施設問題</span>
+          <span class="sum">東出雲公民館との複合施設計画に寄せられた町民意見を踏まえ、支所エリアを住宅地として売却することの断念、避難所機能を考慮した保健相談センター前の進入路と道路の安全対策、児童クラブ専用となる出雲郷公民館の地域への開放を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・小澤一竜</span>
+          <span class="ttl">マイナンバーカードの普及</span>
+          <span class="sum">マイナンバーカードの交付状況と２万円分のポイント付与発表後の申請状況、公民館での出張窓口の状況と見通し、今後の利便性の広がりを問い、ワクチン集団接種会場での申請窓口設置を検討するよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・津森良治</span>
+          <span class="ttl">今後のまちづくり</span>
+          <span class="sum">拠点連携型とコンパクトなまちづくりの議論を踏まえ、市長が進めるまちづくりの方向性と、公民館・支所の役割と活用策、公共交通の果たすべき役割と活用策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・三島良信</span>
+          <span class="ttl">公共施設の適正化と報道</span>
+          <span class="sum">19施設の譲渡・処分が新聞で先に報じられたことを踏まえ、支所・公民館・自治会などへの意見聴取を経た順序立てた処分の進め方、隣接施設との一体的活用、部局間の情報共有と報道の在り方について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・長谷川修二</span>
+          <span class="ttl">公民館の非常用電源</span>
+          <span class="sum">避難所となる公民館が停電で機能を失わないよう、エネファームなどの発電設備や大型蓄電設備といった非常用電源設備の導入を図るべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・山根宏</span>
+          <span class="ttl">原子力災害時の避難の理解</span>
+          <span class="sum">万が一の際に住民が取るべき行動の理解浸透がまだ不十分として、県の資料「原子力災害時に皆さんが取る行動」などを参考に町内会や公民館で出前授業を含む事前研修を繰り返し行うよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・たちばなふみ</span>
+          <span class="ttl">子ども食堂への支援</span>
+          <span class="sum">鳥取県の支援例を挙げ、市内の子ども食堂の現状と数値目標、公民館使用料の補助や食材の保管場所・冷蔵庫の援助、運転資金など補助金や交付金を活用した支援策の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・三島良信</span>
+          <span class="ttl">島根町加賀の大規模火災</span>
+          <span class="sum">島根町加賀の大規模火災について、常備消防の初動体制と消防団の対応、消防ＯＢ等の支援活動に対する公務災害補償制度、災害救助法適用後の国の支援を含む対応、支所・公民館・自治会の対応、検証・総括と今後の振興策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・原田守</span>
+          <span class="ttl">市の情報発信</span>
+          <span class="sum">緊急記者会見資料の作成部署とデータ提供の時期、新たな行動指針の提示、７月豪雨時にホームページがつながりにくかった原因、防災マップの活用、災害時の公民館の役割、アクセス解析、高齢者への情報伝達を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岩本雅之</span>
+          <span class="ttl">市の遊休施設の活用</span>
+          <span class="sum">活用されず空いている学校や体育館など市の遊休施設の数を公民館区別に問い、活用方法が決まっている施設の有無と、地域のアイデアを生かした遊休施設の実証事業を公民連携で進めることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">市周辺部の地域振興</span>
+          <span class="sum">朝酌や本庄、持田、秋鹿など市周辺部の活性化に向け、地域版総合戦略関連の予算事業をもっと活用してもらう施策と、地域振興課や公民館が連携したモデル地域づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・中村ひかり</span>
+          <span class="ttl">災害時の避難計画</span>
+          <span class="sum">公民館で避難者が受け入れられなかった事例を挙げた避難所設置基準の見直し、浸水想定区域にある市庁舎の空からの緊急対応などリスク管理、原子力災害時の避難車両の想定台数と30キロ圏外への避難シミュレーションを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・原田守</span>
+          <span class="ttl">災害時避難所の環境</span>
+          <span class="sum">避難所となる公民館などの簡易ベッドや間仕切り、充電設備など備品の充足、日頃の備えの周知策、応援協定の状況と加賀の大火や７月豪雨での執行、公民館や学校の建て替えの考え方、トイレの洋式化と多機能トイレの設置状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川島光雅</span>
+          <span class="ttl">行政のデジタル化</span>
+          <span class="sum">マイナンバーカードの普及率、健康保険証利用に対応する医療機関・薬局の受皿づくりと普及促進、支所や公民館で高齢者などにＩＴ機器の操作を気軽にサポートする体制づくりについて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川島光雅</span>
+          <span class="ttl">遊休施設の譲渡と貸付け</span>
+          <span class="sum">元公民館や元保育所など19か所の遊休資産の譲渡・貸付けのその後の進展と、宍道町のサバイバルゲーム拠点を例に、若者の提案を育てる継続的支援や地域との協力を含む支援協力条件の明確化について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・津森良治</span>
+          <span class="ttl">過疎対策と土地利用制度</span>
+          <span class="sum">国の過疎対策の評価と過疎法の効果、過疎要件など今後の在り方、公民館区間の人口格差を踏まえ、コンパクト・プラス・ネットワークが目指す「まちのかたち」か、それを実現する土地利用制度と線引き制度の方向性について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・海徳邦彦</span>
+          <span class="ttl">防災ラジオと浸水対策</span>
+          <span class="sum">豪雨時に屋外スピーカーの放送が聞こえづらかったことから防災行政ラジオの導入を尋ね、吸水式土のう袋を公民館や消防団の倉庫等へ備蓄する体制と水のう型浸水防止システムの導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・太田哲</span>
+          <span class="ttl">高齢者のスマホ教室</span>
+          <span class="sum">コロナ禍で市内の高齢者スマホ教室に参加した人数、シルバー人材センターが公民館単位で開催した教室の状況、令和４年度の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島良信</span>
+          <span class="ttl">市の除雪体制</span>
+          <span class="sum">2月の降雪での除雪対応への市民の意見、避難道路や緊急輸送道路・通学路の計画どおりの除雪、公民館や支所の除雪機の設置状況、原発交付金や起債による除雪費用の確保、市民協力員の除雪機運転研修の仕組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・津森良治</span>
+          <span class="ttl">支所と公民館の在り方</span>
+          <span class="sum">合併後の支所の存廃を含む今後の活用方針と機能への期待、公民館区ごとの人口や高齢化率の格差への認識と公民館の役割、公民館区域設定の妥当性、職員体制や所管を含む抜本的な見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・岩本雅之</span>
+          <span class="ttl">まち歩きマップの活用</span>
+          <span class="sum">29の公民館が作るまち歩きマップをSDGs未来都市や脱炭素先行地域の推進の中でどう位置づけ活用するかを問い、健康増進活動との連携や休憩場所の確保を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・立脇通也</span>
+          <span class="ttl">公民館の在り方</span>
+          <span class="sum">人口減少と社会の変化の中で、全国に誇る公設民営方式を維持しつつ公民館を住民自治活動の拠点として強化拡充し、昭和・平成の合併地域や支所の有無など地域特性に合わせた公民館とすることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三島良信</span>
+          <span class="ttl">公民館職員の処遇改善</span>
+          <span class="sum">若手職員の退職や採用辞退で年齢構成がいびつになっている公民館職員の処遇について、連合会等の要望を受け副市長をトップとするプロジェクト会議で10月までに方針を取りまとめるとした検討の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石倉茂美</span>
+          <span class="ttl">小学校開校150周年</span>
+          <span class="sum">開校150年を迎える小学校や公民館で今年・来年に予定される式典の有無と、式典に合わせた校舎の美装化や外壁塗装の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石倉茂美</span>
+          <span class="ttl">市民活動センターの活用</span>
+          <span class="sum">天神町のにぎわいを取り戻すため、市民活動センターの1階を改造してステージを設け、公民館のクラブが安来節などを定期上演する活用を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・岩本雅之</span>
+          <span class="ttl">持続可能な地域社会の在り方</span>
+          <span class="sum">約８年で市の人口が7,654人減り高齢化率が30.3％に達したことを公民館区別のデータで示し、人口の緩やかな減少を事実として受け止め、持続可能な地域社会の在り方を検討すべき時期ではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・岩本雅之</span>
+          <span class="ttl">福祉事業所への物価高騰支援</span>
+          <span class="sum">コロナ禍や物価高騰で民間の企業活動や福祉・医療事業が縮小・廃業する中、全公民館区にあり地域を支える基盤である福祉事業所に対し、光熱水費を含む物価高騰への支援策を講じるべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・津森良治</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">空き家の地域別の特徴と発生原因の分析、周辺地域での定住対策の現状、水洗化など初期投資費用への助成制度の創設、部局横断のプロジェクトチームによる公民館区ごとの実態調査と活用策・補助制度の整備への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三島明</span>
+          <span class="ttl">総合文化センターの再開館</span>
+          <span class="sum">来年４月のリニューアルオープンに向け、プラバホールの役割と意気込み、芸術監督の配置、パイプオルガンの利活用とオルガニストの処遇、館長等の組織体制、学校教育での活用、近隣公民館等との連携、バス停名のプラバホールへの変更を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・森本秀歳</span>
+          <span class="ttl">能登半島地震を踏まえた防災</span>
+          <span class="sum">地震被害想定の見直しに向けた国や県への調査要望、島根半島部の新規道路整備の要望、孤立が想定される地域への備蓄品・資機材とエネルギーの確保、受援体制、自主防災組織の実態、防災部を含めた支所と公民館の在り方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・立脇通也</span>
+          <span class="ttl">コミュニティー再生の提案</span>
+          <span class="sum">合併で旧町村部の中心とネットワークが失われたとして、自治会の歴史を踏まえた地域特性に応じた支援と役員の負担軽減、自治会とＮＰＯなど市民団体の協働、Ｚ世代のつながりの研究、（仮称）市民会議など新たな住民自治組織の設立、地域特性に応じた支所職員の配置、公民館への市の方針提示と課長前の職員の公民館長登用を含む支所と公民館の在り方の再検討を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・野々内誠</span>
+          <span class="ttl">ホーランエンヤの準備</span>
+          <span class="sum">令和11年のホーランエンヤに向けた協賛会や奉賛会、五大地など関係組織の準備状況と、東出雲町の旧出雲郷公民館跡地を中日祭の陸船や史料の展示施設として整備する検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・野々内誠</span>
+          <span class="ttl">メテオプラザと公共施設管理</span>
+          <span class="sum">部材が崩落し利用を中止したメテオプラザの資産価値や改修経過、利用状況、指定管理者サンライズ美保関の運営と株主総会の状況、解体費用、県との協議、管理責任を尋ね、学校や公民館など避難所施設の修繕計画が適正かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・長谷川修二</span>
+          <span class="ttl">公民館の機能強化</span>
+          <span class="sum">大規模災害時に避難所となる公民館で、降雨・降雪時の炊き出しやトイレ、防犯に対応できるよう、テントではなく屋外に屋根付きの作業スペースを整備する機能強化を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・立脇通也</span>
+          <span class="ttl">合併後の地区別人口動態</span>
+          <span class="sum">平成17年の合併から20年を検証するため、旧町村区域や公民館区ごと、集落ごとの人口動態データの有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・太田哲</span>
+          <span class="ttl">地域の防災体制</span>
+          <span class="sum">地域防災指導員の公民館単位の配置状況と自主防災組織の体制、市の補助を受けた防災士の取得状況、高齢化や少子化で地域活動が減る中での防災体制の課題と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原田守</span>
+          <span class="ttl">旧八雲支所の解体と寄附財産</span>
+          <span class="sum">旧八雲支所・公民館の解体工事のその後と議会への上程方法、当初予算との差額を確認し、減額予算の説明の少なさを指摘したうえで、公共施設適正化で寄附された土地や建物を扱う際に過去の経緯へ配慮する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・森本秀歳</span>
+          <span class="ttl">旧出雲郷公民館の跡地利用</span>
+          <span class="sum">平成21年の閉館以来倉庫代わりとなり老朽化が進む旧出雲郷公民館の今後の活用策を尋ね、ホーランエンヤの陸行列で船の転回場となる拠点性を生かしてホーランエンヤに関する利活用を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島進</span>
+          <span class="ttl">線引き制度の見直し</span>
+          <span class="sum">公民館説明会の出席状況や説明体制と税の説明の不足、主な質疑、市の基本的な考えの有無、１種農地や山林、荒廃した圃場整備済み農地の扱い、用途地域の白地での景観・風致条例の必要性、廃止表明から１年の経過の評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・舟木一真</span>
+          <span class="ttl">ガス事業譲渡の選定委員</span>
+          <span class="sum">ガス事業譲渡先選定委員５名の選考方法、公民館長会長を利用者代表とした中立性・公平性と市との利害関係、一般市民代表を加えることへの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・津森良治</span>
+          <span class="ttl">人権施策と地域コミュニティ</span>
+          <span class="sum">所信表明の多様性尊重の考えを受けた人権施策の普及啓発の取組と、町内会・自治会や公民館の役割見直しの組織、時代に即した地域づくりの内容と開始時期、現場の意見の反映を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・津森良治</span>
+          <span class="ttl">公民館と町内会・自治会</span>
+          <span class="sum">各地域の実情やニーズの把握と公民館・町内会・自治会の役割の検討状況、行政からの依頼事項や依頼の仕組みの見直しの進捗と令和８年度の実行内容、町内会・自治会への各種手当・委託料・補助金の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・佐藤和彦</span>
+          <span class="ttl">公民館の在り方</span>
+          <span class="sum">公民館について、職員の処遇改善を求めつつ公民館職員の在り方への教育長の見解と、地方創生2.0やＡＩの講習などを公民館単位の社会教育として実施する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・柳原治</span>
+          <span class="ttl">公民館職員の処遇改善</span>
+          <span class="sum">令和6年度に前歴加味などで行った公民館職員の処遇改善の成果と、公民館運営協議会連合会・公民館長会の要望書への検討状況に加え、支所のない旧市内と周辺部の公民館の地域振興対応の差を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・錦織伸行</span>
+          <span class="ttl">合併20周年記念式典</span>
+          <span class="sum">10月26日の新松江市合併20周年記念式典が多くの公民館祭りと重なる日程となった事情、連合町内会長会など地域に連絡がなかった理由、説明のないまま案内状を送付した経緯を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・川島光雅</span>
+          <span class="ttl">土地利用制度の見直し</span>
+          <span class="sum">線引き制度廃止に向けた公民館区での説明会の状況と進捗、同じ松江圏都市計画区域の安来市が線引き存続を決めたことによる2026年度めどの見直しへの影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・舟木一真</span>
+          <span class="ttl">市報配布と地域の在り方</span>
+          <span class="sum">市報の印刷費・配送費と全戸配布した場合の費用や課題、浸水・土砂災害ハザードマップが前提とする降雨規模、公民館と協力した公民館区ごとの課題整理と将来計画づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・森本秀歳</span>
+          <span class="ttl">新たな土地利用制度</span>
+          <span class="sum">線引き制度によらない新たな土地利用制度について、公民館区ごとの意見交換会で参加者が少なく関心が低い実情への見解と、制度構築に向けた取組の進捗状況と今後の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・海徳邦彦</span>
+          <span class="ttl">融雪剤の配置と散布方法</span>
+          <span class="sum">今期の除雪計画、市内の融雪剤の配置箇所数と要望による新規配置の可否、各公民館の配置状況、生活道路で住民が散布するタイミングや方法の周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長谷川浩司</span>
+          <span class="ttl">除雪と凍結防止剤散布</span>
+          <span class="sum">２月の降雪による事故やけが・救急出動と市民生活への影響、除雪計画と凍結防止剤等散布作業計画に基づく対応、除雪の優先順位の情報発信と支所・公民館単位の除雪計画、支所主導の凍結防止剤散布計画、温泉地や観光施設周辺の道路を１次路線として優先除雪することを質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">124件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・田中武夫</span>
+          <span class="ttl">中海の環境と河川の浄化</span>
+          <span class="sum">中海の生態系保全には水質浄化が欠かせないとして、公民館でのＥＭ菌の無料配布やＥＭ泥だんごによるヘドロ浄化などボランティアの活動を紹介し、中海浄化の最初の取り組みとなる河川の浄化を市としてどう考えるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・石倉刻夷</span>
+          <span class="ttl">公民館活動の充実</span>
+          <span class="sum">市内24の公民館を回った聞き取りを踏まえ、18年度予算措置の対前年比と考え方、地域を超えた事業への支援や助成、職員の研修と交流、若手職員の巡回を受けた具体策、公民館活動に期待する市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・田淵秀喜</span>
+          <span class="ttl">地域コミュニティーづくり</span>
+          <span class="sum">公民館活動の活性化で光ファイバーなどのハード面の対策が進む一方、住民の認知度や活用はこれからとして、教宣活動や核となる人材の育成などソフト面の強化に向けた行政の仕掛けや支援の具体的な中身を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・嘉本祐一</span>
+          <span class="ttl">市民の一体感の醸成</span>
+          <span class="sum">合併後の旧安来市・広瀬町・伯太町の市民全体の一体感の醸成は緒についたばかりとして、公民館を活用したコミュニティステーションに加え、民間主体のコミュニティＦＭやケーブルテレビなど市民が共有できるメディアや交流の場を含めた手法の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・岡田麻里</span>
+          <span class="ttl">ＡＥＤの設置</span>
+          <span class="sum">心室細動の救命には一刻も早い電気ショックが必要だとして、市役所や体育館、公民館など公共施設へのＡＥＤ設置の考えを尋ね、早期の設置を求めるとともに安来市の救急車の平均到着時間を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・嘉本祐一</span>
+          <span class="ttl">ふるさと教育の進捗</span>
+          <span class="sum">社会科副読本「私たちのふるさと安来」の大改訂とふるさと教育の充実の進捗と内容を尋ね、大社町の「雲太の町物語」の例を挙げて副読本の大人や観光への活用、公民館での大人向けの地域の歴史・文化の紹介の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・嘉本祐一</span>
+          <span class="ttl">公民館事業の制度改革</span>
+          <span class="sum">公民館地域活動のあり方検討委員会の答申を受けた制度改革について、市の担当職員の仕事の範囲を尋ね、仕事量が増える交流センター主事の賃金の見直しときめ細かな労務管理の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田淵秀喜</span>
+          <span class="ttl">公民館運営の改革</span>
+          <span class="sum">地域コミュニティー確立の取り組み進捗について、コミュニティーステーションとしての公民館に求められる機能を発揮させる改革として、市職員の各公民館配置を含む公民館運営の現状と今後、市長部局へ移す場合の条例改定の要否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・田中武夫</span>
+          <span class="ttl">ＥＭによる環境対策</span>
+          <span class="sum">公民館に設置したＥＭ活性液の設置数と利用状況・講習会の中身、十神地区の水路での実証実験の状況、中海圏域への取り組みの働きかけ、他地区や行政での取り組み、ＥＭを使った生ごみ減量化、職員の理解を深めてＥＭの輪を市民に広げる考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・上廻芳和</span>
+          <span class="ttl">中山間地域の農業施策</span>
+          <span class="sum">高齢化が進む中山間地域の農業について、直接支払制度の8年間の評価と協定未締結集落を含む現状と課題、制度の見通しと改正点、品目横断的経営安定対策の現状と水田の利用権設定の動向、農地・水・農村環境保全向上活動支援事業の交流センター単位での取り組み、市独自の振興計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嘉本祐一</span>
+          <span class="ttl">交流センターとまちづくり</span>
+          <span class="sum">平成19年度に始まった交流センター事業について、１年間の市の働きかけと自己評価、館長や主事の評価、市全体と旧安来・広瀬・伯太各地区で目指すまちづくり、市長が会合に出向く考え、職員の地域活動、自治会長の職務と自治会の役割、望ましい連携体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嘉本祐一</span>
+          <span class="ttl">交流センター主事の処遇</span>
+          <span class="sum">交流センター事業について、多様化・高度化する主事の仕事量を市がどう捉えているか、仕事にふさわしい賃金や労働時間の見直しと労務管理の検討予定、交流センター等からの意見聴取の方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・田淵秀喜</span>
+          <span class="ttl">地域センターと交流センター</span>
+          <span class="sum">本年度設置の地域センターと交流センターについて、新体制下の取り組み状況、広瀬・伯太地域センターの特徴的な取り組みや課題と情報の収集・発信、旧公民館との連携、地域人材の発掘・育成、専門職員が出向く支援体制、今後の課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・嶋田豊昭</span>
+          <span class="ttl">学社連携・融合の実施状況</span>
+          <span class="sum">社会教育部門の市長部局への移管や機構改革で学校教育との連携が薄らぐ懸念から、学社連携・学社融合の視点を含めた見解と現在の取り組み内容、交流センターとの関わりにおける教育委員会の関与を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・石倉刻夷</span>
+          <span class="ttl">市民アドバイザー制度の効果</span>
+          <span class="sum">８回の会議を持った市民アドバイザー事業について、アドバイザーの継続性など市報で示されなかった内容を尋ね、経費をかけずに交流センター等の学習会へ助言者として継続的に出向く考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・岩田拓郎</span>
+          <span class="ttl">情報リテラシーの向上</span>
+          <span class="sum">ｕ－Ｊａｐａｎ政策などＩＴの国家戦略と市行政の関わりについて市長の所感を尋ね、携帯電話が届かない地域など情報デバイドの解消、職員のＩＴ利活用能力、電子情報サービスやホームページによる市民サービス、交流センター・公民館での活用、モラルを含む学校のＩＴ教育を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田淵秀喜</span>
+          <span class="ttl">中山間地域の市道の雑草対策</span>
+          <span class="sum">中山間地域で市道に雑草が生い茂り通行の妨げとなっている現状への市の認識、通学路の安全確保、ボランティアだけに頼らず地区交流センターと連携した仕組みづくりの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田淵秀喜</span>
+          <span class="ttl">地域センターの課題</span>
+          <span class="sum">65歳以上の高齢化率が30％近くに達する中で、自治会の維持や課題克服の仕組みづくり、地域センターと地区交流センターの活性化と地域とのつながりについて、現時点での地域センターの考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・山本武士</span>
+          <span class="ttl">地域自治制度の導入</span>
+          <span class="sum">マニフェストに掲げた地域自治制度の導入について市長の考えを尋ね、地域センターや地区交流センターを中心とするまちづくりが動き出した中で別の仕組みを設けることへの懸念を示して質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・田淵秀喜</span>
+          <span class="ttl">防災のハード対策</span>
+          <span class="sum">土砂災害の危険区域の把握状況と砂防事業の実施計画、河川内の樹木伐採など19年度の河川の保安管理と20年度の計画、市道と橋梁の保守管理・改善計画と市内の橋梁数、中海沿岸の海抜ゼロメートル地帯の高潮対策、公民館など避難施設を含む公共施設の耐震調査の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・中村健二</span>
+          <span class="ttl">交流センターの職員体制</span>
+          <span class="sum">交流センター主事に求める業務と現状、能力向上の方策と研修の体制・内容・今後の具体的な研修を尋ね、非常勤の館長の常勤化の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・河津清</span>
+          <span class="ttl">公共施設の洋式トイレ</span>
+          <span class="sum">市民会館で高齢女性がトイレで立ち上がれなくなった事例を挙げ、公共施設の洋式トイレの設置状況を尋ね、洋式トイレの標準設置と交流センター2階へのトイレ設置の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・作野幸憲</span>
+          <span class="ttl">市と学校と地域の連携</span>
+          <span class="sum">市長が安来市の教育をどうしたいかを尋ね、教育委員会と市民生活部の縦割りによる社会教育主事や社会教育委員の活用の行き詰まりの打開策、学校開放と学校のパソコン640台の地域での活用、パソコン教育とインターネットの安全対策、校庭遊具の整備、学校図書館と市立図書館のネットワーク化、ＮＰＯ等ボランティア団体との連携、社日小学校の芝生化や島田交流センターの連携マニュアルの活用、距離がはかれるウオーキング歩道の整備、職員の意識改革による縦割り行政の弊害の解消を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田中武夫</span>
+          <span class="ttl">河川などの浄化対策</span>
+          <span class="sum">布部ダム湖への酸素注入装置の導入を受けて市の水質浄化の進め方を尋ね、交流センターの有用微生物群の活用や中海圏域振興ビジョン案に安来市の環境・農業面の独自性がどこに出ているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・嘉本祐一</span>
+          <span class="ttl">生涯学習と社会教育</span>
+          <span class="sum">交流センター・公民館を中心とした地域づくりや生涯学習・社会教育について、社会教育計画の作成などの専門的・技術的な助言指導の体制と社会教育主事の人数を尋ね、部署の壁を越えた対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・田淵秀喜</span>
+          <span class="ttl">防災マップと危険箇所対策</span>
+          <span class="sum">想像を超える自然災害が相次ぐ中、地震や水害を織り込んだ有効な防災マップへの市の評価と定期的な周知の体制を尋ね、医療機関・介護施設や避難所となる教育施設・公民館で災害危険箇所に隣接するものの有無と対策の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・遠藤孝</span>
+          <span class="ttl">ふるさと教育と地域行事</span>
+          <span class="sum">全小・中学校への図書司書配置を評価したうえで、ふるさと教育として地域交流センターと相談しながら小・中学生に地域行事の計画・運営から参加してもらう取り組みを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・嶋田豊昭</span>
+          <span class="ttl">まちづくりに関する諸課題</span>
+          <span class="sum">新市建設計画による事業の今年度末までの進捗と、今後の重点事業の基本的な考えと住民理解を尋ね、安来市開発公社の土居成の土地と精算に向けた方針、交流センターへの支援、遠距離住宅への給水、市民協働の組織と自治会加入率、農業の新たな交付金への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・中村健二</span>
+          <span class="ttl">交流センター職員の資質向上</span>
+          <span class="sum">3月議会で答弁された研修の充実について半年後の状況を尋ね、主事のコーディネーターとしての能力を高める助言を求めるとともに、8月に開催された学社連携講座の内容とねらい、学校教育側から見た学社連携の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・上廻芳和</span>
+          <span class="ttl">大雪の除雪と人的・家屋被害</span>
+          <span class="sum">市内の人的被害と家屋被害の把握状況、家屋被害への支援策、民生児童委員や自治会長の声を尋ね、自前で除雪した市民への手当て、市道の歩道除雪と南部への対応、ボランティア除雪への謝礼や交流センターの充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・遠藤孝</span>
+          <span class="ttl">小規模交流センターのあり方</span>
+          <span class="sum">過疎と高齢化が最大の課題となっている小規模交流センターについて、人口減少で過疎地にしわ寄せが来ることを踏まえ、小規模館のあり方や近くの交流センターとの連携を再構築する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・上廻芳和</span>
+          <span class="ttl">平和と戦争への取り組み</span>
+          <span class="sum">戦没者追悼式での遺族会長の謝辞への市長の考えと靖国神社参拝への姿勢、小中学校での平和・戦争教育と映画鑑賞、民間の平和活動への支援や交流センターでの催しへの予算づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・丸山征司</span>
+          <span class="ttl">敬老会事業の見直し</span>
+          <span class="sum">市主催の賢人の集いの廃止後に各自治会で行う敬老会事業の実施数と参加減少の理由を尋ね、集会型の不参加者への記念品補助、3月中旬ごろの旧自治会長への案内と他地域の事例の紹介、地区社会福祉協議会や交流センターへの周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・田淵秀喜</span>
+          <span class="ttl">災害危険箇所の状況と対応</span>
+          <span class="sum">土砂災害や河川の危険箇所の把握状況とハード対策の考え方、計画の進み具合への評価、医療・介護・教育施設や公民館が危険箇所に含まれるかを尋ね、未指定箇所への対応と避難体制づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・勝部幸治</span>
+          <span class="ttl">交流センターの体制充実</span>
+          <span class="sum">小規模交流センターから主事一人・半日体制の見直しを求める陳情が出ていることを踏まえ、交流センターを中核に地域力を醸成するとした施政方針の具体的な対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・上廻芳和</span>
+          <span class="ttl">小型除雪機の導入</span>
+          <span class="sum">本市に13台が割り当てられた小型除雪機について、松江市・境港市・米子市への割当台数、配備の方法と交流センターでの保管場所、保守・点検・管理の方法、使用時のけがに備えた保険の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・上廻芳和</span>
+          <span class="ttl">小規模交流センターの充実</span>
+          <span class="sum">議会が採択した陳情を踏まえた小規模交流センター主事の勤務体制の充実について市長の考えを尋ね、これまでの検討内容と今後の検討の観点、24年度途中からの勤務体制の変更や措置の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中武夫</span>
+          <span class="ttl">河川・中海の水質浄化</span>
+          <span class="sum">河川及び中海の水質浄化で、交流センターでのＥＭ活性液の無料配布をやめた方針変換の考え方を尋ね、他地域の浄化事例や市民ボランティアの高齢化を挙げて、泥だんご投入など住民活動の後押しを含む市長の今後の取り組み姿勢を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・田中明美</span>
+          <span class="ttl">福祉施設の生活環境</span>
+          <span class="sum">保育所や市立病院、交流センター、養護老人ホーム、富田山荘など市所有の古い施設の耐震診断と耐震状況、福祉施設の生活環境のあるべき姿を尋ね、耐震性が無く国の基準に合致しない養護老人ホーム鴨来荘の役割と入所者・待機者数、生活環境の認識、現建物での運営期間と耐震工事の費用、スプリンクラー設置のみで建てかえとしなかった理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石倉刻夷</span>
+          <span class="ttl">芸術文化活動への支援</span>
+          <span class="sum">教育委員会や交流センターが把握する芸術文化活動団体の実態を尋ね、奥出雲町の文化協会の仕組みを例に挙げながら、文化協会など任意の市民団体への今後の支援の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・上廻芳和</span>
+          <span class="ttl">近藤市長の公約の検証</span>
+          <span class="sum">任期最後の年度を迎える市長の公約について、庁舎建設以外の中心市街地活性化策、高速バスの安来停車の進展と利用実態の調査、住民投票条例の制定、南部地区の荒廃田や廃校跡を生かした企業誘致、地域自主制度の組織づくりと活動、介護予防の生涯スポーツと交流センターの役割、市長独自の農業振興策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・葉田茂美</span>
+          <span class="ttl">交流センターの今後のあり方</span>
+          <span class="sum">施政方針で交流センターに触れなかったことを受けて地域の拠点としての交流センターに対する考え方を改めて問い、高齢化が進む中での施設のバリアフリー化など施設整備の今後の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">交流センターの駐車場</span>
+          <span class="sum">安来・広瀬・伯太地区ごとの交流センター駐車場の現状と台数への認識、今後の確保の基本的な考え方、舗装など整備の考えを質し、保育所駐車場なども含めた検討を要望しつつ質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・上廻芳和</span>
+          <span class="ttl">参加と交流のまちづくり</span>
+          <span class="sum">3月議会で求めた小規模交流センターの勤務体制充実のその後の検討状況、ブロードバンドの告知端末設置率やどじょっこテレビ加入率の現状と向上の方策、市民との情報共有の取り組み、密陽市との国際交流の今後と職員派遣の効果、切川地区地権者の理解を得る見通しや仲介者による解決、分庁方式の計画、市民会館の移転新築の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・中村健二</span>
+          <span class="ttl">受動喫煙の防止対策</span>
+          <span class="sum">学校や交流センター・体育施設など市内施設の禁煙の現状、健康やすぎ21での公共施設内禁煙の取り組み、子どもや女性の健康を守る禁煙対策、社会体育施設の状況と今後の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・樋野智之</span>
+          <span class="ttl">広瀬図書館の整備</span>
+          <span class="sum">交流センターの一室を借りた広瀬図書室の劣悪な環境や市長選での公約、交流センター運営協議会の要望書を踏まえ、広瀬への図書館整備について中長期財政計画への計上と市長・教育長の考え、整備の着手時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田中武夫</span>
+          <span class="ttl">有用微生物の配布の見直し</span>
+          <span class="sum">水質浄化対策として交流センターで無料配布していた有用微生物の事業を見直した後の市民からの意見の有無を尋ね、水質浄化への前向きな取り組みを要望しつつ質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・田淵秀喜</span>
+          <span class="ttl">緊急時の情報伝達</span>
+          <span class="sum">情報告知端末による緊急時の情報提供で耳の不自由な方や高齢者への対応の検討内容と対象者数を尋ね、公民館等への設置やどじょっこテレビの普及促進、情報インフラを活用した買い物弱者対策の検討状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・作野幸憲</span>
+          <span class="ttl">ペーパーレス会議とクラウド</span>
+          <span class="sum">新安来庁舎完成時のペーパーレス会議導入の考え、島根県市町村クラウドの検討状況と単独クラウド導入の考え、全業務システムの再検討を尋ね、再質問で分野横断のプロジェクトチーム設置や学校・交流センターの通信高速化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・葉田茂美</span>
+          <span class="ttl">庁舎建設事業の進め方</span>
+          <span class="sum">確定した計画のないまま見込みで予算計上していると指摘し、総合的な計画の決定経過、商工会議所との用地協議、基本設計の有無と実施設計の予算計上、川尻３号線の扱い、市民会館の突然の解体理由、中央交流センターの活用、分庁舎方式が正しい選択かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中明美</span>
+          <span class="ttl">放課後児童クラブの運営</span>
+          <span class="sum">繰越金を理由に国の基準額から委託料を減額した考え方と各クラブへの指導の内容、備品費を子ども未来課が持つべきではないかとの点と国の備品購入費補助の活用、交流センターとの備品や光熱水費の負担、広瀬地区の地域コーディネーターの活動、市直営化の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・田中武夫</span>
+          <span class="ttl">災害避難場所の再確認</span>
+          <span class="sum">避難場所に指定された小学校や交流センターへの道路が冠水した状況から、安全な避難場所の再確認の必要性と、水害時にも行政として避難場所をきちんと確保すべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・岩田拓郎</span>
+          <span class="ttl">AEDの設置</span>
+          <span class="sum">市内のAED設置数と交流センターへの配備状況を尋ね、避難所ともなる他の交流センターへの今後の設置予定や目標を質し、自主防災組織の訓練も踏まえた計画的な整備を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉刻夷</span>
+          <span class="ttl">公共施設の老朽化対策</span>
+          <span class="sum">5年以内に500万円以上と見込まれる改修として、体育館・野球場・陸上競技場・庭球場の体育施設、市内の交流センター、富田山荘・湯田山荘の計画と解体を要する老朽物件の有無を尋ね、野球場のスコアボード改修が緊急支援の交付金事業に該当しないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・永田巳好</span>
+          <span class="ttl">広瀬・伯太地域の課題</span>
+          <span class="sum">合併10周年を迎え、広瀬・伯太地域の課題の認識と分庁方式の成果、老朽化した広瀬の中央交流センターの考え、市民会館など旧安来市への大型施設の集中と一体感の醸成、合併の満足度を問う市民アンケートの実施について質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・石倉刻夷</span>
+          <span class="ttl">映画「たたら侍」への支援</span>
+          <span class="sum">「たたら侍」への市長の所見、平成26年度1,330万円の支援額と各自治体の負担内訳、今後のスケジュールと支援策、市独自のキックオフイベントの計画を尋ね、交流センター単位でのたたらの勉強会開催の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐々木厚子</span>
+          <span class="ttl">豪雨災害対策</span>
+          <span class="sum">市内の土砂災害警戒区域と特別警戒区域の箇所数、豪雨災害の防災対策と要援護者の避難対策、災害時の情報発信と情報収集、交流センター単位の防災セミナー、自主防災組織の活動を尋ね、行政告知端末の未設置世帯への無料設置や個人の避難計画、自主防災組織の立ち上げの推進を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・樋野智之</span>
+          <span class="ttl">ふるさと教育の実態と課題</span>
+          <span class="sum">子供のころの思いがふるさと回帰につながるとして、安来ふるさと読本の発行や交流センターの地域紹介ガイド製作などを踏まえ、現状のふるさと教育の実態と成果、今後の課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">ケーブルテレビの公共施設接続</span>
+          <span class="sum">市内各地区のケーブルテレビ接続世帯数と割合、交流センターや学校など市管理施設の接続状況、市立病院の個室や未設置施設への今後の接続計画と年次計画の策定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・丸山征司</span>
+          <span class="ttl">マイナンバー制度への対応</span>
+          <span class="sum">マイナンバー制度の導入に伴う電子自治体推進の認識と準備、コンビニ交付や交流センターへの交付機導入、住基カード・印鑑登録証・図書館カードとの兼ね合い、市民への制度周知と普及に向けた対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・上廻芳和</span>
+          <span class="ttl">中山間地域対策</span>
+          <span class="sum">中山間地域の活性化を最重要課題として平成28年度の活性化事業を尋ね、交流センターでの確定申告の受け付けの廃止や広瀬・伯太庁舎での受け付けの隔日化の理由と、来年度の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・上廻芳和</span>
+          <span class="ttl">交流センターの業務</span>
+          <span class="sum">交流センターについて、市が最も大切と認識する業務と、比田・布部・山佐の窓口業務以外に依頼している行政事務の内容を尋ね、館長や主事の処遇への配慮を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">公共施設総合管理計画の策定</span>
+          <span class="sum">交流センター８館の耐震補強の取り組みと、遊休施設の利活用や夢ランド財団の指定管理施設の老朽化対策を含む公共施設等総合管理計画の策定に向けた流れと考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・澤田秀夫</span>
+          <span class="ttl">安来市総合戦略の具体的施策</span>
+          <span class="sum">安来市総合戦略の施策について、出産に対する支援策、小・中学校で安来市の歌を覚える教育、特定の販路を持たない商品の認知度向上、学習訓練センターの機能充実、お試し住宅の方向性、地域リーダー研修派遣事業の内容、交流センターの光熱費など維持管理費の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・樋野智之</span>
+          <span class="ttl">協働のまちづくり</span>
+          <span class="sum">奥州市の協働のまちづくり指針や地域自治組織への指定管理・交付金による支援を紹介し、交流センター単位で地域自主の動きを底上げするまちづくりへの転換を市がどう考えるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・田淵秀喜</span>
+          <span class="ttl">市政運営と財政の見通し</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略の１年間の経過と分析、新庁舎と総合文化ホールをまちづくりの道具としてどう使うか、公共施設等総合管理計画でめり張りをつけた財政運営と単年度収支を一定の時期にプラス・マイナス・ゼロへ戻す計画への市長の見解、交流センターを核とする地域の取り組み状況と支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">市道等の維持管理と安全対策</span>
+          <span class="sum">県道での落石死亡事故を受け、市管理の市道・農道・林道の維持管理体制と落石等の情報提供・対策の考え方を尋ね、交流センターで初期対応できる仕組みなど職員の負担を軽減する支所機能を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">平成29年度の予算編成方針</span>
+          <span class="sum">今後の財政運営や公共施設等総合管理計画の実行を踏まえた、財政・政策部局から各部局への平成29年度予算編成方針の指示内容を尋ね、嘱託・臨時職員の賃金、交流センター館長・主事の報酬、民生委員・児童委員の手当の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐々木厚子</span>
+          <span class="ttl">防災拠点の耐震化</span>
+          <span class="sum">熊本地震を受け、新庁舎の安全性の説明、耐震化されていない広瀬庁舎の今後、伯太庁舎の現状、市立病院の耐震強度不足箇所の検討状況、避難所として開設できない交流センターの耐震化、業務継続計画の策定と専門家を入れた危機管理体制の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・石倉刻夷</span>
+          <span class="ttl">除雪と雪害対策</span>
+          <span class="sum">この冬の２度の大雪について、除雪対応に対する市民の要望の状況と今後のあり方、ハウス栽培など農業施設等の被害状況、各交流センターに配置した動力小型除雪機の稼働状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐々木厚子</span>
+          <span class="ttl">高齢者の介護予防事業</span>
+          <span class="sum">介護予防事業のうちミニデイサービス事業を行う交流センター数とミニサロン事業を行う自治会数、それぞれの過去３年間の１回平均参加人数を尋ね、栃木県小山市のいきいきふれあい事業を参考に市内全域へ取り組みを広げることへの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・永田巳好</span>
+          <span class="ttl">中期財政計画と施設整備</span>
+          <span class="sum">中期財政計画に関し、広瀬庁舎の建てかえの詳細、災害時の拠点である広瀬中央交流センターがＣランクとされた理由、市立病院の建てかえ時期と経営形態の見直し、繰出基準外の増加、第３次行政改革と定員管理計画の効果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・原田貴与子</span>
+          <span class="ttl">交流センターの役割</span>
+          <span class="sum">地域センターと地区交流センターの役割と位置づけを尋ね、住民自治能力の向上という公民館の目的を明確にし、仕事ができる勤務体制と正規職員の配置が必要ではないか、市政を住民に見える形で発信する役割を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・三島静夫</span>
+          <span class="ttl">交流センターの運営と待遇</span>
+          <span class="sum">交流センター主事の報酬改正の妥当性と研修の受講状況、未経験の主事が育つまでの期間、館長の勤務内容の規定と教育委員会・市長部局の管轄の線引き、館長の活動状況の把握、地域コーディネーターの配置状況と業務、市教委と地域振興課の連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・原田貴与子</span>
+          <span class="ttl">公共施設等総合管理計画</span>
+          <span class="sum">公共施設等総合管理計画の25％削減目標にとらわれず長期的視点に立つべきではないか、まちづくりの理念、適正配置の判断と民営化の基準、住民参加と市民意見の反映、住民自治の拠点となる交流センターの位置づけと職員の待遇改善を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">地域センターと交流センター</span>
+          <span class="sum">地域センターの役割と機能について、新任センター長の決意、伯太地域センターの人員体制と災害時の初動対応、交流センター主事の確保策、館長の処遇改善、地域センターへの人材配置の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・原田貴与子</span>
+          <span class="ttl">地域課題解決への支援体制</span>
+          <span class="sum">地域センターの体制強化とセンター長の権限の明確化、集落支援制度を活用した十神交流センターなどへの集落支援員の早期配置と目標値３名の実現、生活支援コーディネーターの中学校区単位での配置について市の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田淵秀喜</span>
+          <span class="ttl">市政運営の課題への取り組み</span>
+          <span class="sum">市長が目指す将来像と若者定住に向けた土地政策や中山間地域の道路整備、単年度黒字化の目標を含む財政基盤の確立、自治会・地域センター・交流センターの機能強化と館長等の処遇、市立病院のあり方と改革プランの進捗や累積欠損金の処理、事象ごとの危機管理体制と避難所の安全性や孤立集落への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・佐々木厚子</span>
+          <span class="ttl">市議選の投票率向上</span>
+          <span class="sum">衆議院選挙と1週間違いとなった市議選を同日選挙にしなかった理由と同日実施での経費削減額や投票率への影響、18歳・19歳の投票率と若い世代への働きかけ、合併後の期日前投票率を尋ね、期日前投票所の中央交流センターから新庁舎への変更、デイサービス利用者の施設内投票、入場券への宣誓書の添付、投票終了時間の繰り上げを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島静夫</span>
+          <span class="ttl">コンパクトシティーと交流センター</span>
+          <span class="sum">クラスター型コンパクトシティーの方向性を尋ね、交流センターの職員が正規職員でない理由、事業費・管理費の算定と自主性、事業評価、主事の休日出勤の扱いと一人主事館の閉館、地域センターや集落支援員の支援、情報発信とホームページの利用・集約を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・澤田秀夫</span>
+          <span class="ttl">交流センターの災害対応</span>
+          <span class="sum">土砂災害の危険がある区域に建つ住宅の戸数と住民への対応、裏山の崩壊対策への支援策や補助事業を尋ね、避難所となる交流センター25館を開設した場合の1回当たりの費用、耐震基準を満たさない交流センターの施設名と耐震補強工事の今後の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・澤田秀夫</span>
+          <span class="ttl">公共施設の防犯とAED</span>
+          <span class="sum">3庁舎と小・中学校、交流センターの火災・防犯の管理状況と警備委託の費用、市の施設や交流センターのAEDの設置と管理の状況、全交流センターで機械警備やAEDを市が管理した場合の費用を尋ね、行政としての必要性と優先順位を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">地方創生の総合戦略</span>
+          <span class="sum">総合戦略の主な7施策として地域おこし協力隊、新規就農研修、みどりの担い手確保緊急対策、地域交流センターの活性化、生活交通ネットワーク再編、イエローバス運行、道路改良の各事業の現状と検証を踏まえた今後の考え方を尋ね、地域ビジョン作成事業を実施した交流センターの有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・永田巳好</span>
+          <span class="ttl">広瀬分庁舎と中央交流センター</span>
+          <span class="sum">分庁方式を公約とした市長に未整備の広瀬庁舎の構想と分庁方式を維持する考え、整備の原資と過疎債の活用、広瀬中央交流センターの耐震補強・改修の状況と複合施設化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・三島静夫</span>
+          <span class="ttl">水害に備えた避難体制</span>
+          <span class="sum">ハザードマップの浸水想定が何年に1回の降水量か、伯太川の川底の変化と対応、避難告知の手法と告知端末の停電時の機能や電池交換・高齢者への対応、自主防災組織への情報伝達と行動マニュアル・訓練の評価、自主防災組織と避難所の情報共有、自主避難所の増設の判断と職員の増員・告知、避難経路が水没する交流センターの整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・中村健二</span>
+          <span class="ttl">自主避難の仕組み</span>
+          <span class="sum">自主避難のシステムの内容、今年度の自主避難所の開設状況と避難された方の状況、交流センターが遠い地域での集会所への自主避難の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">身障者用駐車場の拡充</span>
+          <span class="sum">公共施設の身障者用駐車場の設置基準や指導要綱の有無、安来庁舎で何台に増やすか、各庁舎・交流センター・市立病院などの設置数を尋ね、未設置施設での確保、消えかけた表示の補修、病院玄関横を回転の早い患者や送迎用とする検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">会計年度任用職員制度</span>
+          <span class="sum">制度の内容とメリット、該当する職種や人数などの実態、従来との予算の差と交付税措置や助成の有無を尋ね、交流センター館長の任期が１年となることへの市の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・向田聡</span>
+          <span class="ttl">学びを支える環境整備</span>
+          <span class="sum">指導用教科書の担任への配布とデジタル教科書の充実、子育て協働プロジェクト事業の交流センター単位での活用、学びの場を提供するボランティア団体への支援、外国人労働者の学びの場を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・永田巳好</span>
+          <span class="ttl">広瀬中央交流センターの改修</span>
+          <span class="sum">1974年建築で災害時の避難指定施設である広瀬中央交流センターの耐震補強や改修に予算措置がない理由と、改修する場合の財源を尋ね、補正予算での調査費計上の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・澤田秀夫</span>
+          <span class="ttl">施設の受動喫煙対策</span>
+          <span class="sum">健康増進法の改正に伴い、安来・広瀬・伯太の各庁舎、交流センター、中海ふれあい公園・市民広場・安来運動公園での喫煙の扱いと、喫煙・禁煙の変更の市民への周知方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・向田聡</span>
+          <span class="ttl">未就学児の交通安全</span>
+          <span class="sum">大津市の事故を受けた緊急安全点検の結果と対策を尋ね、親子交流センターと城谷保育所付近の県道での具体的な対策、キッズゾーンの設置、国の未就学児等の交通安全緊急対策費の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石倉刻夷</span>
+          <span class="ttl">防犯カメラの設置</span>
+          <span class="sum">市が管理する防犯カメラの台数や警察・企業による設置状況の把握、交流センターや学校、保育所等への設置状況と今後の設置の考えを尋ね、防犯カメラの設置運用に関する条例化と公用車へのドライブレコーダー設置の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原田貴与子</span>
+          <span class="ttl">防犯灯電気代とポスター掲示</span>
+          <span class="sum">防犯灯の位置づけと自治会が負担する電気代を市が負担する考えを尋ね、憲法週間の啓発ポスターの交流センター掲示を断るよう働きかけた経緯と基準、自由な市民活動の保障を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・佐々木厚子</span>
+          <span class="ttl">ＡＥＤと防犯灯・通学路の安全</span>
+          <span class="sum">施錠された場所のＡＥＤを休日に使う際の対処、市内と交流センターの設置数と市民への周知、防犯灯と街灯の違いと設置条件・申請方法、防犯灯電気代の補助、通学路の危険箇所の把握と件数を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・永田巳好</span>
+          <span class="ttl">新年度予算と中期財政計画</span>
+          <span class="sum">分庁方式の広瀬庁舎の予算と中央交流センターへの移転の是非、合併特例債の組替えによる安来庁舎への集約、市立病院の方針と予算、公共施設総合管理計画の方向と進捗、決算剰余金の２分の１を積み立てる財政規律を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・原田貴与子</span>
+          <span class="ttl">災害種別に応じた避難所</span>
+          <span class="sum">水害時に母里交流センターが平家で適さず安田への避難路も危険であることを挙げ、自主避難所でなく初めから指定避難所へ避難する方法など、災害別の避難所の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岩崎勉</span>
+          <span class="ttl">交流センターの運営</span>
+          <span class="sum">交流センターへの支援体制と地域振興課との意見交換の有無、主事の研修とブロック内の人事異動、週12時間勤務で館長の職責が果たせるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・三島静夫</span>
+          <span class="ttl">地域交流センターのあり方</span>
+          <span class="sum">地区交流センターの今後のあり方と具体的事業、行政情報発信拠点としての活用、小規模交流センターの現状を尋ね、館長の平均年齢・職務・賃金と成り手についての見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・岩崎勉</span>
+          <span class="ttl">小中学校適正化と地域づくり</span>
+          <span class="sum">児童数に大きな差がある小学校や規模・運営がまちまちな交流センターの実態を踏まえ、小・中学校の適正化と交流センターの運営方針を含む地域づくりのあり方について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・作野幸憲</span>
+          <span class="ttl">小中学校適正化と地域づくり</span>
+          <span class="sum">小学校の複式学級の見直しや中学校の1学年複数クラスをうたう市立小中学校適正配置基本方針に至った経緯と考え方、交流センターを核とした地域づくりでの市の支援体制・運営方針・職員の処遇改善を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三島静夫</span>
+          <span class="ttl">中山間地域の公共施設の在り方</span>
+          <span class="sum">認定こども園の休園への懸念や小規模な交流センターの悩みを踏まえた中山間地域の地域づくりにおける公共施設の在り方と、指定管理施設の運営費を圧迫する光熱費の値上がりへの対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・澤田秀夫</span>
+          <span class="ttl">中期財政計画</span>
+          <span class="sum">令和５年度から９年度の中期財政計画について、重点的な取組事項、市税・普通交付税・寄附金の歳入と補助費・繰出金・投資的経費の歳出、基金残高の見込み、令和５年度見込みの前年計画との差異、鴨来荘・広瀬中央交流センター・市立病院の予算を計画に盛り込む時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・岩崎勉</span>
+          <span class="ttl">交流センターの在り方</span>
+          <span class="sum">交流センターを核とした地域づくりのあり方検討委員会の開催回数と構成、各回の議論、今後の予定、交流センター主事の任用区分と勤務時間・休日出勤等の扱い・研修実績、館長の処遇に関する近隣自治体の調査結果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石倉刻夷</span>
+          <span class="ttl">交流センターの活用</span>
+          <span class="sum">交流センターを核とした地域づくりの在り方検討委員会の進捗状況と、軽自動車の減免申請などの書類を市内全ての交流センターで受け付けられないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・内田卓実</span>
+          <span class="ttl">交流センター核の地域づくり</span>
+          <span class="sum">交流センターを核とした地域づくりのあり方検討委員会でこれまで議論された内容を尋ね、現状の課題を踏まえて今後の地域づくりをどのように進めていくのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・澤田秀夫</span>
+          <span class="ttl">令和５年度施政方針と当初予算</span>
+          <span class="sum">令和５年度の施政方針と当初予算案について、最も重要な事業、マルチタスク車両の活用内容とスケジュール、井尻交流センターの耐震補強、医師確保の現状と課題、地域医療連携等に関する基本構想、市立病院への繰出金、赤屋老人福祉センターの風呂場改修、コミュニティ・スクール、スマートインターチェンジの効果、県境付近の渋滞緩和策、市道川尻本線の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石倉刻夷</span>
+          <span class="ttl">公共施設等総合管理計画の進捗</span>
+          <span class="sum">公共施設等総合管理計画について、富田山荘の公募と上の台緑の村の調査の状況と見通し、金屋子神話民俗館の閉館後の展示・収蔵と説明板設置の計画、広瀬庁舎と交流センターの建て替え、図書館の建設計画、市立病院駐車場の除雪、小・中学生の安来節演芸館の視聴を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・向田聡</span>
+          <span class="ttl">大雪時の除雪対策</span>
+          <span class="sum">十数年ぶりの大雪を踏まえ、交流センター単位での小型除雪機の配置、歩道や高齢者宅の除雪に向けた防災ボランティア登録制度の創設、除雪路線や基準を示した分かりやすい除雪計画の公開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・原瀬清正</span>
+          <span class="ttl">ｅスポーツによる地域の活性化</span>
+          <span class="sum">ｅスポーツに関する市の認識、公民館や交流センターなど公共施設の通信環境の整備状況と今後の対応、コロナ禍での代替や新たなイベントの開催状況、ｅスポーツを取り入れた地域活性化に向けた市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三原哲郎</span>
+          <span class="ttl">スマートシティやすぎ</span>
+          <span class="sum">自治体ＤＸの基本的な考え方と今後の予定、部署間連携とマイナンバーカードの利用状況、市庁舎のシステム形態、ノートパソコンやタブレットによるテレワーク、中山間地域の交流センターへのキオスク端末配置、移動診療車によるオンライン診療の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・岩崎勉</span>
+          <span class="ttl">交流センターの運営</span>
+          <span class="sum">あり方検討委員会報告が示した現状の問題点と地域づくりの方向性、行政の関わりを尋ね、令和６年度の交流センターの位置づけと支援体制、主事の研修、館長の処遇に関する近隣調査の結果、定年延長、十神交流センターの経過と今後の運営を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三原哲郎</span>
+          <span class="ttl">交流センター館長の人選</span>
+          <span class="sum">月約６万円・週12時間勤務で24時間の連絡対応も求められる交流センター館長の人選が難しくなっている現状を踏まえ、他自治体との比較と今後の対応策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石倉刻夷</span>
+          <span class="ttl">合併20周年記念事業</span>
+          <span class="sum">合併後20年で9,236人減った人口推移を示して記念事業や式典、期日などの決定内容を尋ね、交流センター24館への一律100万円交付による地域企画の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・三島静夫</span>
+          <span class="ttl">地域交流センターの支援</span>
+          <span class="sum">交流センターを核とした地域づくりのあり方検討委員会報告書について、人的支援・財政的支援・関係部署間の連携の３つの柱の取組、交流センターからの意見聴取、人材の育成・確保、小規模館の主事増員や館長勤務時間拡大、館長確保の取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・清水保生</span>
+          <span class="ttl">少子高齢化下の地域づくり</span>
+          <span class="sum">人口定住対策の個別評価と実績の乖離の分析と評価の観点、地域ビジョンの策定状況と支援、地域運営組織の説明、交流センターの部会制移行と職員の増員・処遇、職員の地域活動への関与、政策推進部・地域センターの関わり、小学校再編後の学校と地域の関わりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・岩崎勉</span>
+          <span class="ttl">広瀬地域のまちづくり</span>
+          <span class="sum">広瀬庁舎・広瀬中央交流センターの整備基本計画策定に向けた地域住民の意見の聞き方と反映を尋ね、市立病院や富田山荘の課題も含めた広瀬の町部のまちづくりについて市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・向田聡</span>
+          <span class="ttl">災害に強いまちづくり</span>
+          <span class="sum">今冬の除雪作業の状況、除雪計画のホームページ掲載と旧安来市内の交流センターへの小型除雪機配置、能登半島地震を踏まえた避難所整備、道路等の危険箇所対策と防災予算、防災会議での計画見直し、原子力広域避難計画の国・県への要請、島根原発２号機再稼働同意の撤回を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・福井加代子</span>
+          <span class="ttl">避難所運営と男女共同参画</span>
+          <span class="sum">女性の視点から災害時の防災部署と男女共同参画部局の連携やマニュアル、避難所となる交流センターの安全性を尋ね、個別避難計画の策定状況と要援護者台帳の登録者数、能登半島地震を受けて市が今すべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・石倉刻夷</span>
+          <span class="ttl">交流センターの地域づくり</span>
+          <span class="sum">地方創生の最前線で地域活動の源となる交流センターを核とした地域づくりについて市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・清水保生</span>
+          <span class="ttl">地域を守る取組</span>
+          <span class="sum">空き家を移住・定住策として活用するための組織体制を尋ね、廃校舎の利活用や交流センターを核とした地域づくりにも触れ、オールやすぎの意味と地域の存続・成長に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・原瀬清正</span>
+          <span class="ttl">市長が描く本市の未来予想図</span>
+          <span class="sum">地域医療提供体制と市立病院の５年後・10年後の姿と老朽化対策、2025年問題に向けた介護の支え方、少子化対策と産科病院の設置、学校再編後の交流センターの在り方、地域消防と防災活動、農林水産業の課題と将来像、定住対策と住宅地開発、渋滞緩和と道路整備・維持管理、公共交通、公共施設の在り方、廃棄物処理と災害廃棄物処理について市長の未来予想図を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・原瀬清正</span>
+          <span class="ttl">交流センターの運営</span>
+          <span class="sum">中央交流センターと地区交流センターの業務内容・配置人員・採用方法の違い、中央交流センターによる包括的支援や総合的調整と勤務状況の把握方法、貸し館業務の利用数と対応、今後の業務と賃金、職員数の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・三島静夫</span>
+          <span class="ttl">夏に起こる災害への対策</span>
+          <span class="sum">夏の災害対策として、昨年度の熱中症患者と救急搬送の人数・程度・発症場所、市の熱中症対策と警戒アラート時の広報、正午のサイレンの扱い、指定一般避難所の職員配備と待遇、水害に弱い赤江交流センターの避難所指定と変更の判断を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">172件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・杉谷寿之</span>
+          <span class="ttl">コミュニティセンター移行</span>
+          <span class="sum">四月から公民館がコミュニティセンターへ移行することが一月に通告されたのは拙速ではないかとして、公民館が行ってきた自主企画事業と住民のボランティアによる運営が新コミセンで担保されるのかを尋ね、きちんとした物差しのないまま地元が職員を推薦する人選と、雇用期間を一年とする人事管理の再考を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・牛尾尚義</span>
+          <span class="ttl">個人情報保護と地域活動</span>
+          <span class="sum">個人情報保護法により、ひとり暮らしの高齢者の暮らしぶりも幼児の所在もコミュニティセンターで把握できなくなっているとして、住所や氏名など客観的な事実まで隠す過剰反応が起きていないかと述べ、何を保護し何を共有すべきかを一度整理して示すことを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・曽田盛雄</span>
+          <span class="ttl">公共施設の耐震と防災</span>
+          <span class="sum">本庁舎と同様に老朽化が激しい平田支所庁舎と消防庁舎の早急な整備への所見、公民館等の耐震強度の状況、平田小学校と旭丘中学校の改築と耐震補強の計画および調査で不適格となった場合の対処、災害情報の伝達方法と避難場所と防災無線の導入時期、防災ネットワークの年次計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・西尾敬</span>
+          <span class="ttl">公民館のセンター移行</span>
+          <span class="sum">平田地域の公民館がコミュニティーセンターへ移行する時期を早く示すことと、職員の身分の変更や移行後の雇用契約と待遇の扱い、館長以下二名という体制への臨時職員の採用、合併とともに廃止された地区担当職員の復活を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・長岡幸江</span>
+          <span class="ttl">公民館の役割と人づくり</span>
+          <span class="sum">合併の成否は各地区の住民自治組織の活動がかぎになるとして、地域の公民館を拠点に各団体やグループの組織づくりと育成に精力的に取り組むべきだとし、これからの社会に対応する公民館のあり方と位置づけ、今後の方向性を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・川上幸博</span>
+          <span class="ttl">地域から見た学校の安全</span>
+          <span class="sum">自治協会長や浜山中学校の教育振興会長を歴任し地域と学校のかかわりが深い教育委員長に対し、地域から見た学校における児童生徒の安全と安心の確保についての所感を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・高野成俊</span>
+          <span class="ttl">大型施設と合併特例債</span>
+          <span class="sum">新庁舎や出雲弥生博物館、大社の阿國座といった大型施設は建設費に加えて必ず維持管理経費が伴うとして将来にツケを回すことなく建設が可能なのかを尋ね、老朽化が著しい学校や幼稚園、公民館の建替えと修繕の年次計画、合併特例債はどのような事業に充てることができるものなのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・多久和康司</span>
+          <span class="ttl">対話と交流の市政</span>
+          <span class="sum">市政懇話会をどのように開催するのか、各種行事や諸会合とはどこのどのようなものを指すのかを尋ね、旧出雲市の各コミュニティセンターでの活性化フォーラムのようなきめ細かな対話の取り組みと、旧市町に置かれる地域協議会とのかかわりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・石川寿樹</span>
+          <span class="ttl">自治協会への加入促進</span>
+          <span class="sum">地区自治協会への現在の加入状況と五年前との比較、各地区で行われている加入促進の取り組みと市の支援策、負担が重いことやメリットが見えないという受け入れ側の問題への認識、町内単位の自治会結成を含む今後の加入促進策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・遠藤力一</span>
+          <span class="ttl">ＡＥＤの配備計画</span>
+          <span class="sum">心停止した人の救命率を高めるＡＥＤについて、公的施設への配備計画と使用講習会の取り組みスケジュール、１万人の若者を集めるミュージックキャンプ２００５での配備を尋ね、高齢者が多く集うコミュニティセンターや公民館の全施設への配備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・萬代弘美</span>
+          <span class="ttl">いじめ防止の教育環境整備</span>
+          <span class="sum">現在は中学校に拠点校方式で置かれるスクールカウンセラーをすべての小学校に配置して早期にかかわることの考えと、出雲中央教育審議会の答申が強調する地域の結節点としてのコミュニティセンターの役割を踏まえた施設整備や財政的な支援策の充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・山根貞守</span>
+          <span class="ttl">コミュニティセンター運営</span>
+          <span class="sum">統一された３６カ所のコミュニティセンターについて、職員の任用期間を１年間としなくてはいけない理由、当初５名体制とされながら実際は４名と年間７０日の臨時職員で対応していることに現場での問題がなかったか、時間外勤務に手当が支給されず月を越えられない振替休日で対応している実態を承知しているのかと今後の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・長岡幸江</span>
+          <span class="ttl">子育てと地域の人づくり</span>
+          <span class="sum">出生を妨げている要因を把握し意向調査をしたうえで施策を講じているのか、会社内の保育施設や妊婦の勤務条件の緩和など企業とのパートナーシップや地域の子育て応援団の育成をどう進めるのか、コミュニティセンターの位置づけと役割や職員の１年サイクルの雇用と資質・待遇の見直し、あいさつ運動から始める人権同和教育の推進啓発活動のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・長岡幸江</span>
+          <span class="ttl">教育行政の五つの課題</span>
+          <span class="sum">小中学校の施設点検と整備や学習環境の確保、学校の安全管理と安全教育及び児童の安全対策支援、人づくりと地域づくりの拠点としてのコミュニティセンターのあり方と運営、学校と地域と関係機関が連携し協働するシステムづくり、地域学校運営理事会の組織づくりと理事の選任や運営方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・福代秀洋</span>
+          <span class="ttl">自治会への加入促進</span>
+          <span class="sum">都市化や核家族化、近所づきあいの希薄化で自治協会・自治会の未加入世帯が増えていると感じられるとして、自治協会・自治会の果たす役割と市や住民にとってのメリット、平成１８年度の加入状況と加入促進策の内容と成果、平成１９年度の具体的な取り組みの内容と目標を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・直良昌幸</span>
+          <span class="ttl">豪雨災害の対策と財源</span>
+          <span class="sum">降雨期を前に国や県やダム管理者と流域の自治協会長らを含めた水害対策の協議の場が持たれたのか、神戸川流域の災害復旧緊急対策事業の今後のスケジュール、実情に合わせた避難場所の選定、今回の災害復旧費とその財源を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・広戸恭一</span>
+          <span class="ttl">20年度予算案の編成方針</span>
+          <span class="sum">平成20年度予算案の特徴を一言で表すとどうなるかと、予算編成がボトムアップかトップダウンかを尋ね、新たに掲げた21世紀市政の経営改革の内容と財政への危機感、経済産業という語の意味、地域協議会とコミセンへの財源の一括交付に着目した理由、西部日本海域の中心都市出雲が指すエリアを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・長岡幸江</span>
+          <span class="ttl">コミセンと自治協会</span>
+          <span class="sum">コミュニティセンターと自治協会それぞれの役割と責任の所在を明確にした地域拠点のあり方を尋ね、人と人のきずなが失われる中でどのような手法により地域社会を再構築し地域コミュニティーづくりを推進するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・米山広志</span>
+          <span class="ttl">コミセン職員の処遇</span>
+          <span class="sum">公民館と一元化された出雲市コミュニティセンターの役割と事業および職員の職務を尋ね、1年契約で昇給にも上限がある職員の雇用期間と基本給と昇給の実態を挙げて、身分保障と給与面を見直すべき時期に来ているのではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・高野成俊</span>
+          <span class="ttl">地区活性化の交付金</span>
+          <span class="sum">信号機の設置や地域図書館の蔵書、幼稚園や学童クラブの運営助成など地区ごとに異なる課題を地域自らが解決できるよう、自治協会の加入世帯割や地域の面積割を算定の基準とした地区活性化補助金なる交付金の制度を設けることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・荒木孝</span>
+          <span class="ttl">地域への財源配分</span>
+          <span class="sum">地域協議会の活動に初めて措置された財源を平成20年度を出発点として今後拡大するのかと、コミセンへの一括交付の配分ルールに均等割と人口割に加えて面積割を入れる考え、各地域の自主的イベント事業の支援の前年との比較とくにびきマラソンなど既存の大会とのすみ分けを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・長岡幸江</span>
+          <span class="ttl">地域交流活動拠点のあり方</span>
+          <span class="sum">２１世紀出雲の地域交流活動拠点のあり方についての答申とあしたの日本を創る協会のビジョンを踏まえ、コミュニティセンターの役割や運営体制について住民と職員の相互理解ができておらず活動がイベントや特定の趣味に固定化しているとして、地域活動の現状と時代背景をどう見極め、新しい公共としての地域交流活動をどう育み地域の一体感をどう醸成し、人づくりと地域づくりを担うリーダーの確保と育成をどう進めるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・曽田盛雄</span>
+          <span class="ttl">学校の管理責任の所在</span>
+          <span class="sum">校庭や運動場、校舎の周辺部の草刈りはだれの責任で行うべきか学校側で対処できないのか、教育委員会や市のかかわりと草刈りの命令権はどの程度だれにあるのか、校門を出た後の通学路での子どもの安全に学校の責任はあるのかないのか、各小・中学校に配置された連絡・配達用の車をコミュニティセンターと共有できないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・多久和康司</span>
+          <span class="ttl">温暖化防止と緑化推進</span>
+          <span class="sum">猛暑や氷河の融解など異常気象が続く中での温暖化防止の対応についての考え、省エネ対策の効果と出雲市地域省エネビジョン推進事業の取り組みの現状とこれからの取り組みおよび温暖化対策地域協議会の立ち上げ、幼稚園や小・中学校、コミュニティセンター、支所、公園といった公共の場所での植樹と緑化事業、市民や事業所の植樹や緑化への補助の現状と今後を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・遠藤力一</span>
+          <span class="ttl">限界集落と過疎の対策</span>
+          <span class="sum">限界集落3カ所と準限界集落28集落を抱える出雲市に対応する専門部署があるのかと集落維持や活性化の計画、不在地主による耕作放棄地と管理放棄林への対策、最近10年のU・Iターン者の数と定住支援策の有効性、コミュニティセンターで証明書を発行するなどの機能強化、奈良のシカ視察の成果と共生の森づくり基本方針、事業名称からの有害の2字の削除、鷺浦の町並みを伝統的建造物群として保存することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・長岡幸江</span>
+          <span class="ttl">地域交流活動拠点の運営</span>
+          <span class="sum">コミュニティセンターの位置づけが理解されないまま運営されているとして行政とのパートナーシップの図り方、地区自治協会の役割と自治会機能を発揮する体制づくり、社会教育と組織団体の育成への連携と支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・長岡幸江</span>
+          <span class="ttl">地域教育力再生プラン</span>
+          <span class="sum">学校を起点に地域や家庭、行政機関とどう連携し融合して教育再生を進める方針かを尋ね、コミュニティセンターや企業との連携による学社連携と学社融合の現況と課題、子どもが安心して外出できる環境づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・山代裕始</span>
+          <span class="ttl">消防受委託と消防団</span>
+          <span class="sum">契約の無期限延長を求める斐川町からの要望を踏まえた救急消防業務の受委託への考え、老朽化した平田と大社の消防署の庁舎整備計画、小型ポンプへの積載車配備による機動化と消防コミュニティセンターの設置計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・荒木孝</span>
+          <span class="ttl">災害時のアマチュア無線</span>
+          <span class="sum">昨年の防災訓練で通信手段が断たれた想定に活用されたアマチュア無線の地域防災計画上の位置づけを尋ね、コミュニティセンターへの無線局と避難所へのハンディ無線機の配備、補償を含む協定の締結を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・古福康雅</span>
+          <span class="ttl">阿國座建設の基本理念</span>
+          <span class="sum">伝統芸能の上演施設、地域交流センター、観光拠点施設と位置づけが多様で市民へのアピールが不明確になっているとして、慎重に考えたうえでの不変の基本理念を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・広戸恭一</span>
+          <span class="ttl">コミセン整備の促進</span>
+          <span class="sum">国が１０分の１０または１０分の９を負担する有利な交付金を使い、老朽化や手狭で活動に支障のあるコミュニティセンターを一度に三、四か所整備すれば地域経済の活性化にもつながるとして、選択と集中の考えに照らした整備の促進を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・狩野正文</span>
+          <span class="ttl">市民への啓発と意見聴取</span>
+          <span class="sum">ブランド化する項目と発掘の視点が煮詰まった段階で市民に投げかけて意見を求め動きながら戦略を策定することが市民の誇りの意識化と社会教育の土壌づくりにつながるとして、市の地区担当者を交えたコミュニティセンター単位での実践を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・木佐宏</span>
+          <span class="ttl">平田地域の公共施設建設</span>
+          <span class="sum">平田の幼稚園は現地建て替えではなく国富コミュニティセンター周辺への分割移転が送り迎えの利便性と伝染性疾患のリスク分散、駐車場と安価な用地の確保の面で優れると述べ、平田小学校の放課後児童クラブの校庭への建設中止と平田消防署の移転用地をめぐる情報の是非を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・板垣成二</span>
+          <span class="ttl">緊急情報伝達システム整備</span>
+          <span class="sum">防災行政無線について佐田・多伎・湖陵地域の更新と出雲市南部４地区の新設の年次計画、南部を除く出雲地域と大社・平田地域の伝達方法を含む全市的な整備の方針、支所やコミセン、避難所と双方向で通話できる機器の配備、地域ごとに異なる放送内容を活かす運用のルール化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・狩野正文</span>
+          <span class="ttl">コミセンの運営改善</span>
+          <span class="sum">コミュニティセンターのあり方を市としてどう考えているのかとゼロベース評価を踏まえた検討結果で運営が検討前とどう変わるのかを尋ね、土日祝日は職員一人を置く対応にとどまり真の開館ではないと指摘し、団体の自立より結成の奨励を、文書配布の見直しより情報提供を、使用料の徴収より無料の意義の強調をと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・板倉明弘</span>
+          <span class="ttl">コミュニティセンター職員</span>
+          <span class="sum">コミュニティセンター職員のここ三年間の新規採用者数と在職年数の状況および一年ごとに契約を更新する雇用形態の利点と欠点、職員研修の内容と期間と参加状況を尋ね、ブロック内でマネジャーの人事交流を行い資質の向上を図ることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・多久和康司</span>
+          <span class="ttl">コミュニティ活動の推進</span>
+          <span class="sum">コミュニティセンターを中心に地域の諸団体との連携をどのようにするのかと、地域における住民とのコミュニティをどのようにするのかと、町内会や自治会への加入促進の支援策はどうかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・米山広志</span>
+          <span class="ttl">スポーツ振興21の運営</span>
+          <span class="sum">監査から一部改善や検討を要すると指摘されたＮＰＯ法人出雲スポーツ振興２１について給料3か月分で総額1,000万円を超す年度末手当の具体的な支給内容と今後の改善策、西部体育館と長浜中央公民館を約200万円で稗原運動広場を約190万円で自治協会に再委託しながら実際はコミセン職員が業務を行っていることへの指導方針、全職員が期限付き雇用契約となっていることのあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・原隆利</span>
+          <span class="ttl">フラワータウン集会所</span>
+          <span class="sum">西出雲駅南口の240平米に及ぶ西出雲フラワータウン集会所の建設経過と管理者と敷地の所有者と使用状況を尋ね公園を宅地に地目変更する1か月半前に行政財産のまま無償貸与した契約の有効性と合築の規定がない当時に2,400万円を交付した根拠と無償貸与契約の破棄と神門コミセンの機能補完に活用しなかった理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・板倉一郎</span>
+          <span class="ttl">事務事業の点検と改善</span>
+          <span class="sum">神門コミュニティセンターの不適切な対応や住宅用地特例の適用漏れや会計検査院が指摘した不適正な経理処理が相次いだとして事業仕分けへの市長の評価と外部監査制度の導入目的を尋ね長年継続した不適切な事務がないかの業務総点検と常に業務をチェックする行政考査制度の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・高野成俊</span>
+          <span class="ttl">地域交付金制度の導入</span>
+          <span class="sum">各地区の活性化につながる事業に対して自治協会単位で交付金を支給する地域交付金制度の導入を求め、人口や地域面積、自治協会の加入率を交付額の算定の基礎とすることや、風雪害による倒木で山道が通れなくなった場合の対応にも触れて提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・多々納剛人</span>
+          <span class="ttl">子育て支援と地域力</span>
+          <span class="sum">社会環境の急激な変化から子育てに困難を感じる親が増えているとして今後の子育て支援策には何が必要と考えるのかを尋ね、住民の生活ステージが地域から職場へ移り自治協会の加入促進も意識が伴わなければ数字だけで無意味になるとして地域力の向上にどう取り組むのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・多久和康司</span>
+          <span class="ttl">災害時の個人情報の共有</span>
+          <span class="sum">高松地域で約6,500人が参加した2回目の防災訓練を踏まえ大規模災害等に備えた避難体制作りの一環として家族構成と個人情報を町内会や自治会と一部共有することに市として取り組む考えを尋ね60％台にとどまる自治協会の加入の現状と今後の加入促進の取り組みと隣近所のつながりを深める行政支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・米山広志</span>
+          <span class="ttl">神門コミセン機能補完事業</span>
+          <span class="sum">年間400万円が6年間支出された神門コミュニティセンター機能補完対策事業について神門自治協会が各年度の収支決算書に報告しなかった理由と利用実績の聞き取り調査の実施日と方法とフローラいずもの管理運営団体とＮＰＯ法人国際交流フラワー２１や株式会社サンフローラ所有の土地建物の固定資産税の減免と過去の補助金の取り扱いと来年度以降を尋ね6年間2,400万円の全額返還を求めるべきだと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・原隆利</span>
+          <span class="ttl">神門コミセン補助の隠ぺい</span>
+          <span class="sum">神門コミュニティセンター機能補完対策事業のてんまつと処置と反省と教訓を尋ね契約と覚書の差異や決算成果表で400万円を県公連下水道受益者負担金等428万円に含めたことは隠ぺいにあたるのではないかとただしフローラいずもとの随意契約の理由と議会の議決のない契約の有効性と市民への損害の回復を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・板垣成二</span>
+          <span class="ttl">コミセン交付金と支所</span>
+          <span class="sum">コミュニティセンターの自主企画事業交付金の総額が３，４００万円から３，０００万円へ４００万円減額された根拠を尋ね、斐川地域でのコミセン制度導入も見据えてこの交付金をどのような考え方で決定しさらなる減額はあるのか、地域自治運営の観点から今後の支所やコミセンの機能や組織のあり方についてどのようなビジョンを持つのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・保科孝充</span>
+          <span class="ttl">トキと発達相談とコミセン</span>
+          <span class="sum">国のトキ野生復帰事業に貢献する今後の飼育計画と市民が飼育の様子を感じられる施設への配慮、平成２４年度（2012）に事業費４６万８，０００円で実施する幼稚園児発達相談モデル事業の形態と全市での実施、平成２５年度（2013）から斐川の七つの公民館がコミュニティセンターとなるにあたり生涯学習施設としての運営が主眼なのか行政施設の補完なのか、職員の教育や災害時の指示と責任の関係や職員体制と警備員の存続を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・木佐宏</span>
+          <span class="ttl">副市長の防災への認識</span>
+          <span class="sum">美野本線を１０か年計画で整備すると述べた６月議会の答弁を挙げて福島原発の事故を踏まえた防災担当副市長としての認識をただし、５月１２日の豪雨で土のう５０袋を求めた高齢の夫婦にコミセンまで取りに来るよう答えたことや、電車不通時の学生への情報提供、遠方から消防団員を呼び戻した土のうづくりなど平田支所の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・西村亮</span>
+          <span class="ttl">地域活動助成と支所予算</span>
+          <span class="sum">自治協会や町内会への加入は必要不可欠であるとしてその見解と、会費や奉仕作業や伝統文化の継承など住民負担に対する活動助成制度の必要性、出雲市道路河川ふれあい愛護活動助成事業と島根県のハートフルしまね助成事業との比較検討の内容と今後の対応、県の緊急雇用対策で残った障害竹の伐採への市の予算措置、数十万円で対応できるものは支所へ権限と予算を移譲して住民の要望に即応できる体制を整えることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・珍部全吾</span>
+          <span class="ttl">学校再編計画の進め方</span>
+          <span class="sum">学校再編計画の素案を連合自治協会などに相談せずに全員協議会へ出して報道されたことを挙げ、飛ぶ前に足元を見つめるとしながらなぜ足元を見なかったのか、平成３２年（2020）の児童数として北陽が１３８人増え大社が８７人減るといった数字が教職員定数算定資料から示された根拠と、少子対策の担当に相談がなかった経緯を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・西村亮</span>
+          <span class="ttl">島根原発の安全対策</span>
+          <span class="sum">点検漏れが見つかり３７年以上が経過した島根原発１・２号機の点検状況と再稼働についての所見、地震と津波とテロへの安全対策についての市の考え方、ＥＰＺ内にある地域の避難道の整備、住民が納得できるコミセン単位での地区説明会の開催、ＥＰＺの拡大と原子力の安全協定の締結に向けた施策を尋ね、松江市と県を除く周辺市町の連絡協議会での統一行動の進め方や有事に備えたトンネル整備の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・多々納弘</span>
+          <span class="ttl">支所とコミセンのあり方</span>
+          <span class="sum">支所が独自性と地域性を発揮できる仕組みが必要だとして本庁と支所の業務の分担、支所長の決裁権の範囲と専決できる事項、支所長への専決権と若干の予算執行権の付与を尋ね、本庁の自治振興課が所管するコミュニティセンターと支所の業務との連携、コミセンを支所の所管とすることが望ましいのではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・大場利信</span>
+          <span class="ttl">斐川の引き継ぎ事業の実施</span>
+          <span class="sum">地域特性を持つ斐川ゾーンを新出雲市の中にどう位置付け一体的な発展を考えるのかを尋ね、斐川中央工業団地の造成整備、西野小学校屋内運動場の移転改築、久木公民館の移転改築、大黒山麓簡易水道の上水道接続の現時点の計画と、神守・神立地区の公共下水道工事および坂田阿宮線ほか五つの市道の道路改良工事の継続実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・保科孝充</span>
+          <span class="ttl">斐川を加えたまちづくり</span>
+          <span class="sum">合併から二か月を経た市長の感想と、出雲地域のブランド力を高めて人が集まるまちづくりの取り組み状況と今後の方針、旧斐川町議会で採択された下阿宮地区の農業用水・防火用水の確保と県道木次直江停車場線の堤防道路の拡張と久木公民館の移転新築の引き継ぎ、山陰自動車道に近い斐川中央工業団地西工区の早期整備、出雲空港国際化促進協議会の再開と中国との定期路線の新設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・米山広志</span>
+          <span class="ttl">神門コミセン補助金の適否</span>
+          <span class="sum">平成１７年度から平成２１年度までと平成２２年度に交付した補助金の取り扱いをめぐる三者協議と顧問弁護士協議の時期と結果、フローラいずもの株式会社サンフローラへの業務委託の時期、神門自治協会の収支決算書への記載、平成２３年度の固定資産税の減免の検討状況を尋ね、１人の利用に１２万７，５００円を認めた根拠や職員の会議への支出、減免の該当条項を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・小村吉一</span>
+          <span class="ttl">神門補助金の経緯説明</span>
+          <span class="sum">神門コミュニティセンター機能補完対策補助金について、一括借り上げが覚書のどこに書かれているのかという疑問と公金は実際の行使があって支払うべきものだという考えを述べたうえで、市民への経緯の説明や謝罪をどのように行うのかを尋ね、ホームページだけでなく広報いずもでも行うべきだと求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・萬代輝正</span>
+          <span class="ttl">観光施設と経済効果</span>
+          <span class="sum">神門通り観光交流センターとまちかど案内処について事業による設備投資と備品と維持管理の内容とどれほどの経済効果が見込めるのかを尋ね、出雲神話観光大国の創造が中身のない空想で終わらないよう現状の観光消費額と平成２４年度（2012）の目標を具体的な数値で示すよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・井上惠夫</span>
+          <span class="ttl">防災体制の組織強化</span>
+          <span class="sum">東日本大震災を教訓として公助と自助と共助のすべてが整って初めて防災の成果が出るとして防災のネットワークづくりの促進が重要な課題だとし、どの組織をどのように強化しどのような政策を実現するのかを尋ね、コミュニティセンターを中心にした地域の防災の取り組みについて今後の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・直良昌幸</span>
+          <span class="ttl">震災の教訓と防災の備え</span>
+          <span class="sum">東日本大震災から何を学び何を研修して平素の日常業務に反映しているのかを尋ね、斐川を含めた地域防災計画の拡充と自治協会長らへの情報の伝達、消防の救援隊の派遣報告、学校での防災教育と教職員の履物、二百人以上が集まる催しでの主催者の腕章と非常口の案内、定住促進空き家活用と耐震化の整合性を挙げ、今この場で震度６の地震が発生したらどう対応するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・米山広志</span>
+          <span class="ttl">エネルギーセンターの要望</span>
+          <span class="sum">神門地区エネルギーセンター等問題対策委員会の設立の日付、神門地区での稼働年数を２０年とした当初の約束をいつどのような形で交わしたのか、三者の覚書で平成２３年度から廃止した神門コミュニティセンター機能補完対策補助金４００万円との整合性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・板倉明弘</span>
+          <span class="ttl">コミセン職員の採用と人事</span>
+          <span class="sum">コミュニティセンターの職員が１年ごとの契約ながら実質的に期限のない雇用とみなされる形態となっている実態を挙げ、職員の採用責任と雇用形態の改善策、本年４月から試行的に導入された職員指導ガイドライン制度の経緯と内容、平成２２年９月議会で提案した職員の人事交流制度のその後の検討状況と対応内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・保科孝充</span>
+          <span class="ttl">スポーツ少年団への支援</span>
+          <span class="sum">スポーツ少年団の団体数と団員数、ボランティアによる指導員数、現在と平成２５年４月からの使用料の減免制度を尋ね、青少年の健全育成とスポーツ振興の観点から施設使用料の減免と、全市民が無料であるコミセンの使用料の見直しを併せて質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・井原優</span>
+          <span class="ttl">公民館のコミセン移行</span>
+          <span class="sum">斐川地域の公民館が平成２５年度からコミュニティセンターへ移行することについて、常勤４人体制で業務がこなせるかと補助員の増員、各団体の事務局体制のあり方、土曜・日曜の施設利用と非常時の管理、１戸あたり１，０００円の財源の使途、バス利用の変更を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・保科孝充</span>
+          <span class="ttl">公民館の使用料と運営</span>
+          <span class="sum">利用者負担の原則から公民館（コミセン）で低額な使用料を徴収して活動費や地域の公園等の整備に充てる考え、斐川地域の公民館人件費と平成２５年度からコミセンとなった場合の人件費、そろばんや英語、習字など教育を主目的とした事業への使用許可、斐川地域の介護予防事業であるミニデイサービスの継続を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・狩野正文</span>
+          <span class="ttl">地域環境の美化</span>
+          <span class="sum">国道・県道・市道の路側帯や中国自然道、一畑電車の沿線、斐伊川など河川、公園、斐伊川の樋門や排水機場の除草を誰がどの範囲で何回行い経費はいくらかを尋ね、土木委員やコミセン、ボランティア団体への働きかけ、除草剤や野焼き、羊やヤギの貸し出し制度の創設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・松村豪人</span>
+          <span class="ttl">市民活動への支援</span>
+          <span class="sum">財政計画の期間中に市民生活の充実や公的サービスの質を下げないためには市民活動の活性化が不可欠であるとして、市内コミュニティセンターやまちづくりの取り組みへの支援がどのようなものになるのかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・小村吉一</span>
+          <span class="ttl">支所の見直しの構想</span>
+          <span class="sum">現在の支所と本庁との関係やかかわり、支所の機能、構成、問題点などの実態を尋ね、コミセンの位置付けを切り離した二段構造では真の見直しはできないとして本庁・支所・コミセンを含む総合的な構想と、行政改革推進委員会に公募を含めた内容の充実を求めることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・萬代輝正</span>
+          <span class="ttl">支所機能のあり方</span>
+          <span class="sum">合併を経過した支所機能の体制の編成、本庁と各支所の来所者数とその内容、支所の空きスペースの活用状況を尋ね、コミュニティセンターを中心とした地域のまちづくりを進める流れの中でコミセンへ職員を配置できないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・井原優</span>
+          <span class="ttl">斐川地域の防災対策</span>
+          <span class="sum">平成１８年７月の豪雨災害を教訓にコミュニティセンターを単位とする自主防災組織と地区災害対策本部の立ち上げが斐川地域でも急がれるとして、自宅の防災対策、自治会の防災計画、避難マップの作成、非常時の連絡方法への市の積極的な育成支援を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・米山広志</span>
+          <span class="ttl">旧宍道邸の活用と手続</span>
+          <span class="sum">旧宍道邸に和文化交流センターと児童クラブを整備するとして１２月議会に文書で報告した債務負担行為を３月議会に提出しなかった理由と今後のスケジュールを尋ね、地権者との協議を経ずに議会へ示した手続と地元への説明のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・多々納剛人</span>
+          <span class="ttl">災害時要支援者の情報管理</span>
+          <span class="sum">自身が支援者に登録されながら要支援者が誰か分からなかった経験から、災害時要支援ネットワーク事業での登録情報の管理と情報提供の方法を尋ね、独自に要支援者登録を行っているコミュニティセンターや公民館の数とその手法、管理のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・萬代輝正</span>
+          <span class="ttl">選択校区制の検証</span>
+          <span class="sum">四絡地域を例に選択校区制の導入に至った経緯、当初の生徒数の予測と実際の推移、学校再編計画素案での扱い、導入後の検証、地域コミュニティへの影響、メリットとデメリット、当時の公民館活動の強化策を尋ね、今こそ再検討すべき時期ではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・保科孝充</span>
+          <span class="ttl">高齢者の買い物とごみ捨て</span>
+          <span class="sum">高齢者世帯が増える中で各地区のコミセンや社会福祉協議会と協力し、年々減少している寄附金や余裕資金を活用して移動購買車の購入補助やごみの登録制回収を行うこととし、市内の１、２箇所でモデル的に実施して高齢者の安心安全に貢献することを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大場利信</span>
+          <span class="ttl">ひとり暮らし高齢者</span>
+          <span class="sum">平成２３年９月末に６，２０４人であったひとり暮らし高齢者のその後の状況と７５歳以上の後期高齢者の割合、災害時要支援者ネットワーク事業への登録者数と割合、地域別の特色を尋ね、登録されていない高齢者や自治会未加入者への日常の安全確保と消防の予防活動、社会福祉協議会や地区社協、コミセンとの連携、過疎・高齢化地域も含めた今後の安全・安心の確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大場利信</span>
+          <span class="ttl">コミセンのあり方</span>
+          <span class="sum">支所業務の多くが本庁に移管される中で小学校区単位のまちづくりはコミセンの比重が高まっているとして支所の業務とのすみ分けと今後のあり方、方向づけを尋ね、業務量と責任が増す中で市職員のコミセン業務への従事などの支援、自主企画事業の交付金を広場や市有地の環境整備活動にも交付する柔軟な運用を認めてよいのではないかと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・飯塚俊之</span>
+          <span class="ttl">コミセンの整備方針</span>
+          <span class="sum">定住人口キープ１７万人プロジェクトから、コミュニティセンターの整備状況と今後の整備方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・松村豪人</span>
+          <span class="ttl">コミセン施設の安全性</span>
+          <span class="sum">北浜コミュニティセンターで壁のコンクリート片が崩落した事故を受け、市内４３のコミュニティセンターそれぞれの築年数と修繕等の計画・修繕要望の状況を尋ね、築年数の経過した施設の調査の必要と担当課の危機感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・長廻利行</span>
+          <span class="ttl">大社の交通渋滞対策</span>
+          <span class="sum">出雲インターから国道４３１号線が大渋滞となった中で長浜工業団地周辺にシャトルバスを出せなかったか、斐川インターから降りる誘導ができなかったか、学校やコミセンなど公共施設の駐車場対策、民間企業や個人への駐車場の依頼、渋滞対策の予算と駐車場の確保、街中のトイレ対策と案内表示、島根県及び周辺自治体への参画と経費負担の要請、一畑電車の活用と駐車場の有料化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・板垣成二</span>
+          <span class="ttl">定住人口キープの施策</span>
+          <span class="sum">５，０００万円を計上した出雲シティセールス事業のうち３，３００万円を２本の映画制作支援に充てて期待する効果と数値目標、地域維持や地域運営におけるコミュニティセンターの役割、要請の増加が予想される集落応援隊の派遣に応えていくための課題と克服方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・大場利信</span>
+          <span class="ttl">定住人口キープの施策</span>
+          <span class="sum">結婚支援者の育成・輩出の人数と役割、３０歳代の男女に行われた結婚に関する市民意識調査の感想と今後の活用、支所とコミュニティセンターの役割の見直しの状況と今後の整備計画、地域自治区と地域協議会の見直しの意図と内容、子育て世代等の定住促進のための未利用市有地の有効活用、定住促進住まいづくり助成金制度の優先順位と優先枠を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・神門至</span>
+          <span class="ttl">旧宍道邸の活用と整備</span>
+          <span class="sum">南側離れ部分を和文化交流センターとして改修し北側母屋部分を解体して児童クラブを併設するという方針を受け、実施設計の状況、進入路道路などについて地元地域の皆さんとの同意がなされているか、今後の考え方と方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・萬代輝正</span>
+          <span class="ttl">行財政改革の検証</span>
+          <span class="sum">常設型の「行財政改革審議会」の構成メンバーの考え方や開催日程、答申時期を尋ね、今まで進めてきた行革は何があったのか、市税や各種料金の未納状況と不納欠損の推移、収納率向上と未収金の縮減への具体策を問い、行革から見た（仮称）和文化交流センターの必要性と提案過程を市民が納得できるよう説明するよう質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・保科孝充</span>
+          <span class="ttl">護衛艦いずもと愛国心</span>
+          <span class="sum">８月６日に命名進水式が行われた護衛艦「いずも」について海上自衛隊や島根県等の関係者から市に連絡があったのか、どういう経過で命名され式典への招待はあったのかを尋ね、教育の現場での愛国心を醸成する教え方の実態、支所やコミュニティセンター、学校など公共施設の国旗掲揚の実態と常時掲揚への今後の考え方、市内の外国人による土地所有の実態を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・保科孝充</span>
+          <span class="ttl">防災行政無線の活用</span>
+          <span class="sum">各コミュニティセンターに設置されている防災行政無線放送の時刻放送等の有効活用の状況を尋ね、毎日の昼と午後５時ごろの定時に出雲市民の歌「愛しきわが出雲」を放送し、小中学生をはじめ市民の安心・安全と一体感の醸成に努めることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・渡部勝</span>
+          <span class="ttl">除雪体制と小型除雪機</span>
+          <span class="sum">今年度の除雪計画の経費と地区別の除雪体制、除雪に対する基本的な考えに加え、除雪機を手放す業者やオペレーターの高齢化への対応を尋ね、雪害を受けやすい地区や個人への小型除雪機購入の一部助成とコミセン単位への設置の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">コミュニティセンターの役割</span>
+          <span class="sum">４３のコミュニティセンターについて公民館からの改編で目指した設置の目的と制度上・機能上の違い、行政サービスや支所との関係、自主企画事業の予算化の手順、長寿命化を念頭に置いた管理・整備の進め方と管理費・施設整備費算出の手順、４３センター体制の維持や職員の見直しを含む今後の方針を尋ね、市がセンターに求める役割と委託する事業をどの場で整理しているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大場利信</span>
+          <span class="ttl">ハザードマップの全戸配布</span>
+          <span class="sum">自治会加入者が全市民の約７割にとどまる中で、自治会未加入者に対する災害ハザードマップと原子力防災ガイドブックの現在の配布方法を尋ね、コミセン単位で地域の団体やボランティアの力を借りて届けるなど全市的に同一の対処方法をとることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">公共施設利用料金の減免</span>
+          <span class="sum">使用料・手数料の見直しに伴う公共施設の利用料金について、利用目的別や年齢構成別、市内外の区分などで規定の金額より減免する措置を設ける考えがあるかを尋ね、現在無料の学校の体育館やコミセンで使用料金が検討されているのかと減免規定を整理する時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・板倉明弘</span>
+          <span class="ttl">地域包括ケアの推進体制</span>
+          <span class="sum">第６期高齢者福祉計画・介護保険事業計画で推進する出雲らしい地域包括ケアについて４３のコミセン単位、１５の中学校区単位、七つの旧自治体単位、全市的な政策形成制度の調整を今後どのようなスケジュールで行うのかを尋ね、介護予防・生活支援・生きがいづくり、在宅医療と介護の連携、認知症ケアの推進、高齢者の権利擁護、介護サービス基盤の整備という五つの重点項目の現状と課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大場利信</span>
+          <span class="ttl">地域自治区と地域協議会</span>
+          <span class="sum">地域自治区及び地域協議会を平成２９年３月３１日限りで廃止する見直し案について、地域の意見や要望を聞き集約する場がなくなる懸念、自治協会での議論と多くの分野の代表からなる地域協議会での議論の違い、地域協議会を廃止した場合のまちづくりの主体、コミセンの見直しのその後を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・米山広志</span>
+          <span class="ttl">旧宍道邸の解体と活用</span>
+          <span class="sum">和文化交流センターの改修整備事業を中止し旧宍道邸の建物を解体するとした議会報告を受け、今年度に入って行われた地元町内への説明の目的と内容、児童クラブ保護者・運営委員会への意見の聴取、進入路と駐車場用地の地権者への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・勝部順子</span>
+          <span class="ttl">特別支援教育の拠点園</span>
+          <span class="sum">塩冶自治協会や塩冶幼稚園運営協議会などから塩冶幼稚園を特別支援教育の拠点園に指定し午後６時過ぎまでの預かり保育や夏季等休業中の預かり保育、施設設備の充実と人員の配置を求める要望書が提出されたとして、今市幼稚園の拠点園を始まりとして全市内に展開する今後の市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・伊藤繁満</span>
+          <span class="ttl">組織機構改革の狙い</span>
+          <span class="sum">本庁と支所とコミセンのあり方や役割、任務分担を早く明確にしてほしいという市民の声を挙げ、農林水産部の新設など今回の機構改革全体の狙いと、子育て関係とりわけ児童クラブの所管をどのように整理したのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・湯淺啓史</span>
+          <span class="ttl">ｗｅｂサイトの活用と体制</span>
+          <span class="sum">ドメイン、ｗｅｂサイト、ホームページ、インターネットという用語に市がどのような意味合いを込めて使っているのかを尋ね、ネット上で公開されている情報の内容と全体の管理を担う部署、職員教育や幼稚園・小中学校・コミセンにおける情報掲載の意識づけを質し、情報戦略室のような統括する組織や外部からのスーパーバイザーの招聘を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・小村吉一</span>
+          <span class="ttl">コミセンと学校の有料化</span>
+          <span class="sum">コミュニティセンターと学校施設の使用料の見直しについてこの間の周知徹底の内容と「公共的目的」の概念を尋ね、有料となる使用例の件数と割合、単年度の収益の見込み、市民が施設へ行う財政的支援の総額を問い、従来どおり無料にすべきだと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・米山広志</span>
+          <span class="ttl">コミセン職員の雇用形態</span>
+          <span class="sum">コミュニティセンターの雇用形態と職員体制について、議会への説明はどうであったか、庁舎内での内部協議はどれだけされたか、実施に向けての計画を尋ね、資料の誤りやセンター長の勤務日数、チーフ・マネジャーの採用、アシスタントの廃止、平成２９年４月１日施行の妥当性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・米山広志</span>
+          <span class="ttl">朱鷺会館の固定資産税</span>
+          <span class="sum">朱鷺会館の土地・建物の所有者と固定資産税が全額減免なのか、平成２２年度から今年度までに出雲市が主催する事業・会議等で会場使用料を支払った年度と事業を尋ね、固定資産税が全額減免のＮＰＯ法人所有の施設に市が会場使用料を支払うことの是非と、補助金で建設した集会所やコミセンの一部有料化との公平性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・原正雄</span>
+          <span class="ttl">自治協会の未加入問題</span>
+          <span class="sum">神門地区の自治協会加入率が５８．１３％まで下がった状況を示し、加入問題を抱えた他の自治協会の状況、自治協会等応援条例の取り組み支援の実情、民間施設を１次避難所に指定した場合の市の協力、未加入団地に住む市職員への指導、コミュニティセンターへの補助員配属など加入促進の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・福島孝雄</span>
+          <span class="ttl">証明書のコンビニ交付</span>
+          <span class="sum">マイナンバーカードの申請状況とコンビニ交付に向けてのスケジュールや市全域での交付可能店舗数を尋ね、コミュニティセンターのあり方検討の目的と今後のスケジュール、手いっぱいの事務事業への対策、自主企画事業の取り組みに対する評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・珍部全吾</span>
+          <span class="ttl">２０２５年問題の捉え方</span>
+          <span class="sum">団塊の世代がそろって７５歳を超えることを「問題」と呼ぶのはよくないとして、コミュニティセンターに集まって会話ができる場をつくることが医療や介護の予防につながるとし、２０２５年を迎えたときにどういう社会になっているのかを包括的に考えるべきだと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・小村吉一</span>
+          <span class="ttl">コミセンのあり方検討</span>
+          <span class="sum">コミュニティセンターのあり方の検討が主に職員の人員体制に限られているとして、今後さらにさまざまな点から検討し改善を図る予定か、現在の職員の性別総数・年齢構成・勤続年数、運営協議会により委託する形態の理由とメリット・デメリット、職員１２名の減員が地域の総合的な活動拠点としての機能に後退や混乱をもたらさないか、職を失う１２名の再雇用、市職員並みの待遇改善の方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・米山広志</span>
+          <span class="ttl">コミセンの事務軽減策</span>
+          <span class="sum">コミュニティセンターの行政関係の事務の軽減を検討したかと支所とコミュニティセンターのかかわりを尋ね、支所の設置場所や組織機構図での扱い、災害対応や公共事業をめぐる支所のある地区とない地区の事務量の差を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・米山広志</span>
+          <span class="ttl">コミセン職員数の算定</span>
+          <span class="sum">職員数の算定の根拠が点数制から世帯数のみへ変わった理由とアシスタント制度を廃止する理由を尋ね、２００世帯と２，０００世帯で職員が同じ４人となる配置への認識、就業規則の見直し、地区ごとに異なる事務量の把握を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・福島孝雄</span>
+          <span class="ttl">人口減少地域の対策</span>
+          <span class="sum">住民基本台帳で平成２２年から平成２７年の５年間に１０％以上減少した地域への具体策と、自治協会やコミセン・地域住民から各支所に人口減少についての意見・要望が出ているかとその取り扱い、支所での課題認識と職員からの提案、まち・ひと・しごと総合戦略における具体的な対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・山代裕始</span>
+          <span class="ttl">各種証明の発行窓口</span>
+          <span class="sum">山口市と福岡市の視察を踏まえ、周辺地域の高齢者のためにコミュニティセンターで証明書等の発行窓口を開設できないかと、コンビニ交付のメリットとデメリット、県内と全国の取組状況、本市の取組予定と課題を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・板垣成二</span>
+          <span class="ttl">国勢調査の結果と対策</span>
+          <span class="sum">平成２７年（2015）国勢調査で人口が４５３人増の１７万１，９３８人となった結果をどのように分析・評価しているか、人口減少が著しい地域に対しどのような対策をとるのかを尋ね、コミセン単位の詳細な分析の公表時期と、佐田町から高校へ通う一月３万円弱の通学費の負担を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・珍部全吾</span>
+          <span class="ttl">宍道邸取得の経過</span>
+          <span class="sum">出雲市青少年文化センター検討委員会の議論を経て和文化交流センターにすると議会と地元に示されていた宍道邸について、なぜ改修事業をやめたのか、合併特例債の繰上償還により７，０００万円を全額市が払って用地を買うことになった経過は何かを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・板垣成二</span>
+          <span class="ttl">小型除雪機の導入</span>
+          <span class="sum">脆弱な除雪体制の中で小中学校や支所・コミュニティセンターなどの公共的施設の雪対応を強化するため、実態を調査し優先順位も考慮した小型除雪機の導入が有効ではないかと見解を尋ね、施設から除雪の依頼があった場合や本庁・支所で除雪が必要になった場合の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・米山広志</span>
+          <span class="ttl">支所とコミセンの機能</span>
+          <span class="sum">住民票などの証明書請求を本庁・支所以外で交付する手続を検討しているか、県内の公民館やコミュニティセンター・郵便局・コンビニなど通常窓口以外での交付状況を把握しているか、縮小や統廃合を含む今後の支所のあり方をどう考えるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・原正雄</span>
+          <span class="ttl">旧庁舎の利用の現状</span>
+          <span class="sum">平田・大社・佐田・多伎・湖陵・斐川の旧庁舎について、議場や市長室・議長室の使い方、空き室や空き棟、資料の保管庫や倉庫としての使用、住民の利用、避難所としての可否と耐震構造、今後の見通しを尋ね、コミュニティセンターとの共用も含めた見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・川上幸博</span>
+          <span class="ttl">社会教育による地域づくり</span>
+          <span class="sum">地域の青少年団体や社会福祉協議会などの力を合わせる推進会議をコミュニティセンターに設置する考えを述べたうえで、現在の出雲市の社会教育がどのように推進され取組みが行われているか、地域の維持存続につながる社会教育を今後どのように推進していくかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大場利信</span>
+          <span class="ttl">ボランティア活動の推進</span>
+          <span class="sum">出雲総合ボランティアセンターと出雲市社会福祉協議会に登録されているボランティアの数とそれぞれの役割、センター設立の背景や活動内容とコミセン・地区社協との連携の実態及び地域への浸透策、介護予防・日常生活支援総合事業におけるボランティアの状況と役割及び期待、公的部門や専門人材との連携を含む今後の推進策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・今岡真治</span>
+          <span class="ttl">人口減少と少子化対策</span>
+          <span class="sum">市街地と周辺地域や山間地域・海岸地域で現状が大きく異なる中での各地域の分析と限界集落・準限界集落の数と推移および合計特殊出生率、自治協会等からの意見・要望の取り扱いと取組み状況、各地域への人口減少・地域づくりの今後の方策、様々な理由で働くことができない状態にある人たちへの就業支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・保科孝充</span>
+          <span class="ttl">手話条例の推進状況</span>
+          <span class="sum">出雲市手話の普及の推進に関する条例の制定後について、手話通訳・緊急通報の利用登録者数、市担当職員の手話通訳士と通訳者数の状況、地域ごとの市民の手話通訳者・奉仕員数、コミセン等における市民の研修・育成状況、通訳者等の派遣の状況と平成３０年度に通訳者を増員することに伴う研修の状況、教育現場での取組みの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・後藤由美</span>
+          <span class="ttl">支所機能のあり方</span>
+          <span class="sum">平成１７年の合併以降に各支所の体制がどのように縮小されてきたのかと、それに伴う住民サービスの低下をどのように認識しているのかを尋ね、来年４月に新体制を実施するという結論を凍結し、コミュニティセンター単位で意見交換の場を設けて支所機能の充実に向け市民の意見を聞くよう求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・寺本淳一</span>
+          <span class="ttl">民生児童委員への支援</span>
+          <span class="sum">民生・児童委員の現在の欠員数とその対応、自治協会から選考委員を出す地元高松地区と他の各地区との人選方法の違い、自治協会の未加入世帯も担当することへの市の考え、相談用のチラシを配って不審者に間違われた事例を踏まえたメディアやＩＴや紙媒体を駆使した後方支援の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・大場利信</span>
+          <span class="ttl">社会教育振興体制の充実</span>
+          <span class="sum">４月に配置された派遣社会教育主事２名のこれまでの主な実績と学校やコミセンに与えた影響、家庭教育や子育ての支援への取組み、地域づくりを担う人材の育成への取組みを尋ね、支所やコミセンへ社会教育主事を計画的に配置する考えと、社会教育推進組織を順次拡充する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・神門至</span>
+          <span class="ttl">豪雪の被害と除雪対応</span>
+          <span class="sum">今回の豪雪について人的・住宅等・農業・漁業・林業・公共施設その他の被害状況、小中学校・幼稚園・児童クラブの通学や通園への支障と始業・終業・休校などの対応、市の除雪計画と市道・県道・国道・歩道・学校やコミュニティセンター等の公共施設で誰がどのように対応したか、除雪に要した費用、市民への情報提供の有無、救急搬送への支障、今回の豪雪を災害と認識したか否かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・児玉俊雄</span>
+          <span class="ttl">農業収支の研修会運営</span>
+          <span class="sum">コミュニティセンターなど１４会場で開催された農業所得の収支内訳書の作成にかかわる研修会について、今年から研修会場で申告書の受け付けができなくなった理由と今後もそのような対応になるのかを尋ね、支所機能の見直しに伴って相談会場や研修会場を減らす考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・板倉明弘</span>
+          <span class="ttl">コミュニティセンターの人事異動</span>
+          <span class="sum">来年度と再来年度に異動となる対象の職員数、異動期間を２年間を基本とする理由、異動にチーフマネジャーを対象としない理由、ブロックの統廃合とブロック内での採用の可否を尋ね、９ブロックの再編は市の主導で行うべきだとして再考する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・児玉俊雄</span>
+          <span class="ttl">コミュニティセンター強化</span>
+          <span class="sum">公民館から移行して１７年となるコミュニティセンターに期待されていた役割と現在の状況の評価、支所と併存する合併地域の評価、４３のセンターの機能がどの程度同じでどの程度違うのかの分析、情報端末の設置や人員増・市職員の配置を含む機能面・体制面の強化策と将来的な方向性、世帯数を基準とする職員数の実情に応じた柔軟な対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・後藤由美</span>
+          <span class="ttl">ハザードマップの周知</span>
+          <span class="sum">防災ハザードマップを生かした防災教育と市民への啓発の強化、８月に市内６７８か所で行われたため池の点検結果の公表と危険な箇所の市民への周知、廃止に係る経費のうち１％となる受益者負担のあり方を尋ね、自治協会や自主防災組織や消防団の責任者への講習会の開催を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・大谷良治</span>
+          <span class="ttl">地域応援補助と施設耐震化</span>
+          <span class="sum">元気！やる気！地域応援補助金制度の成果と、コミュニティセンターの施設耐震化スケジュール及び今後の整備方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・板倉一郎</span>
+          <span class="ttl">外国籍住民との多文化共生</span>
+          <span class="sum">市長の考える多文化共生社会とはどのようなものか、外国籍の住民の在住の実態と今後の見通し及び永住を考えている人数、自治協会やコミュニティセンターを通じた地域社会への参加の仕組みづくりと現状の改善を尋ね、意向調査によるデータの再把握、企業の協力を得た地域ごとの意見交換の場、地域の交流活動への助成制度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・福島孝雄</span>
+          <span class="ttl">高齢者の生きがいづくり</span>
+          <span class="sum">健康寿命を延ばすための健康づくりや介護予防、交流、社会参加の事業・講座について市民及びコミセン等での実態と男性高齢者の参加状況及び参加促進策を尋ね、高齢者が集う行政施設での洋式トイレ設置の現状と、尿取りパットの普及を踏まえた男性用トイレの汚物入れの設置状況及び今後の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・児玉俊雄</span>
+          <span class="ttl">コミセンの人材確保</span>
+          <span class="sum">約２００名のコミュニティセンター職員を運営協議会が雇用する仕組みとその経緯及び現在の雇用形態のメリット、応募が少ない中でのチーフマネジャーとマネジャーの給与水準と今後の処遇改善策、６５歳となっている定年の延長への考え、市の運営協議会で一括公募・選考を行うなど選考方法を再検討する考え、センター長を市長の任命とする考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・神門至</span>
+          <span class="ttl">出雲市の将来推計人口</span>
+          <span class="sum">人口と世帯数の推移、ＵＩターン住民及び外国人住民の世帯数の推移と定住・永住の現状と課題、自治会・町内会の数と加入世帯数及び加入率の推移と加入のメリット・デメリット並びに加入促進への対応、自治協会の役割と支援と意見反映の場、５年後・１０年後・２０年後の将来推計人口を、斐川地域との合併以降の数値で地域ごとに質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・福島孝雄</span>
+          <span class="ttl">地域コミュニティの維持</span>
+          <span class="sum">自治協会やコミュニティセンターが解決できない地域課題に対する市の課題認識と支援策、若者の意見や発想をくみ上げる場、高齢化により手間不足と危険が危惧される官地の除草作業への対策、防草シートの効果の検証と今後の取組み、管理されていない空き家周辺の環境悪化の早期解決、通学路や生活道路に繁茂する立ち木や竹林への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・保科孝充</span>
+          <span class="ttl">子どもへの伝統文化の伝承</span>
+          <span class="sum">市内の伝統文化伝承に向けた教室の設置状況と各コミセンの子どもに対する教室数や人数、生け花・茶道に取り組む小中学校数と人数を尋ね、出雲文化伝承館の役割と各コミセンとの連携により伝承館で体験させることへの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・伊藤繁満</span>
+          <span class="ttl">安心して住み続けられる出雲</span>
+          <span class="sum">道路・河川・上下水道のライフラインや中山間地域の土砂災害防止など防災・減災・縮災に向けた日常の点検活動強化、加入率６１．６％まで下がった自治会とコミセンへの支援を若者が集う形につくりかえる検討、地域・社会全体で支え合う子育て環境の充実を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・寺本淳一</span>
+          <span class="ttl">旧高松コミセンの活用</span>
+          <span class="sum">平成３０年３月に新しい高松コミュニティセンターが竣工した後、旧高松コミュニティセンターの活用について地元でも結論が出ないまま議論なく現在を迎えているとして、出雲市としての今後の方針とスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・湯淺啓史</span>
+          <span class="ttl">自主避難時の支援体制</span>
+          <span class="sum">避難指示や避難勧告が発令される前に自主的に近隣のコミュニティセンターなどへ避難する場合について、自主的な避難場所として公共施設を利用できるか、どのような手続を経て借りるか、センター職員や市の地区担当職員の協力は得られるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・保科孝充</span>
+          <span class="ttl">自治会の加入促進</span>
+          <span class="sum">各地域の自治会加入率と市全体で加入率の高い自治協会と低い自治協会、斐川地域７自治協会の１０年前との比較、市の加入促進の取組みと出雲市自治会等応援条例の効果や自治協会での取組状況、人口や世帯数の増減率と加入率の相関関係と今後の施策を尋ね、市職員の未加入率と実態を再調査する必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・長廻利行</span>
+          <span class="ttl">コミュニティセンターの整備</span>
+          <span class="sum">市内４３か所のコミュニティセンターの整備計画についての基本的な考え方を尋ね、昭和１２年に建設され最も古い大社コミセンと昭和２５年に建設され２番目に古い鵜鷺コミセンという耐震診断が未実施の二つの施設についてどのような検討がなされているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・板垣成二</span>
+          <span class="ttl">人口２極化の現状分析</span>
+          <span class="sum">平成１７年３月末と本年１０月末の比較で４３のコミセン単位の地域が増加１２・減少３１に２極化し、流入人口の多い地域ほど自治会加入率が低いことをパネルで示し、現状の課題についてどのように分析しているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・板垣成二</span>
+          <span class="ttl">今後の地域対策の方針</span>
+          <span class="sum">現状を踏まえて今後どのような取組みをするのかその方針を尋ね、うみ・やま応援センターをコミセン単位で派遣する体制へ拡充する考え、元気！やる気！地域応援補助金を全地域へ広げる考え、自治会の加入・未加入に関係なく負担金を徴収するという提案の検討、来年策定する新たな出雲市総合振興計画への位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・神門至</span>
+          <span class="ttl">外国人住民との交流事業</span>
+          <span class="sum">市が取り組んでいる交流事業のこれまでの取組状況、民間団体が取り組んでいる国際交流事業などの取組状況、企業や民間団体、コミュニティセンター等との連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・錦織稔</span>
+          <span class="ttl">新しい生活様式の定着</span>
+          <span class="sum">３密の回避をどう定着させていくのか、医療・高齢者施設などへのマスクや消毒液などの物資の充足、次亜塩素酸水の有効性の認識、第２波の到来に向けた備えとインフルエンザ予防の広報、本庁または行政センターが閉鎖になったときの勤務体制とテレワーク構築や時差出勤など新たな働き方、コミセンの３密回避と会場使用のマニュアル、地区内の諸行事を円滑に行うためのガイドラインを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・保科孝充</span>
+          <span class="ttl">防災行政無線とお悔やみ放送</span>
+          <span class="sum">自治協会から意見を聞いた後の市の対応と防災行政無線・お悔やみ放送についての意見や要望の内容、お悔やみ放送を実施し全市に拡大する考え、９月議会以降の各地域の加入状況・割合と加入促進に向けた取組み、加入率の目標は１００％ではないのか、加入されない家庭が孤立した場合の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・大場利信</span>
+          <span class="ttl">防災行政無線の加入状況</span>
+          <span class="sum">整備が進むデジタル式防災行政無線について、整備される各地域ごとの加入希望世帯数と率の現状、その分析と今後の加入促進策を尋ね、コミセン情報やイベント情報、地域で定着しているお悔やみ情報を放送することとしているのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・大谷良治</span>
+          <span class="ttl">コミセンの耐震改修</span>
+          <span class="sum">コミュニティセンターの施設耐震補強・改修方針について、現在までの取組と進捗状況、今後のスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・伊藤繁満</span>
+          <span class="ttl">コミセン職員の指揮命令</span>
+          <span class="sum">市職員と身分保障が違うコミュニティセンター職員が災害対策本部の指揮命令下に入るのかを尋ね、災害時の責任体制の所在と、何日も泊まりがけになる場合にコミセンの対応でカバーができるのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・石橋広信</span>
+          <span class="ttl">デジタル化と高齢者支援</span>
+          <span class="sum">デジタル田園都市国家構想のロードマップが具体的にどんなことを示しているのかと出雲市の未来像を含む取組み、デジタル化がどのような流れから始まりその中で何が必要とされ個々にどのような技術が求められるのかを尋ね、年代別のスマートフォン利用者数を問うたうえで、高齢者デジタルサポート事業として同世代の講師によるスマホ教室をコミセン単位で開催できないかとその効果を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・児玉俊雄</span>
+          <span class="ttl">デジタル社会の裾野拡大</span>
+          <span class="sum">デジタルファーストを行政が本格的に取り入れるにはまず裾野を広げる取組みが不可欠だとして、１人１台の教育環境がなかった高齢者を対象にしたスマホ教室を各コミセンなどできめ細かく開催し、誰一人取り残さないという決意で全市的な盛り上がりとなるよう大々的に開催する考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・今岡久人</span>
+          <span class="ttl">トキ放鳥の公募への準備</span>
+          <span class="sum">環境省が来年４月以降に始める放鳥希望地域の公募に向けて準備がどの程度進みどのような体制を整えたのかを尋ね、コミュニティセンターへのアンケート結果を示して広報紙の紙面の工夫と小学校の環境カリキュラムによる子どもへの周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・今岡久人</span>
+          <span class="ttl">共生のまちづくりと自治会</span>
+          <span class="sum">各町内で自治会からの脱退や未加入が続き、自治協会の役員が一軒ずつ家庭訪問して加入促進を図る努力にもかかわらず加入率が減っている実態を挙げて各自治協会に対する支援策を尋ね、訪問ミーティングなどを通じて再認識したことのうち今年実現可能なことは何かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・高橋扶治夫</span>
+          <span class="ttl">原子力の広域避難計画</span>
+          <span class="sum">浜山公園へ向かう車の台数が駐車可能台数を大きく上回るとして避難退域時検査候補地を増やす考え、広島県へ避難する際の避難経由所の駐車可能台数など受入体制の確認、コミュニティセンターの地区災害対策本部単位での避難訓練、広域避難計画の市民への周知の時期と方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・高橋扶治夫</span>
+          <span class="ttl">災害時の避難情報と避難所</span>
+          <span class="sum">市内全域に避難指示を発令する場合に体育館のような広いスペースを持つ施設を避難所として開設すべきではなかったか、斐伊川と神戸川の危険水位と警戒レベル発令の関連や氾濫危険水位になった場合の情報伝達、斐伊川放水路の分流開始の基準と市民への伝達、福祉避難所の仕組みと今回の開設の有無、コミュニティセンター職員の行動についてのマニュアルの有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・児玉俊雄</span>
+          <span class="ttl">自治協会への支援強化</span>
+          <span class="sum">市の行政運営における自治協会の位置づけと現在なされている支援、元気・やる気・地域応援補助金と地域コミュニティづくり支援補助金の実績と評価、事務方の不足を補う事務局長や事務局の配置と自治協会が雇用した場合の人件費の半額支援、８０歳以上の独り暮らしの会費減額分の補てん、加入のメリットを感じられる今後の支援の在り方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・今岡久人</span>
+          <span class="ttl">避難指示から避難所開設まで</span>
+          <span class="sum">防災ハザードマップとパンフレットの配布を市民がどう受け止め市に大きな変更点や変化があったのかを尋ね、７月１２日に避難指示から神門コミセンの避難場所指定まで２時間近くを要した原因、避難場所を指定する際の準備や必要物品とコミセンへの備置き、避難所へ出向く市職員の人数と人選の手順を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・福田実</span>
+          <span class="ttl">コミュニティセンターの職員</span>
+          <span class="sum">コミュニティセンターが市にとってどのような役割を担っているか、社会教育主事の資格を持つ職員が地域にもたらす効果、職員の人事交流制度がいつからどのような経緯で行われたのか、制度の導入がセンターの活性化や職員のスキルアップにつながったか、今後の人材確保の方策を尋ね、社会教育士が活躍できる場の拡充と退職慰労金を含む処遇改善を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石橋広信</span>
+          <span class="ttl">マイナンバーカードの申請</span>
+          <span class="sum">マイナンバーカードの交付率、カード及びマイナポイントの特典、今後の展望と活用、取得者を増やすための対策を尋ね、コミセン等での出前申請とポイント予約の申込みの実施、出雲市独自のポイントの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・保科孝充</span>
+          <span class="ttl">人口の均等化政策</span>
+          <span class="sum">斐川地域の各コミセン単位の人口と各学校の児童生徒数・クラス数の過去１０年間と将来１０年間の状況、住宅開発に係る農振除外の要件緩和、児童が増え続ける西野小学校の教室不足とトイレの洋式化、人口集中が見込まれる地域への用途地域の指定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・保科孝充</span>
+          <span class="ttl">都市計画マスタープラン</span>
+          <span class="sum">２か年で策定する都市計画マスタープランの今後の策定計画と日程、地域の実情をよく理解した委員を求める都市計画審議会の委員の構成と選任方法、自治協会など地域との協議と中学校単位の説明会の実施、斐川地域を例とした人口減少地域で計画的で良好な市街地の形成を促す用途の指定、富士通道路から直江停車場線までの都市計画道路の早期整備、平成２６年に見直した路線の復活、ほとんど使われていない久木地区今在家の農村公園を住宅団地などに活用する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・児玉俊雄</span>
+          <span class="ttl">地域の魅力創出の検討</span>
+          <span class="sum">地域が活用しやすい支援制度の創設や見直し、補助金制度から交付金制度への転換や小規模団体と個人への支援制度の充実の検討状況、アフターコロナにおける各地区の地域行事の取組状況と復活のための特例的な支援、コミュニティセンターの役割や機能を検証したビジョンの発信、市職員の活用や職員の配置基準の見直しと処遇改善による組織強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・木佐宏</span>
+          <span class="ttl">旅伏小学校の用地</span>
+          <span class="sum">旅伏小学校の用地について土石流の災害が及ぶ場所の真ん中にある窪地で水が出るのに教育長が休めばよいと答えたこと、地元が一反１，０００平米を１２万円程度と言い近隣の地権者が１５万円で売買している土地を５００万円で買っていることを挙げ、コミュニティセンターの近くで１６軒の地権者が連判状を出している三町歩の土地でやるべきだと質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・石橋広信</span>
+          <span class="ttl">自治会と地域の活動</span>
+          <span class="sum">自治協会とコミュニティセンター業務の負担軽減に関する見直し内容と他地域の自治会活動支援アプリへの見解、毎年約５００世帯ずつ減少する自治会加入世帯に対する自治会加入推進員の活動と自治会加入のメリット、能登半島地震での対応で感じた自治会の大切さへの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・児玉俊雄</span>
+          <span class="ttl">自治協会の魅力と負担</span>
+          <span class="sum">自治協会やコミュニティセンターの依頼業務量の調査など中間報告の詳しい内容、行政連絡業務の委託料について必要かつ十分な対価を準備して依頼するという視点の実態と所見、自治協会等の魅力を向上させるためにどのような役割を果たすべきと考えるのか、設置当時の原点に返ったコミュニティセンターのあり方のビジョンを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・大場利信</span>
+          <span class="ttl">コミセン職員の処遇</span>
+          <span class="sum">コミセン職員の最近の応募状況と養成研修の方法、社会教育主事の資格取得者数を尋ね、地域のまちづくりを担う職員の給与面での評価を高めることへの所見と土曜日曜や休日の勤務の振替が適正に運用されているか、市からコミセンへの依頼業務の見直し状況と検討結果を出す時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・保科孝充</span>
+          <span class="ttl">コミセン職員の離職と待遇</span>
+          <span class="sum">市全体と斐川地域それぞれのコミセン職員の定数と過去３年間の離職状況、チーフマネジャーとマネジャーの月額給与や賞与及び年間給与の実態、福利厚生費の実態、給与改定の状況、変形労働時間制の運用実態、松江市や雲南市、大田市など近隣市の待遇を尋ね、コミセンと職員の在り方の将来計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・福田実</span>
+          <span class="ttl">コミュニティセンターの体制</span>
+          <span class="sum">本庁、行政センター、コミュニティセンターそれぞれの業務と役割、コミュニティセンター職員の交流事業の状況とこれまでの実績・成果、今後の交流事業の進め方と考え方、職員の待遇を尋ね、年数を重ねない退職の増加への認識、退職金制度の導入、本庁への集約が過ぎたのではないかとの点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・長廻利行</span>
+          <span class="ttl">出雲大社周辺の渋滞対策</span>
+          <span class="sum">神在祭期間中に実施した交通規制や警備員の配置、出雲文化伝承館からのシャトルバス運行と一畑電車の利用促進に渋滞緩和の効果があったかを尋ね、コミセンや小中学校の駐車場やグラウンドを活用した繁忙期の臨時駐車場の確保を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・川上幸博</span>
+          <span class="ttl">地域コミュニティの活性化</span>
+          <span class="sum">人口減少に悩み地域行事にも支障が出ている地域コミュニティや自治協会があると推察されるとして、地域振興の担い手となる青少年の育成につながる人づくり教育や移住者の空き家活用、農地貸出し、ふるさと会などの関係人口の拡大を挙げ、地域活性策の今後に向けた取組を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・保科孝充</span>
+          <span class="ttl">外国籍市民の実態と対策</span>
+          <span class="sum">年々増加している外国籍市民について、市民・保育幼稚園児・小学生・中学生の数が多い地域をコミセン単位で上位５位まで尋ね、中部小学校・斐川西中学校・直江保育所の指導体制、税金や介護保険料等の支払い義務と選挙権・被選挙権、教職員加配や相談支援体制など島根県の役割と島根国際センターの出雲市への誘致を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・玉木満</span>
+          <span class="ttl">小中一貫教育と学校再編</span>
+          <span class="sum">今年度で学校再編統合が一つの区切りを迎える一方で少子化が進み今後も再編統合を避けられないとして、令和５年に佐田自治協会から要望された須佐小学校と窪田小学校の再編統合も視野に、国が推進する小中一貫教育にどのような考えで取り組むのか方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・保科孝充</span>
+          <span class="ttl">闇バイト犯罪への対策</span>
+          <span class="sum">国道・県道等の主要道路やコンビニ、コミセンを中心とした地域の防犯カメラの設置状況と市の連携、中・高校生と一般市民への啓発活動と警察との連携、高齢者家庭への設置補助の考えを尋ね、凶悪犯罪に巻き込まれない安心・安全な街宣言の実施を含めた市の対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長島和孝</span>
+          <span class="ttl">コミセンの貸館利用</span>
+          <span class="sum">社会教育法第２３条第１項の解釈に関する国の事務連絡を踏まえてコミュニティセンターの政治に関する利用の運用を改めるべきだとして所見を尋ね、利用料の支払いにいずも縁結びＰＡＹによる電子決済を導入する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">コミュニティセンター整備</span>
+          <span class="sum">老朽化したコミュニティセンターを利用している市民から届けられている声とバリアフリー法や出雲市福祉のまちづくり条例に関する問題の有無、市議会へ陳情されているもの以外に地元から要望されているもの、今後どのような判断基準により優先的に整備していくのかを尋ね、大社コミュニティセンターをいつ頃整備していく方針かを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">コミュニティセンター老朽化</span>
+          <span class="sum">本市に設置されているコミュニティセンターの中で古いものは何年経過しているのか、近年整備された、また整備しようとするコミュニティセンターは何年経過したものが整備されているのか、建物の法的な耐用年数と、指定避難所としているコミュニティセンターに耐震性に問題があるものはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・萬代輝正</span>
+          <span class="ttl">人材バンクの創設</span>
+          <span class="sum">誰もの「学びたい」を実現するため、市内で様々な分野で活躍する方々を人材バンクとして登録しコミセンや自治協会、企業研修や高齢者団体等への紹介窓口をネット上に創設してはどうかと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・萬代輝正</span>
+          <span class="ttl">自治会と自治協会の運営</span>
+          <span class="sum">持続可能な自治会活動に向けて実施してきた政策に効果的なものがあったのかを尋ね、自治協会の運営についてＤＸでできることや既に活用しているものを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・板倉一郎</span>
+          <span class="ttl">自治会加入率の低下</span>
+          <span class="sum">自治会・自治協会の加入率について、新型コロナウイルス感染症流行前後での変化及び市全体と加入率が低い５地区の現状、低下の原因ともたらす影響、自治協会等へ依頼する業務の見直しの実施状況と成果、加入世帯と非加入世帯の不公平感の拡大を踏まえた今後の市の取組を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>奥出雲町<span class="ex-n">49件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H21・藤原充博</span>
+          <span class="ttl">小学校の統合</span>
+          <span class="sum">児童数の減少を踏まえ仁多・横田地域の中学校のそばに小学校を統合して小中一貫教育を導入することや、通学時の安全確保のためのスクールバス運行と外灯整備、団塊の世代がいなくなる15年先の維持管理を見据え公民館や幼保と併せた統廃合の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・塔村俊介</span>
+          <span class="ttl">教育環境と図書館</span>
+          <span class="sum">大人数の中で子供を育てたいという親のニーズに対応できていない保育園・幼稚園があることや図書館が未設置であることを挙げ、特に面積が狭く人もいない横田コミセンの図書室など横田地域の図書館の現状認識と今後の計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・藤原充博</span>
+          <span class="ttl">新庁舎の建設</span>
+          <span class="sum">災害に強くランニングコストのかからない庁舎が必要だとして、合併債やソーラー発電などの補助金を活用した庁舎の一元化と、光ケーブルを使い公民館やコミセンにテレビ電話を置いて役場と対話・相談できるシステムの実験的な導入を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・内田勇</span>
+          <span class="ttl">環境問題への対策</span>
+          <span class="sum">環境先進地を目指し、学校・公民館等の公共施設への太陽光発電の導入と国と自治体で3分の1の補助となる一般家庭への助成の創設、鳥取方式による保育所・幼稚園・小学校の校庭の芝生化、町としての地球温暖化対策の行動計画の提示を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・内田勇</span>
+          <span class="ttl">農林業の振興</span>
+          <span class="sum">奥出雲版グリーンニューディールとして、仁多米の香港・台湾など東アジアへの輸出、地産地消と自給率向上の具体策と農特産物の販路拡大、耕作放棄地の現状と集落支援員の各地区公民館への配置、20代・30代を含む農林業従事者の都市部での募集を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田勇</span>
+          <span class="ttl">人口減少への歯止め</span>
+          <span class="sum">国勢調査の速報値で5年間に1,358人減り減少率が県平均の2倍以上となった人口減少への対策を尋ね、行政や集落を挙げた婚活・就活支援など若者への投資と、公民館長が集落支援員を兼務することの無理を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・若月忠男</span>
+          <span class="ttl">町有施設用地の賃借料</span>
+          <span class="sum">3年前にも質問した土地賃借料の見直しの状況を尋ね、単価に相違がある町有施設用地の賃借料と賃借契約の見直し、幼稚園・小学校・公民館など教育施設の賃借料の見直しと今後の用地購入の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・内田精彦</span>
+          <span class="ttl">町有財産の管理体制</span>
+          <span class="sum">町有財産の担当課と台帳管理や現地確認などの管理方法、決算特別委員会で尋ねた仁多地域の町有林と砂取り場の場所、学校施設の管理体制と事故・事件の報告の流れ、横田公民館跡地の現状と院外薬局への賃貸契約の内容や賃貸料の予算計上が遅れた理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・内田正男</span>
+          <span class="ttl">布勢公民館進入路の凍結</span>
+          <span class="sum">高台にある布勢公民館と布勢幼児園の進入路が冬季に積雪・凍結しスリップ事故もあったことから、町としての対策と凍結剤の早期の配備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・内田精彦</span>
+          <span class="ttl">公民館等の調理実習室整備</span>
+          <span class="sum">公民館やコミュニティーセンター、婦人の家の調理実習室の施設間の格差の把握、布勢公民館と横田の婦人の家でお湯が出ない状況、古い設備の早急な改修と器具の整備、古い建物の改築計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・内田精彦</span>
+          <span class="ttl">町有施設のバリアフリー</span>
+          <span class="sum">馬木・八川・鳥上以外の古いコミュニティーセンターや公民館から寄せられたバリアフリーの要望内容を尋ね、建て替え計画の有無、車いすマーク入り駐車場の確保と設置の法的な規制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・塔村俊介</span>
+          <span class="ttl">集落の維持と活性化</span>
+          <span class="sum">しまねの郷づくりカルテを活用した公民館単位の集落支援、専任の集落支援員のモデル地区での設置、役場職員による集落支援の体制、女性や若者の活用、集落ごとの未来ビジョンの策定、三沢幼児園の計画、集落の政策プランのコンテストへの支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・塔村俊介</span>
+          <span class="ttl">公民館等施設のルール</span>
+          <span class="sum">公民館等施設の利用料や夜間割り増し料金・冷暖房料の設定の考え方と施設間の差、開館日・開館時間の差異、条例上の根拠が無いコミセン等の管理責任と条例改正、民間団体の私有物の放置、耐震化・改築のスケジュール、三成公園の陸上トラックの修繕の経緯と今後の管理を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田勇</span>
+          <span class="ttl">図書館と読書の振興</span>
+          <span class="sum">本物の図書館設置の構想、各地区公民館をミニ図書館とする町中図書館構想、読書通帳の発行、古い図書の更新と学校を含めた図書予算の増額、図書室のパソコンの更新を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田精彦</span>
+          <span class="ttl">公民館嘱託職員の勤務体制</span>
+          <span class="sum">公民館の嘱託職員の月17日勤務と業務内容を確認し、17日を超える勤務への対応と教育委員会の把握、嘱託職員の増員、正規職員と同様の時間外手当や賃金単価の改定時期、長期勤務者への退職慰労金の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・村尾明利</span>
+          <span class="ttl">小さな拠点づくりの推進</span>
+          <span class="sum">公民館エリアを基本とする小さな拠点づくりを町の総合戦略の具体的目標に組み入れ、町民一人一人の役割と目標を示したうえで、モデル地域での実証実験やＪＡ旧支所などの遊休施設を町が買い取り地元に貸し出す推進策と、各地区の活動を集約して促す役場内の部署の設置を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・内田精彦</span>
+          <span class="ttl">町ホームページの活用</span>
+          <span class="sum">有線放送でホームページ参照を案内する情報についてアクセス数を把握できる仕組みとインターネット接続率を尋ね、公民館にあったパソコンの処分理由と、インターネットを使わない町民へ公民館や庁舎で情報を引き出して提供する対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・藤原充博</span>
+          <span class="ttl">コンパクトビレッジの考え</span>
+          <span class="sum">日南町や十津川村の例を挙げてコンパクトビレッジの考え方への町長の見解を尋ね、小さな拠点の中心とされる亀嵩公民館や阿井公民館が古く耐震化もままならないことから、防災や地震に強い拠点施設の整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・内田雅人</span>
+          <span class="ttl">公民館の体制と活性化</span>
+          <span class="sum">地域振興や集落支援など住民のニーズがふえる公民館について、嘱託の２名体制で月１７日勤務という職員数と勤務時間の制限を見直し、活動を広げたい公民館の活性化を促す仕組みに変えていくべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・内田雅人</span>
+          <span class="ttl">結婚支援と各課の連携</span>
+          <span class="sum">結婚相談の利用が少なく縁結びネットワーク協議会が機能していないとして、公民館や自治会を巻き込んだ町を挙げての結婚支援と啓発、協力者の拡大、任期があと１年の縁結び支援員の後の計画を尋ね、公民館での結婚支援など各課の業務の範囲を越えて町全体の有益性から判断する政治的決断を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・内田精彦</span>
+          <span class="ttl">地域防災計画と避難所開設</span>
+          <span class="sum">奥出雲町地域防災計画の当初策定日と改訂回数・改訂の根拠、これまでの災害の概略を尋ね、台風21号の大雨で開設した避難所の設置基準や避難者の有無、公民館への連絡手順と毛布の確認、指定緊急避難場所と指定避難所の違い、反省点を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・村尾明利</span>
+          <span class="ttl">専任集落支援員の配置</span>
+          <span class="sum">小さな拠点づくりで本町に県のモデル的な支援地区がないことに触れ、専任集落支援員の具体的な役割と人選、1,050万円の予算の内容、地元の職員を地域担当として配置することの可否、公民館事業と距離を置いた役場直轄の財政支援のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・田食道弘</span>
+          <span class="ttl">自然災害への緊急対応</span>
+          <span class="sum">横田観測所で観測史上1位の24時間降水量となった大雨時の庁舎内や住民、公民館、自治会長への対応が十分だったかを尋ね、危機管理監が担っていた防災の指揮管理業務の担い手の明確化と、主要な避難所への毛布など支援物資の常設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・糸原壽之</span>
+          <span class="ttl">ふるさと納税の今後の方針</span>
+          <span class="sum">ふるさと納税を財源とした看板的な事業、寄附者の県別人数と町出身者の別、使途の希望、クラウドファンディングの取組状況を尋ね、事業の趣旨や目標を明示した募集と成果の報告、寄附者との交流や意見募集、町が補助するイベントや祭りへの招待状の送付、観光施設や公民館への返礼品等を載せたパンフレットの設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・内田精彦</span>
+          <span class="ttl">公共施設の使用規定の統一</span>
+          <span class="sum">カルチャープラザや横田コミセン、体育館、各公民館などで開館時間や閉館日、予約の受付期間、夜間割増し、減免、商業利用料金の定めが異なる状況を尋ね、3カ月より前の予約受付による不利益を指摘し、教育長が議員時代に求めた条例・規則の見直しも踏まえて統一する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・藤原充博</span>
+          <span class="ttl">公民館などの耐震化</span>
+          <span class="sum">行政改革審議会の答申を踏まえ、耐震基準を満たさない公民館などの施設が中期財政見通しでどう示されているか、耐用年数を大きく超え使用頻度の低い施設の扱い、小さな拠点づくりとの連動を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・藤原充博</span>
+          <span class="ttl">地震に備えた防災訓練</span>
+          <span class="sum">山陰地方で震度4以上の地震が多いことを挙げ、町や公民館、学校・幼児園、病院・介護施設・老人ホーム、第三セクターの宿泊・温泉施設での防災訓練と教育の実態、夜間の発災時に要支援者を抱える施設への町の応援、災害時の支援を申請した要支援者の数を尋ね、各機関が一斉に行う避難訓練の実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・藤原和範</span>
+          <span class="ttl">小さな拠点づくりの推進</span>
+          <span class="sum">公民館エリアを基本とする小さな拠点づくりの各地区の取り組み状況と町の支援の目標を尋ね、地区の立ち上がりを待つのではなく町としてのビジョンや生活弱者対策を一体的に進めるかかわり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・内田勇</span>
+          <span class="ttl">期日前投票の宣誓書</span>
+          <span class="sum">高齢化で期日前投票がふえる中、投票所での記入が高齢者の負担になっているとして、投票入場券に宣誓書を印刷し事前に家庭で記入して持参する方法や、役場や公民館に置いた用紙で事前に記入できる方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・内田精彦</span>
+          <span class="ttl">熱中症対策と注意喚起</span>
+          <span class="sum">今夏に町内で熱中症の疑いで搬送された人数と程度、町の注意喚起の有無と放送までの経緯を尋ね、各地区公民館などで行った施設開放の利用者の年代と保健師による健康状態の確認の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・内田精彦</span>
+          <span class="ttl">町職員の研修</span>
+          <span class="sum">平成３０年度の職員研修の計画と実施済み研修の内容、時期、対象者、受講率、未受講者への対応を尋ね、臨時・嘱託職員や公民館、病院の職員への接遇研修の実施、研修による職員の変化についての副町長の受け止めを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・藤原充博</span>
+          <span class="ttl">避難施設等の耐震化</span>
+          <span class="sum">耐震化が遅れている阿井・亀嵩・布勢の公民館が避難施設となっている現状と今後の方針、中期財政計画での位置づけ、当面の要支援者向けトイレの整備、布勢小学校と三成小学校の耐震化に向けた地区での話し合い、夜間の職員が少ない旧仁多病院の老人保健施設と斐乃上荘の耐震・防火対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・内田精彦</span>
+          <span class="ttl">公民館の看板設置</span>
+          <span class="sum">表示看板のない公民館の確認を尋ね、鳥上・横田・八川・馬木公民館への表示看板や案内標識の早急な設置と、所在がわかりにくい阿井・亀嵩公民館への道路案内標識の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田食道弘</span>
+          <span class="ttl">各地区の活性化支援</span>
+          <span class="sum">雲南市の地域自主組織と比べ小さな拠点づくりの予算が少なすぎるとして、モデル地区への助成金の増額など各地区への支援の強化と、公民館職員の増員やパソコン等の機器の更新による事務能力の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・石原武志</span>
+          <span class="ttl">小さな拠点づくり</span>
+          <span class="sum">小さな拠点づくりの次年度以降の指導体制と事業の目標・方向性を尋ね、縦割り行政からの脱却と民間との協業に向けた公民館の民営化や地区総合型組織への育成、都市部の組織と積極的に交流する組織づくりへの所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・川西明徳</span>
+          <span class="ttl">教育行政の独立性</span>
+          <span class="sum">教育行政の一般行政からの独立・合議制・住民意思の反映の原則への教育長の見解、総合教育会議の位置づけへの町長の見解、各校・公民館のICT機器の管理計画と予算計画、関係者の声をよく聞いて学校再編方針を出したと評価するか、同会議での再編方針の決定で教育委員会の自主性・独立性が保たれていたかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・内田精彦</span>
+          <span class="ttl">熱中症対策の実施状況</span>
+          <span class="sum">6月議会の答弁で示された注意喚起、公民館等の施設開放、民生委員への協力依頼、熱中症相談窓口の開設などの今年度の実施状況と、施設開放の利用が昨年の約30名から今年はなかった理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・田食道弘</span>
+          <span class="ttl">インターネット環境の改善</span>
+          <span class="sum">町のインターネット接続サービスの改善に向け、全利用者へのアンケートや訪問調査による実態把握、町内のIT専門家による有識者懇談会の設置、多機能端末の在庫の拡充、利用者向け診断マニュアルの作成、玉峰山荘や公民館などの環境改善を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・川西明徳</span>
+          <span class="ttl">コロナ禍の自治体の役割</span>
+          <span class="sum">新型コロナ禍での緊急事態の認識と行政の進め方、コロナ終息後の日本経済のＶ字回復の見通し、ＰＣＲ検査での国の広域的対応、税収減の中で議会や町民と議論する考え、雲南市職員の感染を教訓としたＢＣＰの有効性、公民館等を活用した小規模分散型の行政組織の恒常化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・内田精彦</span>
+          <span class="ttl">公共施設の駐輪場所</span>
+          <span class="sum">両庁舎とコミュニティセンター・公民館における自転車の駐輪場所の現状と、駐輪場所のない施設への町の考え、施設を管理する館長の意見、仁多庁舎の駐輪場所の位置と一般の利用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・内田雅人</span>
+          <span class="ttl">小さな拠点への町の関与</span>
+          <span class="sum">町内7地区で進む小さな拠点づくりについて、公助が必要な部分を町が把握して役割分担を明確にし成功させる決意を尋ね、公民館や地域づくり推進課のマンパワー不足の解消、地域担当職員の制度、特定地域づくり事業協同組合による人材確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・内田雅人</span>
+          <span class="ttl">耐震基準を満たさない避難所</span>
+          <span class="sum">耐震診断で安全性評価が低かった町民体育館と横田コミュニティセンターが地震の際の指定避難所から外れたことによる収容人数の確保を尋ね、利用中に地震が起きた際の身の守り方や避難の仕方の明示と地震を想定した避難訓練を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・石原武志</span>
+          <span class="ttl">マイナンバーカードの普及</span>
+          <span class="sum">スマートタウン構想の原点としてマイナンバーカードの普及率向上の条件と町民への必要性の説明・啓発の認識を尋ね、開業医が抱く紛失時の受診への不安、国の申請条件への見解、商店・コンビニ・公民館での受付と専任者の配置、デジタル人材の確保に向けた職員の研修派遣の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・内田精彦</span>
+          <span class="ttl">公民館の職員配置と通信環境</span>
+          <span class="sum">町内9地区の公民館の館長と職員の配置数、主事の長期休暇で館長一人となっている鳥上公民館への教育委員会の対応と年度途中の休暇・復帰時の今後の対応、町長の考えを尋ね、公民館のWi-Fiがつながりにくい状況への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・田食道弘</span>
+          <span class="ttl">災害時の避難対応</span>
+          <span class="sum">9月に開設した指定避難所の利用状況と課題を尋ね、収容人員50人の馬木コミセンに加えた馬木小学校体育館の開設や模擬避難訓練、避難行動要配慮者の支援方法の具体化と指定避難所の開設数の増、福祉避難所の確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・北村千寿</span>
+          <span class="ttl">脱炭素宣言と再エネ</span>
+          <span class="sum">2050年二酸化炭素排出実質ゼロ表明への改めての町の考え、公民館等の公共施設への脱炭素とランニングコスト削減につながるソーラーパネルと蓄電池の設置、財源確保につながる国や県の補助事業の活用と積極的に活用した職員の評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・大垣照子</span>
+          <span class="ttl">中央公民館の在り方</span>
+          <span class="sum">町民体育館と併設され解体が必要になると考えられる中央公民館の今後の在り方と建設に向けたタイムスケジュール、町民体育館跡地を商業施設等に有利な立地とした発言を踏まえた商業施設等の立地の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・内田裕紀</span>
+          <span class="ttl">小さな拠点づくり</span>
+          <span class="sum">平成30年度から推進する公民館単位の小さな拠点づくりについて、各地区の取組状況と課題をどう把握しているかを尋ね、行政主導の方向性の提示と、推進に向けた地域おこし協力隊の配置の可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・糸原文昭</span>
+          <span class="ttl">ＬＥＤ照明への交換</span>
+          <span class="sum">中学校やコミセンなど公共施設のＬＥＤ化の進捗を尋ね、既設照明のＬＥＤ交換を脱炭素の奨励金の対象とし低所得者の交換経費を補助することと、事業者向けのＬＥＤ照明のみの補助金、令和７年度の奨励金の見直しを質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>雲南市<span class="ex-n">134件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H17・金山寿忠</span>
+          <span class="ttl">チャレンジデーの開催</span>
+          <span class="sum">公民館や体育協会への通知と協力要請が遅れ木次地区で参加者が３８０人減少したことを挙げ、今回の開催への見解を質し、日ごろからスポーツに親しめるサポートを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・藤原政文</span>
+          <span class="ttl">住民が主役のまちづくり</span>
+          <span class="sum">迅速さと住民主役が相反する場面への見解、公民館と地域自主組織のすみ分け、未組織地域への行政の関与、まちづくり条例の制定、１年以上更新されないホームページなど情報公開のあり方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・足立昭二</span>
+          <span class="ttl">公の施設と第三セクター</span>
+          <span class="sum">クラシック島根の破綻に対する市民と会員への責任あるメッセージ、市の支援の範囲と議会への相談時期、従業員の雇用確保、保育所・給食センター・公民館の直営堅持、第三セクター見直しの手続と雇用、市場化テストへの見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・深津吏志</span>
+          <span class="ttl">公の施設の指定管理</span>
+          <span class="sum">指定管理者制度の導入に伴い、地区の公民館や会館、体育館など地域活動に使われる施設で利用料金の引き上げや使用者の負担増、利用の不便が生じないかを問い、地区公民館の管理の扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・光谷由紀子</span>
+          <span class="ttl">公の施設の管理見直し</span>
+          <span class="sum">コストや効率性だけで見直すことへの基本的な考えと直営か指定管理者制度かを選ぶ庁内協議の進め方を問い、個別法で管理権限に制限のある公民館・図書館・保育所や学校給食センターは直営とすべきこと、企業参入があっても利便性と公平性を保つかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・周藤強</span>
+          <span class="ttl">公共施設の耐震対策</span>
+          <span class="sum">市内の学校施設の耐震調査状況と改修が必要な建物の対策時期、公民館や体育館など学校以外の施設の耐震調査、ラメールのような大型施設の耐震調査と定期的な疲労調査の実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・足立昭二</span>
+          <span class="ttl">公民館と地域自主組織</span>
+          <span class="sum">公民館臨時職員の削減問題への認識と今後の配置、地域振興補助金の申請状況・新年度の考え方・残金の継続使用、公民館と地域自主組織のあり方と財源保障、部局を越えた推進室の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・山崎正幸</span>
+          <span class="ttl">公民館の運営</span>
+          <span class="sum">館長報酬や主事・臨時職員の勤務日数など旧町間で格差のある公民館の待遇・運営体制を見直し、説明責任を果たして平準化を図る考えと計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・板持達夫</span>
+          <span class="ttl">加藤歓一郎顕彰資料室の活用</span>
+          <span class="sum">高齢化で顕彰会による運営が難しくなった日登公民館の加藤歓一郎顕彰資料室を蔵書とともに市へ移管し、生誕１００年祭も含め市の生涯学習施設として活用することを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・深津吏志</span>
+          <span class="ttl">合併と周辺部の不安</span>
+          <span class="sum">合併してよかったのかという周辺部の声に対し、公民館の問題のように決定前に物事が進むことへの疑問を挙げ、将来の合併の効果の説明と地域に目を向ける考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・深津吏志</span>
+          <span class="ttl">地域の住民負担の軽減</span>
+          <span class="sum">地域振興補助金の厳格な条件と既存活動の扱い、公民館臨時職員の削減など地元に掛かる負担の軽減を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・高尾肇</span>
+          <span class="ttl">市税の扱い</span>
+          <span class="sum">総合センターだけとなった申告相談の公民館への拡大、固定資産税の税率と近隣市町の状況、税率統一の時期、前納報奨金廃止の理由、郵便局での口座引落しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・板持達夫</span>
+          <span class="ttl">教育委員会の機構改革</span>
+          <span class="sum">教育分室の廃止の趣旨とこれまでの評価、公民館の見直しの手法、教育支援コーディネーターの役割と研修・養成の期間を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H17・安原重隆</span>
+          <span class="ttl">社会教育と生涯学習</span>
+          <span class="sum">高齢者を含む市民が生きがいを持って暮らすことへの市長の認識、ふるさとへの提言の論文募集と地域貢献者への謝意の手紙という市民提案、公民館の環境づくりと厳しい１８年度予算との関係を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・加藤欽也</span>
+          <span class="ttl">パブリックコメント制度</span>
+          <span class="sum">市の木と花の選定でのパブリックコメントの応募者数やインターネット接続世帯の割合を尋ね、計画を自治会や公民館単位で閲覧できるようにすることやテレビの言葉による周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・堀江眞</span>
+          <span class="ttl">公の施設の使用料</span>
+          <span class="sum">使用料の見直しと減免基準の統一でスポーツ少年団やコーラスグループ、老人クラブなどに使用料が生じる問題を取り上げ、公民館ごとに扱いが異なる統一の考え方を尋ね、住民が利用しやすい低料金や実費程度への条例・規則の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・藤原政文</span>
+          <span class="ttl">公民館・図書館職員協議会</span>
+          <span class="sum">公民館・図書館職員協議会の設置理由と根拠や行財政改革との関係、公民館検討プロジェクトチームとの整合、規約の提示時期、主事への労働基準法の適用と図書館職員の報酬の現給との差を尋ね、情報公開によるオープンな議論への見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・金山寿忠</span>
+          <span class="ttl">公民館改革</span>
+          <span class="sum">地域自主組織の活動拠点として見直す公民館がどう変わるのか、主事を任用する雲南市公民館職員協議会の組織と目的および補助金交付の妥当性と社会教育財団等の設置、平成２０年度からの職員体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・堀江眞</span>
+          <span class="ttl">公民館長の待遇</span>
+          <span class="sum">公民館長の報酬の統一に当たり、これまで積み上げてきた仕事の内容や公民館とともに活動してきた住民の思いへの配慮を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・板持達夫</span>
+          <span class="ttl">地域福祉と生涯学習</span>
+          <span class="sum">総合保健福祉計画に基づく地域福祉の展開に生涯学習の手法を取り入れ部局の垣根を越えて取り組むことを提起し、公民館単位の地域福祉委員会の立ち上げについて庁内を調整してわかりやすく指導する必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・吉井傳</span>
+          <span class="ttl">地域行政のあり方</span>
+          <span class="sum">地域振興補助金の平成１８年度の執行状況と使途、効果の検証と未執行分への対応を尋ね、約１０億円の地域運営経費を地域に配分して住民が立案・運営する手法や公民館での窓口業務を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・光谷由紀子</span>
+          <span class="ttl">教育基本法と教育問題</span>
+          <span class="sum">教育基本法改正の国会審議への受けとめと教育の中立性、学校現場の声、教育再生会議の緊急提言のいじめへの対応、就学援助制度の年度途中の情報提供、大東公民館移転後の体育文化センターの管理運営とほっとはぁーとの運営を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・佐藤嘉夫</span>
+          <span class="ttl">財政非常事態と大型事業</span>
+          <span class="sum">財政非常事態宣言の意図、特別会計等を含めた住民１人当たりの借金額と有利起債を除いた額、大東交流センターなど大型事業が続く中での執行のあり方と財政見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H18・阿川光美</span>
+          <span class="ttl">農道整備と旧町の制度</span>
+          <span class="sum">蛇の原野地地区農道整備工事の完成時期と土地提供者との条件、旧三刀屋町の地区土木委員制度の廃止、地区の公民館や家庭への市旗の提供とあっせん、永井隆平和賞の回数の通算化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・加藤欽也</span>
+          <span class="ttl">コミュニティービジネス</span>
+          <span class="sum">コミュニティービジネスの可能性と交流センター活動への組入れ、考えられる活動分野、建設業の新分野進出による雇用創出を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・周藤強</span>
+          <span class="ttl">パブリックコメント制度</span>
+          <span class="sum">これまでの実施件数と意見数、制度を浸透させる方策と関係機関への意見募集、今後の対象計画と学校の適正規模・適正配置の成案の扱い、公民館等へのパソコン設置などコメントしやすい環境づくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・小林眞二</span>
+          <span class="ttl">交流センター</span>
+          <span class="sum">地域づくり活動検討委員会が示す交流センターについて、住民への十分な説明と合意形成を図り一部地域が先行しないよう慎重に推進する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・福間義昭</span>
+          <span class="ttl">今後の市政運営</span>
+          <span class="sum">前年度比約２４億円減となる平成２０年度予算の市民生活への影響、効果の薄れた事業の考え方、市政懇談会の意見の反映、定員管理計画の見直し、公民館への市職員の出向、公共工事減少下の新産業創出、学校給食センターの運営を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・堀江眞</span>
+          <span class="ttl">公の施設の使用料</span>
+          <span class="sum">７月実施となる公の施設の使用料について、３カ月間の住民説明で得た意見、公民館の自主事業の減免判断、料金を先に統一してから負担を求める手順を尋ね、過疎地域の実情を踏まえたポスト過疎法の考えと料金の性急な統一が公平といえるかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・板持達夫</span>
+          <span class="ttl">公民館の地域交流センター化</span>
+          <span class="sum">公民館を地域交流センターとする検討について、名称変更の理由、市長部局への移管のメリット、現行職員体制での対応、教育委員会との連携、指定管理者制度導入と地元負担、平成１９年度末の方針決定の可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・板持達夫</span>
+          <span class="ttl">地域交流センター計画</span>
+          <span class="sum">公民館と交流センターの違いと移行の必然性、名称を地域に委ねる弾力条項、職員の雇用や賃金への市の関与と指定管理委託料の担保、木次公民館下の４つのコミュニティーセンターの存続、市長自らの説明責任を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・内田郁夫</span>
+          <span class="ttl">地域自主組織</span>
+          <span class="sum">自主財源がないと補助金が出ないか、他団体との共同行事や既存の運動会への補助、体育協会や公民館を傘下に置けるか、加茂公民館新設の目的、自主組織の目的と方向性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・堀江治之</span>
+          <span class="ttl">市ホームページの充実</span>
+          <span class="sum">市ホームページでの公民館や地域自主組織単位の統計情報のデータベース化と公開、視覚障害者や高齢者が利用しやすい機能への対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・堀江眞</span>
+          <span class="ttl">施設の光熱費の一律削減</span>
+          <span class="sum">公民館等の光熱費など維持管理費の一律１０％カットにより、免除団体の利用で節約が無駄になり使用料収入も市に徴収されるという施設運営の課題への認識を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H19・藤原信宏</span>
+          <span class="ttl">町村合併の総括</span>
+          <span class="sum">雲南市の危機的財政は合併によるものかと健全財政への見通し、まちづくりの基礎固めへの自己評価、地域の一体化と職員の融和の成果、交流センターは機が熟すのを待って全市同時に移行すべきとの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・佐藤隆司</span>
+          <span class="ttl">交流センター</span>
+          <span class="sum">公民館を交流センターとする計画の認識、公民館の負担の実態、施設修繕への対応、センター長・主事の報酬や地域福祉推進員の予算措置の妥当性、条例提案より市民の理解を先にすべきことと今後の予算拡充を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・細木和幸</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">公民館制度を広げる交流センター構想が市民にわかりにくいため、わかりやすい工夫をして説明を続けることを求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・佐藤隆司</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">２６の公民館と４つのコミュニティーセンター、地域自主組織の活動内容や体制の温度差の把握、すべての地域自主組織が問題なく活動できるか、地域づくり担当職員の役割、一斉移行でなく体制が整った地域からモデルセンターとして進める考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・周藤強</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">公民館を交流センターに改称する構想について、生涯学習部門を市長部局に一本化する基本方針、公民館関係者から不安や不満が出る理由、教育委員会での議論、公民館条例の廃止の可否、来年４月施行のスケジュールが拙速ではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・景山隆義</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">地域の実情に応じた体制づくりができるか、公民館と地域自主組織の関わりを把握していたか、自主組織が公民館の活動を担えるか、センター長・主事による地域活動の支援の範囲、公民館の名称が消えることへの副市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・藤原政文</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">社会教育の担保について現在の生涯学習課との違いとコーディネーター配置の人員管理・財政協議との整合性、地域自主組織が指定管理を受けない場合の対応、１２月議会での公民館条例廃止の予定の有無と丁寧な住民説明を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・細田實</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">交流センター構想の内容の確認、公民館が社会教育に果たしてきた役割と社会教育のとらえ方、公民館を廃止して社会教育を推進できるか、窓口の一本化と指定管理者・主事の役割の整理を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・小林眞二</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">公民館を発展的に解消して交流センターとして市長部局へ移す必要性、地区公民館を拠点とする他自治体の考え方への見解、住民票や印鑑証明の交付など交流センターで行う業務、移行期間の１年延長に伴い条例案の提案時期にこだわらない弾力的なスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・深田徳夫</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">２１年４月実施を広報していた交流センター構想の延期による行政不信をどう打開するか、準備の整った地域でのモデル的な前倒し実施、スタート時点での市職員の各センターへの派遣、職員配置ができない場合の住民票交付などに関する答弁の撤回を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・細田實</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">公民館を残すべきとの立場から、来年度実施の断念後に議会と協議せず次の方針を示した進め方や雇用主体の変更を拙速と指摘し、議会や公民館関係者と議論して進める考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・安井誉</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">交流センター構想について、各地区の説明会等を経た市民の理解・認識をどう受けとめているかと、平成２２年４月の一斉スタートまでの住民説明・施設整備・職員配置・末端組織の拡充のスケジュールを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・西村雄一郎</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">自主組織による地域経営を採用した意義と市長の決意、公民館が担ってきた社会教育の担保、社会福祉協議会との協議と福祉推進員の配置継続、地域自主組織の理念の条例等での明文化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・福島光浩</span>
+          <span class="ttl">交流センター構想</span>
+          <span class="sum">多くの市民の理解が進まず今後を不安視する声への認識と、組織内の活動ごとに行政の関わりを示すなど、説明を求める市民への今後の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・板持達夫</span>
+          <span class="ttl">交流センター計画</span>
+          <span class="sum">来年３月に制定する交流センター設置条例の意義と効果、交流センター予算を３月に固めず時間をかけて理解を得ること、地域福祉部門を社協の地域福祉委員会にゆだねる方針と協議状況、地域福祉の概念を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・細田實</span>
+          <span class="ttl">交流センター計画</span>
+          <span class="sum">３月の条例化への慎重な対応、社会教育推進と公民館機能を条例でどう担保するか、社会教育担当職員を学校でなく地域に置くべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・板持達夫</span>
+          <span class="ttl">交流センター計画</span>
+          <span class="sum">交流センターの実施時期を１年延期した理由、公民館や地域自主組織の関係者と市民への周知と説明、人の配置や責任体制、運営費を含む財源問題について地元が納得できる説明と機運の醸成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・安原重隆</span>
+          <span class="ttl">交流センター計画の変更</span>
+          <span class="sum">移行時期と方法の変更に対する市長の感想と反省、合併協以来の課題とするだけでない市民理解の得方、センター長の雇用形態の変更理由、総合センターへの担当職員配置の適正さ、財政支援の説明と住民負担転嫁への不信の解消、交流センターの将来構想を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・周藤正志</span>
+          <span class="ttl">協働のまちづくり</span>
+          <span class="sum">交流センター構想について市民の理解を得る手法や進め方の問題、地域自主組織と交流センターが将来にわたり持続可能な仕組みか、地域委員会の役割と自主組織・交流センターとの位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・板持達夫</span>
+          <span class="ttl">地域交流センター</span>
+          <span class="sum">公民館を交流センター化する決定的な理由と最大の効果、国の教育行政の議論を踏まえたものか、平成２１年度実施が時間的に可能か、社会教育担当職員の配置の考えと社会教育と生涯学習の手法の違い、住民の理解を深める決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・藤原政文</span>
+          <span class="ttl">地域交流センター構想</span>
+          <span class="sum">市報うんなん１１月号にセンター職員の報酬を掲載した経緯と意図、４４の地域自主組織の組織力の認識、自分たちができることは自分たちでという言葉の具体的な意味、２１年３月の条例制定を急がない考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・石川幸男</span>
+          <span class="ttl">地域経済対策</span>
+          <span class="sum">温浴施設の割り増し回数券やバス利用券など市民対象の景気刺激策、真に必要な公共事業の前倒し、交流センターとなる施設の浄化槽やエアコン等の追加整備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・阿川光美</span>
+          <span class="ttl">市長の４年間の総括</span>
+          <span class="sum">総合計画の５つの将来像のうち交流センターの２２年４月一斉移行について市民への十分な説明を求め、２点目から５点目の将来像の実現を含めて将来に向けた市長の意気込みを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・加藤一成</span>
+          <span class="ttl">情報公開の徹底</span>
+          <span class="sum">交流センター構想への住民の理解を得る方法、市政懇談会の出席率と欠席者への対応、要点を書いた１枚紙の配布、学校給食センター統合延期の理由と今後の予定の周知、総合センターの改革構想の開示を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・光谷由紀子</span>
+          <span class="ttl">指定管理者制度</span>
+          <span class="sum">大きな修繕費がかかる施設を指定管理に出した問題、１０万円以下の修繕費の実績と基準、交流センター化に伴う公民館等の施設整備と２２年４月までの整備の見通しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・深田徳夫</span>
+          <span class="ttl">施設使用料の改定</span>
+          <span class="sum">学校施設や福祉センター、公民館などで大幅な値上げとなる使用料改定が住民の立場や利用目的を考えたものか、１８年度実績に置き換えた増収見込みと来年度の使用料収入、担当部局内での議論や政策会議での判断、市長が全施設の金額を承知しているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・西村雄一郎</span>
+          <span class="ttl">職員の勤務時間短縮</span>
+          <span class="sum">経済危機の中で職員の勤務時間を１５分短縮することへの市民の理解、短縮される労働時間、業務への支障、非常勤職員との格差、交流センター職員の扱い、ワークシェアリングの検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H20・加藤欽也</span>
+          <span class="ttl">補助金・交付金の均等割</span>
+          <span class="sum">公民館単位の均等割による補助金・交付金を加茂町が不平等とする声への見解、交流センターの生涯学習事業費の均等割２０万円と世帯割３００円の見直し、青少年育成協議会の活動補助金一律２万円の再考を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・佐藤隆司</span>
+          <span class="ttl">チャレンジデーの取り組み</span>
+          <span class="sum">チャレンジデー2009で昨年の反省をどう工夫し成果をどう検証したか、身体教育医学研究所うんなんとの連携、対戦相手の広報紙の情報を見たか、取り組みの評価と来年以降の取り組みを問い、交流センター単位の参加率比較など自発的参加の仕掛けづくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・山﨑正幸</span>
+          <span class="ttl">交流センター</span>
+          <span class="sum">地域自主組織が指定管理を受ける場合の納税義務と指定管理料への上乗せ、市職員の地域づくりへの関与、自治振興課担当職員の処遇、地域マネジャー制度の継続、大東・吉田・掛合での施設修繕の発注の遅れを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・佐藤隆司</span>
+          <span class="ttl">交流センター</span>
+          <span class="sum">附帯決議を踏まえた4月以降の取り組みと市民の理解度、支援に係る要望、社会福祉協議会との地域福祉の合意形成、発足後の指導と情報共有、地域づくりの窓口の一本化、社会教育担当職員の中学校配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・細木和幸</span>
+          <span class="ttl">交流センターの地域福祉</span>
+          <span class="sum">社会福祉協議会の地区福祉委員会が自主組織の福祉部に入ることによる指示の重複や譲り合いで地域福祉活動が弱体化しないよう、発足までのすり合わせを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・周藤強</span>
+          <span class="ttl">交流センター移行の課題</span>
+          <span class="sum">地域自主組織の位置づけ、交流センター運営協議会と自治会長連絡協議会の関係、交流センター長と地域自主組織会長の権限、地域福祉活動の指導権限と市の支援、施設の利用制限、既存施設の設置条例の改正と指定管理の契約、地域自主組織の納税義務、運営規則の周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・板持達夫</span>
+          <span class="ttl">地区福祉委員会のあり方</span>
+          <span class="sum">交流センター化に伴い、地区福祉委員会の設置と福祉委員の選出を自主組織に任せること、助成の交付金への一本化、社協の役割を助言と現地指導とすること、市と社協が自主組織へ出向いて調整することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・吉井傳</span>
+          <span class="ttl">地域拠点施設の整備</span>
+          <span class="sum">交流センターとなる29施設の改修が4,000万円で対応できるかと完了時期、掛合町のオンリーワン事業を経済対策の補正で前へ進める考えを問い、農業の位置づけを含む中山間地の雲南市が生きる道について市長の総括的な見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・細木和幸</span>
+          <span class="ttl">地域福祉推進員の報酬</span>
+          <span class="sum">交流センターの地域福祉活動を担う地域福祉推進員について、報酬を低額に平準化するのを避け、三刀屋町の地区福祉委員会の実績を踏まえて数年がかりで三刀屋方式に近づける努力ができないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・光谷由紀子</span>
+          <span class="ttl">地域経済対策</span>
+          <span class="sum">交流センター改修に向けた小規模工事等希望者登録制度の創設、空き家改修の補助条件、住宅リフォーム助成の実施、個人住宅の耐震診断・耐震化の実施時期、住宅用火災警報器の設置への低所得者助成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・周藤正志</span>
+          <span class="ttl">市政運営</span>
+          <span class="sum">公共サービス基本法の職員研修や市民への周知と、交流センター構想やゆとりの里の閉鎖などを例に市長がみずからの政治手法をどう認識しているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・石川幸男</span>
+          <span class="ttl">社会教育の充実</span>
+          <span class="sum">家庭・地域の教育力の現状と変化への認識、社会教育コーディネーターを配置しての社会教育推進の具体策、ＰＴＡとの連携と教育支援コーディネーターへの指導、推進の視点、交流センターを中心とした社会全体の教育力向上を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・山崎英志</span>
+          <span class="ttl">組織機構再編と総合センター</span>
+          <span class="sum">新たな定員管理計画に伴う各総合センターの職員削減の規模と年次スケジュール、総合センターが担う業務の将来、緊急災害時の対応、本庁から離れた旧町への支援、交流センターへの新たな負担の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・山崎英志</span>
+          <span class="ttl">経済危機対策の効果と発注</span>
+          <span class="sum">経済危機対策臨時交付金10億5,900万円と公共投資臨時交付金による市の経済効果、生活対策交付金事業と合わせた事業の市内事業者への発注比率、交流センター改修工事等で零細事業者の受注機会を増やすための追加申請の前倒しと、市や商工会による申請書類の作成指導を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・高橋雅彦</span>
+          <span class="ttl">総合センター長の位置づけ</span>
+          <span class="sum">来年4月に発足する交流センターの準備状況と、地域課題の窓口となる総合センター長の職務権限が市の規程で明確にされているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H21・堀江治之</span>
+          <span class="ttl">防災マップと避難体制</span>
+          <span class="sum">各戸に配布された防災ハンドブックとハザードマップに関し、避難所となる学校施設の耐震診断結果と耐震化計画、交流センターとなる施設の耐震状況、避難所スペースの確保、神社仏閣が避難所から外された根拠、安全性確認の確認者、避難勧告の発令基準とパソコンを使えない人への周知、アパート居住者など自治会未加入者への災害情報の伝達方法を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・福島光浩</span>
+          <span class="ttl">住民自治と行政の関わり</span>
+          <span class="sum">掛合町波多の彩りプロジェクトの経過と成果、持続可能な地域づくりに向けて市民と行政それぞれに求められるもの、地区福祉活動や生涯学習など交流センター単位での役割の位置づけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・福島光浩</span>
+          <span class="ttl">協働のまちづくり</span>
+          <span class="sum">地区計画の位置づけと策定状況、合意形成への行政の関与、まちづくり担当職員の体制と役割、交流センター化後の生涯学習の推進、社会教育コーディネーターと地域コーディネーターの体制、地域計画の位置づけ、地域委員会の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・細木和幸</span>
+          <span class="ttl">地域マネジャーの仕事量</span>
+          <span class="sum">交流センターの発足に伴い増えたとされる地域自主組織の地域マネジャーの仕事量を把握し、適切に対応する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・西村雄一郎</span>
+          <span class="ttl">地域自主組織の役員</span>
+          <span class="sum">地域自主組織の役員の政治活動の制限や地位利用の有無とその周知、交流センターと地域自主組織の混同に対する教育長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・周藤正志</span>
+          <span class="ttl">環境を守る取り組み</span>
+          <span class="sum">バイオマスエネルギーの取組の総括と事業化への決意、バイオマスタウン構想への考え、太陽光発電補助の予算・申請締め切り・補助単価、交流センター等への太陽光発電の設置、ＬＥＤ照明の普及施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・藤原信宏</span>
+          <span class="ttl">公共施設の見直し</span>
+          <span class="sum">旧町村の類似施設の総合的計画による統廃合、掛合町の交流センター建設の全体計画上の位置づけ、桂荘の浴室使用料改正で廃止された高齢者等の割引制度の市内温浴施設への統一採用について所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・福島光浩</span>
+          <span class="ttl">協働のまちづくり</span>
+          <span class="sum">地域振興補助金の成果の評価と課題、市主催行事での託児の検討状況、市民活動の情報発信とポータルサイトによる一本化、一括交付金化を含む新制度の設計過程と規模、補助金全般の見直し、コミュニティービジネスの捉え方、地域自主組織と交流センター化の１年目の検証と市民参画の検討組織の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・福島光浩</span>
+          <span class="ttl">市民が主役のまちづくり</span>
+          <span class="sum">交流センターと自主組織の課題認識と見直しの手法・スケジュール、市民が求める行政サービスの可視化、コミュニティービジネスの展開、地域委員会の評価と次期方針、新たな地域づくり支援制度、集落支援員の役割、スーパーコミュニティー法人制度と寄附のＰＲ、社会教育・生涯学習の推進体制、５歳児健診とあわせた就学前の親への働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・石川幸男</span>
+          <span class="ttl">教育・文化の振興</span>
+          <span class="sum">新学習指導要領の全面実施に向けた新年度の取り組み方針、保育所・幼稚園での夢発見プログラムの実践と充実方針、交流センターを拠点とした生涯学習の連携・支援強化、古事記完成１，３００年を機とした地域文化の振興の支援策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・光谷由紀子</span>
+          <span class="ttl">総合センターの機能充実</span>
+          <span class="sum">本庁への集中に対する住民の不安を踏まえた現地解決型の総合センターの機能充実と、交流センターに窓口サービスを置くことが住民自治の拠点を行政の下請機関にすることにならないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H23・福島光浩</span>
+          <span class="ttl">行政組織見直しと協働</span>
+          <span class="sum">行政組織の見直しに向けた１０年先２０年先を見据えた行政運営のビジョンの開示、総合センターのまちづくり支援の仕事の精査、３２年度以降の定員管理と総合センターの維持管理コスト、地域自主組織と交流センターの将来の役割、ＩＴを活用したサービスと情報化計画の策定、行政ＯＢ職員の活用、職員の地域枠を超えた配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・佐藤隆司</span>
+          <span class="ttl">チャレンジデーと健康づくり</span>
+          <span class="sum">告知放送の放送時間や商業放送の地域差、ラジオ体操の全市放送などの健康づくりの仕掛け、チャレンジデーの評価と職員の率先や交流センター対抗の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・矢壁正弘</span>
+          <span class="ttl">プレミアム商品券の効果</span>
+          <span class="sum">プレミアム商品券の波及効果と反応、販売時期や交流センターなど販売場所の見直し、2次販売での大量購入、500円券の発行を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・原祐二</span>
+          <span class="ttl">地域自主組織の支援</span>
+          <span class="sum">地域自主組織に期待することと重点的な支援の内容、組織同士の合併による効率化と規模の差、平成２８年度までの交流センターの建てかえ予定と備えるべき施設や規模を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・山﨑正幸</span>
+          <span class="ttl">行政組織と公の施設の見直し</span>
+          <span class="sum">新庁舎建設にあわせた市民の相談への対応と行政組織の見直し、庁舎と総合センターの役割分担、地域自主組織と行政の関係の変化と活動支援の担当、廃園・廃校後3年以内の利用方針決定に伴う施設修繕への支援、廃園・廃校施設の活用も視野に入れた交流センター整備の実施計画と財政計画の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・福島光浩</span>
+          <span class="ttl">雲南市の経営ビジョン</span>
+          <span class="sum">地域自主組織の成果と課題および組織間の差への対応、協働のまちづくりの具体例と推進体制、交流センター施設整備計画の担当部署と公の施設の見直し方針の進捗、地域要望制度の課題と市民の声を市政に反映させる新たな仕組み、地域おこし協力隊の実績と評価・今後の活用方針と中野地区での取組、スポーツによる健康推進の取組と障がい者スポーツ・市独自のスポーツ振興計画の策定、戦略的な職員採用策、市長が次の4年間に必ずやることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・細田實</span>
+          <span class="ttl">労働者の労働条件</span>
+          <span class="sum">地域自主組織が雇用する交流センター職員の労働条件向上の仕組みと市の指導の立場、公共工事設計労務単価の改定を技能労働者の賃金に反映させる市の対応と建設団体への要請を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・多賀三雄</span>
+          <span class="ttl">地域自主組織と交流センター</span>
+          <span class="sum">地域自主組織と交流センターに求める役割と現状・課題、市担当職員の支援、交付金の将来的な維持と柔軟な使途、法人化の目的、地域への押しつけと住民福祉の公平性、制度変更の早期提示を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・細木照子</span>
+          <span class="ttl">福祉推進員の雇用日数</span>
+          <span class="sum">交流センターの福祉推進員の勤務日数が週に二、三日では不足しているとして、雇用日数の倍増を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・白築俊幸</span>
+          <span class="ttl">総合センターの改築</span>
+          <span class="sum">老朽化した総合センターの改築の考え方を尋ね、掛合町の地域自主組織が要望する交流センターとの合築・一体的整備と方針決定の進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・山﨑正幸</span>
+          <span class="ttl">総合センターの縮小</span>
+          <span class="sum">事業管理課の新庁舎への集約の検討状況、総合センターごとの職員数、市民説明資料の全戸配布とわかりやすさ、交流センターへの職員配置と地域自主組織との協働を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・中村辰眞</span>
+          <span class="ttl">障害者差別解消法</span>
+          <span class="sum">職員対応要領の策定状況と条例化の考え、社会的障壁と合理的配慮の意味、保育所や学校、交流センター、庁舎の環境整備、サービス介助士の配置、民間の障がい者雇用の拡大と法定雇用率を達成した事業所の表彰、職員募集に精神障がいの種別がないことの解釈を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・上代和美</span>
+          <span class="ttl">大雪時の除雪体制</span>
+          <span class="sum">大雪時に総合センターで臨時的に対応すること、雪害レベル２への引き上げ、ボランティアの把握と雪捨て場の明確化、学校や交流センターへの小型除雪機の配備、ボランティア除雪の事故への保険適用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・細木照子</span>
+          <span class="ttl">避難所と福祉避難所の確保</span>
+          <span class="sum">一時避難所となる自治会の公民館・集会所の駐車場や和式トイレの改修支援、福祉避難所へ看護師・介護士・栄養士などをどこから配置するかの事前計画について状況と考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・細木照子</span>
+          <span class="ttl">交流センターの集会室</span>
+          <span class="sum">地域自主組織の拠点である交流センターの集会室が狭い場合の早急な対応と、駐車場が適切に確保されているかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・周藤強</span>
+          <span class="ttl">地域包括ケアの構築</span>
+          <span class="sum">本市が目指す地域包括ケアシステムをわかりやすく示すよう求め、交流センターへの地域支援コーディネーター配置を含むシステム構築の手法と地域との関わりの展開を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・堀江治之</span>
+          <span class="ttl">市有林の林材と木造化</span>
+          <span class="sum">市有林の樹種別の林材数量と松くい虫被害を踏まえた松の材積、下刈り・枝打ち・除伐・間伐など保育の実施時期、柱や桁など用途別の伐採林齢と利用可能な林材の材積、公共施設の木造建築推進の具体方針と交流センター施設整備計画の木造化が実施されない理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・上代和美</span>
+          <span class="ttl">市道の草刈り対策</span>
+          <span class="sum">高齢化や過疎化で困難になっている市道の草刈りについて、事業者への委託の拡大と、交流センター単位での自走式・乗用式草刈り機械の設置を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・白築俊幸</span>
+          <span class="ttl">指定管理者制度</span>
+          <span class="sum">指定管理者制度が経費の節減のみを優先していないかを尋ね、利用料収入の増加に伴う指定管理料の引き下げとインセンティブ、地域自主組織のコミュニティービジネスの狙いと交流センターの指定管理料への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・周藤正志</span>
+          <span class="ttl">自治会と住民自治の支援</span>
+          <span class="sum">自治会維持運営交付金の見直しの調査内容と街路灯の電気代や集会所の小規模修繕への補助、交流センターへの市職員の派遣による住民自治の実地研修を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・上代和美</span>
+          <span class="ttl">雪害対策</span>
+          <span class="sum">大東の連担地の除雪に向けた雪捨て場を含む事前の地元協議、透析患者の通院確保のための部署間の連携、交流センター単位での除雪計画の住民周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・上代和美</span>
+          <span class="ttl">コウノトリとの共生</span>
+          <span class="sum">大東の春殖に営巣したコウノトリについて、市民の理解を得ながら無理なくできることから進める施策の立案、夢ネットでの発見情報の放送、春殖交流センターでのビデオ映像の同時視聴、子供や若者が参画できる学習活動のアクションプランを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・細木照子</span>
+          <span class="ttl">市民バス停留所の再検討</span>
+          <span class="sum">停車帯のない県道の停留所で高齢者が危険な状態でバスを待つ例を挙げ、自治会公民館の庭なども含めた市民バス停留所の場所の再検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・細木照子</span>
+          <span class="ttl">公共施設の音響改善</span>
+          <span class="sum">地域交流センターなど公共施設の会場の音響がこもって言葉を識別しにくく、難聴の高齢者に不評であることから、音響・音質の早急な改善を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・堀江眞</span>
+          <span class="ttl">吉田保育所の整備</span>
+          <span class="sum">総合センター・交流センターとの３つセットにせず保育所の移設を先行できないかを尋ね、吉田・田井両保育所の職員トイレの早期整備と、フェンスや遊具周りの園内除草の担当の明確化を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・周藤正志</span>
+          <span class="ttl">市役所の組織体制</span>
+          <span class="sum">総合センターの役割と人員配置の見直しや交流センターでの証明事務、若手職員の総合センター配置、市全体の業務量と職場点検、グループ制とフラット化の成果と検証、職員定員管理計画の見直しの観点と再任用職員の定数上の扱いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・中林孝</span>
+          <span class="ttl">身体教育医学研究所</span>
+          <span class="sum">身体教育医学研究所うんなんの意義と目的・年間予算・陣容、成果と市民への還元、体育施設や交流センターとの連携、公益財団法人化の目的、市民生活にとっての必要性を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・中村辰眞</span>
+          <span class="ttl">上代タノ先生の宣揚</span>
+          <span class="sum">上代タノ先生を市内外へ啓発する考え、総合センターや交流センター、学校図書館などでの分散型の啓発コーナーの確保、永井隆記念館での外部団体による企画展示の可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・中林孝</span>
+          <span class="ttl">交流センター等の整備</span>
+          <span class="sum">実施計画に示されていない海潮交流センターの新規建設と、借地で立ち退きを求められているうしお児童クラブの新規建設について、地区からの要望書に対する具体策と時期の提示を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・梶谷佳平</span>
+          <span class="ttl">加茂交流センター</span>
+          <span class="sum">加茂交流センター建設費が4.9億円に増額した理由の説明と、総務常任委員会への説明なしに予算説明や報道発表を行ったことへの市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・藤原信宏</span>
+          <span class="ttl">感染者発生時の初動対応</span>
+          <span class="sum">７月２１日に庁舎内で市内初の新型コロナ感染者が確認された際、記者会見が２２日の昼過ぎとなった公表・周知の遅れと、発生直後に交流センター等の休館方針を緩和して通知した対応の是非を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・深田徳夫</span>
+          <span class="ttl">特定地域づくり協同組合</span>
+          <span class="sum">特定地域づくり事業協同組合制度の進捗状況、元気！！ファームズよしだや鍋山担い手ネットワーク協議会の取組の他地域への展開、未整備の交流センターの改築の進捗と完成時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・藤原信宏</span>
+          <span class="ttl">豪雨災害対策</span>
+          <span class="sum">自助の意識啓発、災害の種類に応じた避難場所の事前設定とアスパルの避難所としての適否、危険な交流センターの改築順位の繰上げ、高齢者等避難開始の発令の在り方とタイムライン、天神頭首工の可動堰化、避難所のコロナ対策用品の確保、交流センターへの災害用備蓄品の交付を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・中林孝</span>
+          <span class="ttl">令和４年度当初予算</span>
+          <span class="sum">令和４年度当初予算で市長が公約実現に向けて想定する事業、保留されたサッカー場整備の検討状況と予算化の考え、未整備の交流センターの整備方針と予算計上、災害復旧の土木工事に偏らない建築工事とのバランスの取れた公共工事の発注を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・上代純子</span>
+          <span class="ttl">地域自主組織の支援</span>
+          <span class="sum">新たな取組を後押しする柔軟な財源支援と自主財源確保の助言、若い世代が運営や活動に参加できる対応、地域カレッジ・地域円卓会議の効果、役員・職員の賃金、市職員を交流センターへ専任配置する人的支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・安田栄太</span>
+          <span class="ttl">災害時の避難所運営</span>
+          <span class="sum">指定避難所ごとの避難所運営マニュアルの作成と避難所運営協議会での事前協議、開設した避難所の周知、避難所トイレの洋式化、離乳食やアレルギーに対応する調理設備の交流センターへの設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・藤原信宏</span>
+          <span class="ttl">豪雨災害対策</span>
+          <span class="sum">災害復旧工事の優先発注、通常業務と切り離した災害復興の体制と随時の強化、施工業者の確保、指定の残土処理場の確保、三谷川の排水ポンプ能力の増強と一体的な排水対策、南通り線の迂回路、交流センターの安全点検と移転・改築の前倒し、災害時の電気自動車の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・中村辰眞</span>
+          <span class="ttl">豪雨災害時の対応</span>
+          <span class="sum">災害対策本部の設置場所と応急対策地図、発災直後の被災現場確認の体制、大倉地区の孤立や深野三谷地区の把握の遅れ、ゴムボートや液体ミルクの備蓄、被災者に寄り添う対応、停電時の情報提供、旭町の浸水と排水能力、国土交通大臣の提案の活用、中野交流センターの進入路の複数化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・鶴原能也</span>
+          <span class="ttl">７月豪雨災害への対応</span>
+          <span class="sum">災害情報の一元管理と発信、本庁・総合センター・交流センターの連携体制、ケーブルテレビの水位情報が更新されなかった原因、避難所のコロナ対策とペット同伴避難、災害備蓄品の保管と払出し・品質管理・周知、小学校児童の引渡しの判断と情報提供、被災農家への所得保障的な支援や中山間地域等直接支払交付金の遡及返還、認定農業者の基準緩和を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・中村辰眞</span>
+          <span class="ttl">労働者協同組合法</span>
+          <span class="sum">10月施行の労働者協同組合法で何が変わるか、交流センターを含む行政関係者への研修と市民への周知、庁内の担当窓口、日本労働者協同組合への認識と連携を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・佐藤隆司</span>
+          <span class="ttl">ラメールの大規模修繕</span>
+          <span class="sum">加茂文化ホール・ラメールの大規模修繕の計画と議会への説明、健全度評価と異なるホール施設の整備優先順位、概算予算と地元業者の入札参加、今後の増額見込みを尋ね、交流センターの優先を含め公共施設の在り方を議論すべきと提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・佐藤隆司</span>
+          <span class="ttl">交流センターの整備</span>
+          <span class="sum">協働のまちづくりの拠点としての交流センターの認識と地域からの要望、建て替え・改修の方針と施設整備計画の見直し、選択と集中による交流センター建て替えの重点化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・松林孝之</span>
+          <span class="ttl">避難所の防災機能</span>
+          <span class="sum">学校施設の非常用発電機と断水時のトイレ対策の整備状況と備蓄場所、交流センターなど学校以外の指定避難所の発電機やマンホールトイレの整備、簡易トイレ用のパーティションの配備を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・中林孝</span>
+          <span class="ttl">本市の林業の振興</span>
+          <span class="sum">林家の戸数や樹種、齢級、公的機関が所有する森林面積などの実態、荒れた市有林の活用と交流センターなど公共建築物への市産材の利用、林業がなりわいとなり得るかと集約化や団地化、循環型林業の構築でネックとなるサプライチェーンと行政のすべきことを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・梶谷佳平</span>
+          <span class="ttl">総合センターの在り方</span>
+          <span class="sum">合併２０年を迎え、コスト削減のため総合センターの廃止を含む在り方を尋ね、吉田や掛合など本庁から遠い地域への配慮と、交流センターの統廃合や複合化の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・中村辰眞</span>
+          <span class="ttl">公園遊具撤去の判断</span>
+          <span class="sum">三刀屋交流センター横公園の遊具の安全性の判断根拠と撤去後の跡地利用、アンケート結果に基づく修理と継続、コトリパークのフェンスの隙間解消と回転式バーの出入口設置による安全性確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・石原忍</span>
+          <span class="ttl">所信表明の施設整備方針</span>
+          <span class="sum">市長所信表明のハード面について、掛合体育館の整備に言及しながら実施方針で拠点とした大東公園体育館に触れない理由と整備方針の一体的な提示、幡屋交流センター以外の交流センターの整備や集約を含む方向性、次期一般廃棄物処理施設の検討の進捗と方向性を出す時期、30年までの経費試算を踏まえた慎重な検討を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 自治体くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
