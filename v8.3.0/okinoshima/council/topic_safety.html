@@ -1,0 +1,2576 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防災と地域の安全 — 隠岐の島町議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">隠岐の島町 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+                    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+                        <div class="cross-nav-inner">
+                            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+                            
+                        </div>
+                    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_safety.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">豪雨災害と土砂災害</a></li>
+                            
+                            <li><a href="#topic-02">治水と河川改修</a></li>
+                            
+                            <li><a href="#topic-03">避難所と要支援者の避難</a></li>
+                            
+                            <li><a href="#topic-04">自主防災組織と消防団</a></li>
+                            
+                            <li><a href="#topic-05">災害情報の伝達</a></li>
+                            
+                            <li><a href="#topic-06">交通安全と防犯</a></li>
+                            
+                            <li><a href="#topic-07">大規模地震と耐震化</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 町長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">隠岐の島町 · 議会レポート / <b>防災と地域の安全</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">防災と地域の安全</h1>
+  <p class="page-subtitle">
+    隠岐の島町議会の一般質問・代表質問について、区分「防災と地域の安全」に属する7の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">豪雨災害と土砂災害</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">治水と河川改修</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">避難所と要支援者の避難</a></th>
+            <td class="lt10">8</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">7</td><td class="lt25">14</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">自主防災組織と消防団</a></th>
+            <td class="lt25">17</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">15</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="lt25">21</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">災害情報の伝達</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">交通安全と防犯</a></th>
+            <td class="h0">0</td><td class="lt10">8</td><td class="lt25">17</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-07">大規模地震と耐震化</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">14</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>12</td><td>12</td><td>12</td><td>14</td><td>13</td><td>13</td><td>14</td><td>12</td><td>14</td><td>14</td><td>14</td><td>13</td><td>14</td><td>14</td><td>14</td><td>13</td><td>13</td><td>9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>豪雨災害と土砂災害</h3>
+    <p class="terms">語: 豪雨災害と土砂災害・豪雨災害・土砂災害・７月豪雨・７月豪雨災害・7月豪雨・7月豪雨災害</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">災害時の代替道路</span><span class="sum">線状降水帯による集中豪雨で土砂災害が増え、今年のお盆前の大雨で交通に支障をきたしたことを踏まえ、通行に大きな影響を及ぼす道路の代替道路・バイパスを検討する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">災害予防と応急対策の強化</span><span class="sum">令和2年・3年の豪雨災害を踏まえ、危険箇所の点検活動など災害予防の現状と今後の災害対策強化の取り組みを尋ね、災害協定に加えて平常時から建設業協会との連携を強化し、災害予防・応急対策での役割を明確化すべきではないかと質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">災害を受けたインフラ評価</span><span class="sum">令和2年・令和3年の豪雨災害を受けて、町内のインフラが現代の気象規模に追いついているかを含め、その評価を問うた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第3回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">自主防災組織と避難訓練</span><span class="sum">島根県西部の豪雨災害を教訓に、90地区の自治会による自主防災組織の立ち上げが12.2パーセントに留まる現状から、町が各地区と連携して防災避難訓練を実践・検証する体制の整備と、組織率向上の目標期限の設定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">砂防の土砂災害対策</span><span class="sum">平成19年の集中豪雨で町内の砂防の多くが満杯に近い状態で放置されている現状を挙げ、家屋に被害が出ると予測される範囲の砂防の数と状況、今後の対処を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>豪雨災害の防止のための治水・土砂災害対策</summary><p>平成19年のような大規模な豪雨災害を未然に防ぐため、河川改修・砂防対策・急傾斜地対策・地すべり対策などの整備を島根県と連携して進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>急傾斜地崩壊対策事業</summary><p>土砂災害を未然に防ぐため、高井地区・加茂地区・中村一ノ森地区・倉見地区の急傾斜地崩壊対策事業を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>急傾斜地崩壊対策事業と砂防事業</summary><p>土砂災害を未然に防ぐため、高井・加茂・中村地区などの「急傾斜地崩壊対策事業」や五箇地区の「奥谷川の砂防事業」を推進する。新規に都万地区の「井の奥谷川砂防事業」に着手するなど砂防施設の整備に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>複合林業経営への移行による森林保全</summary><p>森林の適正な保全管理は住民の安心安全に欠かせないことから、短伐期の柱材生産に長伐期の特殊材生産を加えた複合林業経営への移行を促し、森林の土砂災害防止機能を高める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>豪雨災害の復旧と緊急避難道路等の整備</summary><p>昨年8月の豪雨災害の復旧に全力で取り組む。あわせて津波などの災害に備えた緊急避難道路と、緊急車両の進入困難箇所の解消に向けた整備を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>土砂災害特別警戒区域内の住宅補強支援</summary><p>島根県が指定する土砂災害特別警戒区域内の住宅について、住宅補強などの支援制度を整備し、住民の不安を解消する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>昨年8月豪雨災害の早期復旧</summary><p>昨年8月の豪雨で公共施設と農林業施設等あわせて118箇所、約11億1,000万円の被害額が確定した。工事発注の準備を進めており、新年度に最優先で取り組み早期の復旧を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>船原集会所の再整備</summary><p>令和2年8月の豪雨災害で撤去を余儀なくされた船原集会所を新年度に再整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>冠水・土砂災害・河川氾濫対策</summary><p>災害に強い生活環境の基盤整備として、集中豪雨による路面の冠水対策、道路法面崩落に対する土砂災害防止対策、河川の氾濫を防ぐための堆積土砂の撤去を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>治水と河川改修</h3>
+    <p class="terms">語: 治水と河川改修・治水・河川改修・大橋川・斐伊川・内水対策・流域治水・ため池・防災重点ため池・尾原ダム</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="empty">この話題に触れた質問は、対象年度にありません。</p>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>八尾川河川改修事業</summary><p>八尾川河川改修事業の上流部の事業促進を図り、早期完成に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>豪雨災害の防止のための治水・土砂災害対策</summary><p>平成19年のような大規模な豪雨災害を未然に防ぐため、河川改修・砂防対策・急傾斜地対策・地すべり対策などの整備を島根県と連携して進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>八尾川河川改修</summary><p>八尾川上流部の整備を促し、八尾川河川改修事業の早期完成に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>農業施設の整備</summary><p>圃場整備地区の用排水路・農道の維持管理から老朽ため池の整備まで、農業施設の整備を積極的に実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>農業施設の整備と農業用水のパイプライン化</summary><p>ほ場整備地区の用排水路・農道の維持管理から老朽ため池の整備までを計画的に実施する。あわせて農業用水のパイプライン化に取組み、維持管理費の節減と生産性の向上に努める（同一段落の施設整備とパイプライン化を統合）。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>避難所と要支援者の避難</h3>
+    <p class="terms">語: 避難所と要支援者の避難・避難所・避難行動要支援者・避難勧告・ハザードマップ・備蓄・携帯トイレ</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H21"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt25" data-year="R04"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">原発事故時の物資供給</span><span class="sum">島根原子力発電所の事故時に半径30㎞圏内にあるフェリーや航空の輸送機関が使えなくなる場合の本町への物資の輸送・供給に関する考え方を尋ね、備蓄を2日間とする根拠を質した。</span></li>
+          
+          <li><span class="who">令和4年第3回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">高潮被害への対応</span><span class="sum">台風11号の高潮で浸水した港町八尾川沿い地区への町の対策を尋ね、空地への土嚢やシートを備蓄する簡易倉庫の設置と、愛の橋の架け替えと同時に県と協議して浸水防止の工事を進めることを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">防災・減災対策</span><span class="sum">令和元年12月以降に道路沿いの電線・電話線を切断しかねない立木の伐採に向けてどのような調査・検討をしてきたか、各支所・避難所等への非常電源の配備、行政はまず「公助」であるべきとの認識、所有者の許可を得て行政が私有地の樹木を伐採することの可否を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第3回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">ダム管理者との連携</span><span class="sum">8月7日の豪雨で銚子ダムの越水の恐れから避難勧告を出したことや野村ダムの例を挙げ、ダム管理者との協議、渇水に配慮した事前放流、町とのホットラインの有無とその住民への公表を質した。</span></li>
+          
+          <li><span class="who">令和2年第3回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">地域主体の避難所運営</span><span class="sum">避難所を地域住民の運営委員会が女性も参加して自主運営する考えと相良村の避難の例を挙げ、地域と行政が一体となる防災のまちづくりと、水害対応の手引きを踏まえた職員への防災教育を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">学校の防災対策</span><span class="sum">学校保健安全法を踏まえ、通学路の倒木の恐れがある危険木の伐採の整備計画、指定避難所である体育館を含む学校の空調整備とペレットボイラー導入の考え方や国の制度の調査、学校の危機管理マニュアルの策定状況と避難所対応の明記、防災頭巾を活用した訓練を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">津波対策と避難所見直し</span><span class="sum">東日本大震災の大津波を踏まえ、海抜の低い都万地区の例を挙げて一時避難所の見直しと津波対策への着手の考えを問い、計画の作成時期や支所の宿日直廃止後に本庁で対応するまでの時間を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">新型インフルエンザ対策</span><span class="sum">秋冬の第二波に備え、町の新型インフルエンザ対策の考え方、感染拡大時のマニュアルの有無、全世帯を視野に入れたマスク備蓄、杉の子学園解体後を含む毒性の強い場合の発熱外来と感染者ベッド、プレハブ発熱外来の設置時期を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>防災計画の見直しと防災体制の確立</summary><p>県の地震被害想定で本町「代地区」に最大13.35メートルの津波が想定されたことなどを踏まえ、防災計画の見直しや津波ハザードマップの作成を行う。自治会組織・関係機関との連携を強化し、地域の防災組織の推進を含む説明会、避難訓練、研修会の開催など防災体制の確立と災害対策の強化に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>地区防災学習会・防災訓練と自主防災組織化</summary><p>「隠岐の島町地域防災計画」や「隠岐の島町防災ハザードマップ」などを活用した地区学習会や防災訓練を開催し、防災意識を高める。自主防災組織化を推進し、地域の防災・減災対策を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>防災学習会・防災訓練と自主防災組織の設立促進</summary><p>防災ハザードマップや防災パンフレットなどを活用した学習会や防災訓練を実施し、防災・減災意識を高めるとともに、自主防災組織の設立にもつながるよう努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>自主防災組織と消防団</h3>
+    <p class="terms">語: 自主防災組織と消防団・自主防災組織・消防団・消防団員・消防本部・防災訓練・ＡＥＤ・AED</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt25" data-year="H21"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt25" data-year="H25"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/14人</span><span class="q">2件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">2件</span></td><td class="lt25" data-year="R05"><b>3</b><span class="of">/14人</span><span class="q">4件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第4回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">自主防災組織の現状</span><span class="sum">自主防災組織の設立が全島90地区以上のうち20か所程度にとどまる現状への町長の見解を尋ね、防災講演会を旧町村内でも開催するよう質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第2回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">自主防災組織の育成</span><span class="sum">自主防災組織達成率が24.6％と島根県平均の76.2％を大きく下回る中、組織の育成・設立に向けた考え方と地域での学習会など設立への働きかけの具体策を尋ね、防災研修会や先進地視察、防災資機材の購入等への助成制度についての考えを質した。</span></li>
+          
+          <li><span class="who">令和5年第3回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">消防団員の年額報酬</span><span class="sum">県内で国の基準額3万6,500円に達していないのは本町と知夫村のみで本町の団員は2万3,400円であることを挙げ、条例改正による早急な引き上げ、消防委員会の招集と適正な報酬額、今年度中の条例改正、令和10年度までの段階的引き上げを諮問したのかを質した。</span></li>
+          
+          <li><span class="who">令和5年第3回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">消防団のなり手不足対策</span><span class="sum">消防団員の負担の軽減と処遇面の改善によるなり手不足の解消策を尋ね、消防操法大会に向けて仕事後に練習する団員への手当など、団員に寄り添ったきめ細かな対策を質した。</span></li>
+          
+          <li><span class="who">令和6年第1回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">災害時の機関連携</span><span class="sum">能登半島地震を踏まえ、有事に町・自衛隊・警察・消防・病院などが計画どおり連携できるか、地区の自助・共助や避難行動を町が把握しているかを尋ね、顔の見える関係づくりや自主防災組織、地区担当職員、要支援者の把握を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">自主防災組織率の向上</span><span class="sum">平成29年以降新規の自主防災組織が無いなかで自主防災組織率を含む現状への見解と組織率向上の施策を尋ね、立ち上げまでのサポートや健康診断のポイントのような参加促進の仕組みを地区や自治会へ提案することを質した。</span></li>
+          
+          <li><span class="who">令和4年第3回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">水害防止対策</span><span class="sum">台風11号で土嚢やブルーシートが不足した経験を踏まえ、今後の自然災害による水害防止対策を尋ね、消防団と住民の連携や指揮が見える防災活動、各集会所への土嚢用の砂置き場の設置などを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・菊地政文</span><span class="ttl">防災・減災の強化</span><span class="sum">自主防災組織の即時即応の利点を生かし、行政ができることと地域が行うことの役割分担や高齢者・障がい者・乳幼児への支援など防災・減災の強化を質した。</span></li>
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・菊地政文</span><span class="ttl">各種の防災訓練</span><span class="sum">本町と関係機関などが連携してさまざまな状況を想定した防災訓練を実施することを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">地域の防災訓練</span><span class="sum">地域防災計画が机上の空論になっていないかの検証の必要性を指摘し、計画に明記された総合訓練や旧町村単位・地域単位の個別訓練を行政が主導して計画的に実施し、自主防災組織に反映させる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">想定外災害への防災対策</span><span class="sum">津波など想定外の災害に対応した防災行動計画の策定、組織率24.2％にとどまる自主防災組織の育成と数値目標、欠員のある消防団員の確保と企業への働きかけ、人工林の間伐による流木対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第1回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">事業計画の説明手法</span><span class="sum">布施地区の休憩施設改修事業や隠岐島消防本部庁舎の島内産木材による木質化事業を例に議会への説明不足を指摘し、事業計画の詳細を丁寧で誤解を招かないよう説明する手法の改善を求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第3回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">自主防災組織と避難訓練</span><span class="sum">島根県西部の豪雨災害を教訓に、90地区の自治会による自主防災組織の立ち上げが12.2パーセントに留まる現状から、町が各地区と連携して防災避難訓練を実践・検証する体制の整備と、組織率向上の目標期限の設定を質した。</span></li>
+          
+          <li><span class="who">平成26年第1回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">防災対策の充実強化</span><span class="sum">平成18年策定の地域防災計画を見直して津波対策編を盛り込むこと、高齢者など災害弱者の名簿の共有とバス会社等との避難協定、危機管理室設置の考え方と危機管理基本方針の策定及び住民への周知、地域自主防災組織の育成と仮称「自主防災組織活性化支援事業」の創設を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第4回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">新隠岐病院周辺の整備</span><span class="sum">新隠岐病院の周辺に老朽化した隠岐島消防本部庁舎があるなど問題が山積しているとして、島の医療対策の拠点としての病院周辺の整備の考えと、県立養護学校の関係者や県当局との交渉に着手する時期を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第4回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">消防本部の整備</span><span class="sum">築後36年を経過し老朽化と手狭さが目立つ隠岐広域連合消防本部について、隠岐の島町長として移転・新築等を広域連合に提案する考えを質した。</span></li>
+          
+          <li><span class="who">平成22年第1回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">消防本部庁舎の整備</span><span class="sum">13億円を超える隠岐島消防本部庁舎の整備について、新隠岐病院に隣接する現県立養護学校の位置への建設に向けた県との交渉の意思、教育委員会の五箇地区移転と跡地の対策、基金を充ててでも進める首長の構想を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>危機管理体制の確立と自主防災組織の育成</summary><p>町民の生命と財産を災害や犯罪から守るため、的確に行動できる危機管理体制を確立し、防災・防犯の施策を推進する。地域の自主防災組織の育成・強化を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>自主防災組織の組織率向上</summary><p>自主防災組織の組織率の向上は急務であり、その重要性を啓発しながら取組みを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>消防団の充実と自主防災力の強化</summary><p>地域防災力の中核となる消防団の充実を図り、自治会組織・関係機関との連携を深めながら、地域の防災意識の高揚や自主防災力の充実強化に向けた支援策などを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>消防団の充実と自主防災力の強化</summary><p>地域防災力の中核となる消防団の充実、自治会組織・関係機関との連携を深め、地域の防災意識の高揚や自主防災力の充実強化に向けた支援策を実施する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>防災行政無線のデジタル化と地域防災力の強化</summary><p>危機管理体制の充実強化のため防災行政無線のデジタル化整備を推進する。消防団の充実、自治会組織・関係機関との連携を深め、防災意識の高揚や自主防災力の強化に向けた支援策を実施する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>消防団の充実と自主防災力の強化支援</summary><p>地域防災力の中核となる消防団の充実と消防力の強化を図る。自治会組織・関係機関と連携し、防災意識の高揚や自主防災力の充実強化に向けた支援策などを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>消防団の充実と自主防災力の強化</summary><p>「自助・共助のできるまち」を目指し、地域防災力の中核となる消防団の充実と消防力の強化を図る。自治会組織・関係機関と連携し、防災意識の高揚や自主防災力の充実強化に向けた支援策を実施する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>消防団の体制強化</summary><p>消防設備の充実を図り、魅力ある消防団として体制を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>自主防災組織の結成支援</summary><p>町民の災害に対する意識高揚を図るため、自主防災組織の結成に向けた活動を支援し、組織率を高める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>島根県総合防災訓練の実施</summary><p>10月に島根県主催の総合防災訓練が町内で実施されるのを契機に、多くの町民に参加を呼びかけ防災への関心を高める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>地区防災訓練・学習会の開催</summary><p>地域防災計画をはじめ各種計画の見直しが概ね終了したため、これらを活用した地区防災訓練や学習会を開催し、防災意識の向上と災害時の被害軽減を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>地区防災学習会・防災訓練と自主防災組織化</summary><p>「隠岐の島町地域防災計画」や「隠岐の島町防災ハザードマップ」などを活用した地区学習会や防災訓練を開催し、防災意識を高める。自主防災組織化を推進し、地域の防災・減災対策を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>消防団の処遇改善と消防施設整備</summary><p>消防団員の負担軽減や処遇改善を消防委員会・消防幹部会で検討して団員確保に努める。消火栓、防火水槽、消防車等の施設整備を計画的に進め、消防体制を充実させる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>防災学習会・防災訓練と自主防災組織の設立促進</summary><p>防災ハザードマップや防災パンフレットなどを活用した学習会や防災訓練を実施し、防災・減災意識を高めるとともに、自主防災組織の設立にもつながるよう努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>消防団の装備整備と団員確保</summary><p>団員が安全に従事できるよう装備品を計画的に整備し、団員の負担軽減や加入しやすい体制を構築して、団員数を安定的に維持する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>防災学習会・訓練と自主防災組織の強化</summary><p>災害時の心構えや発生時の行動を理解してもらうため防災学習会や訓練を実施し、防災意識の向上を図るとともに、自主防災組織の設立や既存組織の強化に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>消防団の装備整備と団員確保</summary><p>団員が安全に従事できるよう装備品の計画的な整備を進める。また消防団の魅力発信、団員の負担軽減、加入しやすい体制の構築により安定的な人員確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>災害情報の伝達</h3>
+    <p class="terms">語: 災害情報の伝達・防災行政無線・情報伝達</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第3回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">愛の橋の架け替え</span><span class="sum">通行できなくなった愛の橋の架け替えについて、これまでの情報伝達手段と住民へ確実に周知する策、ライブカメラの設置など伝達手段の工夫、工事中の仮橋の設置、現在の橋の姿をミニチュア等で残す考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>防災行政無線のデジタル化</summary><p>防災体制の充実のため、新年度から新たに防災行政無線のデジタル化に向けた取組みを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>防災行政無線のデジタル化</summary><p>危機管理体制の充実強化を図るため、防災行政無線のデジタル化整備を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>防災行政無線のデジタル化と地域防災力の強化</summary><p>危機管理体制の充実強化のため防災行政無線のデジタル化整備を推進する。消防団の充実、自治会組織・関係機関との連携を深め、防災意識の高揚や自主防災力の強化に向けた支援策を実施する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>防災行政無線のデジタル化整備</summary><p>危機管理体制の充実強化を図るため、情報伝達手段である防災行政無線のデジタル化整備を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>交通安全と防犯</h3>
+    <p class="terms">語: 交通安全と防犯・交通安全・交通事故・防犯・通学路</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H22"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt25" data-year="H23"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">防犯カメラの設置</span><span class="sum">塩浜や西郷灯台などに猫が繰り返し遺棄されていることを挙げ、捨て猫防止に加えて防犯や災害時にも機能する防犯カメラの設置を求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第3回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">身近な危険箇所の対処</span><span class="sum">通学路や港町公園近辺の蓋の無い側溝など身近な危険箇所への蓋の設置の必要性を尋ね、県や公安の所管、予算の壁で放置される箇所に担当者が現場へ足を運び住民に寄り添って解決する姿勢を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">学校の防災対策</span><span class="sum">学校保健安全法を踏まえ、通学路の倒木の恐れがある危険木の伐採の整備計画、指定避難所である体育館を含む学校の空調整備とペレットボイラー導入の考え方や国の制度の調査、学校の危機管理マニュアルの策定状況と避難所対応の明記、防災頭巾を活用した訓練を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">島内要所への防犯カメラ設置</span><span class="sum">介護施設入所者の行方不明や徒歩通学路の危険箇所を挙げ、空港・フェリーターミナル以外の学校・通学路・保育所・介護施設・病院・道路・港湾など島内の要所へ犯罪予防と住民の安全確保のための防犯カメラを順次設置することを求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">街灯の整備</span><span class="sum">平成16年の旧西郷町の意向調査で街灯への要望が多かったことや栄町杉山交差点付近の交通死亡事故を踏まえ、街灯の整備状況と現状認識、調査結果の活用状況、町部と郡部の今後の整備方針を尋ね、夜間に一般道路を歩く人のための防犯灯の設置を質した。</span></li>
+          
+          <li><span class="who">平成23年第4回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">通学路の整備</span><span class="sum">小中学校の統廃合後に遠い学校へ通う児童の負担を踏まえ、那久小学校から都万小学校、大久小学校から西郷小学校への県道の改良について年次計画を立てて県へ整備を要請する考えを尋ね、統廃合を踏まえた新たな計画の策定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">町道林道の管理体制</span><span class="sum">道路の陥没や敷鉄板の浮き上がり、視界不良による交通事故で管理者賠償責任が問われないよう、カーブ内側や道路を覆う雑木の伐採、除草作業の監督や定期的なパトロールなど町道・林道の管理責任体制を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>危機管理体制の確立と自主防災組織の育成</summary><p>町民の生命と財産を災害や犯罪から守るため、的確に行動できる危機管理体制を確立し、防災・防犯の施策を推進する。地域の自主防災組織の育成・強化を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>防犯・交通安全対策</summary><p>子どもや高齢者が犯罪や交通事故に巻き込まれることを防ぐため、関係機関と連携して情報提供や啓発活動を進める。交通事故防止のためカーブミラーや防犯灯などを充実する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>交通安全・防犯の啓発</summary><p>交通事故・犯罪から命や財産を守るため、交通安全の啓発や関係機関との連携を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>交通安全・防犯対策</summary><p>交通事故や犯罪から命や財産を守るため、交通安全・防犯の啓発や施設・設備の充実を図り、関係機関と連携して取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>緊急避難道路整備・道路災害防除・通学路危険木伐採</summary><p>緊急避難道路の整備、道路災害防除事業、通学路等の危険木伐採を実施し、日常生活の安全確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>交通安全・防犯の啓発活動</summary><p>交通事故や犯罪等から町民の生命・財産を守るため、警察等関係機関と連携し、未然防止につなげる啓発活動を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>高齢者研修施設等の整備</summary><p>交通事故を減らすため、高齢者研修施設等の整備に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>避難道路・通学路の新設改良</summary><p>有事の際に利用する避難道路と、子どもが日常的に利用する通学路について新設・改良工事を実施し、日常生活の安全確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>緊急避難道路・通学路の整備と河川の堆積土砂撤去</summary><p>生活環境の基盤整備として、緊急避難道路や子どもたちの安全を確保する通学路の整備、河川における堆積土砂の撤去を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>交通安全の啓発活動</summary><p>交通道徳を高めるため、関係機関と連携して啓発活動を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>高齢者研修施設の整備</summary><p>島内で高齢者講習が行えるよう高齢者研修施設を整備し、交通事故防止につなげるとともに、町民の免許更新の負担軽減を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>防犯灯の更新・新設と防犯啓発</summary><p>事件・事故の未然防止のため、道路照明灯・防犯灯の更新及び新設を計画的に進め、関係機関や地域と連携して防犯の啓発活動に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>通学路の支障木伐採</summary><p>通常の維持管理に加え、通学路に繁茂する支障木の伐採を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>NPO法人設立・地域住民の自主的な取り組みへの支援</summary><p>防災・防犯・高齢者の見守りなど多様化する課題に対応するため、各団体の長所を生かしたまちづくりに向けて、NPO法人の設立や地域住民の自主的な取り組みへの支援を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>交通安全対策</summary><p>交通事故防止に向けた啓発活動や危険箇所の点検を関係機関と連携して行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>道路照明灯・防犯灯の更新・新設と防犯活動</summary><p>夜間の事件・事故を未然に防止するため、道路照明灯・防犯灯の更新及び新設を計画的に進める。あわせて地域安全活動や防犯思想の普及などを地域や関係機関と連携して推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>通学路・幹線道路の支障木伐採</summary><p>通常の維持管理に加え、通学路や幹線道路に繁茂する支障木の伐採を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-07">
+    <h3>大規模地震と耐震化</h3>
+    <p class="terms">語: 大規模地震と耐震化・東日本大震災・能登半島地震・耐震化</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第1回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">要配慮者の避難体制見直し</span><span class="sum">能登半島地震で自閉症の方の避難場所の確保が困難だったことやペットを飼う家庭の避難を踏まえ、地域防災計画の要配慮者支援体制を見直す方針を尋ね、危機管理室と保健福祉課の連携や平素から慣れた避難拠点づくりを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第1回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">震災時の業務継続計画</span><span class="sum">能登半島地震を踏まえ、首長不在時の代行順位や代替庁舎など6要素を備えた業務継続計画の実効性の検証と見直しを尋ね、平成26年策定の地域防災計画の風水害・震災対策の早急な見直しを質した。</span></li>
+          
+          <li><span class="who">令和6年第1回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">災害時の機関連携</span><span class="sum">能登半島地震を踏まえ、有事に町・自衛隊・警察・消防・病院などが計画どおり連携できるか、地区の自助・共助や避難行動を町が把握しているかを尋ね、顔の見える関係づくりや自主防災組織、地区担当職員、要支援者の把握を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">津波対策と避難所見直し</span><span class="sum">東日本大震災の大津波を踏まえ、海抜の低い都万地区の例を挙げて一時避難所の見直しと津波対策への着手の考えを問い、計画の作成時期や支所の宿日直廃止後に本庁で対応するまでの時間を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>学校施設の耐震化</summary><p>五箇小学校の耐震改修事業と、新たに西郷中学校の耐震診断・補強計画の事業に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>学校施設の耐震化</summary><p>西郷中学校の耐震補強計画の策定と補強・大規模改造工事の設計、中条小学校の耐震診断と補強計画の策定及び補強・大規模改造工事の設計に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>能登半島地震の被災地支援</summary><p>令和6年能登半島地震の被災地に対し、島根県や他の市町村と連携してできる限りの支援に取り組む。一日も早い復旧・復興を願っての対応である。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>住宅の耐震化</summary><p>地震に対する安全性を高め安全安心な住環境を実現するため、住宅の耐震化に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>上水道の耐震化・更新</summary><p>能登半島地震による断水や老朽管路の破損による断水を踏まえ、上水道事業で管路をはじめとする設備の耐震化と更新を計画的に進め、安全で安心な上水道を提供する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>公営住宅の改修と住宅の耐震化</summary><p>公営住宅の改修に取り組むとともに、地震に対する安全性を高めるため住宅の耐震化に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>上水道の管路・設備の更新・耐震化</summary><p>上水道事業について、管路及び設備の計画的な更新・耐震化を推進し、「隠岐の島町水道事業ビジョン」の将来像の実現に向けて安全で安心な水道水を提供する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.3.0</p>
+                    
+                    <p class="project-credit">
+                        隠岐の島町議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
