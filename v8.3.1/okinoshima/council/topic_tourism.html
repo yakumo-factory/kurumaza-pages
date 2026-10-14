@@ -1,0 +1,3884 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>観光・文化・交流 — 隠岐の島町議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">隠岐の島町 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+                    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+                        <div class="cross-nav-inner">
+                            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+                            
+                        </div>
+                    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_welfare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_tourism.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">観光振興と交流人口</a></li>
+                            
+                            <li><a href="#topic-02">インバウンド</a></li>
+                            
+                            <li><a href="#topic-03">文化財と日本遺産</a></li>
+                            
+                            <li><a href="#topic-04">スポーツ振興</a></li>
+                            
+                            <li><a href="#topic-05">図書館と生涯学習</a></li>
+                            
+                            <li><a href="#topic-06">国際交流と姉妹都市</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 町長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">隠岐の島町 · 議会レポート / <b>観光・文化・交流</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">観光・文化・交流</h1>
+  <p class="page-subtitle">
+    隠岐の島町議会の一般質問・代表質問について、区分「観光・文化・交流」に属する6の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">観光振興と交流人口</a></th>
+            <td class="lt10">8</td><td class="h0">0</td><td class="ge25">25</td><td class="lt25">21</td><td class="ge25">46</td><td class="h0">0</td><td class="ge25">43</td><td class="ge25">50</td><td class="ge25">43</td><td class="lt25">21</td><td class="ge25">29</td><td class="ge25">46</td><td class="lt25">21</td><td class="lt25">21</td><td class="ge25">29</td><td class="lt25">15</td><td class="lt25">15</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">インバウンド</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">17</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">文化財と日本遺産</a></th>
+            <td class="ge25">25</td><td class="lt25">17</td><td class="ge25">25</td><td class="ge25">29</td><td class="lt10">8</td><td class="ge25">31</td><td class="lt25">21</td><td class="lt10">8</td><td class="lt25">14</td><td class="lt10">7</td><td class="lt25">21</td><td class="lt25">15</td><td class="lt25">14</td><td class="h0">0</td><td class="lt25">14</td><td class="lt25">15</td><td class="lt10">8</td><td class="lt25">11</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">スポーツ振興</a></th>
+            <td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">7</td><td class="lt25">14</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">8</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">図書館と生涯学習</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">14</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">国際交流と姉妹都市</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>12</td><td>12</td><td>12</td><td>14</td><td>13</td><td>13</td><td>14</td><td>12</td><td>14</td><td>14</td><td>14</td><td>13</td><td>14</td><td>14</td><td>14</td><td>13</td><td>13</td><td>9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>観光振興と交流人口</h3>
+    <p class="terms">語: 観光振興と交流人口・観光振興・観光客・交流人口・観光施設・観光資源・宿泊施設・おもてなし・誘客・観光客誘致</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H21"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="ge25" data-year="H23"><b>3</b><span class="of">/12人</span><span class="q">6件</span></td><td class="lt25" data-year="H24"><b>3</b><span class="of">/14人</span><span class="q">5件</span></td><td class="ge25" data-year="H25"><b>6</b><span class="of">/13人</span><span class="q">8件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="ge25" data-year="H27"><b>6</b><span class="of">/14人</span><span class="q">7件</span></td><td class="ge25" data-year="H28"><b>6</b><span class="of">/12人</span><span class="q">7件</span></td><td class="ge25" data-year="H29"><b>6</b><span class="of">/14人</span><span class="q">9件</span></td><td class="lt25" data-year="H30"><b>3</b><span class="of">/14人</span><span class="q">6件</span></td><td class="ge25" data-year="R01"><b>4</b><span class="of">/14人</span><span class="q">6件</span></td><td class="ge25" data-year="R02"><b>6</b><span class="of">/13人</span><span class="q">7件</span></td><td class="lt25" data-year="R03"><b>3</b><span class="of">/14人</span><span class="q">4件</span></td><td class="lt25" data-year="R04"><b>3</b><span class="of">/14人</span><span class="q">4件</span></td><td class="ge25" data-year="R05"><b>4</b><span class="of">/14人</span><span class="q">5件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt25" data-year="R07"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第2回隠岐の島町議会定例会・一般質問・脇田千代志</span><span class="ttl">洋上風力誘致の恩恵</span><span class="sum">浮体式洋上風力発電の誘致がもたらす固定資産税や漁業振興基金、地元事業者への発注、交流人口の増加、電源の安定供給などのまちづくりへの恩恵について町長の認識を尋ね、人口減少や産業経済の停滞の救世主となりうる可能性と早期に検討に値する案件であることを質した。</span></li>
+          
+          <li><span class="who">令和7年第3回隠岐の島町議会定例会・一般質問・松山貢</span><span class="ttl">観光・宿泊施設の老朽化</span><span class="sum">総合振興計画に沿った観光施設・宿泊施設の老朽化対策と民間を含めた利活用を尋ね、各施設の過渡期を計画へ反映することや、利用者・事業者との共同立案、今後のロードマップの提示を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">町政運営の自己評価</span><span class="sum">4つの「良かった」と第2次総合振興計画を踏まえ、人口減少・担い手不足・災害対策・観光振興・社会資本整備・財政健全化の効果を含む2期目4年間の自己評価を尋ね、出生数の減少への考え、高齢者福祉施設の休止・閉鎖を踏まえた介護福祉の担い手確保、観光客数が約5万人で横ばいの観光振興の今後を質した。</span></li>
+          
+          <li><span class="who">令和6年第4回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">町有施設の譲渡売却</span><span class="sum">第2次総合振興計画に掲げる町所有の福祉施設や観光宿泊施設の譲渡・売却・廃止が進んでいないとして前年12月の答弁後の現状を尋ね、行政主導で設置した法人の優遇の終了や、廃止ではなく全国公募での譲渡・売却を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第3回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">中地区の働く場所</span><span class="sum">若者の働く場として中地区への介護福祉施設の設置を尋ね、介護福祉事業所の処遇改善と魅力ある職場づくりの取り組み内容、ホテルの誘致や海産物加工・観光資源・歴史遺産を活かした産業おこしと地域おこし協力隊の活用、役場職員が地区に出向く積極的な姿勢を質した。</span></li>
+          
+          <li><span class="who">令和5年第3回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">観光地の景観整備</span><span class="sum">観光客から案内所の対応や観光マップへの休日の記載漏れ、公園遊具の使用禁止、沿道の枝葉や草の繁茂、展望台の見通しの悪さを指摘された意見を紹介し、観光地としての町の景観などの現状と課題、観光道の伐採をスピード感をもって進めることを質した。</span></li>
+          
+          <li><span class="who">令和5年第3回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">観光案内板の設置</span><span class="sum">第2次観光振興計画にあるきめ細やかな誘導と多言語表記の観光看板の整備に触れ、災害時に現在位置からの避難先が分かる情報も取り入れた観光客のための案内板の設置と、草木に隠れた沿道の案内板の改善を質した。</span></li>
+          
+          <li><span class="who">令和5年第4回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">ビジネスプランコンテスト</span><span class="sum">2020年以降開催されていない高校生ビジネスプランコンテストについて、冬期の誘客やジオパークを活かした観光のテーマで令和6年度に再開することを提案し、優れた提案を予算面も含め町が支援し発展させる取り組みを質した。</span></li>
+          
+          <li><span class="who">令和5年第4回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">行財政改革の推進</span><span class="sum">第2次総合振興計画を着実に実行する考えを確かめ、20年間進まない町所有の福祉施設や観光宿泊施設の譲渡・売却・廃止について、法人の積立金の状況も挙げ、先延ばしせず公募に踏み切る決断を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回隠岐の島町議会定例会・一般質問・菊地政文</span><span class="ttl">沿道の草刈りと環境整備</span><span class="sum">ウルトラマラソンのコース沿道や町道・県道の草が観光客から指摘されているとして、インセンティブを与えてでも観光シーズンに沿道の草刈りを行い綺麗な島にすべきではないかと尋ね、災害工事で人手が不足するなかでの実施時期の見通しを質した。</span></li>
+          
+          <li><span class="who">令和4年第4回隠岐の島町議会定例会・一般質問・菊地政文</span><span class="ttl">塩の浜周辺の観光施設</span><span class="sum">塩の浜のシーカヤック周辺のキャンプサイト・管理棟・トイレ・駐車場など観光施設一帯の環境整備の遅れと指定管理者への伴走支援の不足を挙げ、周辺事業者が協力する総力戦の体制づくりと、観光協会会長となった町長の新たな決断と実行を質した。</span></li>
+          
+          <li><span class="who">令和5年第1回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">交流人口の確保</span><span class="sum">定住人口増加の取り組みの効果への認識を尋ね、空き家を利用した体験民泊やそば打ち・わかめ養殖など地域の特産を活かした体験メニュー、旅行会社と提携した受け入れ態勢の整備で固定交流人口を確保する対策を提起した。</span></li>
+          
+          <li><span class="who">令和5年第1回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">新年度の観光振興</span><span class="sum">施政方針の誘客促進と官民連携による質の高いサービスの具体的な強化策を尋ね、観光の旗振り役、DMOと第2次観光振興計画の関係、DMOの中長期計画と連携した同計画の前倒しの見直しを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第2回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">隠岐限定クーポンの見直し</span><span class="sum">宿泊施設が発券対応に追われ他のクーポンとの併用制限もある現状を踏まえ、隠岐限定クーポンの利用期間や形態、発行時期を見直す考えと、クーポンの誤配付への対応を質した。</span></li>
+          
+          <li><span class="who">令和3年第2回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">キャンペーン終了後の対処</span><span class="sum">キャンペーンやクーポンの延長が繰り返される中、緊急経済措置がなくなり普通の状態に戻った際に予想される交流人口の一時的な激減への対処を質した。</span></li>
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">行財政改革と施設の譲渡</span><span class="sum">第2次総合振興計画の財政健全化に向けた具体的な実施計画と町長の目指す行財政改革の基本的な考えと施策、高齢者福祉施設・宿泊施設の譲渡・売却協議のその後と施設の廃止・譲渡等の進め方、地方債残高の増加や基金の減少など財政状況を示して法人の理解を得る働きかけを質した。</span></li>
+          
+          <li><span class="who">令和4年第1回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光振興計画の検証</span><span class="sum">第2次観光振興計画の前期の検証と評価、ウィズコロナ・アフターコロナを見据えた今後の観光振興の取り組み、9月頃を目途とした検証のスケジュール、長年の課題である塩の浜の漂着ごみ対策と機器を用いた環境整備を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">集会所管理条例の見直し</span><span class="sum">集会所の建設負担金や解体時の全額地元負担、観光施設と異なる指定管理の内容を踏まえ集会所管理条例の見直しを尋ね、負担金を所帯数でなく戸数×10万円とすることを求めた。</span></li>
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">海岸漂着ごみの清掃</span><span class="sum">沿岸住民を動員する海岸清掃の負担軽減を環境課が企画しない理由を尋ね、集落前の海岸を全地域で業者委託とし、観光客や住民から見える海岸を建設業者に請け負わせて常に綺麗にすることを質した。</span></li>
+          
+          <li><span class="who">令和2年第3回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">宿泊施設との災害時協定</span><span class="sum">湯梨浜町や岡山県・奈良県・那智勝浦町の例を挙げ、大規模災害を想定してホテル旅館組合と避難支援の協定を結ぶ考えと、指定管理の宿泊施設との準備の具体的な内容を質した。</span></li>
+          
+          <li><span class="who">令和2年第3回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">コロナ禍の経済と感染対策</span><span class="sum">9月以降に重点的に取り組む経済対策と感染症対策、海士町のような支え合い基金の設立やネット販売の仕組みづくり、冬のインフルエンザ流行に備えた医療体制と周知、第2次観光振興計画の見直しの前倒しを質した。</span></li>
+          
+          <li><span class="who">令和2年第4回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">GoToトラベルへの方針</span><span class="sum">GoToトラベルの一時停止を受け、医療体制が不十分な離島で宿泊施設が三密を回避できず感染の不安を抱える現状から、県との連携でも離島の事情を踏まえつつ、町としてどのような方針を持つのかを質した。</span></li>
+          
+          <li><span class="who">令和3年第1回隠岐の島町議会定例会・一般質問・遠藤義光</span><span class="ttl">アウトドア交流人口拡大</span><span class="sum">モンベル社との包括連携協定を生かしたアウトドアスポーツによる交流人口拡大に向け、対策室の新設、キャンプ場の再整備とWi-Fi環境の整備、ツアーガイドやインストラクターの養成、担当職員の人数と予算獲得への姿勢を質した。</span></li>
+          
+          <li><span class="who">令和3年第1回隠岐の島町議会定例会・一般質問・遠藤義光</span><span class="ttl">隠岐温泉GOKAと公衆浴場</span><span class="sum">老朽化と年1,000万円超の赤字を抱える隠岐温泉GOKAについて、カフェや簡易ジム、簡易宿泊施設を併設した再生可能エネルギーによる新施設の建設や、西郷地区への公衆浴場の整備を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第2回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光振興の取り組み</span><span class="sum">観光戦略推進会議の本年度の開催状況と昨年度の開催回数、観光協会等の昨年度の事業総括、昨年度の課題を受けた商工観光課の新年度の考え方、隠岐汽船の島外者料金の値上げに対する町長の考えと町から企業努力を求める姿勢を質した。</span></li>
+          
+          <li><span class="who">令和元年第3回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光振興</span><span class="sum">大手アウトドア用品メーカーや航空会社などが相次いで隠岐を訪れている目的と町の対応、モンベル本社訪問時の対応、止まっている観光戦略推進会議の受け皿と今後の観光政策を尋ね、特別編成のチームでの対応を質した。</span></li>
+          
+          <li><span class="who">令和元年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光振興の抜本的改革</span><span class="sum">第1次総合振興計画の評価と観光の現状課題への今後の取り組み、隠岐ユネスコ世界ジオパークを活用した観光振興、事業委譲や予算・権限の拡大による観光協会との連携強化、観光客のニーズ把握とゲストロジーのような独自の顧客調査の実施を質した。</span></li>
+          
+          <li><span class="who">令和元年第4回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">島内流通と受入れ態勢</span><span class="sum">県の検討会を町が主導するくらいの気持ちでの島内流通システムの構築、宿泊施設の受け入れ態勢の構築と財政支援を含む体制整備への支援策、地域維持特措法を活用した人材確保の取り組みを質した。</span></li>
+          
+          <li><span class="who">令和元年第4回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">観光振興計画の見直し</span><span class="sum">業界・客層・宿泊の受け皿の変化を踏まえ、業界との意見交換の中での第2次観光振興計画の見直しの検討の有無と、見直し時期を5年から3年に改める考えを質した。</span></li>
+          
+          <li><span class="who">令和元年第4回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光客減少への対策</span><span class="sum">隠岐汽船の観光目的の乗船客数が平成12年の16万8,820人から平成30年の6万9,665人へ減ったことへの町長の考え、第2次観光振興計画の進捗のチェックと観光戦略推進会議の開催状況、総合振興計画・総合戦略における観光の位置づけを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第2回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">伝統行事牛突きの継続</span><span class="sum">第2次観光振興計画で牛突きにあまり触れていない点を挙げ、突き牛の頭数や綱取りの不足、全国牛突きサミットや後鳥羽上皇の観覧から800年を控える中で、ガイドブックや牛のオーナーを望む観戦者の声を示し、町民も楽しめる牛突き継続の策を質した。</span></li>
+          
+          <li><span class="who">平成30年第2回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">宿泊施設の指定管理</span><span class="sum">本年4月から始まった島内宿泊施設の指定管理について、株式会社あいらんどの教訓を踏まえた業者の経営チェックや数字の確認を含む管理運営の指導の方法を尋ね、冬場の閑散期の人件費対策として島内でのワークシェアリングの仕組みの構築を質した。</span></li>
+          
+          <li><span class="who">平成30年第3回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">観光宿泊施設の行政運営</span><span class="sum">町が保有し指定管理で運営する観光宿泊施設やレストランを行政が運営することへの町長の基本的な考えを尋ね、指定管理期間中のこの機会に施設の廃止・売却・譲渡を検討すべきと質した。</span></li>
+          
+          <li><span class="who">平成30年第3回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">公共施設の適正配置</span><span class="sum">第3次行財政改革大綱の「公共施設の適正配置」について、温泉・油槽所・福祉施設・宿泊施設など本来民間が行うべき事業の早急な譲渡・売却を求め、町長の本気度とスピード感を持った対応を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">島内観光の現状</span><span class="sum">観光客の減少や工事関係者の流入による宿泊施設の逼迫を踏まえ、観光戦略推進会議の進捗と課題、町内事業所のヒアリング調査の結果を反映する時期を尋ね、島内観光の危機的状況に対する町長の認識を質した。</span></li>
+          
+          <li><span class="who">平成31年第1回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">道の駅の整備計画</span><span class="sum">第2次隠岐の島町観光振興計画に観光受け地整備として掲げた「道の駅」整備事業の進捗状況と、計画策定時の具体的な事業プラン等の検討や新任の課長への申し送りの状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光振興の推進体制</span><span class="sum">第2次観光振興計画の中心となる観光戦略推進会議の進捗と年次計画の作成状況、隠岐観光協会や隠岐世界ジオパーク協議会など他の観光組織との連携の具体的内容と観光施策の一貫性、共立メンテナンスへの約1億5,000万円の未払金をめぐる株式会社あいらんどの交渉状況と今後を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">地魚の島内流通</span><span class="sum">観光客が求める地魚を提供しにくい現状を受け、蓄養施設や冷凍ストックによる海産物の町内での安定供給の必要性と短期的な対応、水産振興計画と観光振興計画の連携、設備投資への行政の支援を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光行政の推進体制</span><span class="sum">観光戦略推進会議の進捗と推進か検証・評価かという位置づけ、観光振興計画の短期計画の有無、町観光課と観光協会の指示命令系統、町観光協会の位置づけと運営費の補助率や職員派遣を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">観光・交流施策</span><span class="sum">ジオパークを核としたジオ資源の整備やおもてなしの環境醸成、西郷港周辺と城山周辺の整備、西郷港から西町への街歩きコースの整備の進め方を尋ね、グランドデザインが無い中での整備の考え方を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">観光振興と港周辺整備</span><span class="sum">未作成の西郷港周辺のグランドデザインへの町長の関わり方と前倒しを含むタイムスケジュール、地元の食の提供に向けた蓄養施設や冷凍・冷蔵施設を町の責任で整備する考えを質した。</span></li>
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">観光振興策の見直し</span><span class="sum">8月ジェット便の維持を人為的な搭乗率の確保から観光客誘致の根本的な改善へ見直すべきとし、海鮮料理の素材供給体系と料理の奨励策、除草や漂着ごみ対策を含む景観保持と観光スポット整備、しげさパレードなど郷土芸能の対外振興、土産物の集合売り場を提起した。</span></li>
+          
+          <li><span class="who">平成29年第4回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光行政と観光資源</span><span class="sum">観光資源の開発が最大の課題との認識から、観光分野の最大の課題、観光行政の組織構成、観光戦略推進会議の進捗を問い、隠岐騒動150年を機に中沼了三の記念館を中出張所と併設して観光拠点とすることや、書籍の映画化・ドラマ化への道を質した。</span></li>
+          
+          <li><span class="who">平成30年第1回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">隠岐騒動150年記念事業</span><span class="sum">隠岐騒動150年の節目に先人の偉業を後世に伝える記念事業へ町が主体的に官民一体で取り組む姿勢、陣屋跡等の看板表示や隠岐騒動マップ作成など観光資源としての活用、中沼了三らの功績を伝えるふるさと教育を質した。</span></li>
+          
+          <li><span class="who">平成30年第1回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">観光客の運賃低廉化</span><span class="sum">特定有人国境離島法に基づく観光客向け運賃低廉化への新年度の取り組みと島前3町村や隠岐汽船・航空会社等との意見交換、企画乗船券の対象メニューや閑散期への適用期間、航空路での取り組み、実施のスケジュールを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">Wi-Fiの観光振興活用</span><span class="sum">屋外のインターネット利用環境の改善を観光振興に活用し、思い切った予算措置を講じてでもWi-Fiを用いた島の神秘性を強調する観光スポットの動画配信を進める考えを質した。</span></li>
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">観光施設のおもてなし教育</span><span class="sum">「訪れて良かった」について、町が管理する施設を含む関係者へのおもてなし教育の徹底と人材育成を環境整備より優先すべきとの考えや、来訪者調査で初来訪が50.7％とリピーターが活かされていない点を踏まえたデータに基づく施設運営を質した。</span></li>
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">観光客への制度適用</span><span class="sum">観光を基軸とした町の発展のため観光客等の利用者全員が制度の恩恵を受けるべきではないかと尋ね、観光客等の除外が法令のどこに定められているかと議会・町民との情報共有を質した。</span></li>
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">隠岐・大阪間の航空路運賃</span><span class="sum">航空路運賃について隠岐・出雲間に加え観光客誘致に関わる隠岐・大阪間の補助の扱いを尋ね、法第13条の規定を挙げて大阪が対象外との報告の有無と要望をしたのかを質した。</span></li>
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">観光客向けトイレの整備</span><span class="sum">来島者の増加を踏まえ町部の公衆トイレの増設整備と時期の前倒しや夜間の安全性・維持管理、観光施設のトイレを業として維持管理する方法とバリアフリー化、観光協会との連携、教育長が答弁した洋式化の調査後の取り組み状況と飲食店等の現状を質した。</span></li>
+          
+          <li><span class="who">平成29年第1回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">外国人観光客の誘致</span><span class="sum">外国人観光客の誘致について、多国語表記やクレジットカード決済など受け入れ環境の整備、観光協会・交通機関・病院など公共機関の対応力の向上、境港市など環日本海地域との観光商品の共同開発、松江・境港・隠岐観光振興協議会の見直しを質した。</span></li>
+          
+          <li><span class="who">平成29年第1回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">あいらんど宿泊施設の管理</span><span class="sum">株式会社あいらんどの解散方針を受け、宿泊施設の指定管理者の募集にあたっての基本方針、施政方針にある新しい運営方針の中身、会社経営の経験者やUIターン者による少数の検討委員会の設置、島内の農林水産業者などが出資し町の株式保有を抑えた経営母体による管理を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">観光振興と観光地整備</span><span class="sum">ジオパーク加盟を活かした修学旅行や学術研究の誘致に観光部署の動きが鈍いとして現在の誘致活動状況を尋ね、ローソク島展望台の雑木や小さな案内板・山道の草・トイレの汚れなど観光地の美化と環境整備を含む観光政策の今後の対策を質した。</span></li>
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">観光客の受け入れ態勢</span><span class="sum">夏季ジェット便で関西から来島した団体の受け入れで関係者との情報共有や連携が不十分だったとして、担当者を明確にした組織を編成し観光協会等と情報交換して受け入れ態勢を整えるべきではないかを質した。</span></li>
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">観光客へのおもてなし</span><span class="sum">リピーターを増やすために島を訪れる人へどのような“おもてなし”をすべきかを尋ね、観光に関わる職員や事業者の意識改革を含めた教育や前年と同等の料理・サービスの提供を質した。</span></li>
+          
+          <li><span class="who">平成27年第4回隠岐の島町議会定例会・一般質問・小野昌士</span><span class="ttl">循環道路の片側1車線整備</span><span class="sum">国防・災害対策・地域間交流や観光振興を考え、島内を循環する道路を片側1車線で全線整備する計画があるかを尋ね、普通車が安心して行き交える循環道についての町長の考え方を改めて質した。</span></li>
+          
+          <li><span class="who">平成27年第4回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">宿泊施設の課題</span><span class="sum">株式会社あいらんどの廃業も含めた検討の結果と町長の考え、財政負担なしで宿泊の受入れ客数を増やせるか、共立メンテナンスに委託するホテルMIYABIの食事や接客の評判と経営状況、町の対応を質した。</span></li>
+          
+          <li><span class="who">平成28年第1回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光振興計画の検証と策定</span><span class="sum">第1次観光振興計画の評価・検証と観光基軸のまちづくり約10年の町長としての総括を尋ね、第2次観光振興計画の策定にあたり行政関係者の多いワーキンググループの構成を指摘して、住民参加・民間主導で進める体制づくりを質した。</span></li>
+          
+          <li><span class="who">平成28年第1回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">ふるさと応援基金の活用</span><span class="sum">28年度予定で4,100万円の残高となる一方で年間100万円程度しか使われていないふるさと応援基金に目的・目標を設定し、企業版ふるさと納税も見据えて世界ジオパークや観光振興など独自色のある事業を使いみちに示して寄付を募るべきではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">ジオパーク誘客と羽田便</span><span class="sum">竹島問題とジオパークで注目が集まる好機を生かす誘客対策と観光客入込数12、13万人を2倍、3倍に増やす手立てを尋ね、羽田・隠岐間の路線や羽田発着枠の政策コンテストへの参入、スカイマークなど航空会社への商工会と連携した営業活動を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">行財政改革の評価</span><span class="sum">平成17年以降の行財政改革について、実質単年度収支の黒字が繰上償還や財政調整基金積立に回された点、人件費の削減と物件費の上昇、町税収入が横ばいの守りの姿勢だった点を挙げ、当初から経済浮揚策や観光客増などのソフト対策で歳入増を図らなかった理由と合併以来9年間の評価を質した。</span></li>
+          
+          <li><span class="who">平成25年第4回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">遊覧船発着場の一本化</span><span class="sum">ローソク島観光遊覧船の発着場が福浦と赤碕の2か所にあり観光客にわかりにくいとして、県道44号線が整備された福浦地区へ一本化すべきとし、岸壁を使う他の漁船の移転の状況を質した。</span></li>
+          
+          <li><span class="who">平成25年第4回隠岐の島町議会定例会・一般質問・小野昌士</span><span class="ttl">20年後の町の将来像</span><span class="sum">人口推計から20年後の町の姿と課題の捉え方を尋ね、一本釣り漁業の衰退を見据えた町営の磯見市場の開設や、隠岐航路のJR並み運賃への補助制度の実現による交流人口20万人への拡大を質した。</span></li>
+          
+          <li><span class="who">平成25年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光振興計画の見直し</span><span class="sum">平成19年度策定の観光振興計画の現状認識と見直しの必要性を尋ね、見直しへの住民の参画と周知の方法、主体となる機関の明確化、達成期日の明記を質した。</span></li>
+          
+          <li><span class="who">平成25年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光行政の体制強化</span><span class="sum">職員数が少なく攻めの事業が手薄な観光行政の体制づくりを尋ね、各課からなる観光振興プロジェクトチームの設立を行革の組織改編を待たずに早期に進める考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第4回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">行政運営の基本姿勢</span><span class="sum">観光振興を前面に出すより雇用・定住対策に重点を移す考えを尋ね、闘牛ブリバーガーの商品化と加工場の時期、ビジネスプランコンテスト優秀賞の起業の雇用見込みと町の支援策、愛の橋の修繕など島民へのおもてなしを優先する考えを質した。</span></li>
+          
+          <li><span class="who">平成26年第1回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">観光交流人口の減少</span><span class="sum">推定交流人口が153,112人から平成24年度に126,684人へ約17パーセント減少したことについて、町が効果の出る対策をとってこなかったのではないかを尋ね、観光協会の対前年横ばいとの判断ではなく10年間を振り返った評価を問うた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光ルートの道路整備</span><span class="sum">車による観光が主流で道幅が狭くすれ違えない町道や林道が多く、世界ジオパーク認定で観光客の増加が見込まれるとして、安全な観光のための道路の拡幅や待避所の設置などの整備を質した。</span></li>
+          
+          <li><span class="who">平成24年第2回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光客の顧客調査</span><span class="sum">前年の質問で検討するとされた観光客の顧客調査の検討結果を尋ね、隠岐観光協会との情報交換の連携と、何を期待して隠岐に来たのかを捉える心理的な調査を盛り込むかを質した。</span></li>
+          
+          <li><span class="who">平成24年第4回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">広域観光の推進</span><span class="sum">観光振興計画に掲げた縁結び観光協会や大山中海圏域観光との連携の進捗と今後の施策を尋ね、古事記編纂1300年事業を例に出雲と隠岐をセットにした観光商品の提案など提案型の姿勢を質した。</span></li>
+          
+          <li><span class="who">平成24年第4回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">観光振興実施計画の策定</span><span class="sum">昭和60年をピークに観光入込客数が減少し観光の形態も体験型へ変わる中、平成19年3月に策定した観光振興計画を具現化する観光振興実施計画の策定を急ぐべきだとして考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第1回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">地場産業の振興</span><span class="sum">農林水産畜産業の各分野で個別に協議会等を設置するのではなく4分野が一体となった組織体制を町も関わって編成し、中期財政計画の財源不足を見据えて地場産業の在り方を根本から考え直し雇用確保や観光振興につなげる考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">観光のおもてなし醸成</span><span class="sum">町政運営基本方針概要の観光振興対策について、観光立国推進基本法が定める住民や事業者の役割を挙げ、来訪者の満足度を高めるおもてなしの気持ちの醸成と観光振興の体制づくりを質した。</span></li>
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">観光の協働と連携体制</span><span class="sum">住民、観光関連業者、観光協会、行政などの協働による観光まちづくりについて、観光資源同士の連携が弱い現状を挙げ、島内外の資源を点から線でつなぐイベントの企画・宣伝や情報発信への所信を質した。</span></li>
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光客の顧客調査</span><span class="sum">リピート率の低さを課題として東京ディズニーリゾートの例を挙げ、観光客のニーズの把握方法と要求や先入観を含む顧客調査の実施、これまで実施しなかった理由と観光シーズンに合わせた検討を質した。</span></li>
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">おもてなしの接客連携</span><span class="sum">おもてなしの心を持った接客サービスを観光関連団体や個人で共有し連携して行うことについて、町長の考えるおもてなしと今後の取り組み、研修以外に行政が施策をつくり協力を求める考えを質した。</span></li>
+          
+          <li><span class="who">平成24年第1回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">中心市街地の活性化</span><span class="sum">総合振興計画の街感ゾーンに掲げた中心市街地活性化事業が履行されていないとして、定住・交流人口増加の重点施策、空き店舗や空き家を活用した憩いの場の整備とビジネスチャレンジ支援、観光案内と情報発信による観光拠点機能の向上、的を絞った重点的取り組みの必要性、隠岐汽船前の交通結節点の利便性と待合・トイレ環境の充実を質した。</span></li>
+          
+          <li><span class="who">平成24年第1回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">観光振興と定住促進</span><span class="sum">町長の所信表明と町政運営の基本方針について、境港市の観光客の誘客や隠岐汽船の運賃・料金体系の改革に向け行政が主導して観光協会等とプロジェクトチームを結成し町が中心となって営業に出向く考え、木質バイオマス事業やものづくり学校など定住対策事業で見込む定住・雇用、補助金に頼らない財源確保の考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第4回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">世界ジオパーク登録への準備</span><span class="sum">日本ジオパーク認定を受け世界ジオパーク登録に向けた観光客・研究者・外国人への応対体制を尋ね、ガイドの早期育成や島前との連携、庁内連携、島民の意識改革、事務所の設置場所と担当を含むスケジュールの策定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>新たな観光アイテムの開発</summary><p>観光客の入込み数が横ばいである状況の打開策として、ジオパーク資源の活用、八尾川遊覧船の運航、佐山牛突き場の改修、蓮華会舞演舞場の建設など、新たな観光アイテムを開発する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>全町民で迎え入れる体制づくりと食の充実</summary><p>人情味あふれるもてなしときめ細かい情報提供による全町民挙げての受入れ体制づくりに努める。観光客の一番の喜びとなる食の充実に向けた取組を、隠岐空港利用促進協議会ほか関係機関に要請している。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>山陰文化観光圏協議会による広域観光連携</summary><p>島根・鳥取両県の広域圏で設置された「山陰文化観光圏協議会」の中で、松江・境港・隠岐の3圏域の協議会事業を重点的に実施する。松江市・境港市と連携して一体的なイメージ形成と情報発信を図り、交流人口の拡大と観光客の増加に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>航空路線の維持と利用促進</summary><p>地方空港撤退の厳しい情勢の中、出雲路線・大阪路線の維持と将来の羽田路線を視野に入れた利用促進を目指し、新商品の造成と誘客活動に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>夏季ジェット便就航5周年の利用促進</summary><p>夏季ジェット便の就航5周年記念イベントを実施し、首都圏・中部圏を中心に島内観光資源を活用したイン対策と、ジェットクーポン券の販売強化や各種団体へのアプローチなどのアウト対策を重点に行う。交流人口の拡大を図り、搭乗率80％の実現を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>観光宣伝事業（記念イベントと全国闘牛サミット）</summary><p>5周年を迎える「隠岐の島ウルトラマラソン」と「隠岐・大阪夏季ジェット便就航」の記念イベントを開催する。11年ぶりに本町で開催する「全国闘牛サミット」などを全国に発信し、知名度の向上と交流人口の拡大を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>広域連携による観光情報発信</summary><p>松江・境港・隠岐観光振興協議会など広域連携を核とした事業により隠岐を全国へ発信し、交流人口の拡大と観光客の増大を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>航空路線の維持と首都圏での利用促進</summary><p>生活路線の出雲路線と観光振興の大阪路線を維持し、将来の羽田路線を視野に首都圏を対象とした利用促進を、島根県や関係団体と連携して進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>夏季ジェット便の搭乗率確保対策</summary><p>7月15日から8月28日まで45日間就航する夏季ジェット便について、島内の観光資源を活用した新商品づくりと、搭乗率が低い7月下旬から8月上旬及び8月下旬の強化対策で、前年を上回る搭乗率の確保をめざす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>観光宣伝事業</summary><p>神話のふるさと「島根」推進事業を活用した「隠岐国分寺蓮華会舞」の県外公演、「第6回隠岐の島ウルトラマラソン」、ジオパーク資源など島内の観光資源を活用して隠岐の島を全国にアピールし、知名度の向上と交流人口の拡大を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>着地型観光商品の造成と誘客活動</summary><p>「古事記」編纂1300年に当たり島根県が開催する「神話博しまね」などのイベントとの相乗効果を期し、地域の観光資源を活かした着地型の観光商品を造成する。平成23年度を上回る入り込み客数を目指して誘客活動に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>魅力ある観光地づくり</summary><p>観光客の評価が高い「牛突き」など独自の観光資源の充実と拡大を図る。宿泊施設、二次交通体制、観光関連施設等の充実と接客マナーの向上に努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>観光宣伝事業（隠岐ジオパーク・イベント情報発信）</summary><p>隠岐ジオパークに関係する島内の観光資源の活用や、「第7回隠岐の島ウルトラマラソン」「第14回隠岐古典相撲大会」「日本の凧の会秋季大会」など各種イベントの情報発信を行い、知名度アップと観光客の増加を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>観光ナビシステム導入と着地型観光メニューの開発</summary><p>観光客の利便性向上のため、新たにスマートフォン対応の観光ナビシステムを導入し、街歩きと八尾川遊覧船をセットにした新たなメニューを開発するなど、着地型観光を充実させる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>町有観光施設・宿泊施設の修繕</summary><p>町が所有する観光施設や宿泊施設の修繕工事を行い、より快適な宿泊・滞在空間を提供して誘客につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>映画「渾身」ロケ地巡りなど新コンテンツの活用</summary><p>本年1月に全国公開された映画「渾身」のロケ地巡りなど新たなコンテンツを活用し、観光客の受け入れにつなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>日本ジオパーク全国大会・全国河童サミットの開催</summary><p>「第4回日本ジオパーク全国大会」と「全国河童サミット」などを開催し、もてなしやきめ細かな情報提供によって観光客を迎え入れる体制づくりにつなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>観光資源と観光関連施設の充実</summary><p>独自の観光資源の更なる充実と、宿泊施設をはじめとする観光関連施設等の充実に努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>着地型観光商品の造成</summary><p>「松江・境港・隠岐観光振興協議会」や「ジオパーク推進協議会」など関係団体と連携し、地域の観光資源を活かした着地型観光商品の造成と受け入れ態勢の整備を進め、魅力ある観光地づくりに努める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク認定を活かした情報発信</summary><p>昨年9月の「隠岐世界ジオパーク」認定を交流人口拡大の好機と捉え、島の魅力の積極的な情報発信に努め、リピーターの確保と新規顧客の獲得を目指す。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>観光振興計画の見直しと推進体制強化</summary><p>本町の観光振興の道しるべである「隠岐の島町絵の島花の島観光振興計画」を再度見直し、事業の評価・検討を行い、推進体制の強化を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>おもてなしと観光資源・観光関連施設の充実</summary><p>来訪者へのきめ細かな情報提供と人情味あふれるおもてなしに努める。あわせて独自の観光資源の維持・確保や、宿泊施設を始めとする観光関連施設等の充実に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>隠岐空港チャーター便の誘客活動</summary><p>隠岐空港を利用した新たな地域からのチャーター便運航の実施に向けた誘客活動等を行い、前年度を上回る入込客数を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>隠岐汽船への安全運航・サービス向上の要請</summary><p>隠岐汽船株式会社に対し、航路の安全運航と更なるサービス向上への努力を要請する。特に本年3月就航の超高速船レインボージェットについて、町民や観光客の期待に応えるよう重ねて要請する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>観光振興計画の事業評価と推進体制の強化</summary><p>本町の観光振興の道しるべである「隠岐の島町絵の島花の島観光振興計画」の事業評価・検討を行い、推進体制の強化を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>おもてなしと観光資源・観光関連施設の充実</summary><p>来訪者へのきめ細かな情報提供と“おもてなし”に努める。独自の観光資源の維持・保全や、宿泊施設をはじめとする観光関連施設等の充実にも努める。</p></details></td>
+            <td class="c">5</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>チャーター便による誘客活動</summary><p>隠岐空港を利用し、新たな地域からのチャーター便運航による誘客活動を積極的に行う。本年度を上回る入込客数を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>ユネスコ世界ジオパークの理念に基づく誘客の推進</summary><p>世界ジオパーク活動がユネスコの正式プログラムに認定されたことを追い風に、ユネスコの理念に基づいた活動を推進し、観光客の入込数を伸ばす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>第2次隠岐の島町観光振興計画の策定</summary><p>宿泊施設の老朽化や経営者の高齢化・後継者問題などの課題解決に向け、平成29年度から10年間を見据えた第2次隠岐の島町観光振興計画を策定する。計画に基づく事業実施と年度ごとの事業評価・検証を行い、推進体制を強化する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>FDAチャーター運航企画による誘客</summary><p>全国各地の地方空港から多くの客を呼び経済効果につながっているFDAフジドリーム・エアラインズのチャーター運航企画について、新年度も春と秋の実施を目標に調整している。遠距離からの客の誘致に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>専門職員の配置による文化財の保護・活用</summary><p>専門職員を配置し、離島独自の自然と風土で醸成された多くの文化財等を適切に保護する。教育・学術資源として文化の振興や交流人口の拡大に活かす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>文化財の保護・継承と活用</summary><p>牛突き習俗や国分寺周辺遺跡などの文化財を適切に保護して次世代に継承し、積極的な公開・活用に努める。教育・学習・学術資源として文化の振興や交流人口の拡大等に活かす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>第2次隠岐の島町観光振興計画の策定</summary><p>総合振興計画及び総合戦略の基本目標に沿い、向こう10年を見据えた第2次観光振興計画を平成28年度末に策定する。基本構想に「人情がつむぐ“よかった”があふれる島」を掲げる。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>宿泊施設の課題解決と観光関連施設の充実</summary><p>宿泊施設の老朽化、経営者の高齢化や後継者・労働者不足等による廃業の危機等の課題解決に向け関係機関と協議し、宿泊施設のトイレやWi-Fi環境の整備等、観光関連施設の充実に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>海洋スポーツセンター等の観光施設整備</summary><p>国立公園関連補助事業を活用して、海洋スポーツセンターなどの観光施設整備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>第三セクターの組織整理</summary><p>第三セクターについて、これまでの経緯や実績を踏まえ組織を整理し、新しい運営方針に沿った観光宿泊施設の運営に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>フジドリームエアラインズのチャーター運航企画</summary><p>全国の地方空港から来訪者を呼び経済効果を生んでいるフジドリームエアラインズのチャーター運航企画について、新年度も春と秋の実施を目指して調整し、遠距離からの誘客を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>商工会への地域振興推進員配置</summary><p>商工会に地域振興推進員を配置し、町内事業所の横連携強化と情報共有の仕組みづくりを進める。商工事業所の活発な活動が観光客へのサービス向上にも直結するためである。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>第2次観光振興計画に基づく施策展開</summary><p>平成29年度から10年を見据えた「第2次隠岐の島町観光振興計画」に基づき、基本構想「人情がつむぐ『よかった。』があふれる島」の実現に向けて具体的な施策を展開する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>宿泊施設の課題解決と施設整備支援</summary><p>宿泊施設の老朽化に伴う改修、経営者の高齢化や後継者・労働者不足による廃業の危機等の課題解決に向けて関係機関と協議し、各種施設整備の支援を継続・改善する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>滞在型観光推進事業（企画乗船券等）</summary><p>有人国境離島法に基づく「滞在型観光推進事業」として平成29年度事業を継続するとともに、新たに一部拡大となる制度を活用し、観光客を対象とした企画乗船券発行等をからめた事業を展開して、運賃低廉化の助成対象拡大につなげる。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>観光施設整備（海洋スポーツセンター・トイレ洋式化）</summary><p>国立公園関連補助事業を活用した海洋スポーツセンターなどの観光施設整備をはじめ、各地の観光施設のトイレ洋式化改修を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>第21回全国闘牛サミット隠岐の島大会の開催</summary><p>平成22年度以来8年ぶりとなる「第21回全国闘牛サミット隠岐の島大会」を町内で開催し、隠岐の歴史や固有文化の伝承と内外への広報により新たな誘客につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>第三セクター「株式会社あいらんど」の解散と観光施設の有効利用</summary><p>長年の懸案である第三セクター「株式会社あいらんど」を平成29年度末で解散し、経緯の検証による教訓を観光行政に活かす。町所有の観光関連施設は将来展望を踏まえ検討し有効利用を図る。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>航路・航空路運賃低廉化事業の継続と対象拡大の要望</summary><p>有人国境離島法に基づく運賃低廉化事業を継続する。交流人口拡大につながる島民以外への対象拡大に向けて、島根県や他の有人国境離島と連携し国への制度改正の要望活動を展開する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>FDAチャーター運航企画による遠距離誘客</summary><p>FDAによるチャーター運航企画が経済効果を生んでおり、新たに関東地方から成田・茨城空港も加わる。チャーター企画の利点を活かし遠距離からの誘客を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>宿泊施設の課題解決に向けた新制度の検討</summary><p>宿泊施設の老朽化、経営者の高齢化や後継者・労働者不足による事業承継問題などの課題解決に向け、実態調査結果をもとに商工会や観光協会と協議し、新たな制度の制定等の事業実施に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>国立公園関連補助による観光施設整備</summary><p>国立公園関連補助事業を活用してログハウスなどの施設を整備するとともに、各宿泊施設の経年劣化に対応する改修を積極的に進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>アウトドア・アクティビティの情報発信と誘客</summary><p>隠岐の島ウルトラマラソンやシーカヤックなどのアウトドア・アクティビティと人との交流を関連づけ、広く内外へ情報発信して新たな誘客につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>航路・航空路運賃低廉化の継続と対象拡大の要望</summary><p>有人国境離島法に基づく隠岐航路・航空路の運賃低廉化事業を継続する。交流人口拡大のため、島根県や他の有人国境離島と連携し、島民以外への対象拡大に向けた国への制度改正要望を積極的に展開する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">14</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>FDAチャーター企画による遠距離誘客</summary><p>FDA（フジドリーム・エアラインズ）によるチャーター運航企画が大きな経済効果を生んでいることから、新年度も短時間で移動できるチャーター企画の利点を活かし、遠距離からの誘客を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>鮮魚等の流通システムの構築</summary><p>課題となっている町内の鮮魚等の流通システムについて、検討委員会での協議を踏まえ、島根県やJFしまね、漁業・観光・商工等の関係機関と連携する。町民や観光客に隠岐島産の海産物を安定的に提供できる枠組み作りに町として関わる。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>観光推進体制の強化（観光協会の組織運営）</summary><p>「第2次隠岐の島町観光振興計画」に基づく施策の一環として、一般社団法人隠岐の島町観光協会の組織運営が効率よく進みその役割を最大限発揮できるよう、町と商工会も連携して取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>民間宿泊施設への新たな支援制度</summary><p>町内の民間宿泊施設の老朽化に伴う改修、経営者の高齢化や後継者・労働者不足による事業承継問題等の解決に向け、新たな支援制度を制定し事業者の環境改善に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>観光関連施設の整備・改修</summary><p>国立公園関連補助事業を活用してログハウスなどの施設整備を行う。各宿泊施設の経年劣化に対応する改修も進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>モンベルとの連携によるアウトドア・アクティビティの活用</summary><p>マラソン、自転車、シーカヤック、トレッキングなどのアウトドア・アクティビティを活用するため、包括連携協定を締結した株式会社モンベルと連携して仕組みづくりや素材の掘り起こしに取り組む。人との交流や情報発信を通じて幅広い世代の誘客に繋げる。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>FDAチャーター運航企画による誘客</summary><p>全国の地方空港から多数の来訪者を呼び経済効果を生んでいるFDA（フジドリーム・エアラインズ）のチャーター運航企画について、短時間で移動できる利点を活かし遠距離からの誘客を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>役場本庁舎移転に伴うバス路線の再編計画策定</summary><p>交通弱者にとって不可欠な島内公共交通を維持するため、新年度に役場本庁舎移転に伴うバス路線の再編計画を策定する。航路との接続や高校生・観光客の利用も念頭に検討する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>鮮魚などの島内流通システムの構築</summary><p>島内の鮮魚などの流通システムの構築について、島根県・JFしまね・漁業・観光・商工などの関係機関と情報共有・連携を強め、町民や観光客に隠岐島産の海産物を広く安定的に提供できるよう関わる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>航空路の利用促進</summary><p>ターミナルビル拡張工事中の隠岐世界ジオパーク空港の利便性向上に向け、隠岐空港利用促進協議会を中心に、安定した定期航空路の確保とチャーター便の運航による誘客に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>独自の観光素材を活かした誘客</summary><p>アウトドア・アクティビティや民謡・牛突き、四季の旬の食など、独自の歴史・文化を個性的な観光素材として活かし、人との交流と関連づけて誘客につなげる。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>宿泊施設など町内の受け入れ態勢の環境改善</summary><p>町有・民間の宿泊施設の老朽化に伴う改修や、経営者の高齢化・事業承継問題など、町内事業者の環境改善に官民が連携して取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>観光施設の長寿命化計画の策定</summary><p>新年度、観光施設の長寿命化計画を策定し、ライフサイクルコストの低減に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>隠岐空港の利用促進と定期航空路の確保</summary><p>空港ターミナルビルの拡張とPBBの設置で利便性が向上したことを受け、隠岐空港利用促進協議会を中心に、安定した定期航空路の確保とチャーター便運航による誘客に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>しげさ踊りパレード等を起点とした観光振興</summary><p>第50回しげさ踊りパレード、第35回隠岐しげさ節全国大会を皮切りに、アウトドア・アクティビティや民謡・牛突き・旬の食など独自の歴史・文化を観光素材として活かし、関係人口の拡大と地域経済の活性化につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>観光地域づくり法人（DMO）の設立とジオツーリズム推進</summary><p>4月から隠岐観光協会と隠岐ユネスコ世界ジオパーク推進協議会を統合して観光地域づくり法人（DMO）とし、隠岐諸島全体の窓口を一本化する。ジオツーリズムの推進で「エージェント依存から地域主導」へ転換し誘客を促進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>宿泊施設等の観光受け入れ体制の改善</summary><p>宿泊施設の老朽化に伴う改修や経営者の高齢化・事業承継問題など町内事業者の環境改善に向け、民間活力が活発に事業展開できるよう取り組み、官民連携で質の高いサービスの継続提供を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>公共施設の長寿命化計画策定と遊休施設の利用調査</summary><p>公共施設等総合管理計画に基づき施設の適正量の検討や長寿命化を計画的に進める。新年度は社会教育施設や観光施設の長寿命化計画を策定し、遊休施設の有効利用促進に向けた調査研究を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>定期航空路の充実とチャーター便による誘客拡大</summary><p>隠岐空港利用促進協議会を中心に島根県や関係団体と連携し、定期航空路の充実とチャーター便の運航による誘客拡大の取り組みを強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>地域資源を活かした観光振興</summary><p>島まつり行事、第16回隠岐の島ウルトラマラソン、牛突き、四季の「旬の食」など独自の歴史・文化を観光素材として活かし、人との交流と関連づけて関係人口を拡大し地域経済の活性化につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>隠岐ジオパーク推進機構を中心とした地域主導の誘客</summary><p>昨年4月に発足した隠岐ジオパーク推進機構を中心に隠岐諸島全体の窓口を一本化し、旅行代理店等への依存から地域主導に転換して、「おき得乗船券」などと組み合わせた誘客促進に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>宿泊施設の改修支援と受入れ態勢の整備</summary><p>宿泊施設の老朽化に伴う改修に観光庁の高付加価値化事業なども活用し、民間活力と連携して事業展開するとともに、官民連携で質の高いサービスを継続して提供できるようにする。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>景観計画の策定</summary><p>本町の美しい景観を保全し魅力ある風景を持続させるため景観計画の策定に取り組む。また、景観を観光資源として価値を高め、地域振興を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>イベント・伝統文化を生かした交流人口の拡大</summary><p>観光振興計画の基本理念の実現を目指し、島まつり行事、第18回隠岐の島ウルトラマラソン、牛突き、各地域の祭などの独自の歴史・文化を観光素材として生かし、人との交流と関連付けて交流人口を拡大し地域経済の活性化につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>宿泊施設の改修と観光の受入れ態勢整備</summary><p>町内の受入れ態勢として、老朽化した宿泊施設の改修や担い手確保対策を行い、サービスの向上に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>祭・イベントを生かした交流人口の拡大</summary><p>観光振興計画の基本理念「人情がつむぐ『よかった』があふれる島」の実現を目指し、島まつり行事、「第19回隠岐の島ウルトラマラソン」、「牛突き」、各地域の祭などの歴史・文化を観光素材として生かし、人との交流を関連付けて交流人口を拡大する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>宿泊施設への支援と受入れ態勢の整備</summary><p>町内の受入れ態勢として、譲渡する宿泊施設への支援、老朽化した宿泊施設の改修、担い手確保対策などサービスの向上に引き続き取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>インバウンド</h3>
+    <p class="terms">語: インバウンド・外国人観光客</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt25" data-year="H28"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第2回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">外国人観光客の誘致</span><span class="sum">昨年度522人にとどまった外国人観光客について、年間1,000人を目標に町をあげて出向き営業をかけ、反応を見ながらインバウンド対策を作る考えを尋ね、海外への直接の営業や外国人ツアーコンダクターなど専門職の誘致を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第1回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">外国人観光客の誘致</span><span class="sum">外国人観光客の誘致について、多国語表記やクレジットカード決済など受け入れ環境の整備、観光協会・交通機関・病院など公共機関の対応力の向上、境港市など環日本海地域との観光商品の共同開発、松江・境港・隠岐観光振興協議会の見直しを質した。</span></li>
+          
+          <li><span class="who">平成29年第1回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">クロトシン市との交流</span><span class="sum">ポーランド共和国クロトシン市との友好都市協定の今後の展望について、ヨーロッパからの外国人観光客の誘致やオリンピック関連予算の活用、経済交流、国の関係機関などとの関係構築を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>外国人観光客の受入れ対応</summary><p>増加する外国人観光客への受入れ対応として、観光関連事業者を中心とした研修会を開催し、観光協会に英語対応が可能な地域おこし協力隊職員を配置する予定である。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>隠岐国分寺蓮華会舞公演事業（厳島神社）</summary><p>インバウンド対策も含め、伝統文化を活用した全国への情報発信事業として、広島県の厳島神社を会場に「隠岐国分寺蓮華会舞公演事業」を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>文化財と日本遺産</h3>
+    <p class="terms">語: 文化財と日本遺産・文化財・史跡・日本遺産・国宝・たたら・世界農業遺産・棚田・ジオパーク</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="ge25" data-year="H21"><b>3</b><span class="of">/12人</span><span class="q">5件</span></td><td class="lt25" data-year="H22"><b>2</b><span class="of">/12人</span><span class="q">2件</span></td><td class="ge25" data-year="H23"><b>3</b><span class="of">/12人</span><span class="q">3件</span></td><td class="ge25" data-year="H24"><b>4</b><span class="of">/14人</span><span class="q">4件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/13人</span><span class="q">2件</span></td><td class="ge25" data-year="H26"><b>4</b><span class="of">/13人</span><span class="q">4件</span></td><td class="lt25" data-year="H27"><b>3</b><span class="of">/14人</span><span class="q">4件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt25" data-year="H29"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt25" data-year="R01"><b>3</b><span class="of">/14人</span><span class="q">3件</span></td><td class="lt25" data-year="R02"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt25" data-year="R03"><b>2</b><span class="of">/14人</span><span class="q">3件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt25" data-year="R05"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="lt25" data-year="R06"><b>2</b><span class="of">/13人</span><span class="q">3件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="R08"><b>1</b><span class="of">/9人</span><span class="q">1件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R08">
+        <summary>令和8年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第2回隠岐の島町議会定例会・一般質問・山田浩太</span><span class="ttl">佐々木家住宅の公開短縮</span><span class="sum">国指定重要文化財佐々木家住宅の公開を週2日各3時間に短縮した理由、過疎地域持続的発展計画の文化関連展示施設の入り込み客数1万人の目標との整合、事業費約72％削減による影響の把握、夏季休館の理由と空調設置、団体受入れや夏季の午前公開など柔軟な運用を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回隠岐の島町議会定例会・一般質問・松山貢</span><span class="ttl">モンベル社との連携協定</span><span class="sum">モンベル社の出店検討の実態と予算的裏付けを含めた今後の展開を尋ね、同社からの要望の内容、協定を活かした施策の具体的内容、DMOジオパーク推進機構での取り組みへの町の指導性を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第4回隠岐の島町議会定例会・一般質問・菊地政文</span><span class="ttl">歴史文化財を生かした観光</span><span class="sum">歴史・文化財を活用した観光の方向性について認識と所見を尋ね、五箇創生館への上映設備導入による映像上映の提案に触れつつ、モンベルとの包括連携協定の具体的な取り組みを質した。</span></li>
+          
+          <li><span class="who">令和7年第1回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">仏像調査後の文化財調査</span><span class="sum">西郷町誌に記載された貴重な文化財が発行から50年近く調査されてこなかったことへの町長の所見を尋ね、劣化が進む岸浜厳島神社・今津白鳥神社の船絵馬など絵画類の調査と修復、北前船などテーマを定めた継続的な調査・保護、文化振興係への専門職員の増員を質した。</span></li>
+          
+          <li><span class="who">令和7年第1回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">文化財の展示と黒仏修理</span><span class="sum">埋蔵文化財や地上の文化財を町民向けに展示する考えと、保存が厳しい状態にある「黒仏」の修理の予定を尋ね、図書館のスペースや五箇創生館を活用した展示を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第4回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">文化財保護と活用</span><span class="sum">放置された丸木舟「からむしⅡ世号」の保管小屋の状況と対応時期、隠岐郷土館の隠岐騒動の展示改善、保護された仏像の今後の方向性を尋ね、文化財の全数調査、学芸員の雇用や文化振興係の人員拡大、平和教育のための戦時中の品の収集を質した。</span></li>
+          
+          <li><span class="who">令和5年第4回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">ビジネスプランコンテスト</span><span class="sum">2020年以降開催されていない高校生ビジネスプランコンテストについて、冬期の誘客やジオパークを活かした観光のテーマで令和6年度に再開することを提案し、優れた提案を予算面も含め町が支援し発展させる取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第2回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">自然館の入館料無料化</span><span class="sum">4月に開館した隠岐自然館の入館料で小人の範囲が明記されていないことを指摘し、ジオパーク学習やふるさと教育の観点から中学生以下の入館料を無料とすべきだとして町長の考えを質した。</span></li>
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">文化財の調査研究と保護</span><span class="sum">崩壊寸前の黒仏をはじめ保護されていない文化財の調査研究・保護と、隠岐郷土館・五箇創生館の見直しの終了時期、運営委員会が開催されていない年数とその理由、隠岐騒動や久見の黒曜石が分かる展示や学芸員のような専従者を質した。</span></li>
+          
+          <li><span class="who">令和3年第4回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">昔道とトレッキング道の整備</span><span class="sum">小野篁が歩いたであろう那久から横尾山を越える昔道とトレッキング道を、隠岐ユネスコ世界ジオパークの理念やモンベル社との包括連携協定を踏まえて長期的に年次整備し里山を維持していく総合整備計画について町長の所信を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">愛の橋架け替えと環境整備</span><span class="sum">新庁舎とジオパーク中核・拠点施設に次いで「愛の橋」を早く架け替え、海岸・山・川・道路沿線の環境整備に力点を置いて取り組む考えを質した。</span></li>
+          
+          <li><span class="who">令和2年第4回隠岐の島町議会定例会・一般質問・福田晃</span><span class="ttl">牛突きの国指定</span><span class="sum">隠岐の牛突き習俗が平成30年に県指定となった後、国の重要無形民俗文化財指定に向けた要望活動が見えない現状への町長の捉え方を問い、判断までの見通しや財政面の効果も踏まえ繰り返し要望する熱意を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光振興の抜本的改革</span><span class="sum">第1次総合振興計画の評価と観光の現状課題への今後の取り組み、隠岐ユネスコ世界ジオパークを活用した観光振興、事業委譲や予算・権限の拡大による観光協会との連携強化、観光客のニーズ把握とゲストロジーのような独自の顧客調査の実施を質した。</span></li>
+          
+          <li><span class="who">令和2年第1回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光施策とジオパーク</span><span class="sum">来年度の観光施策全体の考えとモンベル社との包括連携協定後の具体的な動きを問い、隠岐ユネスコ世界ジオパーク推進協議会への町の負担金や監査の有無、モンベルとの関わり、観光への寄与度と観光協会との統合、戦術面での取り扱いを質した。</span></li>
+          
+          <li><span class="who">令和2年第1回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">山間部道路沿線の維持管理</span><span class="sum">町道・県道の沿線で幅員1ｍ先から道路境界標識までの法面の雑木除伐を、県と連携し費用を抑えて5年に1度は施工し、見通しの確保と国立公園・ジオパークにふさわしい美観の保持に努めるよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回隠岐の島町議会定例会・一般質問・大江寿</span><span class="ttl">防災遺産認定制度</span><span class="sum">八尾川放水路を築いた先人の功績を称え防災意識の向上や観光、ジオパークに生かす町独自の防災遺産認定制度を提起し、昭和63年以降に限られる地域防災計画の風水害履歴にそれ以前を調査して含める考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回隠岐の島町議会定例会・一般質問・石橋雄一</span><span class="ttl">観光振興の推進体制</span><span class="sum">第2次観光振興計画の中心となる観光戦略推進会議の進捗と年次計画の作成状況、隠岐観光協会や隠岐世界ジオパーク協議会など他の観光組織との連携の具体的内容と観光施策の一貫性、共立メンテナンスへの約1億5,000万円の未払金をめぐる株式会社あいらんどの交渉状況と今後を質した。</span></li>
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">観光・交流施策</span><span class="sum">ジオパークを核としたジオ資源の整備やおもてなしの環境醸成、西郷港周辺と城山周辺の整備、西郷港から西町への街歩きコースの整備の進め方を尋ね、グランドデザインが無い中での整備の考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第1回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">自然館の子ども入館料</span><span class="sum">隠岐ユネスコ世界ジオパークの資料展示場である隠岐自然館について、学校の見学会の後に再び訪れる子どもから入館料を取っている現状を挙げ、隠岐の子どもの来館者の入館料を無料にするよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">観光地の管理整備予算</span><span class="sum">展望台など観光地の管理者がジオパーク推進協議会・観光課・県・支所・地域と様々で管理が行き届いていない現状を指摘し、夢崎展望台やローソク島へ向かう道路の草の状況も挙げて、年間を通じた管理整備を当初予算に組むよう求めた。</span></li>
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">ジオパーク活動拠点施設</span><span class="sum">調査研究・広報・教育普及・養成講座などを担う隠岐世界ジオパーク推進活動の拠点施設の必要性を述べ、阿蘇草原保全活動センターの例を挙げて積立金を使った予算化と、庁舎と併せた検討ではなく先行しての整備を求めた。</span></li>
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">観光振興と観光地整備</span><span class="sum">ジオパーク加盟を活かした修学旅行や学術研究の誘致に観光部署の動きが鈍いとして現在の誘致活動状況を尋ね、ローソク島展望台の雑木や小さな案内板・山道の草・トイレの汚れなど観光地の美化と環境整備を含む観光政策の今後の対策を質した。</span></li>
+          
+          <li><span class="who">平成28年第1回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">ふるさと応援基金の活用</span><span class="sum">28年度予定で4,100万円の残高となる一方で年間100万円程度しか使われていないふるさと応援基金に目的・目標を設定し、企業版ふるさと納税も見据えて世界ジオパークや観光振興など独自色のある事業を使いみちに示して寄付を募るべきではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第2回隠岐の島町議会定例会・一般質問・遠藤義光</span><span class="ttl">外来植物の駆除</span><span class="sum">隠岐世界ジオパークの認定を受け、耕作放棄地や河川沿い、岬の新しい牧野にも広がる帰化植物セイタカアワダチソウの大規模な撲滅作戦の必要性と、認識を新たにして取り組む考えを質した。</span></li>
+          
+          <li><span class="who">平成26年第3回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">ジオパークと修学旅行誘致</span><span class="sum">隠岐世界ジオパークの世界認定から1年の総括と今後の展望を尋ね、日本ジオパークネットワーク登録自治体や関西圏・中四国の自治体への修学旅行の戦略的な誘致、10年後・20年後のジオパーク活用のビジョン、修学旅行誘致の数値目標設定の必要性を質した。</span></li>
+          
+          <li><span class="who">平成26年第4回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">町立博物館の設置</span><span class="sum">旧隠岐空港ターミナルビルなど利用されていない施設を活用し、眠っている文化遺産や芸術作品、ジオパークや竹島の資料を定期的に入れ替えて展示する町立博物館を設置し、周辺を一大ミュージアムエリアとする考えを町長と教育長に質した。</span></li>
+          
+          <li><span class="who">平成27年第1回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">隠岐世界ジオパークの活用</span><span class="sum">隠岐世界ジオパーク活用推進検討会議での議論と具体的施策、世界認定に即した環境整備の中身を尋ね、生態系を含む自然環境の保全策や、毒性の強い薬剤の空中散布・地上散布が再認定審査を控えたジオパークのイメージダウンにつながる懸念を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">ジオパーク懸案の進捗</span><span class="sum">隠岐世界ジオパーク加盟認定後の活動について、外国語対応を含むガイド養成、センター窓口と推進協議会など関係組織の役割分担、島前島後120箇所の案内板設置の現状、空き校舎の研究者向け提供や宿泊業者との連携、小中高生による来島者案内など学校教育での活用の5点の進捗を質した。</span></li>
+          
+          <li><span class="who">平成25年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">ジオパーク誘客と羽田便</span><span class="sum">竹島問題とジオパークで注目が集まる好機を生かす誘客対策と観光客入込数12、13万人を2倍、3倍に増やす手立てを尋ね、羽田・隠岐間の路線や羽田発着枠の政策コンテストへの参入、スカイマークなど航空会社への商工会と連携した営業活動を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回隠岐の島町議会定例会・一般質問・遠藤義光</span><span class="ttl">まちづくりへの夢と決意</span><span class="sum">隠岐病院の完成や畜産振興、ジオパークの世界登録、新離島振興法の活用、離島航路の国道昇格など課題が山積するなか、病から回復した町長に合併後2期8年を基にしたまちづくりへの夢と決意を問うた。</span></li>
+          
+          <li><span class="who">平成24年第2回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">観光ルートの道路整備</span><span class="sum">車による観光が主流で道幅が狭くすれ違えない町道や林道が多く、世界ジオパーク認定で観光客の増加が見込まれるとして、安全な観光のための道路の拡幅や待避所の設置などの整備を質した。</span></li>
+          
+          <li><span class="who">平成24年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">ジオパークの観光活用</span><span class="sum">隠岐ジオパークの世界ジオパーク加盟が見送られたことを受けて原因の究明と対策を求め、商工会・旅館業者・輸送業・JR・JFや島外の旅行エージェントなど受益者による官民一体の組織づくりを提案し、観光に活かす具体的な活動を質した。</span></li>
+          
+          <li><span class="who">平成24年第4回隠岐の島町議会定例会・一般質問・米澤壽重</span><span class="ttl">エコツーリズムの推進</span><span class="sum">隠岐ジオパークの世界認定保留を踏まえ、ガイドやコーディネーターの養成、学芸員の配置などエコツーリズムの受け皿となる態勢づくりと、浄土ヶ浦海岸の散策道や津井の男池・女池への取り付け道路の整備を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成23年第2回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">世界ジオパーク認定の準備</span><span class="sum">世界ジオパーク認定に向けた町の支援と進捗について、島民への協力依頼の具体化、宣伝、宿泊・飲食業や外国人の受入れ、ガイド養成、案内板や道路の整備、認定までの日程と波及効果、進捗の随時報告や小冊子の配布を質した。</span></li>
+          
+          <li><span class="who">平成23年第3回隠岐の島町議会定例会・一般質問・小野昌士</span><span class="ttl">文化行政と地域づくり</span><span class="sum">指定文化財や無形文化財を観光やまちづくりに生かす「攻めの文化行政」の現状と今後の方向を尋ね、教育文化振興財団の基金の積み増し、高齢化で維持が厳しい祭事・伝統行事の実態調査と課題を整理する会議の設置、子どもの文化への参加・交流の機会づくりを質した。</span></li>
+          
+          <li><span class="who">平成24年第1回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">大久・那久小学校跡地利用</span><span class="sum">地元住民が参加して宿泊体験施設と加工施設とする利用計画が平成24年度予算に計上されていない大久・那久小学校の跡地利用計画の状況、住民の動きを育て町民と協働で進める考え、使われない教室の利用と町の支援、文化財の収納庫・展示室としての利用を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H22">
+        <summary>平成22年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成22年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">世界ジオパーク登録への取組</span><span class="sum">世界ジオパーク登録に向け、住民のコンセンサスを得る活動の実績、島前地域との連携、国土交通省の補助金申請、ガイドと外国語案内人の養成、説明看板の設置、自然館のリニューアル、担当職員の配置とプロジェクトチームの編成、総合観光案内所の設置、島外への看板掲示、活動スケジュールの公表を質した。</span></li>
+          
+          <li><span class="who">平成22年第4回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">過去の質問のその後</span><span class="sum">過去の一般質問の答弁のその後として、隠岐の牛突き習俗の国重要無形民俗文化財指定に向けた取り組みと推進組織、観光用突き牛の購入・飼育への支援と新年度予算での対応、町村合併の検証・総点検の手法と時期と町民参加を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">隠岐ジオパークの推進</span><span class="sum">隠岐ジオパーク推進連絡協議会の設立を受け、日本ジオパーク委員会認定後の事務局や人員配置、インターネットを含む宣伝活動、観光コース作成、ガイド養成などの活動予定と、県議会議員や国会議員へのアプローチを質した。</span></li>
+          
+          <li><span class="who">平成21年第4回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">牛突きの文化財保護と支援</span><span class="sum">牛突きの文化財としての保護・伝承に向けた教育委員会の積極的な取り組みと行政のリーダーシップ、全国闘牛サミットを機とした飼育費補助など町の支援姿勢、「検討する」とした内容の具体を質した。</span></li>
+          
+          <li><span class="who">平成21年第4回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">世界ジオパーク登録への準備</span><span class="sum">日本ジオパーク認定を受け世界ジオパーク登録に向けた観光客・研究者・外国人への応対体制を尋ね、ガイドの早期育成や島前との連携、庁内連携、島民の意識改革、事務所の設置場所と担当を含むスケジュールの策定を質した。</span></li>
+          
+          <li><span class="who">平成22年第1回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">文化財の保護と収納</span><span class="sum">海洋自然館や郷土館の岩石標本・生物標本・出土遺物の教育委員会による一元管理と台帳整備、個人宅や小学校に残る文化財の調査、民具や古文書の収納環境、人員配置と予算措置、閉校校舎を含む収納施設の整備、文化財保護審議会の開催回数を質した。</span></li>
+          
+          <li><span class="who">平成22年第1回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">閉校後の跡利用</span><span class="sum">5校の閉校後の跡利用について町の基本方針と各校の基本計画を示す時期、地区が事業を始める際の財政的・人的支援の基準、世界ジオパーク認定を見据えて校舎を宿泊研究施設や博物館として島全体で配置する構想の策定を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>新たな観光アイテムの開発</summary><p>観光客の入込み数が横ばいである状況の打開策として、ジオパーク資源の活用、八尾川遊覧船の運航、佐山牛突き場の改修、蓮華会舞演舞場の建設など、新たな観光アイテムを開発する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>世界ジオパーク登録に向けた条件整備</summary><p>世界ジオパークの登録認定に向けて、ツアーガイド養成事業や指定文化財説明板の設置などの条件整備を図る。隠岐独自の地質遺産、自然の生態系、歴史文化などを活かしたまちづくりに取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>体験型観光の充実と観光ガイドの組織化</summary><p>八尾川遊覧船やシーカヤック洞窟ツアー等の体験型観光を充実させ、新年度は観光ガイドを組織化してもてなしの受入体制を整備する。ジオパーク資源を活用し、個人客層・団体客層への商品提供と情報発信に努める。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>観光宣伝事業</summary><p>神話のふるさと「島根」推進事業を活用した「隠岐国分寺蓮華会舞」の県外公演、「第6回隠岐の島ウルトラマラソン」、ジオパーク資源など島内の観光資源を活用して隠岐の島を全国にアピールし、知名度の向上と交流人口の拡大を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>世界ジオパーク登録に向けた推進体制の整備</summary><p>世界ジオパークの登録認定に向け、県の支援を受けて島前3町村と連携し、推進体制を整え、ツアーガイドの養成やホームページの設置などの条件整備を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>観光宣伝事業（隠岐ジオパーク・イベント情報発信）</summary><p>隠岐ジオパークに関係する島内の観光資源の活用や、「第7回隠岐の島ウルトラマラソン」「第14回隠岐古典相撲大会」「日本の凧の会秋季大会」など各種イベントの情報発信を行い、知名度アップと観光客の増加を図る。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>伝統文化の保護育成（無形文化財・牛突き習俗）</summary><p>「無形文化財保存育成事業」により伝統文化への支援を続け、「牛突き習俗保存対策事業」では各大会への出場支援を充実する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>隠岐ジオパークの世界認定登録</summary><p>島根県、島前3町村及び「隠岐ジオパーク推進協議会」と連携し、本年秋の世界認定登録に向けて取り組む。これを契機に、隠岐独自の地質遺産や自然の生態系、歴史文化を活かしたまちづくりを推進する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>日本ジオパーク全国大会・全国河童サミットの開催</summary><p>「第4回日本ジオパーク全国大会」と「全国河童サミット」などを開催し、もてなしやきめ細かな情報提供によって観光客を迎え入れる体制づくりにつなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>着地型観光商品の造成</summary><p>「松江・境港・隠岐観光振興協議会」や「ジオパーク推進協議会」など関係団体と連携し、地域の観光資源を活かした着地型観光商品の造成と受け入れ態勢の整備を進め、魅力ある観光地づくりに努める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク認定を活かした情報発信</summary><p>昨年9月の「隠岐世界ジオパーク」認定を交流人口拡大の好機と捉え、島の魅力の積極的な情報発信に努め、リピーターの確保と新規顧客の獲得を目指す。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>隠岐自然館の魅力アップ</summary><p>隠岐世界ジオパークの拠点としての隠岐自然館の魅力アップに努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>ジオパーク認定に即した自然環境の整備</summary><p>昨年開設された国の自然保護官事務所及び県とともに、隠岐世界ジオパーク認定に即した環境の整備に取組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパークを活用した観光施策</summary><p>県・隠岐4町村・関係団体による「隠岐世界ジオパーク活用推進検討会議」でソフト・ハード両面の施策を議論している。本町はその結果を具体的施策へスピード感を持って反映させ、「世界」の冠をフルに活用する。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>ジオパーク世界認定に即した自然環境の整備</summary><p>自然保護官事務所、島根県、隠岐世界ジオパーク推進協議会との連携を強め、世界認定に即した環境の整備に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>ユネスコ世界ジオパークの理念に基づく誘客の推進</summary><p>世界ジオパーク活動がユネスコの正式プログラムに認定されたことを追い風に、ユネスコの理念に基づいた活動を推進し、観光客の入込数を伸ばす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">11</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク空港の開港・ジェット化10周年記念事業</summary><p>新空港開港及びジェット化10周年の節目にあたり、島根県をはじめ関係団体と連携して記念事業に取り組み、「隠岐世界ジオパーク空港」を全国に広める活動を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>ポーランド・クロトシン市との友好都市協定締結</summary><p>新年度にポーランド共和国のクロトシン市との友好都市協定の締結を計画している。相撲文化を中心に隠岐の歴史・文化を理解してもらい、隠岐ユネスコ世界ジオパークを世界へ発信するきっかけとする。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>ジオパーク認定に即した自然公園等の環境整備</summary><p>自然保護官事務所・島根県・隠岐世界ジオパーク推進協議会と連携し、隠岐ユネスコ世界ジオパーク認定に即した自然公園の整備をはじめとする環境の整備に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>専門職員の配置による文化財の保護・活用</summary><p>専門職員を配置し、離島独自の自然と風土で醸成された多くの文化財等を適切に保護する。教育・学術資源として文化の振興や交流人口の拡大に活かす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>文化財の保護・継承と活用</summary><p>牛突き習俗や国分寺周辺遺跡などの文化財を適切に保護して次世代に継承し、積極的な公開・活用に努める。教育・学習・学術資源として文化の振興や交流人口の拡大等に活かす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>大山隠岐国立公園満喫プロジェクトの行動計画策定</summary><p>環境省自然保護官事務所、県及びジオパーク推進協議会と連携し、「大山隠岐国立公園満喫プロジェクト」の実現に向けた行動計画を策定し、世界水準のナショナルパークとしての取組みを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>ジオパーク認定に即した環境整備</summary><p>隠岐ユネスコ世界ジオパーク認定に即した環境の整備に積極的に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>隠岐ユネスコ世界ジオパークの再認定対応</summary><p>新年度は再認定の年度で、5月から8月に審査員の現地調査が予定されている。最終準備を整え、確実に再認定されるよう関係者の連携を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>ジオパーク中核・拠点施設の建設</summary><p>「隠岐ユネスコ世界ジオパーク基本構想」に基づく中核・拠点施設の建設事業について、近隣の町民や関係団体等と協議を重ね、事業効果を高める計画を練り着手する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク空港の利用促進</summary><p>島根県や関係団体と連携して空港を全国に広める活動を強化し、通年の出雲便、大阪便及び夏季ジェット便の搭乗率目標の達成と路線維持のための利用促進事業を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>ジオパーク活動を中心とした情報発信</summary><p>ジオパーク活動を中心に本町の魅力を全世界に広げるため、隠岐ユネスコ世界ジオパーク推進協議会と連携して積極的に情報発信する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>文化財の保護・公開活用</summary><p>町の財産である文化財を適切に保護し次世代に継承するとともに、積極的な公開・活用に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>国立公園ステップアッププログラムとジオパーク環境整備</summary><p>環境省自然保護官事務所、島根県、ジオパーク推進協議会と連携し、「大山隠岐国立公園ステップアッププログラム2020」の行動計画に沿って世界水準の「ナショナルパーク」実現に向けた取り組みを実施する。隠岐ユネスコ世界ジオパーク認定に即した環境整備にも取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>ジオパーク中核・拠点施設の建設</summary><p>平成29年度に再認定された隠岐ユネスコ世界ジオパークの魅力を高め価値を伝えるため、「中核・拠点施設」建設事業を近隣住民や関係団体と協議を重ねながら進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク空港の利用促進と機材大型化・施設改善の要望</summary><p>島根県等と連携して隠岐世界ジオパーク空港を全国に広める活動を強化する。隠岐⇔大阪路線の通年ジェット化に続き、隠岐⇔出雲路線の機材大型化や空港ターミナル拡張を含む施設改善を航空会社や県に要望し、定期航空路線の利用促進事業を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>国内外のジオパークとの交流</summary><p>隠岐ユネスコ世界ジオパーク推進協議会と連携を強化し、全国のジオパーク地域や香港ジオパークなど海外のジオパークとの交流を進め、町の魅力を世界に発信する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>文化財の調査・保護・活用</summary><p>町内の史跡、埋蔵文化財、天然記念物などの文化財の調査・研究を進め、適切に保護し次世代に継承する。あわせて積極的な公開・活用に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>大山隠岐国立公園ステップアッププログラムの推進</summary><p>環境省自然保護官事務所、県、ジオパーク推進協議会と連携し、大山隠岐国立公園ステップアッププログラム2020の行動計画に沿って、世界水準のナショナルパークの実現に向けた具体的な取り組みを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>ジオパーク認定に即した環境整備</summary><p>隠岐ユネスコ世界ジオパーク認定に即した環境の整備に積極的に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>ジオパーク中核・拠点施設の建設</summary><p>隠岐ユネスコ世界ジオパークの魅力や価値を広く伝えるため、ジオパーク中核・拠点施設の建設事業を進める。西郷港の新しい情報発信基地として、住民や関係団体と協議を重ねながら確実に進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク空港の利用促進</summary><p>島根県をはじめ関係団体と連携し、隠岐世界ジオパーク空港を全国に広めるための活動を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>空港ターミナルの拡張を含む施設改修</summary><p>隠岐世界ジオパーク空港ターミナルの拡張を含む施設改修等の早期実現に向けて、航空会社や島根県と連携して取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>学力向上対策事業とふるさと教育の推進</summary><p>新学習指導要領の「主体的・対話的で深い学び」による「生きる力」を育成するため、学校・家庭・地域が連携する学力向上対策事業を進める。ジオパーク学習や地域の課題発見解決学習等のふるさと教育もより推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>文化財の調査・保護と公開・活用</summary><p>町内の史跡、埋蔵文化財、天然記念物などの文化財の調査・研究を進め、適切に保護して次世代に継承する。あわせて積極的な公開・活用に努める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>国立公園ステップアッププログラムとジオパーク認定に即した環境整備</summary><p>環境省自然保護官事務所、県、ジオパーク推進協議会と連携し、「大山隠岐国立公園ステップアッププログラム2020」の行動計画に沿って世界水準の「ナショナルパーク」の実現に向けた取り組みを実施する。隠岐ユネスコ世界ジオパーク認定に即した環境の整備にも取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>ジオパーク中核・拠点施設の活用</summary><p>隠岐ユネスコ世界ジオパークの魅力や価値を伝えるため、建設中の「ジオパーク中核・拠点施設」を島の玄関口にふさわしい情報発信基地として、町民や来町者に親しまれ活用されるよう取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク空港の利用促進</summary><p>ターミナルビルの拡張工事が予定される「隠岐世界ジオパーク空港」について、島根県をはじめ関係団体と連携し、空港を全国に広める活動を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>指定文化財の維持管理と伝統文化継承者への支援</summary><p>貴重な文化財を保護し後世に継承するため、指定文化財の維持管理への支援と、牛突きなど伝統文化の継承者への支援を引き続き実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>文化財の説明看板の設置・改修と学習活動</summary><p>地域資源としての活用を図るため、指定文化財の説明看板を設置・改修する。あわせて文化財への理解と保護意識の向上を図る学習活動に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>佐々木家住宅の保存修理事業</summary><p>新年度、国指定重要文化財である佐々木家住宅の保存修理事業を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>海岸漂着ごみ対策と不法投棄防止対策</summary><p>隠岐ユネスコ世界ジオパークの自然環境を保全するため、ジオパーク推進協議会などと連携した啓発活動を行い、海岸漂着ごみ対策や不法投棄防止対策を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>航空路の利用促進</summary><p>ターミナルビル拡張工事中の隠岐世界ジオパーク空港の利便性向上に向け、隠岐空港利用促進協議会を中心に、安定した定期航空路の確保とチャーター便の運航による誘客に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>指定文化財の維持管理支援と伝統文化継承者支援</summary><p>貴重な文化財を保護し後世に継承するため、指定文化財の維持管理への支援や、牛突き等の伝統文化の継承者への支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>文化財説明看板の設置・改修と文化財学習</summary><p>文化財を地域資源として活用するため、指定文化財の説明看板の設置・改修を実施し、文化財への理解と保護意識を高める学習活動にも力を注ぐ。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>重要文化財佐々木家住宅の保存修理</summary><p>昨年から引き続き、重要文化財佐々木家住宅の保存修理事業を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>史跡隠岐国分寺境内の保存活用計画策定</summary><p>史跡隠岐国分寺境内の保存活用計画の策定を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>海岸漂着ごみ対策・不法投棄防止と環境啓発</summary><p>隠岐ユネスコ世界ジオパークの自然環境保全のため、観光地域づくり法人（DMO）と連携して啓発活動を行い、海岸漂着ごみ対策や不法投棄防止対策を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>観光地域づくり法人（DMO）の設立とジオツーリズム推進</summary><p>4月から隠岐観光協会と隠岐ユネスコ世界ジオパーク推進協議会を統合して観光地域づくり法人（DMO）とし、隠岐諸島全体の窓口を一本化する。ジオツーリズムの推進で「エージェント依存から地域主導」へ転換し誘客を促進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>指定文化財と伝統文化継承者への支援</summary><p>貴重な文化財を適切に保護し後世に継承するため、指定文化財の維持管理に対する支援や伝統文化の継承者への支援を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>文化財説明看板の設置・改修と学習活動の提供</summary><p>文化財を地域資源として活用するため、指定文化財の説明看板の設置・改修を実施するとともに、文化財への理解や保護意識の醸成を目的とした学習活動を提供する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>牛突き習俗の重要無形民俗文化財指定に向けた取り組み</summary><p>昨年11月の国や関係機関への要望活動に続き、牛突き習俗の重要無形民俗文化財指定に向けた取り組みを推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>史跡隠岐国分寺境内の保存活用計画の策定</summary><p>史跡隠岐国分寺境内の保存活用計画の策定を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>ジオパークの自然環境保全</summary><p>隠岐ユネスコ世界ジオパークの自然環境を保全するため、隠岐ジオパーク推進機構と連携して啓発活動を行い、海岸漂着ごみ対策や特定外来生物駆除対策などを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>隠岐ジオパーク推進機構を中心とした地域主導の誘客</summary><p>昨年4月に発足した隠岐ジオパーク推進機構を中心に隠岐諸島全体の窓口を一本化し、旅行代理店等への依存から地域主導に転換して、「おき得乗船券」などと組み合わせた誘客促進に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>文化財の保存修理と継承者支援</summary><p>貴重な文化財を保護し後世に継承するため、島根県指定有形民俗文化財「都万目の民家」などの建造物の保存修理を行う。指定文化財の維持管理と伝統文化の継承者への支援も行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>文化財の理解促進イベント・学習活動</summary><p>文化財を地域資源として活用するため、文化財への理解や保護意識の醸成を目的とした各種イベントの開催と学習活動の提供を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>史跡隠岐国分寺境内・国府尾城跡の保存活用</summary><p>これまで検討してきた史跡隠岐国分寺境内と国府尾城跡について、それぞれの計画に基づき適切に保存し効果的に活用する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>木像調査と牛突き習俗の国指定に向けた働きかけ</summary><p>文化財の指定に向け、町内の貴重な木像などの調査を進める。あわせて牛突き習俗の国指定に向けた働きかけを行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>隠岐ジオパーク推進機構との協働</summary><p>隠岐ジオパークの活動を通じて推進機構と協働体制を構築し、町民が隠岐の自然環境の価値への理解を深め次世代に継承する取り組みを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>隠岐世界ジオパーク空港の全国PR</summary><p>隠岐空港利用促進協議会を中心に島根県や関係団体と連携し、「隠岐世界ジオパーク空港」を全国に広める活動を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>隠岐諸島全体の観光窓口一本化</summary><p>隠岐ジオパーク推進機構を中心に隠岐諸島全体の窓口を一本化し、「タビマエ」「タビナカ」「タビアト」の役割を明確にして、各町村の観光協会や民間事業者が効率よく事業展開できるようにする。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>文化財の保護・継承と活用</summary><p>貴重な文化財を適切に保護し後世に継承するため、指定文化財の維持管理への支援と伝統文化の継承者への支援を行う。あわせて地域資源としての活用を図るため、文化財への理解や保護意識の醸成を目的とした各種イベントの開催や学習活動の提供を行う。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>牛突き習俗・木像彫刻の文化財指定に向けた取り組み</summary><p>牛突き習俗の国指定に向けた働きかけを継続する。また、貴重な木像彫刻についても文化財指定に向けて取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>国府尾城跡の総合調査と国史跡指定</summary><p>国府尾城跡について、新年度から3か年をかけ、埋蔵文化財調査を中心とした総合的な調査を行い、国史跡指定を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>ジオパークの自然環境保全（漂着ごみ・不法投棄対策）</summary><p>隠岐ジオパーク推進機構と連携して様々な機会を通じた啓発活動を行い、海岸漂着ごみ対策や不法投棄防止対策など自然環境の保護に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>隠岐航路の安定運航と空港の利用促進</summary><p>隠岐航路の安定運航や隠岐世界ジオパーク空港における航空路の利用促進など、町民や来訪者にとって快適で利便性の高い交通網の整備に努める。空港については隠岐空港利用促進協議会を中心に、島根県をはじめ関係団体と連携して取り組む。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>訪日外国人旅行者への対策</summary><p>増加傾向にある訪日外国人旅行者への対策として、隠岐ジオパーク推進機構を中心に、各町村の観光協会や民間事業者が効率よく活発に事業展開できるよう取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>指定文化財の維持管理と伝統文化継承者への支援</summary><p>独自の自然・風土により育まれた貴重な文化財を適切に保護し後世に継承するため、指定文化財の維持管理に対する支援と伝統文化の継承者への支援を行う。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>文化財の理解・保護意識の醸成</summary><p>文化財への理解や保護意識の醸成を図るため、各種イベントの開催と学習機会の提供を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>国府尾城跡の総合調査と国史跡指定</summary><p>国府尾城跡について、引き続き埋蔵文化財調査を中心とした総合的な調査を行い、国史跡指定を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>ジオパークの自然環境保全</summary><p>隠岐ユネスコ世界ジオパークの貴重な自然環境を将来世代へ引き継ぐため、関係機関と連携した普及啓発を推進し、海岸漂着ごみ対策や不法投棄防止など地域一体の環境保全に継続的に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>訪日外国人旅行者への対策</summary><p>増加傾向にある訪日外国人旅行者への対策として、隠岐ジオパーク推進機構を中心に、各町村の観光協会、民間事業者が効率よく活発に事業展開できるよう取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>スポーツ振興</h3>
+    <p class="terms">語: スポーツ振興・スポーツ・体育館</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H21"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt25" data-year="H30"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R02"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R05"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">スポーツクラブの活動助成</span><span class="sum">保護者が草刈り作業などで活動資金を稼いでいる実情を挙げ、隠岐汽船の運賃以外は自己負担となっている子どものスポーツクラブ活動に助成金を出す考えと、庁内で検討する考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回隠岐の島町議会定例会・一般質問・菊地政文</span><span class="ttl">隠岐のスポーツ教育</span><span class="sum">元関脇隠岐の海の引退と活躍を挙げて隠岐のスポーツ教育にかける教育長の思いを尋ね、国民スポーツ大会の相撲会場となることを踏まえた県のスポーツ強化指定校制度や、ござんせカップを通じた豊中との交流と物流の繋がりを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R05">
+        <summary>令和5年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第4回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">公共施設の設備管理</span><span class="sum">総合体育館アリーナの壊れた空調設備や和式トイレの改善を挙げ、施設維持係が職員から聞き取りながら対象箇所を把握し、公共施設の設備改善と維持管理に計画的に対処することを求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第1回隠岐の島町議会定例会・一般質問・遠藤義光</span><span class="ttl">アウトドア交流人口拡大</span><span class="sum">モンベル社との包括連携協定を生かしたアウトドアスポーツによる交流人口拡大に向け、対策室の新設、キャンプ場の再整備とWi-Fi環境の整備、ツアーガイドやインストラクターの養成、担当職員の人数と予算獲得への姿勢を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">旧西郷町民体育館跡地</span><span class="sum">老朽化した旧西郷町民体育館の解体スケジュールと跡地利用を尋ね、屋根付き野外運動場の建設を提案するとともに、調査研究委員会の検討時期と住民との協働の進め方、教育委員会としての文教エリアの捉え方を質した。</span></li>
+          
+          <li><span class="who">平成30年第4回隠岐の島町議会定例会・一般質問・池田賢治</span><span class="ttl">学校の防災対策</span><span class="sum">学校保健安全法を踏まえ、通学路の倒木の恐れがある危険木の伐採の整備計画、指定避難所である体育館を含む学校の空調整備とペレットボイラー導入の考え方や国の制度の調査、学校の危機管理マニュアルの策定状況と避難所対応の明記、防災頭巾を活用した訓練を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第1回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">移転後の現庁舎の活用</span><span class="sum">新庁舎移転後のふれあいセンター部分の譲渡・貸し出しなど現庁舎の活用方法と検討体制・スケジュール、老朽化した団体施設への平成30年度からのヒアリング、旧町民体育館の現状認識を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">生涯スポーツの振興</span><span class="sum">生涯スポーツの振興とまちづくりへの活かし方、社会体育の方針と平成20年策定の生涯スポーツ推進計画の検証、町独自の「アスリートタウン構想」の制定を尋ね、遠征補助金の小中学校別の支援のあり方や構想の発信の仕方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第4回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">活躍する子どもの顕彰</span><span class="sum">スポーツや文化活動の大会で好成績を挙げた子どもたちの活躍の町民への周知や教育長のほめ言葉、広報掲載、町長による顕彰を提案し、報奨制度の充実と基準の有無、派遣予算の枠外の活動への対応を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>総合型地域スポーツクラブ「隠岐レインボークラブ」の設立</summary><p>町民が主体となって運営する隠岐の島町総合型地域スポーツクラブ「隠岐レインボークラブ」を設立し、健康で活気に満ちた地域づくりを推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>総合型地域スポーツクラブによる生涯スポーツ</summary><p>総合型地域スポーツクラブ「隠岐レインボークラブ」を中核に、誰もがいつでも気軽にスポーツができる環境をつくり、生涯スポーツ社会の実現をめざす。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>生涯スポーツ社会の実現</summary><p>誰もが気軽にスポーツができる環境づくりを進め、地域全体が健康で活力あふれる生涯スポーツ社会の実現を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>国内都市交流の推進</summary><p>友好都市協定を結ぶ大阪府豊中市との交流を中心に、伊丹市・池田市を含め、子どもたちのスポーツや文化芸術を通した市民間の交流を進める。名古屋市を中心とした中京圏や、首都圏の東京都世田谷区・港区等にも働きかけ、相互交流につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>海洋スポーツセンター等の観光施設整備</summary><p>国立公園関連補助事業を活用して、海洋スポーツセンターなどの観光施設整備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>豊中市との都市交流</summary><p>友好都市協定を結ぶ大阪府豊中市との交流を中心に、子どもたちを始めとするスポーツ・文化芸術を通した市民間の交流を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>観光施設整備（海洋スポーツセンター・トイレ洋式化）</summary><p>国立公園関連補助事業を活用した海洋スポーツセンターなどの観光施設整備をはじめ、各地の観光施設のトイレ洋式化改修を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>豊中市との都市交流</summary><p>友好都市協定を結ぶ大阪府豊中市との交流を中心に、子どもたちをはじめスポーツ・文化芸術を通じた市民間の交流を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>第1回隠岐少年武道大会の支援</summary><p>スポーツ振興として、島内小学生が武道を通じて島外の子どもたちと交流し心身の健全育成を図ることを目的に開催される第1回隠岐少年武道大会を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>豊中市との都市交流</summary><p>友好都市協定を結んでいる大阪府豊中市との交流を中心に、子どもたちをはじめとするスポーツ・文化芸術を通した市民間の交流を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>学校施設の学習環境整備（照明LED化・特別教室空調）</summary><p>安全・安心で快適な学習環境を整えるため、校舎・体育館照明のLED化や特別教室の空調設備整備などに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>社会教育による人づくり・仲間づくりの支援</summary><p>主体的に地域課題を見つけ解決策を学ぶことで地域に貢献しようとする「人づくり」「仲間づくり」の活動を支援する。町民が学習活動やスポーツ・文化芸術活動に親しみ心豊かに暮らせる地域づくりに努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>スポーツ振興と「つなGO隠岐の島」の開催</summary><p>子どもから高齢者までの健康づくりや競技力向上のための環境づくりに努める。特に一流のアスリートが指導する「つなGO隠岐の島」を、「町民の健康づくり」をテーマとする各種スポーツ教室のイベントとして継続して開催する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>社会教育施設の有効利用（指定管理団体との連携強化）</summary><p>スポーツ・文化芸術活動をより活発にするため、公益財団法人隠岐の島町教育文化振興財団等の社会教育施設指定管理団体との連携を強化する。社会教育推進体制の充実と環境整備を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>友好都市・豊中市との交流</summary><p>友好都市協定を結ぶ大阪府豊中市との交流を中心に、子どもたちをはじめとするスポーツ・文化芸術を通した市民間の交流を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>ICT教育環境の整備と地域の教育環境づくり</summary><p>学びを支える基盤となるICT教育環境を整備し、安心・安全で魅力ある教育環境を整える。あわせて町民が学習・スポーツ・文化芸術活動に親しめる地域の教育環境づくりに努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>生涯スポーツの推進</summary><p>誰もが気軽にスポーツに親しめるよう、隠岐の島町スポーツ推進計画に基づき、体育協会や競技団体への支援と、スポーツに触れる機会を増やす取り組みを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>屋内温水プールの機器更新と体育施設の維持管理</summary><p>屋内温水プールの機器更新をはじめ、体育施設の維持管理によりスポーツ環境を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>旧町民体育館の解体撤去と不要施設の廃止・譲渡</summary><p>老朽化した旧町民体育館の解体撤去など、不要な施設の廃止・譲渡に向けた取り組みを進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>ICT教育環境の整備と地域の教育環境づくり</summary><p>学びを支える基盤となるICT教育の環境整備を加速し、安心・安全で魅力ある教育環境を整える。あわせて町民が学習・スポーツ・文化芸術活動に親しめる地域の教育環境づくりに取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>生涯スポーツの推進</summary><p>スポーツ推進計画に基づき、体育協会や競技団体、指導者への支援と、スポーツに触れる機会を増やす取り組みを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>屋内温水プールの改修と体育施設の維持管理</summary><p>屋内温水プールの施設改修をはじめ体育施設の維持管理を行い、スポーツ環境を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>地域の教育環境づくり</summary><p>町民が各種学習活動やスポーツ・文化芸術活動に親しみながら、生き生きと心豊かに暮らせる地域の教育環境づくりに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>生涯スポーツの推進</summary><p>生涯スポーツ推進計画に基づき、体育協会・競技団体・指導者への支援や、スポーツに触れる機会を増やす取組を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>屋内温水プール改修と社会体育施設の維持管理</summary><p>屋内温水プールの施設改修をはじめ、社会体育施設の維持管理により、スポーツ環境の整備に取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>国民スポーツ大会相撲競技の開催準備</summary><p>2030年に島根県で開催される第84回国民スポーツ大会で本町が相撲競技の開催地に正式決定したことを受け、島根県や島根県相撲連盟等と連携して開催準備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>ICT機器の利活用と教育環境の整備</summary><p>学びを支える基盤としてICT機器の利活用を加速させる。子どもたちが伸び伸び学べる安心・安全な教育環境の整備や、町民が学習・スポーツ・文化芸術活動に親しめる地域の教育環境づくりに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>生涯スポーツの推進</summary><p>生涯スポーツ推進計画に基づき、体育協会や競技団体、指導者への支援と、スポーツに触れる機会を増やす取り組みを実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>屋内温水プール改修と社会体育施設の維持管理</summary><p>屋内温水プールの施設改修をはじめ社会体育施設を維持管理し、スポーツ環境を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>国民スポーツ大会相撲競技の開催準備</summary><p>2030年に町で開催される「国民スポーツ大会相撲競技」の成功に向け、島根県や島根県相撲連盟等の関係機関と連携して準備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>地域の教育環境づくり（学習・スポーツ・文化芸術活動）</summary><p>町民が各種学習活動、スポーツ・文化芸術活動に親しみ、生き生きと心豊かに暮らせるよう、地域の教育環境づくりに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>生涯スポーツの推進と社会体育施設の管理</summary><p>令和7年度が最終年度である生涯スポーツ推進計画の見直しを行うとともに、体育協会・競技団体・指導者への支援やスポーツに触れる機会の提供に取り組む。また、屋内温水プールなどの社会体育施設を適正に管理し、スポーツ環境を整備する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>国民スポーツ大会相撲競技の開催準備</summary><p>2030年に本町で開催される国民スポーツ大会相撲競技について、所管する部署を新たに立ち上げ、大会の成功に向けた準備を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>地域の教育環境づくり（生涯学習・スポーツ・文化芸術）</summary><p>町民が各種学習活動、スポーツ・文化芸術活動に親しみながら、生き生きと心豊かに暮らせる地域の教育環境づくりに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>生涯スポーツの推進と社会体育施設の管理</summary><p>誰もが気軽にスポーツに親しめるよう、関係機関と連携して競技団体や指導者への支援、スポーツに触れる機会の創出に取り組む。また、総合体育館や屋内温水プールなどの社会体育施設を適正に管理し、スポーツ環境を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>国民スポーツ大会相撲競技の開催準備</summary><p>2030年に本町で開催される「国民スポーツ大会相撲競技」に向け、島根県や競技団体と連携し、選手強化や公認審判員・放送委員の養成など大会の成功に向けた準備を着実に進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>図書館と生涯学習</h3>
+    <p class="terms">語: 図書館と生涯学習・図書館・生涯学習</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt25" data-year="H24"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第1回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">文化財の展示と黒仏修理</span><span class="sum">埋蔵文化財や地上の文化財を町民向けに展示する考えと、保存が厳しい状態にある「黒仏」の修理の予定を尋ね、図書館のスペースや五箇創生館を活用した展示を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">支所・出張所の施設整備</span><span class="sum">老朽化の著しい五箇支所・中出張所・布施支所について、生涯学習センターや布施公民館との機能統合も視野に入れた将来の支所機能のあるべき姿と整備の展望・スケジュールを尋ね、健康づくりや介護予防への支所の関わり、改修の中期財政計画への盛り込みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">公共施設の維持管理体制</span><span class="sum">五箇生涯学習センターの空調設備が故障から数年未修繕であることや都万の高田会館裏側の荒廃を挙げ、機能不全の公共施設の有無と維持管理体制、今後万全を期す考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第1回隠岐の島町議会定例会・一般質問・是津輝和</span><span class="ttl">図書館の管理運営体制</span><span class="sum">生涯学習課長が館長を兼務し教育文化振興財団へ業務委託している隠岐の島図書館について、見直しの検討結果、施行規則どおり館長が職員を指揮監督しているか、4月からの祝日開館に向けた体制の準備状況を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>図書館資料の整備充実</summary><p>図書館の貸出しシステムのネットワークを有効に活用するとともに、DVDなどの視聴覚資料をはじめ蔵書や郷土資料の整備充実を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>図書館の収蔵室整備と資料の充実</summary><p>図書館の収蔵室等を整備して古文書や公文書等の史料の保存環境を充実させ、DVDなどの視聴覚資料・蔵書・郷土資料を充実させる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>図書館資料の充実と史料の保存</summary><p>図書館で蔵書や郷土資料、DVDなど視聴覚資料の充実を図るとともに、古文書や公文書などの史料の適正な保存と管理に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>公民館・図書館の機能充実と生涯学習施設の改修</summary><p>住民が気軽に学習できるよう、中核施設である公民館や図書館等の機能の充実に努めるとともに、各種生涯学習施設の改修を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>全校への図書館司書配置</summary><p>全校に図書館司書を配置し、子どもたちが本にふれ合う機会を確保する。言葉を学び、表現力・創造力を高め、生きる力を育むためである。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>図書館振興計画に基づく施策展開</summary><p>生涯学習の中核施設である隠岐の島町図書館について、昨年12月に策定した隠岐の島町図書館振興計画に基づき、新年度から向こう10年を見据えて各種施策を展開する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>図書館振興計画に基づく施策の展開</summary><p>生涯学習の中核施設である隠岐の島町図書館について、「隠岐の島町図書館振興計画」の基本理念「町民の暮らしに活きる図書館」の実現を目指し、基本目標に沿った各種施策を展開する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>町図書館の直営化</summary><p>新年度から隠岐の島町図書館を直営とし、図書館振興計画の基本理念「町民の暮らしに活きる図書館」を目指して蔵書の整備、郷土資料の保存公開、利用の啓発等を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>隠岐の島町図書館の充実</summary><p>図書館振興計画の基本理念「町民の暮らしに活きる図書館」を目指し、蔵書の整備、郷土資料の保存公開、利用の啓発等を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>町図書館の蔵書整備・郷土資料公開</summary><p>図書館振興計画の基本理念「町民の暮らしに活きる図書館」を目指し、蔵書の整備、郷土資料の保存公開、利用の啓発等を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>第3次子ども読書活動推進計画の策定と記念イベント</summary><p>家庭・学校・地域が協働して子どもの読書環境づくりを進める指針として「第3次子ども読書活動推進計画」を策定する。町政20周年と図書館開館25周年を記念し、子どもが読書に親しめるイベントを計画する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>町図書館の充実</summary><p>図書館振興計画の基本理念「町民の暮らしに活きる図書館」を目指し、蔵書の整備、郷土資料の保存公開、利用の啓発に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>地域の教育環境づくり（生涯学習・スポーツ・文化芸術）</summary><p>町民が各種学習活動、スポーツ・文化芸術活動に親しみながら、生き生きと心豊かに暮らせる地域の教育環境づくりに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>隠岐の島町図書館の充実と子どもの読書環境づくり</summary><p>図書館振興計画の基本理念「町民の暮らしに活きる図書館」を目指し、蔵書の整備、郷土資料の保存公開、利用の啓発に取り組む。あわせて家庭・学校・地域と協働して子どもたちの読書環境づくりを進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>国際交流と姉妹都市</h3>
+    <p class="terms">語: 国際交流と姉妹都市・国際交流・姉妹都市</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="empty">この話題に触れた質問は、対象年度にありません。</p>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>クロトシン市との国際交流</summary><p>平成28年度に友好都市協定を締結したポーランド共和国クロトシン市との交流事業で、相撲交流に加え文化交流も計画する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>国際交流員の配置</summary><p>教育委員会と連携して国際交流員1名を新たに配置し、小中学生の英語教育を始め、町民との国際的な文化交流活動に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>クロトシン市との国際交流（中学生のネット動画交流）</summary><p>友好都市協定を締結したポーランド共和国クロトシン市と、相撲交流に加え文化・教育交流を計画する。教育委員会と連携し、両市町の中学生によるネット動画を利用した相互交流を始める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>国際交流員による外国語・国際文化交流</summary><p>町に配置した国際交流員により小中学生が外国語に親しむ機会をつくり、町民との国際的な文化交流活動に継続して取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>クロトシン市との国際交流</summary><p>友好都市協定を締結したポーランド共和国クロトシン市との交流事業で、相撲交流に加え、文化・教育交流を計画する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>国際交流員による外国語・文化交流</summary><p>本町に配置した国際交流員により、小中学生が外国語に親しむ機会を設けるほか、町民との国際的な文化交流活動に継続して取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>クロトシン市（ポーランド）との国際交流</summary><p>ポーランド共和国クロトシン市との交流事業について、交流の目的を明確にし、本町にとって有益な活動となるよう進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>国際交流員による外国語・文化交流</summary><p>町に配置した国際交流員による小中学生の外国語に親しむ機会をはじめ、町民との国際的な文化交流活動に継続して取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.3.1</p>
+                    
+                    <p class="project-credit">
+                        隠岐の島町議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>

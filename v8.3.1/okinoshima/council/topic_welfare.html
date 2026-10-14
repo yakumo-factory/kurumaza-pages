@@ -1,0 +1,3525 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療・介護・福祉 — 隠岐の島町議会レポート</title>
+    <style>
+/* 議会レポート — 共通スタイル */
+
+:root {
+    /* 意味色（増減・強調・中立）— 既存維持（Req9.3「色が意味を担う箇所」） */
+    --color-up: #16a34a;
+    --color-down: #dc2626;
+    --color-accent: #fbbf24;
+    --color-neutral: #64748b;
+
+    /* 配色トークン層（ライトのみ・#382 Task 3.2、確定モック docs/mocks/m6/00 準拠）。
+       基調＝藍アクセント＋ニュートラル（Req9.2）。ダークパレットは本スコープ外
+       （2026-07-09 ユーザー決定）。将来 @media (prefers-color-scheme:dark) を 1 ブロック
+       足すだけで拡張できるよう命名構造のみ踏襲する。モック残骸の --new/--keinen は
+       採用しない（Req7.4/9.4「新」「経年」タグ廃止）。 */
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --panel: #f6f5f1;
+    --ink: #1c1e26;
+    --ink-soft: #55596b;
+    --ink-faint: #8b8fa3;
+    --line: #e3e1d9;
+    --line-soft: #eeece5;
+    --accent: #3a4a8c;
+    --accent-soft: #e8ebf7;
+    --accent-ink: #2c3a70;
+    --shadow: 0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+
+    /* フッタ濃色地（装飾地・意味色でも本文でもない）。#422 harmonize で専用トークン化。
+       ライト解決値は現値維持（純トークン化(a)）。将来 @media(prefers-color-scheme:dark)
+       を1ブロック足すだけで拡張できる命名構造を回復する目的（ダーク実装自体はスコープ外）。 */
+    --footer-bg: #334155;
+    --footer-ink: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+.site-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-title a {
+    color: #fff;
+}
+
+.site-title a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.main-nav li a {
+    display: block;
+    padding: 0.3rem 0.7rem;
+    color: #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.main-nav li a:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Section */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a5f;
+}
+
+.card .card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--panel);
+    color: var(--ink-soft);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+    background: var(--panel);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Table scroll for wide tables */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bill breakdown — 議員提出議案の期別一覧
+   件名列の開始位置を期をまたいで固定する（table-layout: fixed + 共通幅クラス） */
+.bb-item-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.bb-item-table .bb-col-session {
+    width: 10em;
+}
+
+.bb-item-table .bb-col-result {
+    width: 6em;
+}
+
+/* Bill breakdown — 役割内訳 details 内の小分類行 */
+.bb-minor-label {
+    padding-left: 1.6em;
+    color: #64748b;
+}
+
+/* Tags */
+.tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+/* Links */
+.detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.detail-link:hover {
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Guide Text — 市民向け案内文 */
+.guide-text {
+    background-color: var(--panel);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--ink);
+}
+
+/* Glossary Inline Expand */
+.glossary-inline {
+    display: inline;
+}
+
+.glossary-inline details {
+    display: inline;
+}
+
+.glossary-inline summary {
+    display: inline;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--ink-faint);
+    list-style: none;
+    font-weight: bold;
+}
+
+.glossary-inline summary::-webkit-details-marker {
+    display: none;
+}
+
+.glossary-inline summary::after {
+    content: ' \2139';
+    font-size: 0.7em;
+    color: var(--ink-faint);
+}
+
+.glossary-inline details[open] {
+    position: relative;
+    z-index: 10;
+}
+
+.glossary-inline-text {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    display: block;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-left: 2px solid var(--line);
+    line-height: 1.4;
+    background: var(--panel);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    width: max-content;
+    max-width: 90vw;
+}
+
+/* No Data */
+.no-data {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* 開示プルダウン（.bb-dd）— #395 で確立し #422 harmonize で共有へ昇格した正準意匠。
+   箱＋藍カレット（▸→▾ 回転）＋ホバーで開閉を明示。セクション級の <details> 開示に用いる
+   （複数ページ共通の正準意匠のため共有が妥当・§3）。用語解説の glossary-inline（点線下線）
+   には適用しない。配色は全てトークン（藍アクセント＋ニュートラル）。 */
+.bb-dd {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin: 10px 0;
+    background: var(--panel);
+    overflow: hidden;
+}
+.bb-dd > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.bb-dd > summary::-webkit-details-marker { display: none; }
+.bb-dd > summary::before {
+    content: "\25B8";
+    color: var(--accent);
+    font-size: 12px;
+    flex: 0 0 auto;
+    transition: transform .15s ease;
+}
+.bb-dd[open] > summary { border-bottom: 1px solid var(--line); }
+.bb-dd[open] > summary::before { transform: rotate(90deg); }
+.bb-dd > summary:hover { background: var(--line-soft); }
+.bb-dd > :not(summary) { background: var(--surface); }
+.bb-dd > p { margin: 0; padding: 10px 14px 0; }
+
+/* Page Title（#422 harmonize: M6式1系統へ統一。旧式ページ〔bill_breakdown/
+   member_longitudinal/timeline/policy_speech_overview〕が値継承で収束する。
+   M6独自 lead〔.ma-lead/.ea-lead/.br-lead/.ps2-sub〕と同値＝22px/13.5px・ink トークン） */
+.page-title {
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin-bottom: 20px;
+}
+
+/* Footer（濃色装飾地・#422 harmonize で専用トークン化＝ライト値は現値維持） */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-ink);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.project-credit {
+    margin-top: 0.5rem;
+    color: #64748b;
+}
+
+.footer-notice {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #475569;
+    font-size: 0.8rem;
+    color: var(--footer-ink);
+    line-height: 1.6;
+}
+
+.footer-notice a {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* Chart.js Containers & Fallback */
+.chart-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.chart-fallback {
+    background: var(--panel);
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 1rem;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.4rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+}
+
+/* About Page */
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p {
+    margin-bottom: 0.6rem;
+}
+
+.about-section ul,
+.about-section ol {
+    margin: 0.6rem 0 0.6rem 1.5rem;
+}
+
+.about-section li {
+    margin-bottom: 0.3rem;
+}
+
+/* Cross Navigation */
+.cross-nav {
+    background: #0f2942;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.cross-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cross-nav-portal {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cross-nav-portal:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+.cross-nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.cross-nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cross-nav-sep {
+    color: #475569;
+}
+
+/* ============================================================
+   外殻 shell（#382 段階1・Task 3.2/3.3）
+   折りたたみ式アイコンレールサイドバー＋メインの 2 カラム grid。
+   両者独立スクロール（min-height:0 + overflow-y:auto）。ライトのみ。
+   ============================================================ */
+
+svg.ico, svg.rico, svg.shico, svg.dico,
+.iconbtn svg, .mobile-toggle svg {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    transition: grid-template-columns .22s ease;
+}
+.shell.collapsed { grid-template-columns: 60px 1fr; }
+
+/* --- サイドバー（独立スクロール） --- */
+.sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;        /* Flex 子の独立スクロールの要 */
+    overflow: hidden;
+}
+.sb-h {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    flex: none;
+}
+.sb-top { display: flex; align-items: center; gap: 8px; }
+/* レール（折りたたみ）時はトグルを 60px レールの中央（≈30px 軸）に寄せ、
+   下段のナビ項目アイコン（.collapsed .item）・レポート切替（.collapsed .rsw-btn）
+   と縦のアイコン軸を一致させる（空の白箱に見える左寄せを解消）。 */
+.collapsed .sb-top { justify-content: center; }
+.portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+}
+.portal .ico { flex: none; width: 15px; height: 15px; }
+.portal .portal-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal:hover { color: var(--accent); }
+/* レール時はポータルリンクを flex フローから外す（display:none）。width:0/opacity:0
+   だと不可視でも .sb-top の flex 子として残り gap:8px を占め、justify-content:center
+   がトグル＋隙間＋0幅ポータルの塊を中央化してトグルが 4px 左へずれる。除去して
+   トグルを単独中央（≈30px 軸＝ナビアイコン・レポート切替と一致）にする。 */
+.collapsed .portal { display: none; }
+.iconbtn {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+.iconbtn svg { width: 17px; height: 17px; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* レール時：トグルをレポート切替（.collapsed .rsw-btn）と同一の 34px 角に統一し、
+   ナビアイコン列と同じ 30px 軸の清潔な一列アイコン列にする。 */
+.collapsed .iconbtn { width: 34px; height: 34px; border-radius: 9px; }
+
+/* --- 2層ナビ（ポータル戻り＋レポート切替メニュー） --- */
+.rsw { position: relative; margin-top: 8px; }
+.rsw-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.rsw-btn:hover { border-color: var(--accent); }
+.rsw-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rsw-btn .rico { flex: none; width: 18px; height: 18px; }
+.rsw-btn .rlbl { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; }
+.rsw-btn .rcar { font-size: 10px; opacity: .6; }
+/* レール時：レポート切替を幅100%の横長箱でなく、トグルと同一の 34px 角に統一し、
+   .rsw を中央寄せして 30px 軸（トグル・ナビアイコン列）に載せる。 */
+.collapsed .rsw { display: flex; justify-content: center; }
+.collapsed .rsw-btn { justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 9px; }
+.collapsed .rsw-btn .rlbl, .collapsed .rsw-btn .rcar { display: none; }
+/* cross-nav ブロックをレポート切替メニューとして流用（refresh_all_cross_nav が
+   置換する nav.cross-nav 要素は自己完結を保つ。構造セレクタで参照するため
+   refresh でクラスが刷新されても崩れない）。style ブロックに生タグ文字列
+   （nav.cross-nav の山括弧表記）を書かないこと＝css を | safe で無escape 注入
+   するため、書くと refresh の正規表現が style から body まで巻き込む。 */
+.rsw > .cross-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 6px;
+    z-index: 30;
+    display: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.rsw > .cross-nav.open { display: block; }
+.rsw > .cross-nav .cross-nav-inner {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+}
+.rsw > .cross-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: normal;
+}
+.rsw > .cross-nav a:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.rsw > .cross-nav .cross-nav-portal { color: var(--accent); font-weight: 700; }
+.rsw > .cross-nav .cross-nav-sep { display: none; }
+
+/* --- 領域グループ木（生成時に静的描画） --- */
+.nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;   /* サイドバー独立スクロール */
+    padding: 8px 8px 14px;
+}
+.lead { margin: 2px 0 6px; }
+.group { margin-top: 4px; }
+.grp-h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 9px 8px 4px;
+    font: inherit;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.grp-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grp-h .gcaret { font-size: 9px; transition: transform .18s; margin-left: auto; opacity: .7; }
+.group.closed .grp-h .gcaret { transform: rotate(-90deg); }
+.group.closed .items { display: none; }
+.collapsed .grp-h { justify-content: center; padding: 6px 0 3px; }
+.collapsed .grp-h .gtext, .collapsed .grp-h .gcaret { display: none; }
+.collapsed .grp-h::before { content: ""; display: block; width: 18px; height: 1px; background: var(--line); }
+.item {
+    display: flex;
+    align-items: flex-start;   /* 折り返す長いラベルでもアイコンが先頭行に揃う */
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+}
+.item:hover { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.item.cur { background: var(--accent); color: #fff; font-weight: 700; }
+.item .ico { flex: none; width: 20px; height: 20px; }
+.item .lbl { flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.collapsed .item { justify-content: center; padding: 9px 0; }
+.collapsed .item .lbl { display: none; }
+/* レール時のツールチップ（CSS のみ・付加表示） */
+.collapsed .item:hover .lbl {
+    display: block;
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: var(--shadow);
+}
+/* active ページ直下の節目次（scrollspy 受け皿・段階2 で本格利用） */
+.subtoc { list-style: none; margin: 2px 0 4px 30px; padding: 0; }
+.subtoc a {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.subtoc a:hover, .subtoc a.cur { background: var(--accent-soft); color: var(--accent-ink); }
+/* active ページ配下の期→年目入れ子木（段階3 で本格利用） */
+.ptree { list-style: none; margin: 2px 0 4px 30px; padding: 0; font-size: 12px; }
+.ptree .pnode { display: block; padding: 3px 8px; color: var(--ink-soft); text-decoration: none; border-radius: 7px; }
+.ptree .pnode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .years { list-style: none; margin: 0 0 2px 12px; padding: 0; }
+.ptree .ynode { display: block; padding: 2px 8px; font-size: 11.5px; color: var(--ink-faint); text-decoration: none; border-radius: 7px; }
+.ptree .ynode:hover { background: var(--accent-soft); color: var(--accent-ink); }
+.ptree .ynode.on { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+/* レール（折りたたみ）時は副ナビ（節目次・期→年目木）を隠す。展開時専用の
+   テキストナビが 60px レールに縦へ溢れると下段の領域グループアイコンを可視域外へ
+   押し出すため（確定モック docs/mocks/m6/02 の .collapsed .ptree{display:none} 準拠）。 */
+.collapsed .subtoc, .collapsed .ptree { display: none; }
+
+/* --- メイン領域（独立スクロール） --- */
+.mainwrap {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;    /* メイン独立スクロール */
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+}
+.main-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    flex: none;
+}
+.crumb { font-size: 12px; color: var(--ink-faint); }
+.crumb b { color: var(--ink); }
+.mobile-toggle { display: none; }
+
+/* 既存の .content は max-width 中央寄せを維持（本文は無破壊）。
+   .mainwrap 内で伸縮させる。 */
+.mainwrap .content { flex: 1; width: 100%; }
+
+/* --- 着地ページ「このレポートについて」（Task 5.1） --- */
+.land { padding: 26px 30px 34px; max-width: 820px; margin: 0 auto; width: 100%; }
+.land h1.land-title { font-size: 22px; margin: 0 0 10px; line-height: 1.4; border: none; }
+.land .mission { font-size: 14.5px; color: var(--ink); margin: 0; line-height: 1.95; }
+.land .sec { margin-top: 30px; }
+.land .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.land .sec-h .shico { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.doms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.dom { border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; background: var(--surface); }
+.dom h3 { margin: 0 0 6px; font-size: 14.5px; display: flex; align-items: center; gap: 9px; border: none; color: var(--ink); }
+.dom h3 .dico { width: 19px; height: 19px; color: var(--accent-ink); flex: none; }
+.dom p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.75; }
+.dom .go { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.dom .go:hover { text-decoration: underline; }
+.src { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 13px; }
+.src dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; }
+.src dt { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.src dd { margin: 0; color: var(--ink-soft); line-height: 1.75; }
+.src a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.neutral { margin-top: 13px; font-size: 12.5px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 9px; padding: 12px 15px; line-height: 1.8; }
+.neutral b { color: var(--accent-ink); }
+.notewrap { margin-top: 22px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.8; }
+.notewrap b { color: var(--ink-soft); }
+
+/* --- フッター（サイドバー外・メイン末尾） --- */
+.mainwrap .site-footer { flex: none; }
+
+/* --- レスポンシブ（モバイル：サイドバー オーバーレイ・1 カラム、Req10.2） --- */
+@media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .shell.collapsed { grid-template-columns: 1fr; }
+    .shell .sidebar {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform .22s;
+    }
+    .shell.mobileopen .sidebar { transform: none; }
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        cursor: pointer;
+    }
+    .mobile-toggle svg { width: 18px; height: 18px; }
+    .content { padding: 0 1rem; }
+    .land { padding: 20px 16px 28px; }
+}
+
+    </style>
+</head>
+<body>
+    
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.1"/><path d="M5.7 19c0-3.5 2.8-5.8 6.3-5.8S18.3 15.5 18.3 19"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="2.7"/><path d="M3.6 18.4c0-2.9 2.3-4.8 5.4-4.8 1 0 2 .2 2.8.6"/><circle cx="16.6" cy="9.8" r="2.3"/><path d="M13.7 18.4c.2-2.3 1.7-3.6 3.6-3.6 2.2 0 3.6 1.5 3.6 3.6"/></symbol>
+  <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="4 15.5 9 10.5 13 13.5 20 6"/><polyline points="15 6 20 6 20 11"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1"/><line x1="9" y1="8" x2="10.4" y2="8"/><line x1="13.6" y1="8" x2="15" y2="8"/><line x1="9" y1="11.5" x2="10.4" y2="11.5"/><line x1="13.6" y1="11.5" x2="15" y2="11.5"/><path d="M10.3 20v-3.2h3.4V20"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="1.6"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12.5" x2="15" y2="12.5"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-timeline" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.7"/><circle cx="13" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></symbol>
+  <symbol id="ic-bank" viewBox="0 0 24 24"><path d="M4 9 12 4l8 5"/><line x1="6.2" y1="9.8" x2="6.2" y2="17"/><line x1="10" y1="9.8" x2="10" y2="17"/><line x1="14" y1="9.8" x2="14" y2="17"/><line x1="17.8" y1="9.8" x2="17.8" y2="17"/><line x1="4.5" y1="19" x2="19.5" y2="19"/></symbol>
+  <symbol id="ic-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9.2 8.3 12 11.6l2.8-3.3"/><line x1="12" y1="11.6" x2="12" y2="16.5"/><line x1="9.6" y1="13" x2="14.4" y2="13"/><line x1="9.6" y1="15" x2="14.4" y2="15"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="15.5" y1="15.5" x2="20" y2="20"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><polyline points="13 6 7 12 13 18"/><line x1="7.5" y1="12" x2="19" y2="12"/></symbol>
+</defs></svg>
+    <div class="shell" id="shell">
+        <aside class="sidebar" aria-label="サイドバー">
+            
+            <div class="sb-h">
+                <div class="sb-top">
+                    <button class="iconbtn" id="sb-toggle" type="button"
+                            aria-label="サイドバーを畳む/開く" title="サイドバーを畳む/開く">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                    </button>
+                    
+                    <a class="portal" href="../../index.html" title="ポータルへ戻る"><svg class="ico"><use href="#ic-back"/></svg><span class="portal-lbl">隠岐の島町 ／ 車座プロジェクト</span></a>
+                    
+                </div>
+                
+                
+                <div class="rsw">
+                    <button class="rsw-btn" id="rsw-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg class="rico"><use href="#ic-bank"/></svg><span class="rlbl">議会レポート</span><span class="rcar" aria-hidden="true">▾</span>
+                    </button>
+                    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+                        <div class="cross-nav-inner">
+                            <a href="../../index.html" class="cross-nav-portal">ポータル</a>
+                            
+                        </div>
+                    </nav>
+                </div>
+                
+            </div>
+            
+            <nav class="nav" id="nav" aria-label="ページ一覧">
+                
+                <div class="lead">
+                    <a class="item" href="index.html">
+                        <svg class="ico"><use href="#ic-about"/></svg><span class="lbl">このレポートについて</span>
+                    </a>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">話題</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="topics.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">議会で語られてきた話題</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_childcare.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">子育てと少子化</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_education.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">学校教育</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item cur" href="topic_welfare.html" aria-current="page">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">医療・介護・福祉</span>
+                        </a>
+                        
+                        <ul class="subtoc">
+                            
+                            <li><a href="#s-overview">推移の一覧表</a></li>
+                            
+                            <li><a href="#topic-01">公立病院の経営と地域医療</a></li>
+                            
+                            <li><a href="#topic-02">国民健康保険</a></li>
+                            
+                            <li><a href="#topic-03">介護保険と介護予防</a></li>
+                            
+                            <li><a href="#topic-04">認知症と地域包括ケア</a></li>
+                            
+                            <li><a href="#topic-05">健康づくりと検診</a></li>
+                            
+                            <li><a href="#topic-06">障害者支援</a></li>
+                            
+                            <li><a href="#topic-07">生活保護と生活困窮</a></li>
+                            
+                            <li><a href="#topic-08">感染症対策</a></li>
+                            
+                            <li><a href="#topic-09">ひとり親家庭の支援</a></li>
+                            
+                            <li><a href="#topic-10">医療費の抑制</a></li>
+                            
+                        </ul>
+                        
+                        
+                        
+                        <a class="item" href="topic_safety.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">防災と地域の安全</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_infrastructure.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">都市基盤と生活環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_community.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">市民自治と人権</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_population.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">人口減少と地域の維持</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_industry.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">産業・雇用</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_agriculture.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">農林水産業</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_tourism.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">観光・文化・交流</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_environment.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">エネルギー・環境</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_nuclear.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">原子力</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="topic_administration.html">
+                            <svg class="ico"><use href="#ic-topic"/></svg><span class="lbl">行財政運営</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議員の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="members.html">
+                            <svg class="ico"><use href="#ic-person"/></svg><span class="lbl">議員活動</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="member_longitudinal.html">
+                            <svg class="ico"><use href="#ic-trend"/></svg><span class="lbl">議員の経年推移</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">行政の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="executives.html">
+                            <svg class="ico"><use href="#ic-building"/></svg><span class="lbl">行政側活動</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <button class="grp-h" type="button" aria-expanded="true"><span class="gtext">議会の活動</span><span class="gcaret" aria-hidden="true">▼</span></button>
+                    <div class="items">
+                        
+                        <a class="item" href="bills.html">
+                            <svg class="ico"><use href="#ic-doc"/></svg><span class="lbl">議案審議</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="bill_breakdown.html">
+                            <svg class="ico"><use href="#ic-pie"/></svg><span class="lbl">議案の内訳</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech.html">
+                            <svg class="ico"><use href="#ic-speech"/></svg><span class="lbl">施政方針と議会の動き ― 町長の宣言を議会はどう扱ったか</span>
+                        </a>
+                        
+                        
+                        
+                        <a class="item" href="policy_speech_overview.html">
+                            <svg class="ico"><use href="#ic-timeline"/></svg><span class="lbl">施政方針と議会の動き（長期の俯瞰）</span>
+                        </a>
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+                
+            </nav>
+        </aside>
+
+        <div class="mainwrap">
+            <div class="main-top">
+                <button class="mobile-toggle" id="mobile-toggle" type="button" aria-label="メニューを開く">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+                </button>
+                <span class="crumb">隠岐の島町 · 議会レポート / <b>医療・介護・福祉</b></span>
+            </div>
+
+            <main class="content">
+                
+<style>
+.tdv{--measure:680px}
+.tdv .page-subtitle,.tdv .lede,.tdv .note,.tdv .terms,.tdv ul.qs li{max-width:var(--measure)}
+.tdv h2{font-size:18px;color:var(--accent-ink);margin:36px 0 8px;border-left:4px solid var(--accent);padding-left:10px}
+.tdv h3{font-size:16px;color:var(--accent-ink);margin:4px 0 4px}
+.tdv h4{font-size:14px;color:var(--ink);margin:18px 0 6px}
+.tdv .lede{color:var(--ink-soft);font-size:13.5px;margin:4px 0 12px}
+.tdv .note{color:var(--ink-soft);font-size:12.5px;margin:4px 0 8px}
+.tdv .terms{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.tdv .back{font-size:13px}
+.tdv .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.tdv table.ov,.tdv table.trend{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tdv table.ov th,.tdv table.ov td,.tdv table.trend th,.tdv table.trend td{border:1px solid var(--line);padding:4px 6px;text-align:center;white-space:nowrap}
+.tdv table.ov thead th,.tdv table.trend thead th{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;min-width:4.5em;white-space:normal}
+.tdv table.ov th.bn{text-align:left;font-weight:600;background:var(--surface);position:sticky;left:0;white-space:normal;min-width:9em}
+.tdv table.ov thead th.bn,.tdv table.trend th.corner{background:var(--accent-soft);color:var(--accent-ink);text-align:left}
+.tdv th .partial{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.tdv table.ov tr.den th,.tdv table.ov tr.den td{color:var(--ink-soft);border-top:2px solid var(--line);font-size:12px}
+.tdv table.trend td .of{color:var(--ink-soft);font-size:.9em}
+.tdv table.trend td .q{display:block;color:var(--ink-soft);font-size:.9em}
+.tdv .lt10{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.tdv .lt25{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.tdv .ge25{background:color-mix(in srgb,var(--accent) 30%,var(--surface));font-weight:700}
+.tdv .h0,.tdv .nd{color:var(--ink-soft)}
+.tdv .ge25 .of,.tdv .ge25 .q{color:var(--ink)}
+.tdv .legend{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+.tdv .legend span{display:inline-block;padding:0 6px;border-radius:3px;margin:0 4px 0 8px;color:var(--ink)}
+.tdv details.yr{margin:4px 0}
+.tdv table.trend td[role=button]{cursor:pointer}
+.tdv table.trend td[role=button]:hover,.tdv table.trend td[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tdv table.trend td[aria-pressed=true]{outline:2px solid var(--accent-ink);outline-offset:-2px}
+.tdv details.yr>summary{cursor:pointer;color:var(--accent-ink);font-size:13.5px}
+.tdv ul.qs{list-style:none;margin:6px 0 10px;padding:0}
+.tdv ul.qs li{border-left:3px solid var(--accent-soft);padding:4px 12px;margin:6px 0;font-size:13px}
+.tdv ul.qs span{display:block}
+.tdv ul.qs .who{color:var(--ink-soft);font-size:.85em}
+.tdv ul.qs .ttl{font-weight:600}
+.tdv ul.qs .sum{color:var(--ink-soft)}
+.tdv .empty{color:var(--ink-soft);font-size:12.5px}
+.tdv table.inits{border-collapse:collapse;font-size:13px;width:100%;max-width:var(--measure)}
+.tdv table.inits th,.tdv table.inits td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tdv table.inits th{background:var(--accent-soft);color:var(--accent-ink);font-size:12px;white-space:nowrap}
+.tdv table.inits td.y{white-space:nowrap;color:var(--ink-soft)}
+.tdv table.inits td.c{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.tdv details.it>summary{cursor:pointer;color:var(--accent-ink)}
+.tdv details.it p{margin:4px 0;color:var(--ink-soft)}
+@media (max-width:640px){.tdv .panel{padding:10px}}
+</style>
+
+
+<div class="tdv">
+  <h1 class="page-title">医療・介護・福祉</h1>
+  <p class="page-subtitle">
+    隠岐の島町議会の一般質問・代表質問について、区分「医療・介護・福祉」に属する10の話題ごとに、年度ごとに何人の議員が触れたか、実際にどんな質問があったか、施政方針のどの事業とつながるかを並べました。
+    <a class="back" href="topics.html">← 話題の入口へ</a>
+  </p>
+
+  <h2 id="s-overview">推移の一覧表</h2>
+  <p class="lede">数字は、その年度に質問に立った議員のうち、その話題に触れた議員の割合（%）です。色が濃いほど多くの議員が触れています。話題を押すと、その話題の節へ移ります。</p>
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="ov">
+        <thead>
+          <tr>
+            <th scope="col" class="bn">話題 ＼ 年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-01">公立病院の経営と地域医療</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-02">国民健康保険</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-03">介護保険と介護予防</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">7</td><td class="lt10">8</td><td class="lt10">8</td><td class="lt25">14</td><td class="lt10">8</td><td class="lt25">14</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-04">認知症と地域包括ケア</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-05">健康づくりと検診</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">14</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="lt10">8</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-06">障害者支援</a></th>
+            <td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-07">生活保護と生活困窮</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt25">14</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-08">感染症対策</a></th>
+            <td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="ge25">38</td><td class="lt25">21</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-09">ひとり親家庭の支援</a></th>
+            <td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="bn"><a href="#topic-10">医療費の抑制</a></th>
+            <td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="lt25">15</td><td class="h0">0</td><td class="lt10">7</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="h0">0</td><td class="lt10">7</td><td class="h0">0</td><td class="lt10">8</td><td class="h0">0</td><td class="h0">0</td>
+          </tr>
+          
+          <tr class="den">
+            <th scope="row" class="bn">母数（質問に立った議員）</th>
+            <td>12</td><td>12</td><td>12</td><td>14</td><td>13</td><td>13</td><td>14</td><td>12</td><td>14</td><td>14</td><td>14</td><td>13</td><td>14</td><td>14</td><td>14</td><td>13</td><td>13</td><td>9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">色: <span class="lt10">10%未満</span><span class="lt25">10〜24%</span><span class="ge25">25%以上（入口に載る）</span> ／ 0＝触れた議員なし</p>
+  </div>
+
+  <h2>話題ごとに見る</h2>
+  
+  <section class="panel bunch" id="topic-01">
+    <h3>公立病院の経営と地域医療</h3>
+    <p class="terms">語: 公立病院の経営と地域医療・市立病院・地域医療・医師不足・救急医療・奥出雲病院・町立病院・雲南病院・雲南総合病院</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和7年第3回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">地域医療体制の展望</span><span class="sum">歯科医院の閉院を受けて開業医が閉院を決断する際に医師連絡会や隠岐広域連合へ事前に相談する体制の必要性を尋ね、病診一元化後の医療行政の軸足と保健福祉課の役割、隠岐病院・広域連合との連携を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第1回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">隠岐病院の地域医療</span><span class="sum">医師や看護師への苦情・中傷の早期解決や都万診療所の常勤医師不在に触れ、職員間の風通しのよい業務体制で住民に信頼される隠岐病院とする町長の理想の地域医療のあり方と、益田市のような町民と一緒の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>隠岐病院・診療所の医師招聘</summary><p>全国的な医師不足の中、隠岐病院と診療所の医師招聘について、県と隠岐広域連合と連携しながら医師の情報を収集し、招聘に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>地域推薦入学制度による医療人材の育成</summary><p>県内の高等学校と連携し、関係大学や専門学校の地域推薦入学制度の活用に引き続き取り組む。地域医療を担う医師や看護師などの人材を育成する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>地域推薦入学制度による医療従事者の育成</summary><p>県内の高等学校と連携し、関係大学や専門学校の地域推薦入学制度を活用して、地域医療を担う医師・看護師等の医療従事者を育成する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>医療従事者の人材育成と確保</summary><p>関係大学や専門学校の地域推薦入学制度を引き続き活用するとともに、県立大学との連携のもと地域医療を目指す看護師を育成するなど、地域医療を担う医療従事者の人材育成と確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>地域医療従事者の育成と確保</summary><p>関係大学や専門学校の地域推薦入学制度を活用するとともに、県立大学と連携して地域医療を目指す看護師を育成するなど、地域医療従事者の人材育成と確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>医療従事者の人材育成と確保</summary><p>関係大学や専門学校の地域推薦入学制度を活用するとともに、県立大学との連携のもとで地域医療を目指す看護師を育成するなど、地域医療を担う医療従事者の人材育成と確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>医療従事者の人材育成と確保</summary><p>関係大学や専門学校の地域推薦入学制度を活用し、県立大学との連携のもとで地域医療を目指す看護師を育成するなど、地域医療を担う医療従事者の育成と確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>医療従事者の確保（地域推薦入学制度・看護職育成支援）</summary><p>関係大学や専門学校の地域推薦入学制度を活用し、島根県立大学との連携のもとで地域医療を目指す看護職の育成を支援するなど、地域医療を担う医療従事者の確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>看護職の育成支援と医療従事者の確保</summary><p>関係大学や専門学校の地域推薦入学制度の活用と各学校との連携のもとで、地域医療を目指す看護職の育成支援を実施し、UIターンの働きかけ等も行いながら医療従事者の確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>地域医療と医療・介護・生活支援の連携</summary><p>病院・開業医・町立診療所・訪問看護ステーションの連携を図り、医療・介護・生活支援等の連携を一層進める。患者や家族に寄り添った切れ目のないサービス提供のためである。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>医療従事者の確保・育成</summary><p>大学等の地域推薦入学制度の活用や学校・関係機関との連携のもと、地域医療を目指す医療従事者の育成に積極的に関わる。UIターン者への働きかけ等も行い人材確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>地域医療の連携（在宅医療・介護・生活支援）</summary><p>病院と開業医・診療所・訪問看護等の在宅医療との連携を密にし、医療・介護・生活支援の連携を推進する。患者と家族に寄り添った切れ目のないサービスを提供する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>医師の招へい</summary><p>島根県及び隠岐広域連合と連携して情報収集を行い、地域医療の維持・充実のため医師確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>看護師等医療従事者の育成・確保</summary><p>関係大学等の地域推薦入学制度の活用と関係機関との連携により、地域医療を目指す看護師等の育成を支援する。UIターンの働きかけや情報発信も行い人材確保に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>医師の招へい</summary><p>島根県・隠岐広域連合と連携して医師の情報収集に努め、地域医療の維持・充実を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>医師招へい</summary><p>島根県や隠岐広域連合と連携し医師の確保に努め、地域医療の維持・充実を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>医師招へい</summary><p>島根県や隠岐広域連合と連携を図りながら医師の確保に努め、地域医療の維持・充実を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>医療従事者の確保・育成</summary><p>関係大学などの地域推薦入学制度の活用や関係機関との連携により、地域医療を目指す看護師などの育成を支援し、医療系学校の卒業生への働きかけを継続する。また、将来医療従事者を目指してもらえるよう、中学生・高校生に向けて情報発信を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-02">
+    <h3>国民健康保険</h3>
+    <p class="terms">語: 国民健康保険・国保料・被保険者</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成31年第1回隠岐の島町議会定例会・一般質問・村上三三郎</span><span class="ttl">国民健康保険制度の運営</span><span class="sum">国民健康保険制度の運営について、滞納者への罰則規定とその実施状況、国保税額の上昇傾向と都道府県化の影響、国保税の低減のための施策を尋ね、生活困窮者への施策や応能負担への転換による滞納防止を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回隠岐の島町議会定例会・一般質問・村上三三郎</span><span class="ttl">国民健康保険制度の運用</span><span class="sum">2018年度からの国保の都道府県化による町民への影響と周知、滞納者への差押えや保険証の取上げをしない町の施策、平成27年度の未納363戸・未納額6,595万2,000円を踏まえた未納者対策、国庫負担引上げなどの国・県への要請、医療・介護総合法等による町への影響を尋ね、保険税の賦課決定権が市町村に残ることの確認を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第2回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">国保税改定と滞納対策</span><span class="sum">平成25年度からの国民健康保険税率の改定に当たり、1億488万1千円の滞納額を減らす対策を国保運営協議会で改定と併せて議論し徴収活動に活かすことと、保険証を一度も使っていない人の健康管理を調査し保健活動へ活用することを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営と医療費削減</summary><p>将来にわたり安定した国保運営ができるよう年次計画に沿って保険税を改定しており、特定健診を始めとする保健事業や生活習慣病の予防事業などを実施して医療費の削減に取組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>国民健康保険事業の安定運営</summary><p>平成30年度から保険財政の運営主体が県に代わるが、地域のきめ細かい事業は引き続き町が担う。医療費適正化対策や保険税の徴収などにより、安定的な財政運営と効率的な事業運営に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営と広域化への準備</summary><p>国民健康保険は医療費の高騰で3年間保険税を改定し基金を取り崩してきたが、新年度は税率を改定しない。平成30年度の国保広域化に向け、被保険者に不安や混乱が生じないよう制度の周知や準備を進め、医療費適正化対策や保険税の徴収に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>国民健康保険の医療費適正化と広域化準備</summary><p>本年度策定したデータヘルス計画に基づき特定健診を始めとする保健事業を実施し、保険税の徴収など安定的な財政運営に努め、平成30年度の国保の広域化に向け準備を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>国保の都道府県化への対応</summary><p>国民健康保険制度改革による「国保の都道府県化」が4月から始まるのに伴い、島根県国民健康保険運営方針に基づき県・国保連合会と一体で事務事業を推進する。被保険者が混乱しないよう情報提供し、資格管理・保険給付・保険税賦課徴収・保健事業等に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>国保税の据え置きと医療費適正化</summary><p>国保の都道府県化により医療費適正化が求められる中、過去3年間改定していない国民健康保険税を新年度も改定せずに運営する。保健・福祉部署と連携し、保健事業や地域包括ケアの推進等の医療費適正化事業を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>国民健康保険の健全運営（税率据え置き・徴収率向上・医療費適正化）</summary><p>厳しい事業運営が見込まれる国保について、県と連携し健全な運営に努める。国保税率は改定しない方針とし、徴収率の向上、効果的な保健事業による医療費の適正化を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営</summary><p>効果的な保健事業や保険税の収納率向上などに取り組み、島根県と連携して国民健康保険の安定運営に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営</summary><p>保険税率の改定、保険税の収納率向上、効果的な保健事業などに取り組み、島根県と連携して国民健康保険の更なる安定運営を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営</summary><p>国民健康保険について、保険税率の改定、保険税の収納率向上、効果的な保健事業などに取り組み、島根県と連携して更なる安定運営を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営</summary><p>保険税率の改定、保険税の収納率向上、効果的な保健事業などに取り組み、島根県と連携して国民健康保険の安定運営を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>国民健康保険・後期高齢者医療保険の安定運営</summary><p>マイナ保険証の有無に関わらず安心して医療を受けられるよう、島根県と連携しながら国民健康保険及び後期高齢者医療保険の安定した制度運営を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>国民健康保険・後期高齢者医療保険の安定運営</summary><p>誰もが安心して医療を受けられるよう、国民健康保険及び後期高齢者医療保険について島根県と連携しながら安定した制度運営を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-03">
+    <h3>介護保険と介護予防</h3>
+    <p class="terms">語: 介護保険と介護予防・介護保険・介護保険料・介護保険制度・介護予防・介護サービス</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H23"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="H25"><b>1</b><span class="of">/13人</span><span class="q">2件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt25" data-year="H27"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt25" data-year="H29"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/14人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第1回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">町民の健康増進</span><span class="sum">健康寿命の延伸を掲げる施政方針に対し、令和8年度当初予算で介護予防・日常生活支援総合事業の食生活改善の推進及び普及啓発の事業費が消滅した理由と、健康増進の事業の継続を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">特別障がい者手当の受給漏れ</span><span class="sum">特別障がい者手当の町民向け制度説明の増進と受給漏れ防止のための行政の捕捉を尋ね、障がい者手帳を持たない要介護4・5の人について介護保険担当等と連携した該当調査と申請手続きの支援を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">介護福祉体制の将来</span><span class="sum">人材不足でデイサービス事業所が日曜日の営業を停止した事態を踏まえ、第8期介護保険事業計画の理念に照らし、介護職の人材確保に向けた一段上の改善策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第3回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">介護予防の重点施策化</span><span class="sum">大阪府島本町が高知市の「いきいき百歳体操」を活用して取り組む介護の一次予防・二次予防の事例を挙げ、高齢者の健康寿命を延ばす介護予防を重点施策とすることや、社会福祉協議会との連携と社協の変革を質した。</span></li>
+          
+          <li><span class="who">令和元年第4回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">介護予防の地域づくり</span><span class="sum">厚生労働省の通知「これからの地域づくりの戦略」の確認の有無と、大阪府島本町の「百歳体操」のように包括支援センターと保健師が連携し住民が主体となる介護予防をスピード感をもって進める考え、行政力の向上を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">支所・出張所の施設整備</span><span class="sum">老朽化の著しい五箇支所・中出張所・布施支所について、生涯学習センターや布施公民館との機能統合も視野に入れた将来の支所機能のあるべき姿と整備の展望・スケジュールを尋ね、健康づくりや介護予防への支所の関わり、改修の中期財政計画への盛り込みを質した。</span></li>
+          
+          <li><span class="who">平成29年第4回隠岐の島町議会定例会・一般質問・村上三三郎</span><span class="ttl">介護保険事業所への支援</span><span class="sum">介護保険制度の改定で事業所の閉鎖や介護職員不足が懸念されるとして、町内の介護保険事業所の運営実態調査と町の支援策、国や県への予算増額の要請、福祉職員の人材確保への町の支援を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">高齢者の健康管理と介護予防</span><span class="sum">「住んで良かった」について、先進地のアンケートに基づく集会所単位の健康増進の取り組みへの考えや民間活力の活用、包括支援センターへの保健師増員をめぐる庁内手続きと組織の自浄能力、保健師の家庭訪問と保健課長への訪問報告の有無、再任用の理由、国の三本柱を踏まえた介護予防の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">介護保険事業計画の独自色</span><span class="sum">隠岐広域連合の第6期介護保険事業計画が県計画の踏襲で独自色がないのではないかとして、県内3位の保険料基準額6,550円の一般財源による軽減や職員処遇の改善など本町独自の介護サービスを出せないかを質した。</span></li>
+          
+          <li><span class="who">平成27年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">総合事業と地域包括ケア</span><span class="sum">介護保険法の改正で介護予防の通所型・訪問型サービスが移行する介護予防・日常生活支援総合事業への認識と地域包括ケアシステムの構築への取組みを尋ね、平成29年4月に向けた早期の構築やホームヘルパーの人材確保、地域住民の協力体制づくりを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第1回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">要支援者への支援策</span><span class="sum">介護保険制度から除外される要支援1・要支援2の高齢者が従来どおり通所介護や訪問介護を利用できるかを尋ね、事業者へ介護報酬相当額を町が支援することや、平成29年度を待たない迅速な対応、元気な高齢者をつくる介護予防の充実を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第2回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">介護保険制度の見直し方針</span><span class="sum">要支援1・2を市町村事業へ移行する厚労省の見直し方針について、通達の有無や財源の裏打ちのない移管への見解を尋ね、制度が改悪されても町独自の支援措置で要支援者へのサービスの現状水準を維持する考えを質した。</span></li>
+          
+          <li><span class="who">平成25年第4回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">介護保険制度の見直し</span><span class="sum">厚生労働省の介護保険制度の見直しで予防給付の訪問介護・通所介護が市町村事業へ移ることを受け、本町独自の対応策の検討スケジュール、人材確保など新しい総合事業の実施体制の整備、デイサービス事業体の運営への対処を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第3回隠岐の島町議会定例会・一般質問・是津輝和</span><span class="ttl">医療保健福祉の連携</span><span class="sum">介護保険料の大幅な引き上げや国保税の増税を踏まえ、医療・保健・福祉の連携体制の構築をいつまでに行うかと、インターバル速歩などテーマを絞った町民運動による健康増進の推進を尋ね、組織と実行の過程の確立を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H23">
+        <summary>平成23年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第1回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">財政状況と経済活性化</span><span class="sum">中期財政計画総括表の内容を町民に平易に説明する方法として出前町長室など地域での直接の説明や市町村財政分析表の活用を尋ね、介護保険料などの負担増による消費減退に対する経済活性化対策と、国や外郭団体の事業メニューを活用し実質公債費比率18％を維持しながら活性化を図る考えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>地域における介護予防活動の支援</summary><p>地区組織との連携により、地域における介護予防活動を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>配食サービス・高齢者サロンと介護予防</summary><p>「配食サービス事業」や「高齢者のサロン事業」で高齢者の自立生活の支援・要介護状態の回避・独居高齢者の安否確認を行い、地区組織を活用して地域の介護予防活動を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防活動の支援</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現に向け、「地区活動支援事業」や「サロン事業」による引きこもり防止、配食サービス等の介護予防活動を支援する。ひとり暮らしや高齢世帯の安否確認に必要な緊急通報装置設置の助成も継続する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>高齢者福祉施設の整備</summary><p>養護老人ホーム「百寿荘」の改修経費の一部を支援する。「五箇デイサービスセンター」の特殊浴槽や「中村デイサービスセンター」の空調設備を取り替え、快適な介護サービスの提供に向けて環境を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>介護予防・日常生活支援総合事業の導入</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアを実現するため、新たに介護予防・日常生活支援総合事業に取り組み、地域の力を活用して途切れのないサービスを提供する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>改正介護保険法に対応した計画策定と介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現のため、平成27年度からの改正介護保険法に対応した計画策定の検討を進める。あわせて介護予防・日常生活支援総合事業に取組む（同一文の計画策定と総合事業を統合）。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアを実現するため、関係機関と連携した地域ネットワークづくりを推進し、介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>特定健診の受診率向上</summary><p>特定健診について、未受診者対策により受診率の向上を図り、生活習慣病対策や介護予防事業と連携する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアを実現するため、関係機関と連携した地域ケアシステムの構築を進める。健康寿命の延伸や住民ニーズに対応した介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現のため、関係機関と連携した地域ケアシステムの構築を推進し、介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現に向け、関係機関と連携した地域ケアシステムの構築を推進し、介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>地域ケアシステムの構築と介護予防・日常生活支援総合事業</summary><p>住み慣れた地域で自分らしく暮らし続けられる地域包括ケアの実現のため、関係機関と連携した地域ケアシステムの構築を推進する。あわせて介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>後期高齢者医療（保健事業と介護予防の一体的実施）</summary><p>保健福祉の関係部署と連携し、高齢者保健事業と介護予防の一体的実施に取り組む。島根県後期高齢者医療広域連合と連携して健全な制度運営に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>介護予防と地域包括ケアシステムの構築</summary><p>高齢期も住み慣れた地域で自立した生活ができるよう、介護予防を推進する。介護・医療連携体制の強化や高齢世帯の見守りネットワークの整備などにより、地域包括ケアシステムを構築する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>訪問介護体制の強化と独居高齢者の退院後住まい確保</summary><p>介護予防の推進とともに、新年度から訪問介護サービス提供体制の強化と、独居高齢者の退院後の一時的な住まいの確保に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>介護予防と通所介護サービス確保対策事業</summary><p>高齢期も住み慣れた地域で自立した生活ができるよう介護予防を推進するとともに、新年度から町独自の通所介護サービス確保対策事業によりデイサービスの安定的な提供体制を確保する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>健診・がん検診・保健指導の充実</summary><p>ライフステージに沿った保健事業と地域に根差した保健活動で健康づくりを支援する。各種健康診断やがん検診、保健指導を充実させ、病気の早期発見・治療と介護予防につなげて健康寿命の延伸を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>高齢者の介護予防と機能維持</summary><p>高齢者が住み慣れた地域や家庭で自立した生活ができるよう、介護予防を推進し、身体機能と生活機能を維持する取り組みを充実させる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>訪問介護・通所介護サービス確保対策事業</summary><p>暮らしを支える訪問介護やデイサービスについて、町独自の訪問介護・通所介護サービス確保対策事業で事業所を支援し、安定的な提供体制を確保する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>介護予防の推進</summary><p>高齢者が住み慣れた地域で自立した生活ができるよう、介護予防を推進し、身体機能と生活機能を維持する取り組みを充実させる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>介護事業所への物価高騰支援</summary><p>暮らしを支える基盤である介護事業所に対して物価高騰への支援を行うなど、介護サービスの安定的な提供体制の確保に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-04">
+    <h3>認知症と地域包括ケア</h3>
+    <p class="terms">語: 認知症と地域包括ケア・認知症・地域包括ケア・高齢者福祉</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="H30"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R03"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第1回隠岐の島町議会定例会・一般質問・村上一</span><span class="ttl">補聴器購入補助制度</span><span class="sum">難聴が生活の質の低下や認知症のリスクを招くことや町民アンケートの要望を踏まえ、補聴器の有効性への認識を尋ね、県内10市町が導入している補聴器購入助成制度を本町でも導入するよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">町政運営の自己評価</span><span class="sum">4つの「良かった」と第2次総合振興計画を踏まえ、人口減少・担い手不足・災害対策・観光振興・社会資本整備・財政健全化の効果を含む2期目4年間の自己評価を尋ね、出生数の減少への考え、高齢者福祉施設の休止・閉鎖を踏まえた介護福祉の担い手確保、観光客数が約5万人で横ばいの観光振興の今後を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第3回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">地域包括ケアシステム</span><span class="sum">地域包括ケアシステムの今後の在り方と隠岐広域連合との役割分担を尋ね、6名体制の地域包括支援センターの現状認識や、松江市などの例を挙げて社会福祉協議会へ業務を移行・委託する将来方針を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">行財政改革と施設の譲渡</span><span class="sum">第2次総合振興計画の財政健全化に向けた具体的な実施計画と町長の目指す行財政改革の基本的な考えと施策、高齢者福祉施設・宿泊施設の譲渡・売却協議のその後と施設の廃止・譲渡等の進め方、地方債残高の増加や基金の減少など財政状況を示して法人の理解を得る働きかけを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第4回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">地域包括ケアと人口減少</span><span class="sum">2025年に向けた地域包括ケアシステムの構築と高齢者が健康で希望を語れるまちづくり、社会保障需要の高まりへの対応を尋ね、町と県で異なる人口の数値の扱いや、総合戦略の2060年に1万人を割り込まない目標に対する人口減少対策を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成30年第3回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">高齢者福祉施設の譲渡</span><span class="sum">昨年9月定例会で質問した行政主導で設立した社会福祉法人の一本化と高齢者福祉施設の民間への譲渡について、行革の報告書や実績報告に記述が無いことを指摘し、その後の協議・検討の経過を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第3回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">高齢者福祉施設の民間譲渡</span><span class="sum">第3次行財政改革大綱の公共施設の適正配置に関し、検討が続く公設民営の高齢者福祉施設の民間法人への譲渡を急ぐべきとし、増える修繕費や将来の財政見通しも踏まえた町長の本気度を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">総合事業と地域包括ケア</span><span class="sum">介護保険法の改正で介護予防の通所型・訪問型サービスが移行する介護予防・日常生活支援総合事業への認識と地域包括ケアシステムの構築への取組みを尋ね、平成29年4月に向けた早期の構築やホームヘルパーの人材確保、地域住民の協力体制づくりを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>日常生活圏域ニーズ調査と老人保健福祉計画の策定</summary><p>日常生活圏域ニーズ調査で地域の問題点を把握し、地域包括ケアを実現するため「老人保健福祉計画（平成24年度から平成26年度）」を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>高齢者福祉施設の建設・スプリンクラー設置の支援</summary><p>高齢者福祉施設の建設やスプリンクラー設置等を支援し、安心安全なサービスの提供につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防活動の支援</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現に向け、「地区活動支援事業」や「サロン事業」による引きこもり防止、配食サービス等の介護予防活動を支援する。ひとり暮らしや高齢世帯の安否確認に必要な緊急通報装置設置の助成も継続する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>高齢者福祉施設の整備</summary><p>養護老人ホーム「百寿荘」の改修経費の一部を支援する。「五箇デイサービスセンター」の特殊浴槽や「中村デイサービスセンター」の空調設備を取り替え、快適な介護サービスの提供に向けて環境を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>介護予防・日常生活支援総合事業の導入</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアを実現するため、新たに介護予防・日常生活支援総合事業に取り組み、地域の力を活用して途切れのないサービスを提供する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>改正介護保険法に対応した計画策定と介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現のため、平成27年度からの改正介護保険法に対応した計画策定の検討を進める。あわせて介護予防・日常生活支援総合事業に取組む（同一文の計画策定と総合事業を統合）。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアを実現するため、関係機関と連携した地域ネットワークづくりを推進し、介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアを実現するため、関係機関と連携した地域ケアシステムの構築を進める。健康寿命の延伸や住民ニーズに対応した介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現のため、関係機関と連携した地域ケアシステムの構築を推進し、介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアの実現に向け、関係機関と連携した地域ケアシステムの構築を推進し、介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>国保税の据え置きと医療費適正化</summary><p>国保の都道府県化により医療費適正化が求められる中、過去3年間改定していない国民健康保険税を新年度も改定せずに運営する。保健・福祉部署と連携し、保健事業や地域包括ケアの推進等の医療費適正化事業を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>地域ケアシステムの構築と介護予防・日常生活支援総合事業</summary><p>住み慣れた地域で自分らしく暮らし続けられる地域包括ケアの実現のため、関係機関と連携した地域ケアシステムの構築を推進する。あわせて介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">3</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>地域包括ケアシステムの構築</summary><p>地域の課題や町民のニーズを把握し、関係機関と連携して地域包括ケアシステムの構築を推進する。誰もが住み慣れた地域で自分らしく暮らし続けられる町の実現に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>介護予防と地域包括ケアシステムの構築</summary><p>高齢期も住み慣れた地域で自立した生活ができるよう、介護予防を推進する。介護・医療連携体制の強化や高齢世帯の見守りネットワークの整備などにより、地域包括ケアシステムを構築する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>地域包括ケアシステムの構築</summary><p>介護・医療連携体制の強化や高齢世帯の見守りネットワークの整備などにより、地域包括ケアシステムの構築を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>地域包括ケアシステムの構築</summary><p>高齢者見守りネットワークの充実など、地域包括ケアシステムの構築を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>高齢者見守りネットワークと地域包括ケア</summary><p>高齢者見守りネットワークの充実などにより、地域包括ケアシステムの構築を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>地域包括ケアシステムの構築</summary><p>高齢者見守りネットワークの充実など、地域包括ケアシステムの構築を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>地域包括ケアシステムの構築</summary><p>高齢者見守りネットワークの充実など、地域包括ケアシステムの構築を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-05">
+    <h3>健康づくりと検診</h3>
+    <p class="terms">語: 健康づくりと検診・健康づくり・健康増進・健康寿命・がん検診</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt25" data-year="H24"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H26"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="lt10" data-year="H29"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第1回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">町民の健康増進</span><span class="sum">健康寿命の延伸を掲げる施政方針に対し、令和8年度当初予算で介護予防・日常生活支援総合事業の食生活改善の推進及び普及啓発の事業費が消滅した理由と、健康増進の事業の継続を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第3回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">介護予防の重点施策化</span><span class="sum">大阪府島本町が高知市の「いきいき百歳体操」を活用して取り組む介護の一次予防・二次予防の事例を挙げ、高齢者の健康寿命を延ばす介護予防を重点施策とすることや、社会福祉協議会との連携と社協の変革を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H29">
+        <summary>平成29年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成29年第2回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">支所・出張所の施設整備</span><span class="sum">老朽化の著しい五箇支所・中出張所・布施支所について、生涯学習センターや布施公民館との機能統合も視野に入れた将来の支所機能のあるべき姿と整備の展望・スケジュールを尋ね、健康づくりや介護予防への支所の関わり、改修の中期財政計画への盛り込みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">高齢者の健康管理と介護予防</span><span class="sum">「住んで良かった」について、先進地のアンケートに基づく集会所単位の健康増進の取り組みへの考えや民間活力の活用、包括支援センターへの保健師増員をめぐる庁内手続きと組織の自浄能力、保健師の家庭訪問と保健課長への訪問報告の有無、再任用の理由、国の三本柱を踏まえた介護予防の取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H26">
+        <summary>平成26年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成26年第4回隠岐の島町議会定例会・一般質問・安部和子</span><span class="ttl">元気になろう条例の制定</span><span class="sum">子どもの声によるメロディー放送や出生祝い、健康優良児表彰、ラジオ体操の全町放送、岬の夜景イルミネーション、乳杉への道路整備、ウルトラマラソンのお楽しみコース、隠岐88箇所ジオ巡り、ふるさと納税者への割引券などを例に、健康づくりと町の活性化を目指す「町民みんなで元気になろう条例」の制定を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成24年第3回隠岐の島町議会定例会・一般質問・齋藤昭一</span><span class="ttl">健康寿命の延伸</span><span class="sum">厚生労働省が公表した健康寿命と平均寿命の差や県別の順位、本町の高齢化率33.7%を示し、介護や医療の費用削減を目指す健康なまちづくりに向けて、町が健康寿命をどう認識し中長期継続的な取り組みの計画があるかを質した。</span></li>
+          
+          <li><span class="who">平成24年第3回隠岐の島町議会定例会・一般質問・是津輝和</span><span class="ttl">医療保健福祉の連携</span><span class="sum">介護保険料の大幅な引き上げや国保税の増税を踏まえ、医療・保健・福祉の連携体制の構築をいつまでに行うかと、インターバル速歩などテーマを絞った町民運動による健康増進の推進を尋ね、組織と実行の過程の確立を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>配食サービス事業とサロン事業</summary><p>高齢者の支援として配食サービス事業とサロン事業に引き続き取り組み、自立生活の支援、要介護状態の回避、健康増進のための食生活の支援、独居高齢者の安否確認などに努める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>生活習慣病予防・がん検診と保健指導</summary><p>生活習慣病予防とがん検診による早期発見・早期治療を重視し、医師・保健師・栄養士が一体となった地域密着の保健指導で町民の健康の保持増進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>生活習慣病対策事業と脳検診助成の創設</summary><p>健康教室・健康相談を通じて生活習慣の改善に取り組み、各種がん検診を実施する。新たに脳検診に対する助成事業を創設し、早期発見・早期治療に結びつける。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>健康寿命の延伸に向けた保健事業の強化</summary><p>「健康寿命の延伸」「元気で長生き」を重視し、がん予防対策・生活習慣病対策に取り組む。特に栄養改善・歯科・禁煙対策などを強化し、ライフステージに沿った保健事業と地域に根ざした保健活動を展開する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>地域包括ケアと介護予防・日常生活支援総合事業</summary><p>高齢者が安心して地域で暮らし続けられる地域包括ケアを実現するため、関係機関と連携した地域ケアシステムの構築を進める。健康寿命の延伸や住民ニーズに対応した介護予防・日常生活支援総合事業の充実に取り組む。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">6</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>がん対策・生活習慣病対策等の保健事業</summary><p>「健康寿命の延伸」「元気で長生き」の目標達成のため、がん対策、生活習慣病対策に重点的に取り組み、特に栄養改善対策、歯科対策、禁煙対策などの事業を強化する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>がん・生活習慣病対策を重点とした保健事業</summary><p>「健康寿命の延伸」「元気で長生き」の目標達成のため、がん対策・生活習慣病対策に重点的に取り組む。各種健診（検診）の推進、医療機関・自治組織・企業等との連携により、ライフステージに沿った保健事業を展開する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>がん対策・生活習慣病対策等の保健事業</summary><p>健康寿命の延伸と元気で長生きの目標達成のため、がん対策、生活習慣病対策をはじめ各保健事業に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>スポーツ振興と「つなGO隠岐の島」の開催</summary><p>子どもから高齢者までの健康づくりや競技力向上のための環境づくりに努める。特に一流のアスリートが指導する「つなGO隠岐の島」を、「町民の健康づくり」をテーマとする各種スポーツ教室のイベントとして継続して開催する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>がん対策・生活習慣病対策を重点とする保健事業</summary><p>「健康寿命の延伸」「元気で長生き」の目標達成のため、がん対策と生活習慣病対策に重点的に取り組む。各種健診（検診）の推進や企業との連携により、働き盛り世代を含む町民の健康意識の向上と健康の保持増進を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>健康診断・検診の充実とがん対策・生活習慣病対策</summary><p>ライフステージに沿った保健事業を展開し、各種健康診断・検診・保健指導を充実して病気の早期発見・治療につなげ、健康寿命の延伸に努める。特に町の課題であるがん対策・生活習慣病対策に重点的に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>総合運動公園再編事業</summary><p>寺の前公園の整備に続き、新年度から健康づくりの拠点として総合運動公園の再編事業に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>健診・保健指導の充実とがん・生活習慣病対策</summary><p>各種健康診断や検診、保健指導などを充実し、病気の早期発見・治療につなげて健康寿命の延伸を推進する。特に町の課題である「がん対策・生活習慣病対策」に重点的に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>健康診断・がん検診・保健指導の充実</summary><p>ライフステージに沿った保健事業と地域に根差した保健活動で健康づくりを支援し、各種健康診断・がん検診・保健指導などを充実させて病気の早期発見・治療につなげ、健康寿命の延伸を推進する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>健診・がん検診・保健指導の充実</summary><p>ライフステージに沿った保健事業と地域に根差した保健活動で健康づくりを支援する。各種健康診断やがん検診、保健指導を充実させ、病気の早期発見・治療と介護予防につなげて健康寿命の延伸を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>健康診断・がん検診の受診率向上と健康教室</summary><p>病気の早期発見・治療につなげるため、各種健康診断やがん検診の受診率向上に取り組む。また、各地区・公民館・事業所での健康教室やセミナーにより、食生活の改善や運動の習慣づけを図り、健康寿命の延伸を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>健康診断・がん検診の受診率向上</summary><p>病気の早期発見・治療につなげるため、各種健康診断やがん検診の受診率の向上に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>健康教室・セミナーによる健康寿命の延伸</summary><p>各地区、公民館、事業所での健康教室やセミナーにより、食生活の改善や運動の習慣づけを図り、健康寿命の延伸を目指す。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-06">
+    <h3>障害者支援</h3>
+    <p class="terms">語: 障害者支援・障害者・バリアフリー・ユニバーサルデザイン・補聴器・医療的ケア児</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H21"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="R07"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R07">
+        <summary>令和7年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和8年第1回隠岐の島町議会定例会・一般質問・村上一</span><span class="ttl">補聴器購入補助制度</span><span class="sum">難聴が生活の質の低下や認知症のリスクを招くことや町民アンケートの要望を踏まえ、補聴器の有効性への認識を尋ね、県内10市町が導入している補聴器購入助成制度を本町でも導入するよう求めた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第4回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">障害者控除対象者認定書</span><span class="sum">要介護認定者が障害者控除対象者認定書の交付を受けられる制度の周知徹底と、申請交付方式を改めて行政側から要介護認定者全員に認定書を交付する方式への変更を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">観光客向けトイレの整備</span><span class="sum">来島者の増加を踏まえ町部の公衆トイレの増設整備と時期の前倒しや夜間の安全性・維持管理、観光施設のトイレを業として維持管理する方法とバリアフリー化、観光協会との連携、教育長が答弁した洋式化の調査後の取り組み状況と飲食店等の現状を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第4回隠岐の島町議会定例会・一般質問・齋藤幸廣</span><span class="ttl">新型インフルエンザ対策</span><span class="sum">新型インフルエンザ流行を受けた町関連の催し物中止の検討経過と学級閉鎖等で十分だったのではないかとの見方、生産者や障害者施設・地域経済への影響の考慮を尋ね、冷え込んだ経済の打開策と商品券発行への町の姿勢を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>障害者自立支援法への移行促進と第3期障がい福祉計画の策定</summary><p>福祉サービス事業所の平成23年度中の障害者自立支援法に基づく各事業への円滑な移行を促し、あわせて同法に基づく「第3期障がい福祉計画」を策定する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>障がい者福祉サービス・地域生活支援事業</summary><p>障害者総合支援法に基づき、障がいのある人・児童が自立した日常生活・社会生活を営めるよう、地域の特性や利用者の状況に応じて障がい者福祉サービスや地域生活支援事業等を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>障がい者福祉サービスと理解啓発</summary><p>障害者総合支援法に基づき、障がい者福祉サービス、地域生活支援事業などを総合的に実施する。ノーマライゼーションの実現に向け、関係機関と連携し障がいへの理解を深める啓発活動を拡大する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>役場新庁舎整備</summary><p>防災拠点機能、ユニバーサルデザインや省エネに配慮した新庁舎を整備する。昨年11月着工の敷地造成・取付け町道工事を進め、庁舎建築工事は8月入札・9月着手とし、平成31年度末の全工事完成を目指す。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-07">
+    <h3>生活保護と生活困窮</h3>
+    <p class="terms">語: 生活保護と生活困窮・生活保護・生活困窮・低所得者・格差・重層的支援体制</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt25" data-year="H30"><b>2</b><span class="of">/14人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第1回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">非正規雇用と異次元の支援</span><span class="sum">未婚化の要因とされる若者の経済力格差に着目し、町の施設の非正規職員の正規雇用転換・待遇改善と民間企業等への働きかけ、所得制限の無い支援や高校生以下の医療費・給食費の無料化、出産祝い金100万円など異次元の政策への取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H30">
+        <summary>平成30年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成31年第1回隠岐の島町議会定例会・一般質問・村上三三郎</span><span class="ttl">国民健康保険制度の運営</span><span class="sum">国民健康保険制度の運営について、滞納者への罰則規定とその実施状況、国保税額の上昇傾向と都道府県化の影響、国保税の低減のための施策を尋ね、生活困窮者への施策や応能負担への転換による滞納防止を質した。</span></li>
+          
+          <li><span class="who">平成31年第1回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">臨時職員の処遇と正規登用</span><span class="sum">町が40名を超える臨時職員を募集し役場内に大きな雇用格差を生んでいるとして、1年の短期雇用をやめ正規職員への登用の道を設けて処遇を計画的に改善することや、若い世代の正規職員採用を進め臨時職員には経験豊富なOB・OGを採用する方策を提起した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第3回隠岐の島町議会定例会・一般質問・前田芳樹</span><span class="ttl">施設介護への町の指導</span><span class="sum">民間事業所間で施設介護の質的・量的な格差が生じるとして、各事業所が最低基準のサービスレベルを維持できるよう町が指導的役割をしっかり果たすべきではないかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>光ファイバー網整備事業</summary><p>情報インフラの格差を解消するため、国の経済対策を受けて都会並みの高速インターネット通信網を整備する。平成23年4月の供用開始を目指す。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>生活困窮者への支援</summary><p>生活困窮者に対し、その困窮の状態に応じて必要な保護を行い、一定の生活を保障するとともに自立に向けて取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>生活困窮者への保護と就労支援</summary><p>困窮の程度に応じた保護で一定の生活を保障するとともに、就労支援員を配置して被保護者の社会的自立に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>地域福祉計画に基づく総合的な地域福祉の充実</summary><p>「隠岐の島町地域福祉計画」の基本理念「支えあい(愛)、笑顔あふれる隠岐の島」の実現を目指す。福祉事務所と包括支援センターを中心に、障がい者の自立支援、高齢者・子育て・母子・父子・寡婦・生活困窮者への支援など、きめ細かな対応による総合的な地域福祉の充実に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>生活困窮者への支援と就労支援員の配置</summary><p>困窮の度合いに応じて必要な保護を行い一定の生活を保障するとともに、就労支援員を配置して被保護者の社会的自立の実現に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>生活困窮者への支援</summary><p>国の保護基準・保護制度の見直しに基づき、困窮の程度に応じた保護で最低限度の生活を保障するとともに、自立を助長するよう支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>生活困窮者への保護と自立支援</summary><p>国の保護基準の見直しや保護制度の改正を注視しながら、困窮の程度に応じて必要な保護を行い、健康で文化的な最低限度の生活を保障するとともに、自立を助長するよう支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>生活保護による保護と自立の支援</summary><p>国の保護基準の見直しや制度改正に注視しながら、困窮の程度に応じた必要な保護を行い、自立を助長するよう支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業</summary><p>離職・解雇などの経済的理由で生活保護に陥ることを防ぐため、新たな生活困窮者自立相談支援事業に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>生活保護と就労による自立助長</summary><p>困窮の程度に応じて必要な保護を行い最低限度の生活を保障するとともに、稼働に阻害要因のない被保護者については、ハローワークなどと連携して就労による自立を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業の拡充</summary><p>多重債務や生活実態による経済的困窮から生活保護に陥ることを防ぐため、生活困窮者自立相談支援事業を拡充し、個々の困窮の原因に応じた相談支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>被保護者・生活困窮者の就労支援</summary><p>就労に阻害要因のない被保護者・生活困窮者について、ハローワークや隠岐の島あんしんセンターと連携し、就労等自立に向けた支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業の拡充</summary><p>多重債務や経済的困窮を理由として生活保護に陥ることを防ぐため、生活困窮者自立相談支援事業を拡充し、個々の困窮の原因に応じた相談支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>生活困窮者・被保護者の就労自立支援</summary><p>困窮の程度に応じて必要な保護を行う。就労阻害要因のない被保護者・生活困窮者について、ハローワークや隠岐の島あんしんセンターと連携し就労等の自立に向けた支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業の拡充</summary><p>多重債務や経済的困窮で生活保護に陥ることを防ぐため、生活困窮者自立相談支援事業を拡充し、個々の困窮の原因に応じた相談支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>生活困窮者の就労等自立支援</summary><p>困窮の程度に応じて必要な保護を行うとともに、ハローワークや隠岐の島町あんしんセンターと連携し、就労等自立に向けた支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業の拡充</summary><p>多重債務や生活実態による経済的困窮を理由に生活保護に陥ることを防ぐため、生活困窮者自立相談支援事業を拡充し、個々の困窮の原因に応じた相談支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>生活保護と就労等の自立支援</summary><p>困窮の程度に応じて必要な保護を行い、健康で文化的な最低限度の生活を保障する。ハローワークや隠岐の島町あんしんセンターと連携し、就労等の自立に向けた支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業の拡充</summary><p>多重債務や生活実態による経済的困窮から生活保護に陥ることを防ぐため、生活困窮者自立相談支援事業の取り組みを拡充し、個々の困窮の原因に応じた相談支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>生活困窮者への支援</summary><p>困窮の程度に応じて必要な保護を行い、就労など自立に向けた支援を行う。生活保護に至ることを防ぐため、生活困窮者自立相談支援事業を拡充し、困窮の原因に応じた相談支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業の拡充</summary><p>経済的困窮による生活保護への移行を防ぐため、生活困窮者自立相談支援事業を更に拡充し、個々の困窮の原因に応じた相談支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援事業</summary><p>経済的困窮による生活保護への移行を防ぐため、生活困窮者自立相談支援事業を実施し、困窮の原因に応じた相談支援に取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>生活保護による保障と自立支援</summary><p>困窮の程度に応じて必要な保護を行い、健康で文化的な最低限度の生活を保障するとともに、その自立を助長する支援を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>生活困窮者自立相談支援と生活保護</summary><p>経済的理由で生活保護に至ることを防ぐため、生活困窮者自立相談支援事業を実施し個々の原因に応じた相談支援に取り組む。あわせて困窮の程度に応じて必要な保護を行い、自立を助長する支援を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>生活困窮者の自立相談支援と生活保護</summary><p>経済的理由で生活保護に至ることを防止するため、生活困窮者自立相談支援事業を実施する。また困窮の程度に応じて必要な保護を行い、最低限度の生活を保障するとともに自立を助長する支援を行う。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>生活困窮者への包括的支援と生活保護</summary><p>生活困窮者に対し、個々の原因に応じた相談支援に取り組むとともに、新たに就労及び家計の面から包括的な支援を行う。また困窮の程度に応じて必要な保護を行い、自立を助長する支援を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-08">
+    <h3>感染症対策</h3>
+    <p class="terms">語: 感染症対策・新型コロナウイルス感染症・コロナ禍・ワクチン接種・ＰＣＲ検査・感染拡大・緊急事態宣言・休校・PCR検査</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H21"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="ge25" data-year="R02"><b>5</b><span class="of">/13人</span><span class="q">9件</span></td><td class="lt25" data-year="R03"><b>3</b><span class="of">/14人</span><span class="q">3件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和4年第4回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">物価高騰の町への影響</span><span class="sum">長引くコロナ禍に加えて原油価格や物価の高騰が続く中、物価高騰による町の経済や町民生活への影響について町長の認識を問うた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R03">
+        <summary>令和3年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和3年第2回隠岐の島町議会定例会・一般質問・牧野牧子</span><span class="ttl">町民への情報発信と参画</span><span class="sum">町民の参画意識を高め町全体で取り組むため、町民への情報発信や参画の取り組み方を尋ね、来年度を待たずコロナ禍の今から取り組む考えを質した。</span></li>
+          
+          <li><span class="who">令和3年第3回隠岐の島町議会定例会・一般質問・安部大助</span><span class="ttl">希望検査の推進と費用助成</span><span class="sum">新型コロナウイルス感染症の希望検査の推進に対する認識と今後の取り組み、平日13,000円の検査費用の助成の必要性、西ノ島町が活用する国の高齢者等への検査助成事業をいつ知りどう協議したか、島外から戻る介護・保育・学校の従事者の検査負担を質した。</span></li>
+          
+          <li><span class="who">令和4年第1回隠岐の島町議会定例会・一般質問・藤野定幸</span><span class="ttl">水産業振興計画</span><span class="sum">隠岐の島町水産業振興計画の検証の報告書と今後の方針を尋ね、コロナ禍での取り組み、町が主体となったふるさと納税の返礼品の拡充、新たな事業や商品開発・流通形態の提案、関西地区へのアンテナショップの出店など町が先頭に立つ取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R02">
+        <summary>令和2年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">コロナ禍の事業者支援</span><span class="sum">ホテル旅館組合等の要望書を受けた行政の対応と今後の取り組み、特定有人国境離島地域社会維持交付金事業を活用した旅行商品の造成や専門家派遣の考え方を尋ね、職員がまちに出ることや都市部の子どもの帰省の呼びかけを質した。</span></li>
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">教育長の所信と休校の影響</span><span class="sum">4月に就任した教育長に児童・生徒を島の宝として育てる教育行政の責任者としての所信を尋ね、休校措置による児童・生徒への影響と学校・家庭が一体となって取り戻す取り組みを質した。</span></li>
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・西尾幸太郎</span><span class="ttl">休校措置とリモート授業</span><span class="sum">新型コロナ等の流感による休校で生じる学習の遅れを踏まえ、今後の休校措置のあり方とリモート授業の必要性を尋ね、端末整備のスケジュール感と検討チームの編成の仕方を質した。</span></li>
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・村上三三郎</span><span class="ttl">新型コロナ感染症対策</span><span class="sum">第2波・第3波を見据え、感染者が発生した場合のPCR検査や入院患者の受け入れ態勢と不十分な場合の対策を尋ね、聞き取り調査を踏まえ休業補償の充実への国・県・町の対応を質した。</span></li>
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">地方創生臨時交付金の活用</span><span class="sum">新型コロナウイルス感染症対応地方創生臨時交付金の歳入計上が475万円にとどまった背景と町独自助成金への配分額を尋ね、第2次補正分の申請に向けた実施計画の作成状況と提出した計画の件数・額を質した。</span></li>
+          
+          <li><span class="who">令和2年第2回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">官民の協議組織と政策</span><span class="sum">農林水産業や医療・教育・交通機関など幅広い分野が参加し町全体の経済と地域社会を協議する新たな組織の設立と、町独自の感染症対策と長期視点に立った暮らしと経済を守る政策の早急な提示を求めた。</span></li>
+          
+          <li><span class="who">令和2年第3回隠岐の島町議会定例会・一般質問・村上謙武</span><span class="ttl">コロナ禍の経済と感染対策</span><span class="sum">9月以降に重点的に取り組む経済対策と感染症対策、海士町のような支え合い基金の設立やネット販売の仕組みづくり、冬のインフルエンザ流行に備えた医療体制と周知、第2次観光振興計画の見直しの前倒しを質した。</span></li>
+          
+          <li><span class="who">令和2年第4回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">コロナ禍の事業者支援</span><span class="sum">新型コロナウイルス感染症で宿泊業など観光産業の売り上げが減少するなか、事業継承や経営の安定維持を図る新たな施策の策定実施を問い、交通事業者を含め新年度予算での更なる支援を求めた。</span></li>
+          
+          <li><span class="who">令和2年第4回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">コロナ禍の経済対策</span><span class="sum">新型コロナウイルス感染症の拡大下で町内経済の動向をどう認識しているか、職員による事業所訪問など情報収集の方法を問い、追加対策の考えと、当初予算に盛り込んで即応できる備えを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">新型インフルエンザ対策</span><span class="sum">秋冬の第二波に備え、町の新型インフルエンザ対策の考え方、感染拡大時のマニュアルの有無、全世帯を視野に入れたマスク備蓄、杉の子学園解体後を含む毒性の強い場合の発熱外来と感染者ベッド、プレハブ発熱外来の設置時期を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>3種類のワクチン接種助成</summary><p>安心して子どもを産み育てられる環境整備として、乳幼児期の髄膜炎予防のためのインフルエンザ菌b型ワクチンと小児用肺炎球菌ワクチン、10歳代の子宮頸がん予防ワクチンの接種を引き続き助成する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>感染症予防事業（予防接種助成）</summary><p>高齢者のインフルエンザワクチン接種事業や乳幼児対象の各種ワクチン接種を行い、10歳代での子宮頸がん予防ワクチンの接種にも助成する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>子育てビジター交流センター整備事業</summary><p>放課後児童クラブの待機児童解消と、新型コロナウイルス感染症に対応する専用スペースの確保などのため、子育て支援の拠点となる子育てビジター交流センターの整備に新年度着手する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>人権教育・啓発活動</summary><p>コロナ禍による差別や誹謗中傷などの人権侵害が社会問題となる中、人権が尊重される地域社会を目指し、研修会による人権教育と講演会・広報誌などによる啓発活動に引き続き取り組む。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>新型コロナウイルス感染症対策・事業継続・雇用維持の支援</summary><p>新型コロナウイルス感染症対策や事業継続・雇用維持に関する支援について、町内情勢を常に把握し、手遅れにならないよう適宜必要な対策を講じる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">7</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>新型コロナウイルスワクチン3回目接種</summary><p>3回目のワクチン接種について、5月中を目途に全町民への接種を終えるよう実施している。関係機関と連携し、希望者が1日でも早く接種できるよう着実に進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>子育てビジター交流センターの整備</summary><p>放課後児童クラブの待機児童解消、コロナ禍でも安全に対応できるスペースの確保、子育て支援センターの利便性向上を図るため、子育て支援の拠点となる「子育てビジター交流センター」を整備する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>人権啓発と研修</summary><p>コロナ禍による差別や誹謗中傷等の人権侵害が社会問題となる中、人権が尊重される地域社会を目指して啓発活動を継続する。研修を通じて差別や誹謗中傷を「しない」「許さない」人づくりに取り組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>コロナワクチン接種と自宅療養者等の生活支援</summary><p>国の方針を踏まえ、県・町内医療機関と連携して希望者が安心かつ速やかにワクチン接種できるよう全力を尽くす。あわせて自宅療養者や濃厚接触者等の自宅待機期間中の生活を支援する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>コロナ禍の事業継続・雇用維持支援</summary><p>新型コロナウイルス感染症対策や事業継続、雇用維持に関する支援について、町内情勢を常に把握し、手遅れにならないよう必要に応じて対策を講じる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">5</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>水田園芸など高収益作物への転換</summary><p>主食用米の価格がコロナ禍以前まで回復せず農業経営を圧迫しているため、水田園芸などの高収益作物への転換を一層推進し、経営環境の改善を図る。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-09">
+    <h3>ひとり親家庭の支援</h3>
+    <p class="terms">語: ひとり親家庭の支援・母子家庭・児童扶養手当・ひとり親</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="empty">この話題に触れた質問は、対象年度にありません。</p>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成22年度</td>
+            <td><details class="it"><summary>子ども手当の支給と児童扶養手当の父子家庭への拡大</summary><p>新年度に創設される「子ども手当」を支給する。児童扶養手当の支給対象を拡大して父子家庭へも支給し、子育て家庭の経済的負担の軽減に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成23年度</td>
+            <td><details class="it"><summary>保育料軽減と子育て家庭の経済負担軽減</summary><p>同時入所2人目以降無料化などの保育料軽減事業を継続し、「子ども手当」の支給や父子家庭への児童扶養手当の支給拡大などで保護者の経済負担を軽減する。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成24年度</td>
+            <td><details class="it"><summary>保育料の軽減と子育て世帯の経済的負担軽減</summary><p>保育所への同時入所2人目以降無料化などの保育料の軽減事業を継続するとともに、新年度から「子どものための手当」及び「児童扶養手当」により保護者の経済的負担の軽減に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+  <section class="panel bunch" id="topic-10">
+    <h3>医療費の抑制</h3>
+    <p class="terms">語: 医療費の抑制・医療費</p>
+
+    <h4>年度ごとの推移</h4>
+    <p class="note">上段＝この話題に触れた議員／その年度に質問に立った議員。下段＝この話題が割り当てられた論点の件数。</p>
+    <div class="table-scroll">
+      <table class="trend">
+        <thead>
+          <tr>
+            <th scope="col" class="corner">年度</th>
+            <th scope="col">平成21年度</th><th scope="col">平成22年度</th><th scope="col">平成23年度</th><th scope="col">平成24年度</th><th scope="col">平成25年度</th><th scope="col">平成26年度</th><th scope="col">平成27年度</th><th scope="col">平成28年度</th><th scope="col">平成29年度</th><th scope="col">平成30年度</th><th scope="col">令和元年度</th><th scope="col">令和2年度</th><th scope="col">令和3年度</th><th scope="col">令和4年度</th><th scope="col">令和5年度</th><th scope="col">令和6年度</th><th scope="col">令和7年度</th><th scope="col">令和8年度<span class="partial">年度の途中</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="corner">触れた議員<br>論点</th>
+            <td class="lt10" data-year="H21"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/12人</span><span class="q">0件</span></td><td class="lt10" data-year="H24"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt25" data-year="H25"><b>2</b><span class="of">/13人</span><span class="q">2件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="lt10" data-year="H27"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="lt10" data-year="H28"><b>1</b><span class="of">/12人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R01"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R04"><b>1</b><span class="of">/14人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/14人</span><span class="q">0件</span></td><td class="lt10" data-year="R06"><b>1</b><span class="of">/13人</span><span class="q">1件</span></td><td class="h0"><b>0</b><span class="of">/13人</span><span class="q">0件</span></td><td class="h0"><b>0</b><span class="of">/9人</span><span class="q">0件</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>この話題の質問</h4>
+    
+    <p class="note">年度を開くと、その年度にこの話題が割り当てられた論点（定例会・質問の種別・議員・題・要約）を読めます。新しい年度が上です。</p>
+    <div class="qwrap">
+      
+      <details class="yr" data-year="R06">
+        <summary>令和6年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和6年第3回隠岐の島町議会定例会・一般質問・石田茂春</span><span class="ttl">2期8年間の町政評価</span><span class="sum">3つの「良かった」を掲げた池田町政の2期8年間について、医療費の無償化や子育て環境づくり、新庁舎、港周辺の再開発、新型コロナ対策などを挙げ、給食費の無償化や児童のインフルエンザ予防接種の助成にも触れつつ、町長自身の8年間の振り返りを問うた。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R04">
+        <summary>令和4年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和5年第1回隠岐の島町議会定例会・一般質問・齋藤則子</span><span class="ttl">非正規雇用と異次元の支援</span><span class="sum">未婚化の要因とされる若者の経済力格差に着目し、町の施設の非正規職員の正規雇用転換・待遇改善と民間企業等への働きかけ、所得制限の無い支援や高校生以下の医療費・給食費の無料化、出産祝い金100万円など異次元の政策への取り組みを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="R01">
+        <summary>令和元年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">令和元年第2回隠岐の島町議会定例会・一般質問・村上三三郎</span><span class="ttl">子ども医療費無料化の拡大</span><span class="sum">知事が公約した「しまね子育てトータル支援プラン」や小学生までの医療費無料化を受け、町の結婚支援等の施策の実態と県へ要望する内容、県の財政支援に併せた町の支援として対象者の要望に対応する用意の有無を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H28">
+        <summary>平成28年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成28年第4回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">子育て環境のまちづくり</span><span class="sum">「生まれて良かった」について、地域一体で子育てを応援する環境整備と子どもが自ら将来を選べる教育のまちづくりへの考えや、人生の節目を地域で祝う文化の育成と子育てへの行政支援、家計を圧迫する医療費負担への考え方を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H27">
+        <summary>平成27年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成27年第2回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">保健師活動のあり方</span><span class="sum">施政方針の保健事業の記述が3行で平成22年から同じ文言であることを挙げ、健康おきのしま21の一次予防を担う保健師が地域に入り住民を全人的に見る活動のあり方と、医療費の軽減に向けた保健事業への取組を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H25">
+        <summary>平成25年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第4回隠岐の島町議会定例会・一般質問・小野昌士</span><span class="ttl">子育て支援の拡充</span><span class="sum">人口減少抑制対策として、中学校までの医療費無料化や保育料の減免・無料化拡大、少子化対策、生活支援に重点的に取り組む考えを尋ね、平成26年度からの医療費無料化の実施を質した。</span></li>
+          
+          <li><span class="who">平成26年第1回隠岐の島町議会定例会・一般質問・平田文夫</span><span class="ttl">人材育成と子育て支援</span><span class="sum">地域資源を活用したまちづくりの要となる人材の育成と職員の「感度」を磨くことへの所信、職員人材育成基本方針を踏まえて町長が求める管理職像を尋ね、子育て支援として義務教育終了までの医療費無料化を質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H24">
+        <summary>平成24年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成25年第1回隠岐の島町議会定例会・一般質問・髙宮陽一</span><span class="ttl">がん患者への通院支援</span><span class="sum">本土での放射線療法や化学療法など定期的な治療を余儀なくされているがん患者に対し、ハイリスク出産や人工透析患者の通院助成と同様に船賃など医療費以外の負担を軽減する支援を町長としてすべきと質した。</span></li>
+          
+        </ul>
+      </details>
+      
+      <details class="yr" data-year="H21">
+        <summary>平成21年度</summary>
+        <ul class="qs">
+          
+          <li><span class="who">平成21年第2回隠岐の島町議会定例会・一般質問・池田信博</span><span class="ttl">町独自の子育て支援策</span><span class="sum">人口減少と少子超高齢化の進行を踏まえ、国の子育て応援特別手当相当額の町独自支援策の創設や保育料と就学前児童医療費の完全無料化の実施に向けた協議と、思い切った施策を本気で考えるかを質した。</span></li>
+          
+        </ul>
+      </details>
+      
+    </div>
+    
+
+    
+    <h4>つながる施政方針の事業</h4>
+    <div class="table-scroll">
+      <table class="inits">
+        <thead>
+          <tr><th scope="col">年度</th><th scope="col">事業（押すと要約）</th><th scope="col">宣言の後の質問</th><th scope="col">宣言の前の質問</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="y">平成25年度</td>
+            <td><details class="it"><summary>地域に密着した保健指導</summary><p>医師・保健師・栄養士が一体となって地域に密着した保健指導に取り組み、町民の健康の保持増進を図り、医療費の削減につなげる。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成26年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営と医療費削減</summary><p>将来にわたり安定した国保運営ができるよう年次計画に沿って保険税を改定しており、特定健診を始めとする保健事業や生活習慣病の予防事業などを実施して医療費の削減に取組む。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成27年度</td>
+            <td><details class="it"><summary>国民健康保険事業の安定運営</summary><p>平成30年度から保険財政の運営主体が県に代わるが、地域のきめ細かい事業は引き続き町が担う。医療費適正化対策や保険税の徴収などにより、安定的な財政運営と効率的な事業運営に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成28年度</td>
+            <td><details class="it"><summary>国民健康保険の安定運営と広域化への準備</summary><p>国民健康保険は医療費の高騰で3年間保険税を改定し基金を取り崩してきたが、新年度は税率を改定しない。平成30年度の国保広域化に向け、被保険者に不安や混乱が生じないよう制度の周知や準備を進め、医療費適正化対策や保険税の徴収に努める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>子育て支援の総合的推進</summary><p>安全・安心な妊娠出産への支援、健やかな発育・発達支援、子育て家庭への経済的支援や医療費支援、育児不安軽減対策等を推進する。核家族化等で地域の子育て・見守り機能が低下し、育児不安解消や放課後児童の見守り支援等が必要とされていることに対応する。</p></details></td>
+            <td class="c">2</td>
+            <td class="c">9</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成29年度</td>
+            <td><details class="it"><summary>国民健康保険の医療費適正化と広域化準備</summary><p>本年度策定したデータヘルス計画に基づき特定健診を始めとする保健事業を実施し、保険税の徴収など安定的な財政運営に努め、平成30年度の国保の広域化に向け準備を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">平成30年度</td>
+            <td><details class="it"><summary>子育て支援の総合的な実施</summary><p>安心・安全な妊娠出産への支援、健やかな発育・発達支援、子育て家庭への経済的支援や医療費支援、育児不安軽減対策、子ども同士や親子が地域で交流できる環境整備を行う。子育てしやすい環境づくりの一環である。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>子育て家庭への総合的支援</summary><p>安心・安全な妊娠出産への支援、健やかな発育・発達支援、子育て家庭への経済的支援や医療費支援、育児不安軽減対策、子ども同士や親子が地域の中で交流できる環境整備を行う。子育てしやすい環境づくりの一環である。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">0</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和元年度</td>
+            <td><details class="it"><summary>国保税の据え置きと医療費適正化</summary><p>国保の都道府県化により医療費適正化が求められる中、過去3年間改定していない国民健康保険税を新年度も改定せずに運営する。保健・福祉部署と連携し、保健事業や地域包括ケアの推進等の医療費適正化事業を進める。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>子どもの医療費無料化の拡大</summary><p>子育て支援の充実を図るため、本年10月診療分から医療費助成の枠を拡大する。乳幼児から中学3年生までの医療費無料化を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">4</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和2年度</td>
+            <td><details class="it"><summary>国民健康保険の健全運営（税率据え置き・徴収率向上・医療費適正化）</summary><p>厳しい事業運営が見込まれる国保について、県と連携し健全な運営に努める。国保税率は改定しない方針とし、徴収率の向上、効果的な保健事業による医療費の適正化を進める。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和3年度</td>
+            <td><details class="it"><summary>子育て世帯の経済的負担の軽減</summary><p>保育料・給食費の町独自の軽減策と、中学校卒業までの医療費の無料化を引き続き行い、子育て世帯の経済的負担を軽減する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">8</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和4年度</td>
+            <td><details class="it"><summary>子育て世帯の経済的負担軽減</summary><p>子育て世帯の経済的負担を軽減するため、保育料・給食費の町独自の軽減策や中学校卒業までの医療費無料化などに力を注ぐ。</p></details></td>
+            <td class="c">1</td>
+            <td class="c">2</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和5年度</td>
+            <td><details class="it"><summary>子育て世帯の経済的負担軽減</summary><p>保育料・給食費の町独自の軽減策や、中学校卒業までの医療費の無料化などに引き続き取り組み、子育て世帯の経済的負担を軽減する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和6年度</td>
+            <td><details class="it"><summary>医療費無料化の高校卒業までの延長</summary><p>子育て世帯の経済的負担の軽減のため、新たに医療費無料化の対象を高校卒業まで延長する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">1</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和7年度</td>
+            <td><details class="it"><summary>子育て世帯の経済的負担軽減</summary><p>子育て世帯の経済的負担を軽減するため、保育料の町独自の軽減、高校卒業までの医療費無料化、小学校・中学校入学時の体操服などの支給事業を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">3</td>
+          </tr>
+          
+          <tr>
+            <td class="y">令和8年度</td>
+            <td><details class="it"><summary>子育て世帯の経済的負担の軽減</summary><p>子育て世帯の経済的負担を軽減するため、保育料の本町独自の軽減、高校卒業までの医療費無料化、小学校・中学校入学時の体操服などの支給事業を実施する。</p></details></td>
+            <td class="c">0</td>
+            <td class="c">0</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+  
+</div>
+<script>
+(function() {
+    // Year switch (3.6, 3.7). Each topic section is handled on its own: a trend
+    // cell with data-year opens that year's details and closes the others.
+    // Only attributes and the `open` property change; no text is written.
+    var sections = document.querySelectorAll('.tdv section.bunch');
+    Array.prototype.forEach.call(sections, function(sec) {
+        var cells = sec.querySelectorAll('table.trend td[data-year]');
+        var details = sec.querySelectorAll('details.yr[data-year]');
+        if (!cells.length || !details.length) return;
+
+        function pick(year) {
+            Array.prototype.forEach.call(cells, function(c) {
+                var on = c.getAttribute('data-year') === year;
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            Array.prototype.forEach.call(details, function(d) {
+                d.open = d.getAttribute('data-year') === year;
+            });
+        }
+
+        Array.prototype.forEach.call(cells, function(c) {
+            c.setAttribute('tabindex', '0');
+            c.setAttribute('role', 'button');
+            c.addEventListener('click', function() {
+                pick(c.getAttribute('data-year'));
+            });
+            c.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    pick(c.getAttribute('data-year'));
+                }
+            });
+        });
+
+        // Cells follow the year axis oldest first, so the last one is the
+        // latest year with points (era-prefixed years do not sort as text).
+        pick(cells[cells.length - 1].getAttribute('data-year'));
+    });
+})();
+</script>
+
+            </main>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    
+                    <p>v8.3.1</p>
+                    
+                    <p class="project-credit">
+                        隠岐の島町議会レポート — 車座プロジェクト
+                        ／ <a href="index.html">このレポートについて</a>
+                    </p>
+                    <div class="footer-notice">
+                        <p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+                        <p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <noscript>
+        <p style="padding:8px 22px;background:var(--accent-soft);color:var(--accent-ink);margin:0;">
+            サイドバーの折りたたみやレポート切替メニューには JavaScript を使いますが、
+            すべてのページ・リンクは JavaScript 無効でもサイドバーから直接開けます。
+        </p>
+    </noscript>
+
+    
+    <script>
+    (function() {
+        var shell = document.getElementById('shell');
+        // (1) サイドバー折りたたみトグル（展開⇔レール）
+        var toggle = document.getElementById('sb-toggle');
+        if (toggle && shell) {
+            toggle.addEventListener('click', function() {
+                shell.classList.toggle('collapsed');
+                var menu = document.querySelector('.rsw > .cross-nav');
+                if (menu) menu.classList.remove('open');
+                var rb = document.getElementById('rsw-btn');
+                if (rb) rb.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (2) レポート切替メニュー開閉（aria-expanded・構造セレクタで menu を掴む
+        //     ため refresh_all_cross_nav の置換後も壊れない）
+        var rswBtn = document.getElementById('rsw-btn');
+        var rswMenu = document.querySelector('.rsw > .cross-nav');
+        if (rswBtn && rswMenu) {
+            rswBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var open = rswMenu.classList.toggle('open');
+                rswBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            rswMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function() {
+                rswMenu.classList.remove('open');
+                rswBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // (3) 領域グループ開閉
+        document.querySelectorAll('.grp-h').forEach(function(h) {
+            h.addEventListener('click', function() {
+                var g = h.parentElement;
+                g.classList.toggle('closed');
+                h.setAttribute('aria-expanded', g.classList.contains('closed') ? 'false' : 'true');
+            });
+        });
+        // (4) モバイル：サイドバー オーバーレイ開閉
+        var mob = document.getElementById('mobile-toggle');
+        if (mob && shell) {
+            mob.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shell.classList.toggle('mobileopen');
+            });
+            document.querySelectorAll('.nav .item').forEach(function(a) {
+                a.addEventListener('click', function() { shell.classList.remove('mobileopen'); });
+            });
+        }
+    })();
+    </script>
+    
+    
+    <script>
+    (function() {
+        var subLinks = document.querySelectorAll('.subtoc a[href^="#"]');
+        if (!subLinks.length) return;
+        var linkById = {};
+        var secEls = [];
+        subLinks.forEach(function(a) {
+            var id = a.getAttribute('href').slice(1);
+            var sec = document.getElementById(id);
+            if (sec) { linkById[id] = a; secEls.push(sec); }
+            a.addEventListener('click', function(e) {
+                var target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    a.classList.add('cur');
+                }
+            });
+        });
+        // スクロールスパイ（IntersectionObserver・現在ビューの節を強調）
+        if ('IntersectionObserver' in window && secEls.length) {
+            var spy = new IntersectionObserver(function(entries) {
+                entries.forEach(function(en) {
+                    if (!en.isIntersecting) return;
+                    var link = linkById[en.target.id];
+                    if (!link) return;
+                    subLinks.forEach(function(x) { x.classList.remove('cur'); });
+                    link.classList.add('cur');
+                });
+            }, { rootMargin: '0px 0px -68% 0px', threshold: 0 });
+            secEls.forEach(function(s) { spy.observe(s); });
+        }
+    })();
+    </script>
+    
+
+    <!-- Chart.js CDN -->
+    <script>var chartjsFailed = false; var annotationFailed = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"
+            onerror="chartjsFailed=true;"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"
+            onerror="annotationFailed=true;"></script>
+    <script>
+    // CDNフォールバック（Chart.js読み込み失敗時でも常に利用可能にする）
+    window.initChartFallback = function() {
+      if (!chartjsFailed) return;
+      document.querySelectorAll('.chart-container canvas').forEach(function(c) {
+        var msg = document.createElement('div');
+        msg.className = 'chart-fallback';
+        msg.textContent = 'グラフを読み込めませんでした。ページを再読み込みしてください。';
+        c.parentNode.replaceChild(msg, c);
+      });
+    };
+    (function() {
+      if (typeof Chart === 'undefined') { chartjsFailed = true; return; }
+
+      // 比較チャート 2色定数（#422 harmonize: current を藍アクセント #3a4a8c へ一本化）
+      window.COMPARISON_COLORS = {
+        current: '#3a4a8c',
+        previous: '#93C5FD'
+      };
+
+      // 単色チャート定数（#422 harmonize: 藍アクセント #3a4a8c へ一本化）
+      window.SINGLE_COLOR = '#3a4a8c';
+
+      // グローバルデフォルト
+      Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.plugins.tooltip.enabled = true;
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = true;
+
+      // モバイル対応: フォントサイズ縮小・凡例位置調整
+      if (window.innerWidth < 768) {
+          Chart.defaults.font.size = 10;
+          Chart.defaults.plugins.legend.position = 'bottom';
+          Chart.defaults.plugins.legend.labels = { boxWidth: 10, font: { size: 10 } };
+      }
+
+      // ドーナツ中央テキスト プラグイン
+      window.centerTextPlugin = {
+        id: 'centerText',
+        afterDraw: function(chart) {
+          var centerText = chart.config.data.centerText;
+          if (!centerText) return;
+          var ctx = chart.ctx;
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          ctx.save();
+          var fontSize = chart.config.data.centerTextFontSize || '1.2em';
+          ctx.font = 'bold ' + fontSize + ' ' + Chart.defaults.font.family;
+          ctx.fillStyle = '#1e293b';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerText, centerX, centerY);
+          ctx.restore();
+        }
+      };
+      Chart.register(centerTextPlugin);
+
+      // 軸ラベルツールチップ プラグイン
+      var tooltipEl = document.getElementById('axis-label-tooltip');
+      window.axisLabelTooltipPlugin = {
+        id: 'axisLabelTooltip',
+        afterEvent: function(chart, args) {
+          if (!tooltipEl) return;
+          var evt = args.event;
+          if (evt.type !== 'mousemove') { tooltipEl.style.opacity = '0'; return; }
+          var opts = chart.options.plugins.axisLabelTooltip;
+          if (!opts || !opts.glossary) { tooltipEl.style.opacity = '0'; return; }
+          var glossary = opts.glossary;
+          var scales = chart.scales;
+          var matched = false;
+          ['y', 'x'].forEach(function(axisId) {
+            if (matched) return;
+            var scale = scales[axisId];
+            if (!scale) return;
+            var ticks = scale.ticks;
+            if (!ticks) return;
+            for (var i = 0; i < ticks.length; i++) {
+              var label = ticks[i].label;
+              if (typeof label !== 'string') continue;
+              var pos = scale.getPixelForTick(i);
+              var hit = false;
+              if (scale.isHorizontal()) {
+                hit = Math.abs(evt.x - pos) < 30 && evt.y > scale.top;
+              } else {
+                hit = Math.abs(evt.y - pos) < 12 && evt.x < scale.left;
+              }
+              if (hit && glossary[label]) {
+                tooltipEl.textContent = label + ': ' + glossary[label];
+                tooltipEl.style.left = evt.x + 'px';
+                tooltipEl.style.top = (evt.y - 40) + 'px';
+                tooltipEl.style.opacity = '1';
+                matched = true;
+                return;
+              }
+            }
+          });
+          if (!matched) tooltipEl.style.opacity = '0';
+        }
+      };
+      Chart.register(axisLabelTooltipPlugin);
+
+      // 印刷対応
+      window.addEventListener('beforeprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+      window.addEventListener('afterprint', function() {
+        Object.values(Chart.instances).forEach(function(c) { c.resize(); });
+      });
+    })();
+    </script>
+    
+    <div id="axis-label-tooltip" style="position:fixed;background:#1e293b;color:#fff;padding:6px 10px;border-radius:4px;font-size:0.8em;max-width:300px;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:1000;white-space:pre-wrap;"></div>
+</body>
+</html>
