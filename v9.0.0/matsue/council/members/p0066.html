@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja" data-shell="v9">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>太田哲 — 松江市議会レポート</title>
+<style>
+/* spacing-exceptions: 0 1px 2px 3px 5px 6px 7px 9px 10px 26px 34px */
+/* reason: every value above is kept from the mock (docs/mocks/v9/v9.css) so the look does not change. */
+/* v9 style layer of the council report (canonical; the mock is now a record of decisions).
+   Fixed layout: b (tinted page + left-ruled headings, white boxes only for data), body text capped at 45em, white page.
+   Raw colors live only in the :root token definitions below; everything else uses var(--*).
+   A dark scheme would swap the :root values only; no dark color-scheme media block is kept here.
+   Component CSS (tables, switches, question lists, cards, ...) is appended by the component tasks. */
+:root{
+  /* colors */
+  --bg:#ffffff; --surface:#ffffff; --side:#f7f8fa;
+  --ink:#1c1e26; --ink-soft:#4d5263; --ink-faint:#656a7e; --zero:#8a8fa3; --rest:#c3c6cf; --rest-soft:#eceef1;
+  --line:#e2e4ea; --line-soft:#eef0f4;
+  --accent:#3a4a8c; --accent-ink:#2c3a70; --accent-soft:#eceff8;
+  --a2:#6b76b0; --a3:#a9b0d3; --a4:#d5d9ec; --a5:#eceef7;
+  --on-accent:#ffffff; /* text on an --accent fill */
+  /* shadows (the mock's raw rgba() values, moved into tokens) */
+  --shadow-card:0 1px 2px rgba(28,30,38,.04),0 8px 24px -18px rgba(28,30,38,.25);
+  --shadow-hover:0 6px 18px -12px rgba(58,74,140,.5);
+  --shadow-overlay:0 0 40px rgba(0,0,0,.2);
+  /* per-person colors: the --accent hue (228deg, saturation 41%) at HSL lightness 17/28/39/50/61/72%,
+     dark to light; --person-3 is --accent itself. CIE L* steps are about 9-13 apart. */
+  --person-1:#19203d; --person-2:#2a3564; --person-3:#3a4a8c; --person-4:#4a5fb4; --person-5:#7282c4; --person-6:#99a5d5;
+  /* spacing steps */
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:24px; --sp6:40px; --sp7:64px;
+  --radius:8px;
+  --cap:45em; /* body text cap (45 characters) */
+  --fs:15px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ background:var(--bg); color:var(--ink); font-size:var(--fs); line-height:1.75;
+  font-family:"Yu Gothic UI","Yu Gothic","游ゴシック","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;
+  font-feature-settings:"palt"; -webkit-text-size-adjust:100%; }
+a{ color:var(--accent); text-underline-offset:3px; }
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible,.scroll:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+.ic{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+/* ---- shell: sidebar ---- */
+.shell{ display:flex; min-height:100vh; }
+.side{ width:252px; flex:none; background:var(--side); border-right:1px solid var(--line); padding:var(--sp4) var(--sp3);
+  position:sticky; top:0; height:100vh; overflow-y:auto; font-size:14px; }
+.side .back{ display:flex; gap:var(--sp2); align-items:center; color:var(--ink-faint); text-decoration:none; font-size:12.5px; padding:var(--sp1) var(--sp2); }
+.side .rep{ margin:var(--sp2) 0 var(--sp4); padding:var(--sp2) var(--sp3); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); font-weight:700; display:flex; gap:var(--sp2); align-items:center; }
+.side .grp{ margin-top:var(--sp4); }
+.side .gh{ font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; padding:0 var(--sp2) var(--sp1); }
+.side a.it{ display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); border-radius:6px; color:var(--ink-soft); text-decoration:none; }
+.side a.it:hover{ background:var(--accent-soft); color:var(--accent-ink); }
+.side a.it[aria-current]{ background:var(--accent-soft); color:var(--accent-ink); font-weight:700; }
+.side details > summary{ list-style:none; cursor:pointer; display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); color:var(--ink-soft); border-radius:6px; }
+.side details > summary::-webkit-details-marker{ display:none; }
+.side details > summary::after{ content:""; margin-left:auto; border:4px solid transparent; border-left-color:var(--ink-faint); transform:translateX(2px); transition:transform .15s; }
+.side details[open] > summary::after{ transform:rotate(90deg) translateX(2px); }
+.side .sub{ padding-left:26px; }
+.side .sub a.it{ padding:var(--sp1) var(--sp2); font-size:13.5px; }
+.side .toc{ margin:2px 0 var(--sp2) 34px; border-left:1px solid var(--line); }
+.side .toc a{ display:block; padding:3px var(--sp3); font-size:12.5px; color:var(--ink-faint); text-decoration:none; }
+.side .toc a:hover{ color:var(--accent-ink); }
+/* the section in view, marked by the shell script (not in the mock) */
+.side .toc a[aria-current]{ color:var(--accent-ink); font-weight:700; box-shadow:inset 2px 0 0 var(--accent); }
+/* report switch: the legacy cross-nav block sits in .rep under the report name */
+.side .rep{ flex-wrap:wrap; }
+.side .rep a.rep-link{ display:flex; gap:var(--sp2); align-items:center; flex:1 1 auto; color:inherit; text-decoration:none; }
+.side .rep a.rep-link:hover,.side .rep a.rep-link[aria-current]{ color:var(--accent-ink); }
+.side .rep .cross-nav{ flex-basis:100%; font-weight:400; font-size:12.5px; }
+.side .cross-nav-inner{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp2); }
+.side .cross-nav a{ color:var(--accent); text-decoration:none; }
+.side .cross-nav-sep{ color:var(--line); }
+
+/* ---- shell: breadcrumb and page frame ---- */
+.main{ flex:1; min-width:0; }
+.crumb{ font-size:12.5px; color:var(--ink-faint); padding:var(--sp3) var(--sp6); border-bottom:1px solid var(--line-soft); background:var(--bg); }
+.crumb b{ color:var(--ink); font-weight:600; }
+.page{ max-width:1080px; padding:var(--sp6) var(--sp6) var(--sp7); }
+.menu{ display:none; }
+
+/* ---- page head: kicker, title, lead (the how-to box is a component) ---- */
+.kicker{ display:inline-block; font-size:12px; color:var(--accent-ink); background:var(--accent-soft); border-radius:999px; padding:1px 10px; margin-bottom:var(--sp2); }
+h1{ font-size:28px; line-height:1.35; margin:0 0 var(--sp3); letter-spacing:.02em; }
+.lead{ max-width:var(--cap); color:var(--ink-soft); margin:0 0 var(--sp5); }
+
+/* ---- sections: layout b (tinted page + left-ruled heading; white box only for data) ---- */
+/* --measure is the wrap width of body text in a section: the cap by default;
+   .sec.fit follows the section (= table) width and still stops at the cap. */
+.sec{ --measure:var(--cap); margin:0 0 var(--sp7); }
+.sec.fit{ --measure:min(var(--cap), 100%); }
+.sec > h2{ font-size:20px; line-height:1.4; margin:0 0 var(--sp3); border-left:4px solid var(--accent); padding-left:var(--sp3); }
+.sec h3{ font-size:17px; margin:var(--sp6) 0 var(--sp2); }
+.sec h4.sub{ font-size:14px; margin:var(--sp4) 0 var(--sp2); color:var(--ink-soft); }
+.prose{ max-width:var(--measure, var(--cap)); margin:0 0 var(--sp4); color:var(--ink-soft); }
+.meta{ max-width:var(--measure, var(--cap)); font-size:13px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.terms{ max-width:var(--measure, var(--cap)); font-size:12.5px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.data{ margin:0 0 var(--sp4); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:var(--sp4);
+  box-shadow:var(--shadow-card); }
+
+/* ---- footer (tinted) ---- */
+.foot{ border-top:1px solid var(--line); padding:var(--sp5) var(--sp6); font-size:12.5px; color:var(--ink-faint); background:var(--side); }
+.foot a{ color:var(--accent); }
+.foot p{ margin:0; }
+.foot p + p{ margin-top:var(--sp1); }
+/* the one <noscript> note of the shell (requirement 3.8) */
+.noscript{ margin:0; padding:var(--sp2) var(--sp6); font-size:12.5px; background:var(--accent-soft); color:var(--accent-ink); }
+
+/* ---- mobile: sidebar becomes an overlay menu, body is one column ---- */
+@media (max-width:640px){
+  .side{ position:fixed; left:0; top:0; z-index:40; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow-overlay); }
+  .side.open{ transform:none; }
+  .side:target{ transform:none; }
+  .menu{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; margin-right:var(--sp2); border:1px solid var(--line); border-radius:8px; background:var(--surface); vertical-align:middle; }
+  .crumb{ padding:var(--sp2) var(--sp4); position:sticky; top:0; z-index:30; }
+  .page{ padding:var(--sp5) var(--sp4) var(--sp6); }
+  h1{ font-size:23px; }
+  .data{ padding:var(--sp3); }
+  .foot{ padding:var(--sp4); }
+  .noscript{ padding:var(--sp2) var(--sp4); }
+}
+
+/* ---- components (4.1): how-to box, counting section, tag, link rows, stacked band, policy marks ---- */
+/* how-to box: the mock's list indent of 1.2em is put on the --sp4 step (16px at 14px text vs 16.8px). */
+.howto{ max-width:var(--cap); border-left:3px solid var(--a3); background:var(--accent-soft); padding:var(--sp3) var(--sp4); border-radius:0 var(--radius) var(--radius) 0; margin:0 0 var(--sp6); font-size:14px; }
+.howto h2{ all:unset; display:block; font-weight:700; font-size:13px; color:var(--accent-ink); margin-bottom:var(--sp1); }
+.howto ul{ margin:0; padding-left:var(--sp4); }
+.howto li{ margin:2px 0; }
+.count{ font-size:14px; }
+.count dl{ margin:0; max-width:var(--cap); }
+.count dt{ font-weight:700; margin-top:var(--sp3); }
+.count dd{ margin:var(--sp1) 0 0; color:var(--ink-soft); }
+/* small tag: one part, four variants (legacy tag / ab / sk / rtag) */
+.tag{ display:inline-block; font-size:12px; line-height:1.6; padding:0 9px; border-radius:999px; border:1px solid var(--a4); background:var(--accent-soft); color:var(--accent-ink); }
+.tag.rest{ border-color:var(--line); background:var(--line-soft); color:var(--ink-faint); }
+.tag.role{ background:var(--surface); }
+.tag.out{ border-color:var(--line); background:var(--line-soft); color:var(--ink-soft); }
+/* link rows: page name + one-line description + arrow, ruled rows (not cards) */
+.llist{ list-style:none; margin:var(--sp2) 0 0; padding:0; max-width:var(--cap); border-top:1px solid var(--line); }
+.llist li{ border-bottom:1px solid var(--line); }
+.lrow{ display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:var(--sp3); padding:var(--sp3) var(--sp2); text-decoration:none; color:var(--ink); }
+.lrow:hover{ background:var(--accent-soft); }
+.lrow .lt{ display:flex; gap:var(--sp2); align-items:center; font-weight:700; color:var(--accent-ink); }
+.lrow:hover .lt{ text-decoration:underline; text-underline-offset:3px; }
+.lrow .lt .ic{ color:var(--accent); }
+.lrow .ld{ grid-column:1; font-size:13px; color:var(--ink-soft); }
+.lrow .ar{ grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--accent); }
+/* stacked band: tones 1-5 run dark to light; a legend may reuse the same tone classes */
+.stack{ display:flex; height:16px; border-radius:2px; overflow:hidden; }
+.stack .seg{ width:var(--w); }
+.stack .t1, .stacklegend .t1{ background:var(--accent-ink); }
+.stack .t2, .stacklegend .t2{ background:var(--accent); }
+.stack .t3, .stacklegend .t3{ background:var(--a2); }
+.stack .t4, .stacklegend .t4{ background:var(--a3); }
+.stack .t5, .stacklegend .t5{ background:var(--a4); }
+.stacklegend{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp4); font-size:12.5px; color:var(--ink-soft); margin:var(--sp3) 0 0; }
+.stacklegend i{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+/* policy marks: fixed-width columns so the marks line up across items */
+.pmarks{ display:inline-grid; grid-template-columns:8.6em 8.2em; column-gap:var(--sp3); align-items:baseline; }
+.pmark{ font-size:11.5px; padding:0 var(--sp2); border-radius:999px; line-height:1.7; white-space:nowrap; text-align:center; }
+.pmark.council{ background:var(--accent); color:var(--on-accent); }
+.pmark.executive{ background:var(--a3); color:var(--ink); }
+.pmark.after{ border:1px solid var(--a2); color:var(--accent-ink); }
+.pmark.none{ border:1px dashed var(--a3); color:var(--ink-faint); }
+
+/* ---- components (4.2): table + scale bar, heat cells, number cells ---- */
+/* a table wider than the page scrolls inside this wrapper, never the page (2.8; the mock's .scroll) */
+.scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tbl{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+.tbl th,.tbl td{ padding:7px 10px; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:middle; }
+.tbl thead th{ font-size:12px; color:var(--ink-faint); font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap; }
+.tbl tbody th{ font-weight:600; }
+.tbl tbody tr:last-child > *{ border-bottom:0; }
+.tbl .num{ text-align:right; white-space:nowrap; }
+.tbl a{ text-decoration:none; }
+.tbl a:hover{ text-decoration:underline; }
+.tbl tr.total > *{ border-top:1px solid var(--line); font-weight:700; }
+/* the caption names the table for assistive tech only; the visible title is the heading above the box */
+.tbl > caption{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+/* unified columns: name, scale bar (takes the rest), numbers */
+.cols{ table-layout:fixed; }
+.cols .c-name{ width:15em; }
+.cols .c-num{ width:5.5em; }
+.barcell{ padding-right:var(--sp4)!important; }
+/* the bar element is left out for 0, so no width rule hides it */
+.hbar{ display:block; height:10px; width:var(--w); min-width:2px; background:var(--accent); border-radius:2px; }
+/* catch-all rows (その他・当たる話題なし) are grey */
+.hbar.rest{ background:var(--rest); }
+.tbl tr.rest th{ font-weight:400; color:var(--ink-soft); }
+/* minor row: a sub-item indented under its parent (scale_table row key "minor"). */
+.tbl tr.minor th{ padding-left:var(--sp5); font-weight:400; color:var(--ink-soft); }
+/* heat steps (light type), both families always on: table.heat fills the cell (td.l3-l0),
+   any table fills the number's pill (td.num .h3-.h1). Steps are chosen by the caller. */
+.heat td.l3, td.num .h3{ background:var(--a4); color:var(--accent-ink); font-weight:700; }
+.heat td.l2, td.num .h2{ background:var(--a5); color:var(--ink-soft); }
+.heat td.l1, td.num .h1{ background:none; color:var(--ink-faint); }
+td.num .hr{ background:var(--rest-soft); color:var(--ink-soft); }
+td.num .h3, td.num .h2, td.num .h1, td.num .hr{ display:inline-block; min-width:2.6em; padding:1px var(--sp1); border-radius:3px; text-align:center; }
+/* a table zero is a faint 0; 「—」 is only for "no data / not applicable" */
+.zero, .heat td.l0{ color:var(--zero); }
+
+/* ---- mobile: the scale bar goes under the numbers at full width ---- */
+@media (max-width:640px){
+  .tbl.cols, .tbl.cols thead, .tbl.cols tbody{ display:block; }
+  .tbl.cols colgroup, .tbl.cols thead th:nth-child(2){ display:none; }
+  /* --n (number columns) is set on the table by the scale_table macro */
+  .tbl.cols tr{ display:grid; grid-template-columns:minmax(0,1fr) repeat(var(--n),auto); column-gap:var(--sp3); align-items:baseline; border-bottom:1px solid var(--line-soft); }
+  .tbl.cols thead tr{ border-bottom-color:var(--line); }
+  .tbl.cols tr > *{ border-bottom:0!important; }
+  .tbl.cols td.barcell{ grid-column:1 / -1; grid-row:2; padding-top:0; padding-bottom:var(--sp2); }
+  /* as on the desktop, the last row has no rule of its own (the box edge or .panes draws it) */
+  .tbl.cols tbody tr:last-child{ border-bottom:0; }
+  /* the total row has no bar: drop its empty bar cell (it made a blank second line) and draw
+     the rule on the row, since per-cell rules break at the grid's column gaps */
+  .tbl.cols tr.total td.barcell{ display:none; }
+  .tbl.cols tr.total{ border-top:1px solid var(--line); }
+  .tbl.cols tr.total > *{ border-top:0; }
+}
+
+/* ---- components (4.3): switches, pick rows, 「残り○件」, question ---- */
+/* hidden always wins, also over a component's display (grid rows, flex lists) */
+[hidden]{ display:none!important; }
+/* period tabs, year buttons, chips: one row that scrolls sideways on a phone (3.9) */
+.tabs{ display:flex; gap:2px; border-bottom:1px solid var(--line); margin:0 0 var(--sp3); overflow-x:auto; }
+.tab{ font:inherit; font-size:14px; background:none; border:0; border-bottom:3px solid transparent; padding:var(--sp2) var(--sp4); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.tab[aria-selected="true"]{ color:var(--accent-ink); border-bottom-color:var(--accent); font-weight:700; }
+.ystrip{ display:flex; gap:var(--sp1); overflow-x:auto; padding-bottom:var(--sp2); margin:0 0 var(--sp4); border-bottom:1px solid var(--line); }
+.ybtn{ font:inherit; font-size:12.5px; font-weight:600; line-height:1.35; flex:1 0 40px; padding:5px 0 var(--sp1); border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.ybtn:hover{ border-color:var(--a3); }
+.ybtn[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* year buttons, form "count" (council-v9-topics, mock 05): the year over its topic count, 「途中」 under a year in progress */
+.ystrip.count .ybtn{ display:flex; flex-direction:column; align-items:center; gap:0; }
+.ystrip.count .ybtn .yl{ font-size:12.5px; font-weight:600; white-space:nowrap; }
+.ystrip.count .ybtn b{ font-size:10.5px; font-weight:400; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+.ystrip.count .ybtn b::after{ content:"話題"; }
+.ystrip.count .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; font-weight:400; text-align:center; }
+.ystrip.count .ybtn[aria-pressed="true"] b{ color:var(--on-accent); opacity:.85; }
+/* year buttons, form "bars" (council-v9-topics, mock 06): a bar per year, faded when it cannot be pressed,
+   a dot at the bar's root for a year with policy items only, a faint ground when pressed */
+.ystrip.bars .ybtn{ display:flex; flex-direction:column; align-items:center; gap:2px; flex:1 0 34px; padding:var(--sp1) 0; border:0; background:none; font-weight:400; }
+.ystrip.bars .ybtn .yv{ display:block; width:12px; height:56px; background:linear-gradient(to top,var(--a3) var(--h),transparent var(--h)); border-radius:2px; }
+.ystrip.bars .ybtn .yl{ font-size:10.5px; color:var(--ink-faint); white-space:nowrap; }
+.ystrip.bars .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; text-align:center; }
+.ystrip.bars .ybtn:hover:not([disabled]){ background:var(--line-soft); }
+.ystrip.bars .ybtn[disabled]{ cursor:default; opacity:.45; }
+.ystrip.bars .ybtn.pol .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--a3) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn.pol[aria-pressed="true"] .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--accent) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn[aria-pressed="true"]{ background:var(--accent-soft); color:var(--accent-ink); }
+.ystrip.bars .ybtn[aria-pressed="true"] .yv{ background:linear-gradient(to top,var(--accent) var(--h),transparent var(--h)); }
+.chips{ display:flex; gap:var(--sp2); flex-wrap:nowrap; overflow-x:auto; margin:0 0 var(--sp3); padding-bottom:2px; }
+.chip{ font:inherit; font-size:13px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:3px var(--sp3); cursor:pointer; white-space:nowrap; }
+.chip[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* rows-pick table: the whole row is pressable; the chosen row is tinted with a left rule */
+.pickbtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:600; color:var(--ink); width:100%; }
+tr.pick{ cursor:pointer; }
+tr.pick:hover > *{ background:var(--line-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) > *{ background:var(--accent-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) .pickbtn{ color:var(--accent-ink); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) th{ box-shadow:inset 3px 0 0 var(--accent); }
+.panes{ margin-top:var(--sp4); padding-top:var(--sp2); border-top:1px solid var(--line); }
+.panes h4.sub{ margin-top:var(--sp2); }
+/* one question: title -> meta line (member, kind, meeting) -> summary -> tags; li.line is the one-line form */
+.qlist{ list-style:none; margin:0; padding:0; }
+.qlist li{ padding:var(--sp3) 0; border-top:1px dashed var(--line); }
+.qlist li:first-child{ border-top:0; }
+.qt{ margin:0; font-weight:700; }
+.qm{ margin:2px 0 var(--sp1); font-size:12.5px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:0 var(--sp3); }
+.qm a{ font-weight:600; }
+.qs{ margin:0; max-width:var(--cap); color:var(--ink-soft); font-size:14px; }
+.qlist .tg{ display:flex; flex-wrap:wrap; gap:var(--sp1); margin:var(--sp1) 0 0; }
+.qlist .tg a.tag{ text-decoration:none; }
+.qlist li.line{ padding:var(--sp1) 0; border-top:1px solid var(--line-soft); }
+.qlist li.line .qt{ font-weight:600; font-size:13.5px; }
+.qlist li.line .qm{ margin:0; }
+/* 「残り○件を表示」: drawn hidden; the behaviour script shows it and sets its text */
+.more{ font:inherit; font-size:13.5px; margin:var(--sp3) 0 0; padding:var(--sp2) var(--sp4); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--accent); cursor:pointer; }
+.more:hover{ border-color:var(--a3); }
+/* member pages (council-v9-members): 「…にも当たる」 under a question; a lone key button in a table
+   cell (the period name, mock 08's plink); a period row with no term (「在任していない」) */
+.qlist .also{ margin:var(--sp1) 0 0; font-size:12px; color:var(--ink-faint); }
+.keybtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:700; color:var(--accent); }
+.keybtn:hover{ text-decoration:underline; }
+.keybtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.tbl tr.off > *{ color:var(--ink-faint); }
+.tbl tr.off th{ font-weight:400; }
+
+/* ---- mobile: a picked row of a unified-column table is tinted as one band ---- */
+@media (max-width:640px){
+  .tbl.cols tr.pick:has([aria-pressed="true"]){ background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
+  .tbl.cols tr.pick > *{ background:none!important; box-shadow:none!important; }
+}
+
+</style>
+<style>
+
+.prof{ display:grid; grid-template-columns:max-content 1fr; gap:var(--sp1) var(--sp4); margin:0 0 var(--sp5); font-size:14px; max-width:var(--cap); }
+.prof dt{ color:var(--ink-faint); }
+.prof dd{ margin:0; }
+.ptbl{ max-width:52em; }
+.ptbl .c-p{ width:5em; }
+.ptbl .c-span{ width:12.5em; }
+.ptbl .c-n{ width:5em; }
+.ptbl td.span{ color:var(--ink-soft); font-size:13px; white-space:nowrap; }
+.ptbl tr.off td.note{ font-size:12.5px; }
+.dtbl .c-d{ width:13em; }
+.dtbl .c-n{ width:4.2em; }
+.dtbl .c-bar{ min-width:5em; }
+.dtbl td.num{ text-align:center; }
+.dtbl td.num.tot{ text-align:right; font-weight:700; }
+.empty{ color:var(--ink-faint); font-size:14px; margin:var(--sp3) 0; }
+.qhead{ font-size:13.5px; color:var(--ink-soft); margin:0 0 var(--sp3); }
+.mtg{ margin:var(--sp5) 0 0; }
+.mtg:first-child{ margin-top:0; }
+.sec .mtg h3{ font-size:15px; margin:0 0 var(--sp1); }
+@media (max-width:640px){
+  .ptbl .c-span, .ptbl .span{ display:none; }
+  .prof{ grid-template-columns:1fr; gap:0; }
+  .prof dt{ margin-top:var(--sp2); font-size:12.5px; }
+  .dtbl{ font-size:12px; }
+  .dtbl .c-bar, .dtbl .bar, .dtbl td.barcell{ display:none; }
+  .dtbl th,.dtbl td{ padding:6px 3px; }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="ic-hall" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9.5 10v9M14.5 10v9M3 21h18"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11"/></symbol>
+  <symbol id="ic-topics" viewBox="0 0 24 24"><path d="M4 6h10v7H8l-4 3z"/><path d="M14 9h6v7l-3-2h-5v-1"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><path d="M6 21V4h12v17M3 21h18M9.5 8h1M13.5 8h1M9.5 12h1M13.5 12h1M10.5 21v-4h3v4"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+</svg>
+<div class="shell">
+<nav class="side sidebar" id="side" aria-label="レポートの目次">
+<a class="back" href="../../../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-back"/></svg>松江市／車座プロジェクト</a>
+<div class="rep"><a class="rep-link" href="../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-hall"/></svg>議会レポート</a>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../../financial/index.html" class="cross-nav-link">財政レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+</div>
+<a class="it" href="../about.html"><svg class="ic" aria-hidden="true"><use href="#ic-book"/></svg>このレポートについて</a>
+<div class="grp"><div class="gh">話題</div>
+<a class="it" href="../topics.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>議会で語られてきた話題</a>
+<details><summary><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>区分</summary><div class="sub">
+<a class="it" href="../topic_childcare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>子育てと少子化</a>
+<a class="it" href="../topic_education.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>学校教育</a>
+<a class="it" href="../topic_welfare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>医療・介護・福祉</a>
+<a class="it" href="../topic_safety.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>防災と地域の安全</a>
+<a class="it" href="../topic_infrastructure.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>都市基盤と生活環境</a>
+<a class="it" href="../topic_community.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>市民自治と人権</a>
+<a class="it" href="../topic_population.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>人口減少と地域の維持</a>
+<a class="it" href="../topic_industry.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>産業・雇用</a>
+<a class="it" href="../topic_agriculture.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>農林水産業</a>
+<a class="it" href="../topic_tourism.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>観光・文化・交流</a>
+<a class="it" href="../topic_environment.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>エネルギー・環境</a>
+<a class="it" href="../topic_nuclear.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>原子力</a>
+<a class="it" href="../topic_administration.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>行財政運営</a>
+</div></details>
+</div>
+<div class="grp"><div class="gh">議員の活動</div>
+<a class="it" href="../members.html" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#ic-person"/></svg>議員の名簿</a>
+<div class="toc"><a href="#s-periods">期ごとの質問の回数</a><a href="#s-divs">取り上げた区分</a><a href="#s-qs">質問の題と要約</a><a href="#s-count">このページの数え方</a></div>
+</div>
+<div class="grp"><div class="gh">首長と執行部</div>
+<a class="it" href="../policy_speech.html"><svg class="ic" aria-hidden="true"><use href="#ic-speech"/></svg>施政方針と議会の動き</a>
+<a class="it" href="../executives.html"><svg class="ic" aria-hidden="true"><use href="#ic-building"/></svg>首長と執行部の答弁</a>
+</div>
+<div class="grp"><div class="gh">議会の活動</div>
+<a class="it" href="../bill_breakdown.html"><svg class="ic" aria-hidden="true"><use href="#ic-pie"/></svg>議案</a>
+</div>
+</nav>
+<div class="main">
+<div class="crumb"><button class="menu" type="button" aria-controls="side" aria-expanded="false" aria-label="目次をひらく"><svg class="ic" aria-hidden="true"><use href="#ic-menu"/></svg></button>松江市・議会レポート / <a href="../members.html">議員の名簿</a> / <b>太田哲</b></div>
+<noscript><p class="noscript">期・年度などの切替には JavaScript を使います。JavaScript が無効のときは、それぞれ最初に選ばれている内容だけを表示しています。<a href="#side">目次をひらく</a></p></noscript>
+<main class="page">
+<span class="kicker">議員の活動</span>
+<h1 class="page-title">太田哲</h1>
+
+<p class="lead">第4期から第6期まで在任した議員です。本会議で質問に立った回数の移り変わりと、質問の題と要約を並べています。</p>
+<dl class="prof"><dt>会派</dt><dd>公明クラブ（第6期）</dd></dl>
+
+
+<aside class="howto"><h2>このページの読み方</h2><ul><li>本会議で質問に立った回数と、そこで取り上げた質問の題と要約を並べています。委員会での発言や、質問以外の活動は含みません。</li><li>回数や区分の多い少ないは、議員の活動の良し悪しを示す物ではありません。</li></ul></aside>
+
+
+<div class="switch" data-switch="期">
+<section class="sec" id="s-periods"><h2>期ごとの質問の回数</h2>
+<p class="prose">表示している全ての期を並べています。在任した期の質問の題と要約は、下の「質問の題と要約」に有ります。</p>
+<div class="data"><div class="scroll"><table class="tbl ptbl">
+<caption>太田哲の期ごとの質問の回数</caption>
+<colgroup><col class="c-p"><col class="c-span"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-bar"></colgroup>
+<thead><tr><th scope="col">期</th><th scope="col" class="span">期間</th><th scope="col" class="num">一般質問</th><th scope="col" class="num">代表質問</th><th scope="col" class="num">計</th><th scope="col">回数の計</th></tr></thead>
+<tbody>
+<tr class="off"><th scope="row">第1期</th><td class="span">2005年4月〜2009年4月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="off"><th scope="row">第2期</th><td class="span">2009年4月〜2013年4月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="off"><th scope="row">第3期</th><td class="span">2013年4月〜2017年4月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第4期" aria-pressed="false">第4期</button></th><td class="span">2017年4月〜2021年4月</td><td class="num">14</td><td class="num">1</td><td class="num">15</td><td class="barcell"><span class="hbar" style="--w:93.8%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第5期" aria-pressed="false">第5期</button></th><td class="span">2021年4月〜2025年4月</td><td class="num">11</td><td class="num">5</td><td class="num">16</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第6期" aria-pressed="true">第6期</button></th><td class="span">2025年4月〜2029年4月</td><td class="num">2</td><td class="num">3</td><td class="num">5</td><td class="barcell"><span class="hbar" style="--w:31.2%"></span></td></tr>
+<tr class="total"><th scope="row">計</th><td class="span"></td><td class="num">27</td><td class="num">9</td><td class="num">36</td><td class="barcell"></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-divs"><h2>取り上げた区分</h2>
+<p class="prose">本会議の質問を、取り上げた論点の話題の区分毎に、在任した期を追って数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数えます。どの区分にも当たらない質問は「当たる話題なし」に数えます。</p>
+<div class="data"><div class="scroll"><table class="tbl dtbl">
+<caption>太田哲が取り上げた区分（質問の数）</caption>
+<colgroup><col class="c-d"><col class="c-n"><col class="c-bar"><col class="c-n"><col class="c-n"><col class="c-n"></colgroup>
+<thead><tr><th scope="col">区分</th><th scope="col" class="num">計</th><th scope="col" class="bar">計の棒</th><th scope="col" class="num">第4期</th><th scope="col" class="num">第5期</th><th scope="col" class="num">第6期</th></tr></thead>
+<tbody>
+<tr><th scope="row"><a href="../topic_welfare.html">医療・介護・福祉</a></th><td class="num tot">20</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td><td class="num l3"><span class="h3">8</span></td><td class="num l3"><span class="h3">12</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_tourism.html">観光・文化・交流</a></th><td class="num tot">14</td><td class="barcell"><span class="hbar" style="--w:70.0%"></span></td><td class="num l2"><span class="h2">5</span></td><td class="num l2"><span class="h2">5</span></td><td class="num l2"><span class="h2">4</span></td></tr>
+<tr><th scope="row"><a href="../topic_infrastructure.html">都市基盤と生活環境</a></th><td class="num tot">13</td><td class="barcell"><span class="hbar" style="--w:65.0%"></span></td><td class="num l2"><span class="h2">5</span></td><td class="num l3"><span class="h3">6</span></td><td class="num l1"><span class="h1">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_industry.html">産業・雇用</a></th><td class="num tot">13</td><td class="barcell"><span class="hbar" style="--w:65.0%"></span></td><td class="num l2"><span class="h2">4</span></td><td class="num l3"><span class="h3">7</span></td><td class="num l1"><span class="h1">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_administration.html">行財政運営</a></th><td class="num tot">13</td><td class="barcell"><span class="hbar" style="--w:65.0%"></span></td><td class="num l2"><span class="h2">5</span></td><td class="num l3"><span class="h3">8</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_safety.html">防災と地域の安全</a></th><td class="num tot">12</td><td class="barcell"><span class="hbar" style="--w:60.0%"></span></td><td class="num l3"><span class="h3">7</span></td><td class="num l2"><span class="h2">4</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_community.html">市民自治と人権</a></th><td class="num tot">10</td><td class="barcell"><span class="hbar" style="--w:50.0%"></span></td><td class="num l3"><span class="h3">7</span></td><td class="num l1"><span class="h1">2</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_population.html">人口減少と地域の維持</a></th><td class="num tot">9</td><td class="barcell"><span class="hbar" style="--w:45.0%"></span></td><td class="num l2"><span class="h2">4</span></td><td class="num l1"><span class="h1">2</span></td><td class="num l2"><span class="h2">3</span></td></tr>
+<tr><th scope="row"><a href="../topic_agriculture.html">農林水産業</a></th><td class="num tot">8</td><td class="barcell"><span class="hbar" style="--w:40.0%"></span></td><td class="num l2"><span class="h2">4</span></td><td class="num l2"><span class="h2">4</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_childcare.html">子育てと少子化</a></th><td class="num tot">7</td><td class="barcell"><span class="hbar" style="--w:35.0%"></span></td><td class="num l1"><span class="h1">1</span></td><td class="num l2"><span class="h2">5</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_education.html">学校教育</a></th><td class="num tot">7</td><td class="barcell"><span class="hbar" style="--w:35.0%"></span></td><td class="num l2"><span class="h2">3</span></td><td class="num l1"><span class="h1">2</span></td><td class="num l1"><span class="h1">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_environment.html">エネルギー・環境</a></th><td class="num tot">5</td><td class="barcell"><span class="hbar" style="--w:25.0%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">4</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_nuclear.html">原子力</a></th><td class="num tot">1</td><td class="barcell"><span class="hbar" style="--w:5.0%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l1"><span class="h1">1</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-qs"><h2>質問の題と要約</h2>
+<p class="prose">期毎、区分毎に並べています。2つ以上の区分に当たる質問は、その期に質問の多い方の区分で要約まで出し、他の区分の側には題の一行と「…にも当たる」の印だけを置いています。</p>
+<div class="tabs" role="tablist" aria-label="期"><button type="button" role="tab" class="tab" data-switch-key="第4期" aria-selected="false">第4期</button><button type="button" role="tab" class="tab" data-switch-key="第5期" aria-selected="false">第5期</button><button type="button" role="tab" class="tab" data-switch-key="第6期" aria-selected="true">第6期</button></div>
+<div class="pane" data-switch-pane="第4期" hidden>
+<p class="qhead">2017年4月〜2021年4月・一般質問 14回・代表質問 1回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="農林水産業" aria-pressed="false">農林水産業</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">新型コロナ対策</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">市の出産育児応援特別給付金に関連して県内他市の新生児支援状況、出生数の減少の有無と今後の妊婦・新生児支援、補償のない飲食・観光・土産品業界への支援、旧八束郡のワクチン接種会場、美保関町・八束町民の境港市での接種、問診への薬剤師の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">介護施設の看護師不足</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">コロナ禍で求人を出しても看護師が集まらない介護施設に対し、市が丁寧に事情を聞き県にあっせんや紹介をしないかを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">職員の残業と働き方改革</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">2019年度に年720時間を超えて残業した市職員の勤務状態と体調、新庁舎を見据えた業務の時間管理と効率化、コロナ禍で好調な企業の働き方への指導を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">新卒者の就職状況</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">コロナ禍で大学生の就職内定率が低下する中、市内の高校生と県内の大学卒業生の就職状況、来年度の市職員の新卒及び就職氷河期世代の採用予定を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li><li><p class="qt">新型コロナへの対応</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">行動計画に基づく保健所の負担軽減と医療機関との連携、今後の検査方法、市と県の役割分担、医療資材や人材の確保、風評被害事業者や介護事業所、観光業、製造業、農漁業、文化芸術分野への支援と国の第2次補正の活用、休校による学習のおくれと心のケア、オンライン授業、女子高の進路への影響、3密回避、新卒者の就職支援を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-08">学校のＩＣＴ化</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_agriculture.html#topic-05">水産業と漁業</a></div></li><li><p class="qt">生活保護行政の体制</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">小田原市の改善策を例に、ケースワーカー1人当たりの担当世帯数と配置標準数に対する状況、社会福祉士など有資格者の体制、高齢者の受給の状況を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">生活困窮者自立支援制度</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">生活困窮者自立支援制度の就労準備や家計相談などの具体的な取り組みと、社会福祉協議会と生活保護との連携の対応を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">認知症検診事業の導入</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">草加市が行う認知症検診事業の視察結果を紹介し、無料の脳の健康度チェックによる早期発見・早期対応の取り組みが市民の認知症理解と周知に効果的ではないかと質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">ひきこもり支援</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">ひきこもりの相談窓口と県・市社協との連携や役割分担、市内の8050問題・7040問題の事例、訪問型就労準備支援（アウトリーチ）事業の取り組みを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">スポーツ振興と健康寿命</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">鳥栖市のサガン鳥栖支援を例に、スサノオマジックへの支援と1部復帰に向けた定期的な連絡会議などのサポート体制の強化、市長部局移管後の地域住民の健康寿命延伸の取り組みを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">ひきこもりの自立支援</p><p class="qm"><span>一般質問</span><span>平成30年第１回松江市議会定例会</span></p><p class="qs">ひきこもりの高年齢化・長期化が社会問題となる中、生活困窮者自立支援事業費にひきこもりの人への訪問支援の予算を計上しているかと、ひきこもりへの市長の認識を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">ひきこもりの自立支援</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="qs">本市のひきこもりの現状と、親の高齢化で生活困窮が懸念されるひきこもりの高年齢化への取り組み、秋田県藤里町の取り組みを参考に社会復帰に至った事例を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">新型コロナ対策</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">ちとせやつかの活用</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">閉鎖後長年譲渡先が決まらない八束保健福祉総合センターちとせやつかの経過と今後の活用を問い、中海・宍道湖圏域の視点や地域住民と支所を交えた協議会の立ち上げを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">公園愛護団と公園トイレ</p><p class="qm"><span>一般質問</span><span>令和２年第１回松江市議会定例会</span></p><p class="qs">公園愛護団の登録団体数と実際の活動団体数、高齢化による解散の現状と対策、よい事例の紹介や個人の顕彰、公園協議会の構成、公園・公衆トイレの整備計画を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a></div></li><li><p class="qt">Ｐａｒｋ－ＰＦＩの活用</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">盛岡市の木伏緑地の事例を挙げ、大橋川以外で松江城山公園などに公募設置管理制度（Ｐａｒｋ－ＰＦＩ）を活用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a></div></li><li><p class="qt">城北地区の活性化</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">北堀町の大型スーパー閉店による買い物困難を受けた旧市内での大型店撤退への情報収集と対策、景観形成区域である北堀町の活性化方策の検討状況、城北地区の30キロ速度規制やゾーン30の実施スケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li><p class="qt">境港市との交通連携</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">美保関や八束町と境港市との間のタクシーの営業区域の制約を踏まえ、交通政策協定を設けて相互に営業できるよう国に要望すること、コミュニティバス境港線の大型スーパー前停車による乗降者の増加見込みを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">コミバスの契約と利用促進</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">コミュニティバスの1年更新の路線を複数年契約にできないか、利用促進協議会の構成と開催回数、実際の利用者を協議会に加えて地域の要望を取り上げることを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">公園遊具と施設の修理</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">老朽化した公園遊具やトイレの修繕が順番待ちとなる中、限られた予算での優先順位の決め方と計画的な進め方を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">市道脇の樹木整備</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">市道沿いの樹木や街路樹の繁茂による通行阻害の相談を踏まえ、過去の伐採・剪定データをデータベース化し計画的・定期的に行えないかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">コロナ下の避難所運営</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">防災基本計画の修正に基づく3密回避の避難所運営、マスクや消毒液、段ボールベッドなどの備蓄、公民館などのＷｉ－Ｆｉ環境、分散避難の市民への周知とホテル避難の考えを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li class="line"><p class="qt">Ｐａｒｋ－ＰＦＩの活用</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">高次脳機能障がいの支援</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">市内の高次脳機能障がい者の人数、交通事故や脳卒中の後遺症がある人の生活調査の有無、本人と家族への支援の状況を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a></div></li><li><p class="qt">防災士資格取得事業</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">自主防災組織のリーダーに対する防災士資格取得費用の全額補助について、今年度の資格取得事業の申請状況を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li><p class="qt">安心・安全なまちづくり</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">堀川の転落事故を受けた対策、津波に備えた2度逃げできる避難所の設定、ハザードマップの説明会、避難所運営等のマニュアル整備、想定する災害と対策、屋外スピーカー伝達試験の日曜実施を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">防災の備えと自助・共助</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">平常時からの災害への備えの内容、真備町への市職員派遣の応援内容、防災士養成講座の助成受講者数、西日本豪雨の検証を踏まえた今後の取り組み、自主防災組織の結成率、要配慮者支援名簿の開示の指針、地区防災計画の作成状況と公民館単位とした根拠を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">要配慮者の見守り体制</p><p class="qm"><span>一般質問</span><span>平成30年第２回松江市議会定例会</span></p><p class="qs">町内会組織の維持と自主防災組織や要配慮者見守りの支援体制の現状と今後の構築、自主防災組織の担い手となる防災士の資格取得講習会の周知啓発を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li><p class="qt">ひとり暮らし高齢者の見守り</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="qs">緊急通報装置の設置世帯数と活用事例、設置費助成事業の周知方法、高齢者緊急通報体制整備事業の廃止理由、包括支援センターの職員体制、避難行動要支援者の同意者名簿の提供状況と今後の予定を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">ちとせやつかの活用</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">新型コロナへの支援策</p><p class="qm"><span>一般質問</span><span>令和２年第４回松江市議会定例会</span></p><p class="qs">商業・サービス業感染症対応支援補助金の受付期間延長と予算状況、雇用調整助成金の利用状況と代行申請手数料の支援、貸切バスの補助事業の延長、くらし相談支援センターの相談件数と生活福祉資金の利用状況、公民館と集会所のＷｉ－Ｆｉ環境の整備を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li class="line"><p class="qt">コロナ下の避難所運営</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="also">防災と地域の安全にも当たる</p></li><li><p class="qt">ひきこもり支援の周知</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">内閣府の推計から見た松江市の40歳から64歳のひきこもり者数と案内チラシの周知方法を問い、民生児童委員や福祉推進員、支所からの配布や自治会回覧による周知を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">外国人雇用への支援</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">市内の在留資格を持つ外国人労働者数と支援策、技能実習生の過去5年間の失踪者数と失踪への見解、今後ふえる介護現場での外国人労働者への支援を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-10">多文化共生と外国人材</a></div></li><li class="line"><p class="qt">防災の備えと自助・共助</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="also">防災と地域の安全にも当たる</p></li><li><p class="qt">高齢者の見守り</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">川津公民館が新聞販売店と協定を結んだ高齢者見守りの取り組みへの市の見解と、市内の孤独死の現状を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">防災士の育成</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">市内で初めて開催された防災士の講座の受講者数と周知方法、現在の資格保持者数、公民館への配置などを目指した県と連携した資格取得支援の拡充を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">職員の残業と働き方改革</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">民生児童委員のなり手不足</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">中核市として初めての民生児童委員の任命で前回より人数をふやし地域の要望に応えたか、福祉推進員の人数、民生児童委員のなり手不足への見解を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a></div></li><li><p class="qt">市民活動センターの指定管理</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">指定管理者制度の導入に向けた市民活動センターの公募への応募団体数と今後のスケジュール、まつえ市民大学など現利用団体の扱い、白潟本町周辺での位置づけを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li class="line"><p class="qt">公園遊具と施設の修理</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">働き方改革と中小企業支援</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">働き方改革関連法の成立を受け、市の正規職員と非正規職員の処遇改善、経営者の考え方を変える必要性への見解、中小企業の労使双方への周知方法、制度を知らない企業が多い中小企業支援策の周知方法を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">公共施設適正化の見える化</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">公共施設適正化計画による平成29年度の効果を尋ね、浜松市の施設カルテや施設ごとの適正化計画・廃止計画の例を挙げ、市民に現状がわかるようホームページで公開することを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">新庁舎の建設</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">浦安市や習志野市の視察を踏まえ、現地建てかえとした根拠と他の候補地の検討、地元企業の採用のあり方、新庁舎建設の今後のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">いじめ問題への対策</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">平成29年度のいじめ認知件数と重大事態の件数、教材費や修学旅行費の徴収業務による担任の負担軽減、PTSD治療費の保険適用外の他市事例、市のいじめ対策を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">松江城国宝5周年の周辺整備</p><p class="qm"><span>一般質問</span><span>令和２年第４回松江市議会定例会</span></p><p class="qs">国宝5周年を迎えた松江城の周辺整備として、興雲閣裏の石垣修理と遊歩道の通行止めの終了時期、北惣門橋や新橋の歩道の修繕計画、堀川のミシシッピアカミミガメ駆除への支援、森林整備計画と森林環境譲与税の活用を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">松江城周辺観光の活性化</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">塩見縄手の新乗船場を見送った経緯と代わる活性化策、リニューアルした武家屋敷の入り込み数の推移、昨夏の電動カート実証実験の評価と観光施設を結ぶ足としての活用計画を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li class="line"><p class="qt">スポーツ振興と健康寿命</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">松江城周辺の観光振興</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">不昧公没後200年を前に、新橋通りや松江城へ誘導する看板の設置、松の剪定、小泉八雲記念館の市民無料開放、船着き場新設に伴う船頭の確保、堀川遊覧船の安全対策を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">松江城を中心とした観光</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="qs">松江城周辺の駐車場不足への施策の成果と黒田の西駐車場への大型駐車場集約、観光客を増やす施策として遊覧船の船着き場の増設や城見縄手の森林整備、車椅子で本丸まで行ける通路の設置を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">新型コロナへの対応</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">茶の湯文化の継承</p><p class="qm"><span>一般質問</span><span>平成30年第２回松江市議会定例会</span></p><p class="qs">不昧公200年を機に、市立女子高でのふるさと教育としての茶の湯、秋の大茶会への高校茶道部の参加、毎月24日をお茶に親しむ日とすることを含む茶の湯文化条例の制定を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li><p class="qt">不登校・ひきこもり支援</p><p class="qm"><span>一般質問</span><span>平成30年第２回松江市議会定例会</span></p><p class="qs">国の訪問型就労準備支援事業の実施の考え、中学生の不登校への対応と卒業後の把握、不登校からのひきこもりに対する市長の所見を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li class="line"><p class="qt">いじめ問題への対策</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ＳＤＧｓと第2次総合戦略</p><p class="qm"><span>一般質問</span><span>令和２年第１回松江市議会定例会</span></p><p class="qs">第2次総合戦略にＳＤＧｓの理念を取り入れる理由、職員研修と職員・市民への周知、ＳＤＧｓ未来都市としての取り組み、アイコンを課や係の表示板・名刺に活用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a></div></li><li><p class="qt">空き家対策と司法書士</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">空き家と特定空家の現状と対策を問い、相続人調査や後見制度などに通じた司法書士会と空き家対策や住宅相談で連携することへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">空き家対策と利活用</p><p class="qm"><span>一般質問</span><span>平成30年第１回松江市議会定例会</span></p><p class="qs">解体やリフォームされた空き家の件数と特定空家への行政代執行、空き家バンクの仕組みと登録状況、古民家を借りた開業を阻む市街化調整区域の緩和策を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">空き家対策</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">市内で把握している空き家と特定空家の件数と、中国地方で広がる解体・撤去費用の助成制度を踏まえた特定空家の解体への補助金の支給予定を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">新卒者の就職状況</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">就職氷河期世代の支援</p><p class="qm"><span>一般質問</span><span>令和２年第１回松江市議会定例会</span></p><p class="qs">市内の就職氷河期世代の対象者数と困っている人の推計、国の交付金等を踏まえた市の支援と周知の方法、同世代を正規職員として採用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li><li class="line"><p class="qt">城北地区の活性化</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li class="line"><p class="qt">働き方改革と中小企業支援</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_agriculture.html">農林水産業</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">新型コロナへの対応</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">持続化給付金や雇用調整助成金特例のさらなる延長、製造業緊急販路拡大支援事業の周知と申請超過への対応、松江市斎場の参列人数、感染者が亡くなった場合の葬祭業者や病院との連携とマニュアルを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a></div></li><li class="line"><p class="qt">松江城国宝5周年の周辺整備</p><p class="qm"><span>一般質問</span><span>令和２年第４回松江市議会定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li><li class="line"><p class="qt">新型コロナへの対応</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li class="line"><p class="qt">松江城を中心とした観光</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">新型コロナ対策</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">不妊治療と仕事の両立</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">市内の一般・特定不妊治療の患者数を問い、保険適用や助成拡充で治療希望者が増える中、仕事と治療の両立に向けた周囲の理解や会社の寛容な措置など環境整備への見解を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">防災と災害時の協定</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">県行政書士会と結んだ災害時協定の内容、罹災証明書の書式の全国統一の状況、聴覚障がい者が地域の避難訓練に参加したことがない現状への見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">消費者被害の防止</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">給与ファクタリングや売り掛け債権ファクタリングの相談の有無と、特別定額給付金や各種支援に乗じた悪質業者の被害を防ぐため事例を示した市民への注意喚起を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">令和2年度事業の進捗</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">武者行列や水郷祭の中止など新型コロナの影響を受けた観光関係以外も含む令和2年度予算事業の進捗状況を問うた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ひきこもりの相談支援</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">県のひきこもり実態調査における松江市の状況と見解、公認心理師による相談の状況と課題、断らない相談支援に向けた部署間の連携を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ヘルプマークの普及</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">ヘルプマークの申請・活用件数と、認知度を上げるための市の啓発活動の考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">高齢者肺炎球菌ワクチン</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">定期接種の経過措置の最終年度を迎え、平成26年度から平成29年度の接種率、受け忘れた人への再度の接種機会、定期接種による効果、65歳の対象者への周知方法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">殿町周辺と県立プール跡地</p><p class="qm"><span>一般質問</span><span>平成30年第１回松江市議会定例会</span></p><p class="qs">旧一畑百貨店本館跡地の取得を生かした殿町周辺の活性化策、ボンエルフ道路の整備費と通常道路との比較や目的・効果の達成状況、県立プール跡地での地域のイベントなど活用策を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ひきこもりの自立支援</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">ひきこもりの高年齢化・長期化を踏まえ、実態の把握と市の支援体制、10月に本庁内で始まったハローワークプラスの利用状況と今後のPRを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">新型コロナ対策</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">市の出産育児応援特別給付金に関連して県内他市の新生児支援状況、出生数の減少の有無と今後の妊婦・新生児支援、補償のない飲食・観光・土産品業界への支援、旧八束郡のワクチン接種会場、美保関町・八束町民の境港市での接種、問診への薬剤師の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">介護施設の看護師不足</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">コロナ禍で求人を出しても看護師が集まらない介護施設に対し、市が丁寧に事情を聞き県にあっせんや紹介をしないかを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">職員の残業と働き方改革</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">2019年度に年720時間を超えて残業した市職員の勤務状態と体調、新庁舎を見据えた業務の時間管理と効率化、コロナ禍で好調な企業の働き方への指導を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">新卒者の就職状況</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">コロナ禍で大学生の就職内定率が低下する中、市内の高校生と県内の大学卒業生の就職状況、来年度の市職員の新卒及び就職氷河期世代の採用予定を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li><li><p class="qt">新型コロナへの対応</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">行動計画に基づく保健所の負担軽減と医療機関との連携、今後の検査方法、市と県の役割分担、医療資材や人材の確保、風評被害事業者や介護事業所、観光業、製造業、農漁業、文化芸術分野への支援と国の第2次補正の活用、休校による学習のおくれと心のケア、オンライン授業、女子高の進路への影響、3密回避、新卒者の就職支援を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-08">学校のＩＣＴ化</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_agriculture.html#topic-05">水産業と漁業</a></div></li><li><p class="qt">生活保護行政の体制</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">小田原市の改善策を例に、ケースワーカー1人当たりの担当世帯数と配置標準数に対する状況、社会福祉士など有資格者の体制、高齢者の受給の状況を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">生活困窮者自立支援制度</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">生活困窮者自立支援制度の就労準備や家計相談などの具体的な取り組みと、社会福祉協議会と生活保護との連携の対応を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">認知症検診事業の導入</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">草加市が行う認知症検診事業の視察結果を紹介し、無料の脳の健康度チェックによる早期発見・早期対応の取り組みが市民の認知症理解と周知に効果的ではないかと質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">ひきこもり支援</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">ひきこもりの相談窓口と県・市社協との連携や役割分担、市内の8050問題・7040問題の事例、訪問型就労準備支援（アウトリーチ）事業の取り組みを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">スポーツ振興と健康寿命</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">鳥栖市のサガン鳥栖支援を例に、スサノオマジックへの支援と1部復帰に向けた定期的な連絡会議などのサポート体制の強化、市長部局移管後の地域住民の健康寿命延伸の取り組みを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">ひきこもりの自立支援</p><p class="qm"><span>一般質問</span><span>平成30年第１回松江市議会定例会</span></p><p class="qs">ひきこもりの高年齢化・長期化が社会問題となる中、生活困窮者自立支援事業費にひきこもりの人への訪問支援の予算を計上しているかと、ひきこもりへの市長の認識を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">ひきこもりの自立支援</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="qs">本市のひきこもりの現状と、親の高齢化で生活困窮が懸念されるひきこもりの高年齢化への取り組み、秋田県藤里町の取り組みを参考に社会復帰に至った事例を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">新型コロナ対策</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">市の出産育児応援特別給付金に関連して県内他市の新生児支援状況、出生数の減少の有無と今後の妊婦・新生児支援、補償のない飲食・観光・土産品業界への支援、旧八束郡のワクチン接種会場、美保関町・八束町民の境港市での接種、問診への薬剤師の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">ちとせやつかの活用</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">閉鎖後長年譲渡先が決まらない八束保健福祉総合センターちとせやつかの経過と今後の活用を問い、中海・宍道湖圏域の視点や地域住民と支所を交えた協議会の立ち上げを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">公園愛護団と公園トイレ</p><p class="qm"><span>一般質問</span><span>令和２年第１回松江市議会定例会</span></p><p class="qs">公園愛護団の登録団体数と実際の活動団体数、高齢化による解散の現状と対策、よい事例の紹介や個人の顕彰、公園協議会の構成、公園・公衆トイレの整備計画を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a></div></li><li><p class="qt">Ｐａｒｋ－ＰＦＩの活用</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">盛岡市の木伏緑地の事例を挙げ、大橋川以外で松江城山公園などに公募設置管理制度（Ｐａｒｋ－ＰＦＩ）を活用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a></div></li><li><p class="qt">城北地区の活性化</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">北堀町の大型スーパー閉店による買い物困難を受けた旧市内での大型店撤退への情報収集と対策、景観形成区域である北堀町の活性化方策の検討状況、城北地区の30キロ速度規制やゾーン30の実施スケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li><p class="qt">境港市との交通連携</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">美保関や八束町と境港市との間のタクシーの営業区域の制約を踏まえ、交通政策協定を設けて相互に営業できるよう国に要望すること、コミュニティバス境港線の大型スーパー前停車による乗降者の増加見込みを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">コミバスの契約と利用促進</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">コミュニティバスの1年更新の路線を複数年契約にできないか、利用促進協議会の構成と開催回数、実際の利用者を協議会に加えて地域の要望を取り上げることを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">公園遊具と施設の修理</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">老朽化した公園遊具やトイレの修繕が順番待ちとなる中、限られた予算での優先順位の決め方と計画的な進め方を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">市道脇の樹木整備</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">市道沿いの樹木や街路樹の繁茂による通行阻害の相談を踏まえ、過去の伐採・剪定データをデータベース化し計画的・定期的に行えないかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">コロナ下の避難所運営</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">防災基本計画の修正に基づく3密回避の避難所運営、マスクや消毒液、段ボールベッドなどの備蓄、公民館などのＷｉ－Ｆｉ環境、分散避難の市民への周知とホテル避難の考えを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">Ｐａｒｋ－ＰＦＩの活用</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">盛岡市の木伏緑地の事例を挙げ、大橋川以外で松江城山公園などに公募設置管理制度（Ｐａｒｋ－ＰＦＩ）を活用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a></div></li><li><p class="qt">高次脳機能障がいの支援</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">市内の高次脳機能障がい者の人数、交通事故や脳卒中の後遺症がある人の生活調査の有無、本人と家族への支援の状況を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a></div></li><li><p class="qt">防災士資格取得事業</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">自主防災組織のリーダーに対する防災士資格取得費用の全額補助について、今年度の資格取得事業の申請状況を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li><p class="qt">安心・安全なまちづくり</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">堀川の転落事故を受けた対策、津波に備えた2度逃げできる避難所の設定、ハザードマップの説明会、避難所運営等のマニュアル整備、想定する災害と対策、屋外スピーカー伝達試験の日曜実施を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">防災の備えと自助・共助</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">平常時からの災害への備えの内容、真備町への市職員派遣の応援内容、防災士養成講座の助成受講者数、西日本豪雨の検証を踏まえた今後の取り組み、自主防災組織の結成率、要配慮者支援名簿の開示の指針、地区防災計画の作成状況と公民館単位とした根拠を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">要配慮者の見守り体制</p><p class="qm"><span>一般質問</span><span>平成30年第２回松江市議会定例会</span></p><p class="qs">町内会組織の維持と自主防災組織や要配慮者見守りの支援体制の現状と今後の構築、自主防災組織の担い手となる防災士の資格取得講習会の周知啓発を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li><p class="qt">ひとり暮らし高齢者の見守り</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="qs">緊急通報装置の設置世帯数と活用事例、設置費助成事業の周知方法、高齢者緊急通報体制整備事業の廃止理由、包括支援センターの職員体制、避難行動要支援者の同意者名簿の提供状況と今後の予定を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">ちとせやつかの活用</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">閉鎖後長年譲渡先が決まらない八束保健福祉総合センターちとせやつかの経過と今後の活用を問い、中海・宍道湖圏域の視点や地域住民と支所を交えた協議会の立ち上げを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">新型コロナへの支援策</p><p class="qm"><span>一般質問</span><span>令和２年第４回松江市議会定例会</span></p><p class="qs">商業・サービス業感染症対応支援補助金の受付期間延長と予算状況、雇用調整助成金の利用状況と代行申請手数料の支援、貸切バスの補助事業の延長、くらし相談支援センターの相談件数と生活福祉資金の利用状況、公民館と集会所のＷｉ－Ｆｉ環境の整備を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">コロナ下の避難所運営</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">防災基本計画の修正に基づく3密回避の避難所運営、マスクや消毒液、段ボールベッドなどの備蓄、公民館などのＷｉ－Ｆｉ環境、分散避難の市民への周知とホテル避難の考えを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">ひきこもり支援の周知</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">内閣府の推計から見た松江市の40歳から64歳のひきこもり者数と案内チラシの周知方法を問い、民生児童委員や福祉推進員、支所からの配布や自治会回覧による周知を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">外国人雇用への支援</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">市内の在留資格を持つ外国人労働者数と支援策、技能実習生の過去5年間の失踪者数と失踪への見解、今後ふえる介護現場での外国人労働者への支援を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-10">多文化共生と外国人材</a></div></li><li><p class="qt">防災の備えと自助・共助</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">平常時からの災害への備えの内容、真備町への市職員派遣の応援内容、防災士養成講座の助成受講者数、西日本豪雨の検証を踏まえた今後の取り組み、自主防災組織の結成率、要配慮者支援名簿の開示の指針、地区防災計画の作成状況と公民館単位とした根拠を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">高齢者の見守り</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">川津公民館が新聞販売店と協定を結んだ高齢者見守りの取り組みへの市の見解と、市内の孤独死の現状を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">防災士の育成</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">市内で初めて開催された防災士の講座の受講者数と周知方法、現在の資格保持者数、公民館への配置などを目指した県と連携した資格取得支援の拡充を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">職員の残業と働き方改革</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">2019年度に年720時間を超えて残業した市職員の勤務状態と体調、新庁舎を見据えた業務の時間管理と効率化、コロナ禍で好調な企業の働き方への指導を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">民生児童委員のなり手不足</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">中核市として初めての民生児童委員の任命で前回より人数をふやし地域の要望に応えたか、福祉推進員の人数、民生児童委員のなり手不足への見解を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a></div></li><li><p class="qt">市民活動センターの指定管理</p><p class="qm"><span>一般質問</span><span>令和元年第３回松江市議会定例会</span></p><p class="qs">指定管理者制度の導入に向けた市民活動センターの公募への応募団体数と今後のスケジュール、まつえ市民大学など現利用団体の扱い、白潟本町周辺での位置づけを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">公園遊具と施設の修理</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">老朽化した公園遊具やトイレの修繕が順番待ちとなる中、限られた予算での優先順位の決め方と計画的な進め方を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">働き方改革と中小企業支援</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">働き方改革関連法の成立を受け、市の正規職員と非正規職員の処遇改善、経営者の考え方を変える必要性への見解、中小企業の労使双方への周知方法、制度を知らない企業が多い中小企業支援策の周知方法を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">公共施設適正化の見える化</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">公共施設適正化計画による平成29年度の効果を尋ね、浜松市の施設カルテや施設ごとの適正化計画・廃止計画の例を挙げ、市民に現状がわかるようホームページで公開することを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">新庁舎の建設</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">浦安市や習志野市の視察を踏まえ、現地建てかえとした根拠と他の候補地の検討、地元企業の採用のあり方、新庁舎建設の今後のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">いじめ問題への対策</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">平成29年度のいじめ認知件数と重大事態の件数、教材費や修学旅行費の徴収業務による担任の負担軽減、PTSD治療費の保険適用外の他市事例、市のいじめ対策を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">松江城国宝5周年の周辺整備</p><p class="qm"><span>一般質問</span><span>令和２年第４回松江市議会定例会</span></p><p class="qs">国宝5周年を迎えた松江城の周辺整備として、興雲閣裏の石垣修理と遊歩道の通行止めの終了時期、北惣門橋や新橋の歩道の修繕計画、堀川のミシシッピアカミミガメ駆除への支援、森林整備計画と森林環境譲与税の活用を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">松江城周辺観光の活性化</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">塩見縄手の新乗船場を見送った経緯と代わる活性化策、リニューアルした武家屋敷の入り込み数の推移、昨夏の電動カート実証実験の評価と観光施設を結ぶ足としての活用計画を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">スポーツ振興と健康寿命</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">鳥栖市のサガン鳥栖支援を例に、スサノオマジックへの支援と1部復帰に向けた定期的な連絡会議などのサポート体制の強化、市長部局移管後の地域住民の健康寿命延伸の取り組みを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">松江城周辺の観光振興</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">不昧公没後200年を前に、新橋通りや松江城へ誘導する看板の設置、松の剪定、小泉八雲記念館の市民無料開放、船着き場新設に伴う船頭の確保、堀川遊覧船の安全対策を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">松江城を中心とした観光</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="qs">松江城周辺の駐車場不足への施策の成果と黒田の西駐車場への大型駐車場集約、観光客を増やす施策として遊覧船の船着き場の増設や城見縄手の森林整備、車椅子で本丸まで行ける通路の設置を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">新型コロナへの対応</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">行動計画に基づく保健所の負担軽減と医療機関との連携、今後の検査方法、市と県の役割分担、医療資材や人材の確保、風評被害事業者や介護事業所、観光業、製造業、農漁業、文化芸術分野への支援と国の第2次補正の活用、休校による学習のおくれと心のケア、オンライン授業、女子高の進路への影響、3密回避、新卒者の就職支援を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-08">学校のＩＣＴ化</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_agriculture.html#topic-05">水産業と漁業</a></div></li><li><p class="qt">茶の湯文化の継承</p><p class="qm"><span>一般質問</span><span>平成30年第２回松江市議会定例会</span></p><p class="qs">不昧公200年を機に、市立女子高でのふるさと教育としての茶の湯、秋の大茶会への高校茶道部の参加、毎月24日をお茶に親しむ日とすることを含む茶の湯文化条例の制定を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li><p class="qt">不登校・ひきこもり支援</p><p class="qm"><span>一般質問</span><span>平成30年第２回松江市議会定例会</span></p><p class="qs">国の訪問型就労準備支援事業の実施の考え、中学生の不登校への対応と卒業後の把握、不登校からのひきこもりに対する市長の所見を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li><p class="qt">いじめ問題への対策</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">平成29年度のいじめ認知件数と重大事態の件数、教材費や修学旅行費の徴収業務による担任の負担軽減、PTSD治療費の保険適用外の他市事例、市のいじめ対策を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">ＳＤＧｓと第2次総合戦略</p><p class="qm"><span>一般質問</span><span>令和２年第１回松江市議会定例会</span></p><p class="qs">第2次総合戦略にＳＤＧｓの理念を取り入れる理由、職員研修と職員・市民への周知、ＳＤＧｓ未来都市としての取り組み、アイコンを課や係の表示板・名刺に活用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a></div></li><li><p class="qt">空き家対策と司法書士</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">空き家と特定空家の現状と対策を問い、相続人調査や後見制度などに通じた司法書士会と空き家対策や住宅相談で連携することへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">空き家対策と利活用</p><p class="qm"><span>一般質問</span><span>平成30年第１回松江市議会定例会</span></p><p class="qs">解体やリフォームされた空き家の件数と特定空家への行政代執行、空き家バンクの仕組みと登録状況、古民家を借りた開業を阻む市街化調整区域の緩和策を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">空き家対策</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">市内で把握している空き家と特定空家の件数と、中国地方で広がる解体・撤去費用の助成制度を踏まえた特定空家の解体への補助金の支給予定を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">新卒者の就職状況</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">コロナ禍で大学生の就職内定率が低下する中、市内の高校生と県内の大学卒業生の就職状況、来年度の市職員の新卒及び就職氷河期世代の採用予定を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li><li><p class="qt">就職氷河期世代の支援</p><p class="qm"><span>一般質問</span><span>令和２年第１回松江市議会定例会</span></p><p class="qs">市内の就職氷河期世代の対象者数と困っている人の推計、国の交付金等を踏まえた市の支援と周知の方法、同世代を正規職員として採用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li><li><p class="qt">城北地区の活性化</p><p class="qm"><span>一般質問</span><span>令和元年第２回松江市議会定例会</span></p><p class="qs">北堀町の大型スーパー閉店による買い物困難を受けた旧市内での大型店撤退への情報収集と対策、景観形成区域である北堀町の活性化方策の検討状況、城北地区の30キロ速度規制やゾーン30の実施スケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li><p class="qt">働き方改革と中小企業支援</p><p class="qm"><span>一般質問</span><span>平成30年第３回松江市議会定例会</span></p><p class="qs">働き方改革関連法の成立を受け、市の正規職員と非正規職員の処遇改善、経営者の考え方を変える必要性への見解、中小企業の労使双方への周知方法、制度を知らない企業が多い中小企業支援策の周知方法を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="農林水産業" hidden>
+<ul class="qlist"><li><p class="qt">新型コロナへの対応</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">持続化給付金や雇用調整助成金特例のさらなる延長、製造業緊急販路拡大支援事業の周知と申請超過への対応、松江市斎場の参列人数、感染者が亡くなった場合の葬祭業者や病院との連携とマニュアルを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a></div></li><li><p class="qt">松江城国宝5周年の周辺整備</p><p class="qm"><span>一般質問</span><span>令和２年第４回松江市議会定例会</span></p><p class="qs">国宝5周年を迎えた松江城の周辺整備として、興雲閣裏の石垣修理と遊歩道の通行止めの終了時期、北惣門橋や新橋の歩道の修繕計画、堀川のミシシッピアカミミガメ駆除への支援、森林整備計画と森林環境譲与税の活用を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">新型コロナへの対応</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">行動計画に基づく保健所の負担軽減と医療機関との連携、今後の検査方法、市と県の役割分担、医療資材や人材の確保、風評被害事業者や介護事業所、観光業、製造業、農漁業、文化芸術分野への支援と国の第2次補正の活用、休校による学習のおくれと心のケア、オンライン授業、女子高の進路への影響、3密回避、新卒者の就職支援を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-08">学校のＩＣＴ化</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_agriculture.html#topic-05">水産業と漁業</a></div></li><li><p class="qt">松江城を中心とした観光</p><p class="qm"><span>一般質問</span><span>平成29年第３回松江市議会定例会</span></p><p class="qs">松江城周辺の駐車場不足への施策の成果と黒田の西駐車場への大型駐車場集約、観光客を増やす施策として遊覧船の船着き場の増設や城見縄手の森林整備、車椅子で本丸まで行ける通路の設置を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">新型コロナ対策</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">市の出産育児応援特別給付金に関連して県内他市の新生児支援状況、出生数の減少の有無と今後の妊婦・新生児支援、補償のない飲食・観光・土産品業界への支援、旧八束郡のワクチン接種会場、美保関町・八束町民の境港市での接種、問診への薬剤師の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">不妊治療と仕事の両立</p><p class="qm"><span>一般質問</span><span>令和３年第１回松江市議会定例会</span></p><p class="qs">市内の一般・特定不妊治療の患者数を問い、保険適用や助成拡充で治療希望者が増える中、仕事と治療の両立に向けた周囲の理解や会社の寛容な措置など環境整備への見解を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">防災と災害時の協定</p><p class="qm"><span>一般質問</span><span>令和２年第６回松江市議会定例会</span></p><p class="qs">県行政書士会と結んだ災害時協定の内容、罹災証明書の書式の全国統一の状況、聴覚障がい者が地域の避難訓練に参加したことがない現状への見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">消費者被害の防止</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">給与ファクタリングや売り掛け債権ファクタリングの相談の有無と、特別定額給付金や各種支援に乗じた悪質業者の被害を防ぐため事例を示した市民への注意喚起を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">令和2年度事業の進捗</p><p class="qm"><span>代表質問</span><span>令和２年第２回松江市議会定例会</span></p><p class="qs">武者行列や水郷祭の中止など新型コロナの影響を受けた観光関係以外も含む令和2年度予算事業の進捗状況を問うた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ひきこもりの相談支援</p><p class="qm"><span>一般質問</span><span>令和元年第４回松江市議会定例会</span></p><p class="qs">県のひきこもり実態調査における松江市の状況と見解、公認心理師による相談の状況と課題、断らない相談支援に向けた部署間の連携を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ヘルプマークの普及</p><p class="qm"><span>一般質問</span><span>平成31年第１回松江市議会定例会</span></p><p class="qs">ヘルプマークの申請・活用件数と、認知度を上げるための市の啓発活動の考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">高齢者肺炎球菌ワクチン</p><p class="qm"><span>一般質問</span><span>平成30年第４回松江市議会定例会</span></p><p class="qs">定期接種の経過措置の最終年度を迎え、平成26年度から平成29年度の接種率、受け忘れた人への再度の接種機会、定期接種による効果、65歳の対象者への周知方法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">殿町周辺と県立プール跡地</p><p class="qm"><span>一般質問</span><span>平成30年第１回松江市議会定例会</span></p><p class="qs">旧一畑百貨店本館跡地の取得を生かした殿町周辺の活性化策、ボンエルフ道路の整備費と通常道路との比較や目的・効果の達成状況、県立プール跡地での地域のイベントなど活用策を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ひきこもりの自立支援</p><p class="qm"><span>一般質問</span><span>平成29年第５回松江市議会定例会</span></p><p class="qs">ひきこもりの高年齢化・長期化を踏まえ、実態の把握と市の支援体制、10月に本庁内で始まったハローワークプラスの利用状況と今後のPRを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第5期" hidden>
+<p class="qhead">2021年4月〜2025年4月・一般質問 11回・代表質問 5回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="農林水産業" aria-pressed="false">農林水産業</button><button type="button" class="chip" data-switch-key="エネルギー・環境" aria-pressed="false">エネルギー・環境</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="原子力" aria-pressed="false">原子力</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">インフルエンザとコロナ</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">昨年12月と今年1月のインフルエンザ及び新型コロナウイルス感染症の感染状況、年末年始の救急出動と受入れ病院の実態、コロナの経験が流行対応に役立っているかを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">ひきこもり地域支援センター</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">コロナ禍のひきこもり相談の状況とひきこもりステーション事業の実施状況を問い、要因が多様な中で全体を把握し連携して身近に支援できる拠点として、ひきこもり地域支援センターを設置する計画を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">補聴器購入費の助成</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">難聴が認知症の最大の危険因子とされることから、加齢性難聴者への補聴器購入費助成制度の考えと、言語聴覚士や認定補聴器技能者など専門家を活用した相談体制の検討を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">困窮家庭の学習・生活支援</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">足立区の取組を踏まえ、松江市の就学援助率と生活保護率、保護世帯の18歳未満の子どもの数、困窮世帯の生徒の居場所を兼ねた学習支援や食事支援の有無、不登校児童生徒数と居場所を兼ねた学習支援の場所を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">生活保護の運用</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">生活保護世帯の過去3年の状況と年齢の傾向、ケースワーカーの配置が標準を満たしているか、ひきこもりの方への包括支援センターとの継続的な連携、入院時の家賃支払い変更の大家等への速やかな周知を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">帯状疱疹ワクチンの助成</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">帯状疱疹について、市内の罹患者数とワクチンの効果及び費用を確認し、50代以降に多く発症することから、東京都などの例を挙げてワクチン接種費用の助成を検討する考えを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">子育て支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">子どもの医療費無償化を中学生まで拡充できないか、物価高騰に直面する子育て世帯への応援給付金事業の考え、こども子育て部への名称変更の意義を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">新型コロナ第8波への備え</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">新型コロナの現在の感染状況、3回目ワクチン接種の年代別状況と若年層の接種率、国産初の飲み薬ゾコーバの市内医療機関での処方予定を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">マスク着用とワクチン接種</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">夏場に向けた厚生労働省のマスク着用の指針の市民への周知と見解、登下校時もマスクを着ける児童が多い中での学校の指導、若年層への3回目ワクチン接種の状況と啓発を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">コロナ禍の経済対策</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">松江市事業復活支援金の申請状況と見通し、当初推計1,520件との差異への見解と財源の使い道、地方創生臨時交付金の松江市への配分額、物価高騰に対するさらなる経済対策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">コロナ禍の事業者支援</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">まん延防止措置で支援のなかった土産物店や小売業を念頭に、国の事業復活支援金の内容と周知方法、市単独の事業復活支援金の内容・申請期間・想定社数、ＧＥＮＫＩ夜市プラスの状況と今後の見通しを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">高齢者のスマホ教室</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">コロナ禍で市内の高齢者スマホ教室に参加した人数、シルバー人材センターが公民館単位で開催した教室の状況、令和4年度の取組を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">新型コロナ感染症対策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">年代別のワクチン接種状況、3回目接種の会場や体制、11歳以下の接種への考え、病院での抗原検査キットの準備と判断体制、事業継続支援給付金の状況と松江ＧＥＮＫＩ夜市の経済効果、コロナ禍による廃業・倒産件数を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">コロナ対策と事業者支援</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">12歳以上のワクチン接種の終了予定と収束の目安となる接種率、事業継続支援給付金の申請状況と見通し、売上げ減少の要件を緩和する基準変更、プレミアム付飲食券発行事業の拡大の必要性を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">コロナ対策と観光飲食支援</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">県独自のワクチン接種会場の要望と境港市での接種の可否、倒産・廃業の業種別状況、市単独の支援策、国の一時支援金の申請件数と商工団体を含む周知の対応、経済回復への市長の決意を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">生活弱者の支援</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">生活保護世帯と現役世代の受給の傾向、生活困窮世帯への新たな支援金の相談先、緊急小口資金などの利用者数、ひきこもり問題への市長の認識と孤立化する家族の地域での支援を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">放課後児童クラブ</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">放課後児童クラブの待機児童の現状と地域別の状況、民間クラブのない旧八束郡での夏休みだけの短期受入れ、公設クラブの指定管理者への移行を含む今後の在り方を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">指定管理の労働条件審査</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">指定管理者に対する労働条件審査の活用状況と、指摘項目や指導を行った事例の有無を問い、働き方改革や労務コンプライアンスの観点から今後さらに活用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">商品用軽自動車の課税免除</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">業界3団体の要望を受けても実現しなかった商品用軽自動車の課税免除について、その後の検討状況と、出雲市・鳥取市の免除の実績を踏まえた前向きな検討や中核市市長会での調査を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a></div></li><li><p class="qt">ＳＤＧｓ未来都市の取組</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">ＳＤＧｓ未来都市と自治体ＳＤＧｓモデル事業に選定された理由と他自治体と比べた市の特徴、任命された2名のアドバイザーの役割、市民を巻き込んだ取組の考え、新庁舎にＳＤＧｓを取り入れた工夫を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">マイナンバーカードの普及</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">市内の年代別の普及状況、マイナポイントの申請期限延長の必要性、都城市などの先進事例を踏まえた新たな交付促進策、年度末までの普及目標を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-09">行政のデジタル化</a></div></li><li><p class="qt">ひきこもり支援の強化</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">厚生労働省から評価された松江市の取組の内容、中核市への拡大を受けたひきこもり支援センター設置の方針、総社市の事例や8050問題を踏まえた農福連携の具体的な連携と来年度の取組を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a></div></li><li><p class="qt">中村元記念館10周年</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">開館10周年を迎える中村元記念館で博士の功績を市民に知らせる取組を尋ね、総合計画のスタートの年と位置づけ寛容の精神と慈しみの心を学ぶ拠点とすることを提起した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">国の子育て・経済対策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">18歳以下への10万円相当の給付について、児童手当が支給されない高校生への給付方法と時期、所得制限で対象外となる人数と世帯数を問い、マイナンバーカードの普及状況とマイナポイント付与による消費喚起策を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a><a class="tag" href="../topic_administration.html#topic-09">行政のデジタル化</a></div></li><li><p class="qt">中古軽自動車の課税免除</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">業界団体からの要望書の内容、条例による課税免除の台数・金額と軽自動車税収、ナンバープレートのある商品車両を課税免除している他市の事例と鳥取市など近県の実施への認識を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">物価高騰への景気対策</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">物価高騰対策として予算計上した水道料金の減免の具体的内容と、賃上げが難しい市内の中小企業に対する支援策を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">バス停のベンチと屋根</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">城北小学校前などバス停のベンチの設置費用と設置予定、交通局管理のバス停で設置が必要なベンチの数、地域公共交通計画での待合環境整備の考え方、森林環境譲与税の活用、屋根の設置計画を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a></div></li><li><p class="qt">高齢者のスマホ教室</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">シルバー人材センターに委託する高齢者による高齢者のスマホ教室の現状と、中級者向けやＡＩデマンドバスの呼び方、詐欺被害防止アプリの登録などの講座を加えることへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">エネルギー価格高騰対策</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">水道料金の減免による生活支援が効果を上げた一方で中国電力の電気料金値上げが見込まれる中、来年度予算や今年度補正予算で生活者支援を行う考えがあるかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a></div></li><li><p class="qt">森林環境譲与税の活用</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">森林環境譲与税による松江市産木材を使った住宅新改築支援の状況を尋ね、楽山公園など公園へのベンチの計画的な設置と、松江城山公園の森林での植林・伐採への活用を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a></div></li><li><p class="qt">7月豪雨災害への対応</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">美保関町北浦地区の観音崎トンネル前の土砂崩れのメカニズムと他地域での崩落の可能性、市道の全面通行止め箇所数と復旧の周知、激甚災害指定による市と被災者への支援を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li class="line"><p class="qt">コロナ対策と観光飲食支援</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">美保関地域の交通手段</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">境港市との生活圏でタクシーの営業区域拡大が実現していない中、免許証返納者が増える美保関町の住民の交通の足をどう考えるかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">物価高騰への景気対策</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">松江市の景気状況</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">県内経済が緩やかに持ち直しているとの県の調査を踏まえ、松江市の経済状況の認識と継続する物価高騰への支援策の状況を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">物価高騰下の景気対策</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">価格転嫁が進まず人手不足も深刻な中小企業の現状を踏まえ、市内の業種別の賃金の状況、製造業省エネ対策支援や商業・サービス業等のエネルギーコスト削減対策の補助金の申請・活用状況、市独自の支援策の考えを質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_environment.html#topic-04">省エネルギーと節電</a></div></li><li><p class="qt">物価高騰対策</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">市内の製造業・サービス業・観光業の現状と課題、住民税非課税世帯への7万円給付の対象世帯数と予算、予算化のスケジュール、重点支援地方交付金の見込額、LPガスへの県・市の支援を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">LPガス利用世帯への支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">都市ガスには国の支援がある一方でLPガスは一律の値下げが難しいとして、市内のLPガス利用世帯の比率と、物価高騰対策としてLPガス利用家庭を支援する考えを質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li class="line"><p class="qt">子育て支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li class="line"><p class="qt">コロナ禍の経済対策</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li class="line"><p class="qt">国の子育て・経済対策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">塩見縄手周辺の観光振興</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">朝ドラ「ばけばけ」の効果で塩見縄手周辺に訪れる人数の見込み、新設された小泉八雲・セツのドラマ応援室の役割、小泉八雲記念館やヘルン旧居、武家屋敷、土産店などを含む周辺地域の活性化策と、入館待ちの来訪者を周辺へ回遊させる整理券などの工夫を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">図書館と書店の連携</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">書店の減少を踏まえ、リニューアルした中央図書館の利用状況、イオン松江店の予約貸出し・返却ボックスの活用状況、書籍購入のルールと地元書店の活用、読書文化を守るための地域書店との情報共有・連携を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">中学校のクラブ活動</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">八束学園など希望する部活動がない地域や、保護者が新設したクラブチームに補助がない状況を踏まえ、国民スポーツ大会を目指す中での義務教育におけるスポーツの在り方を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-09">部活動</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">旧県知事公舎の活用策</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">回答期限が7月末に延長された旧県知事公舎の活用策について、提案の件数と内容、取得を前提に取り組んでいるかを尋ね、朝ドラのロケ準備室やおもてなし拠点としての活用に触れて質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">松江城周辺の樹木伐採</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">国宝松江城天守防火対策事業の樹木伐採について、目的の地域住民への周知と説明会の予定、今後の伐採スケジュール、天守入場者のうち小泉八雲記念館など北側へ回遊する割合を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">総合体育館とネーミングライツ</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">市民要望を受けた松江市総合体育館の名称変更、ネーミングライツが実現に至らなかった理由と契約金額を質し、苫小牧市の事例を踏まえて来年度からのネーミングライツ導入を求めた。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">保育所入所と産後ケア</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">保育所の不承諾者や待機児童への相談体制、産後ケア事業の受入れ病院を増やす予定、温泉ゆったり産後ケア事業の申請者数と選考方法を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-05">子育て世代の相談支援</a></div></li><li class="line"><p class="qt">放課後児童クラブ</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">子育て支援と少子化対策</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">市の出生率・出生数の現状と今後の計画、国の異次元の少子化対策とは別の市独自の少子化対策の有無、子ども医療費無償化の中学生までの拡充と県と連携した高校生までの拡充、公立幼稚園への給食導入の考えを質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li class="line"><p class="qt">子育て支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">出産育児一時金</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">松江市の出生数の状況と対策、市内の出産費用と42万円の出産育児一時金で賄えるか、少子化対策としての一時金の拡充について国や県から情報があるかを質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">地域の防災体制</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">地域防災指導員の公民館単位の配置状況と自主防災組織の体制、市の補助を受けた防災士の取得状況、高齢化や少子化で地域活動が減る中での防災体制の課題と対策を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">7月豪雨災害の被害と対策</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">観測史上最大となった7月9日の豪雨による床上・床下浸水や自動車の廃車等の被害状況と件数の把握方法、毎年のように起きる豪雨への対策、内水対策と併せた地域住民の連携などソフト面の取組を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li><li><p class="qt">防災・減災と自主防災組織</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">7月豪雨による崖崩れや土砂災害の復旧状況、自主防災組織と要配慮者支援組織、町内会の平常時及び災害時の連携、歩道や高齢者宅の玄関前の雪かき支援の担い手と自主防災組織による支援の可否を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li class="line"><p class="qt">7月豪雨災害への対応</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_agriculture.html">農林水産業</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">バス停のベンチと屋根</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">農業政策</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">朝来市の就農支援の視察を踏まえ、市内の耕作放棄地の現状、特産品のブラックのジョーや玄丹そばの現状と今後の展開、農業従事者の高齢化と後継者不足の現状と対策を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-02">耕作放棄地と農地の利用</a></div></li><li class="line"><p class="qt">森林環境譲与税の活用</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">ＳＤＧｓとエシカル消費</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">ＳＤＧｓの目標の一部に当たるエシカル消費について、エシカル教育を取り入れた授業の実施状況と、ＳＤＧｓの理念を市政に取り入れる市長の決意を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-03">鳥獣被害</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_environment.html">エネルギー・環境</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">物価高騰下の景気対策</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="also">産業・雇用にも当たる</p></li><li><p class="qt">条件付特定外来生物への対応</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">アカミミガメとアメリカザリガニの条件付特定外来生物指定を受け、生物多様性を脅かす外来生物対策と条例制定の考え、県の予算がなく活動できない駆除団体への県と連携した支援、飼育を含む市民への周知方法を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-05">生物多様性と自然保護</a></div></li><li><p class="qt">SDGs未来都市の目標</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">省エネ設備導入支援を主としてSDGs未来都市を目指すのか、SDGs未来都市の重点施策の内容、申請の目標時期を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-04">省エネルギーと節電</a></div></li><li><p class="qt">エネルギー政策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">太陽光発電導入や蓄電池開発支援、ブルーカーボン、玉湯の地熱発電など再生可能エネルギーの取組状況と、島根原発2号機に関する住民説明会で出た声、市長の福島原発視察での認識、再稼働した場合の稼働期間を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-01">国のエネルギー政策</a><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">中学校のクラブ活動</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li><li class="line"><p class="qt">困窮家庭の学習・生活支援</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">地域の防災体制</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="also">防災と地域の安全にも当たる</p></li><li class="line"><p class="qt">高齢者のスマホ教室</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">相続登記の申請義務化</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">相続登記の義務化に関する市民相談の状況と担当部署・周知方法、法務局や司法書士会と連携した出前講座、相続登記されない特定空家の数、危険な空き家の解体費補助の条件と実績、相続人に寄り添った解決を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li class="line"><p class="qt">コロナ禍の経済対策</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_nuclear.html">原子力</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">エネルギー政策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="also">エネルギー・環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ひきこもり支援センター</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">市内で約2,200人と推計されるひきこもりの人数への認識と取組、ひきこもり支援ステーション事業の状況、身近で包括的な支援拠点となるひきこもり地域支援センターの設置を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ＳＮＳの口コミ被害</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">店舗や病院、開業医から市に寄せられた口コミによる被害の相談件数と、誹謗中傷で経営的にも深刻な被害に陥る病院などへの対応の見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小泉八雲の観光戦略</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">熊本市の旧居のデジタルミュージアム化や朗読劇の事例を挙げ、小泉八雲記念館と旧居の入り込み客数、朝ドラ決定に伴う熊本市との観光コラボや継続交流、没後120年の市民向け取組と観光戦略を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">松江水郷祭の成果と方向性</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">過去最高の来場者となった2024松江水郷祭湖上花火大会の成果と課題、宿泊客数など県外からの観覧者の状況、有料観覧席をはじめ規模拡大が続く中で市が目指す花火大会の姿を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">終活支援の取組</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">横須賀市のエンディングプラン・サポート事業を紹介し、身寄りのない独り暮らし高齢者の数や引取り手のない無縁遺骨の状況を尋ね、同事業を松江市でも導入すべきとして見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">県知事公舎の活用策</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">3月末で廃止される県知事公舎について、提案されている活用策と一般公開を見学した市長の感想を問い、大手前駐車場の代替や回遊拠点、松江北高の避難バス進入スペースの拡張への考慮を求め、市が購入する意思を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">観光の高付加価値化事業</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">国の観光地再生・高付加価値化事業で松江しんじ湖温泉群と面的DX化の計画が採択された理由と件数を問い、不採択の地区もある中、第4次募集の予定と来年度の事業に対する国や県の考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ごみ集積所の補助金</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">家庭用ごみ集積所の新設・修繕に対する補助金について、昨年意向調査書が提出された件数、来年度に申請件数に見合う予算が確保されているか、外れた場合に次年度採用される基準の有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">福祉タクシー利用券の拡充</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">市役所と病院以外に使えないとの要望やアンケートで通院以外の利用が優先課題とされたことを踏まえ、福祉タクシー利用券の利用状況と対象人数、来年度の拡充予定を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小中学校トイレの洋式化</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">洋式便器率45％にとどまる市内小中学校のトイレ洋式化の現状と計画の加速、低学年を優先した洋式化、古い校舎のトイレ環境を把握する保護者アンケートの実施を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">手話言語条例の制定</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">手話を主なコミュニケーション手段とする聾者の人数、手話通訳者の現状と増員の考え、手話言語条例の制定に向けた市の取組を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">松江藩の伝統武術</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">不伝流居合術や直信流柔道など松江藩の伝統武術を研究して市民に周知することと、松江市体育協会発足100周年を機に歴史館所蔵資料の企画展や演武会を計画する考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">コロナ5類移行後の対応</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">新型コロナの5類移行を受け、市の感染状況の現状と今後の見通し、通学時を含む小中学校でのマスク着用の指導と現状、市民への感染症予防の周知方法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">大手前駐車場の広場化</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">新聞で賛否両論が紹介された松江城大手前駐車場の交流広場化について、その考え方と計画、所管する部署を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">観光地の高付加価値化</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">令和4年度の高付加価値化事業の進捗状況、来年度に追加申請があった場合に県と連携して国の事業を受けられるか、観光戦略プランを踏まえた国際文化観光都市づくりへの市長の意気込みを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">観光地の高付加価値化事業</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">観光地の高付加価値化事業について、採択30事業者の実施状況と事業費の進捗、工期が3月にずれ込んだ場合の国・県・市の対応、申請を断念した施設の来年度の追加申請の可否を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">てんかんへの理解と対応</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">市内でてんかん発作に苦しむ本人と家族の推計数、偏見により社会参加が制限されることへの認識、小中学校の患者数と発作時の対応、ブコラム口腔用液の投与に関する国の事務連絡の学校への伝達を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">河川の雑草除去</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">北田川や北堀川の河川敷・川底の清掃を土木要望として出す必要があるか、一級河川における県と市の役割分担、清掃作業計画のデータベース化による効率的な管理を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">労働者協同組合法への対応</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">10月施行の労働者協同組合法について、市の窓口となる部署、県と連携したセミナー等による周知、市内で組合設立を計画する団体の有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">休眠預金の活用状況</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">民間公益活動の資金として活用できるようになった休眠預金について、松江市での活用事例と、ＮＰＯ法人などへの市の働きかけの有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">松江城堀川の環境</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">堀川などで捕獲されるミシシッピアカミミガメの料理や肥料への活用、民間と連携し市が主体的に予算をつけて外来種対策に取り組む考え、堀川の藻刈りの今年の計画を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">インフルエンザとコロナ</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">昨年12月と今年1月のインフルエンザ及び新型コロナウイルス感染症の感染状況、年末年始の救急出動と受入れ病院の実態、コロナの経験が流行対応に役立っているかを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">ひきこもり地域支援センター</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">コロナ禍のひきこもり相談の状況とひきこもりステーション事業の実施状況を問い、要因が多様な中で全体を把握し連携して身近に支援できる拠点として、ひきこもり地域支援センターを設置する計画を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">補聴器購入費の助成</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">難聴が認知症の最大の危険因子とされることから、加齢性難聴者への補聴器購入費助成制度の考えと、言語聴覚士や認定補聴器技能者など専門家を活用した相談体制の検討を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">困窮家庭の学習・生活支援</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">足立区の取組を踏まえ、松江市の就学援助率と生活保護率、保護世帯の18歳未満の子どもの数、困窮世帯の生徒の居場所を兼ねた学習支援や食事支援の有無、不登校児童生徒数と居場所を兼ねた学習支援の場所を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">生活保護の運用</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">生活保護世帯の過去3年の状況と年齢の傾向、ケースワーカーの配置が標準を満たしているか、ひきこもりの方への包括支援センターとの継続的な連携、入院時の家賃支払い変更の大家等への速やかな周知を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li><li><p class="qt">帯状疱疹ワクチンの助成</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">帯状疱疹について、市内の罹患者数とワクチンの効果及び費用を確認し、50代以降に多く発症することから、東京都などの例を挙げてワクチン接種費用の助成を検討する考えを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">子育て支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">子どもの医療費無償化を中学生まで拡充できないか、物価高騰に直面する子育て世帯への応援給付金事業の考え、こども子育て部への名称変更の意義を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">新型コロナ第8波への備え</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">新型コロナの現在の感染状況、3回目ワクチン接種の年代別状況と若年層の接種率、国産初の飲み薬ゾコーバの市内医療機関での処方予定を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">マスク着用とワクチン接種</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">夏場に向けた厚生労働省のマスク着用の指針の市民への周知と見解、登下校時もマスクを着ける児童が多い中での学校の指導、若年層への3回目ワクチン接種の状況と啓発を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">コロナ禍の経済対策</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">松江市事業復活支援金の申請状況と見通し、当初推計1,520件との差異への見解と財源の使い道、地方創生臨時交付金の松江市への配分額、物価高騰に対するさらなる経済対策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">コロナ禍の事業者支援</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">まん延防止措置で支援のなかった土産物店や小売業を念頭に、国の事業復活支援金の内容と周知方法、市単独の事業復活支援金の内容・申請期間・想定社数、ＧＥＮＫＩ夜市プラスの状況と今後の見通しを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">高齢者のスマホ教室</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">コロナ禍で市内の高齢者スマホ教室に参加した人数、シルバー人材センターが公民館単位で開催した教室の状況、令和4年度の取組を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">新型コロナ感染症対策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">年代別のワクチン接種状況、3回目接種の会場や体制、11歳以下の接種への考え、病院での抗原検査キットの準備と判断体制、事業継続支援給付金の状況と松江ＧＥＮＫＩ夜市の経済効果、コロナ禍による廃業・倒産件数を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">コロナ対策と事業者支援</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">12歳以上のワクチン接種の終了予定と収束の目安となる接種率、事業継続支援給付金の申請状況と見通し、売上げ減少の要件を緩和する基準変更、プレミアム付飲食券発行事業の拡大の必要性を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">コロナ対策と観光飲食支援</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">県独自のワクチン接種会場の要望と境港市での接種の可否、倒産・廃業の業種別状況、市単独の支援策、国の一時支援金の申請件数と商工団体を含む周知の対応、経済回復への市長の決意を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">生活弱者の支援</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">生活保護世帯と現役世代の受給の傾向、生活困窮世帯への新たな支援金の相談先、緊急小口資金などの利用者数、ひきこもり問題への市長の認識と孤立化する家族の地域での支援を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">放課後児童クラブ</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">放課後児童クラブの待機児童の現状と地域別の状況、民間クラブのない旧八束郡での夏休みだけの短期受入れ、公設クラブの指定管理者への移行を含む今後の在り方を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">指定管理の労働条件審査</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">指定管理者に対する労働条件審査の活用状況と、指摘項目や指導を行った事例の有無を問い、働き方改革や労務コンプライアンスの観点から今後さらに活用する考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">商品用軽自動車の課税免除</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">業界3団体の要望を受けても実現しなかった商品用軽自動車の課税免除について、その後の検討状況と、出雲市・鳥取市の免除の実績を踏まえた前向きな検討や中核市市長会での調査を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a></div></li><li><p class="qt">ＳＤＧｓ未来都市の取組</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">ＳＤＧｓ未来都市と自治体ＳＤＧｓモデル事業に選定された理由と他自治体と比べた市の特徴、任命された2名のアドバイザーの役割、市民を巻き込んだ取組の考え、新庁舎にＳＤＧｓを取り入れた工夫を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">マイナンバーカードの普及</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">市内の年代別の普及状況、マイナポイントの申請期限延長の必要性、都城市などの先進事例を踏まえた新たな交付促進策、年度末までの普及目標を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-09">行政のデジタル化</a></div></li><li><p class="qt">ひきこもり支援の強化</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">厚生労働省から評価された松江市の取組の内容、中核市への拡大を受けたひきこもり支援センター設置の方針、総社市の事例や8050問題を踏まえた農福連携の具体的な連携と来年度の取組を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a></div></li><li><p class="qt">中村元記念館10周年</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">開館10周年を迎える中村元記念館で博士の功績を市民に知らせる取組を尋ね、総合計画のスタートの年と位置づけ寛容の精神と慈しみの心を学ぶ拠点とすることを提起した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">国の子育て・経済対策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">18歳以下への10万円相当の給付について、児童手当が支給されない高校生への給付方法と時期、所得制限で対象外となる人数と世帯数を問い、マイナンバーカードの普及状況とマイナポイント付与による消費喚起策を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a><a class="tag" href="../topic_administration.html#topic-09">行政のデジタル化</a></div></li><li><p class="qt">中古軽自動車の課税免除</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">業界団体からの要望書の内容、条例による課税免除の台数・金額と軽自動車税収、ナンバープレートのある商品車両を課税免除している他市の事例と鳥取市など近県の実施への認識を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">物価高騰への景気対策</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">物価高騰対策として予算計上した水道料金の減免の具体的内容と、賃上げが難しい市内の中小企業に対する支援策を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">バス停のベンチと屋根</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">城北小学校前などバス停のベンチの設置費用と設置予定、交通局管理のバス停で設置が必要なベンチの数、地域公共交通計画での待合環境整備の考え方、森林環境譲与税の活用、屋根の設置計画を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a></div></li><li><p class="qt">高齢者のスマホ教室</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">シルバー人材センターに委託する高齢者による高齢者のスマホ教室の現状と、中級者向けやＡＩデマンドバスの呼び方、詐欺被害防止アプリの登録などの講座を加えることへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">エネルギー価格高騰対策</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">水道料金の減免による生活支援が効果を上げた一方で中国電力の電気料金値上げが見込まれる中、来年度予算や今年度補正予算で生活者支援を行う考えがあるかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a></div></li><li><p class="qt">森林環境譲与税の活用</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">森林環境譲与税による松江市産木材を使った住宅新改築支援の状況を尋ね、楽山公園など公園へのベンチの計画的な設置と、松江城山公園の森林での植林・伐採への活用を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a></div></li><li><p class="qt">7月豪雨災害への対応</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">美保関町北浦地区の観音崎トンネル前の土砂崩れのメカニズムと他地域での崩落の可能性、市道の全面通行止め箇所数と復旧の周知、激甚災害指定による市と被災者への支援を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">コロナ対策と観光飲食支援</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">県独自のワクチン接種会場の要望と境港市での接種の可否、倒産・廃業の業種別状況、市単独の支援策、国の一時支援金の申請件数と商工団体を含む周知の対応、経済回復への市長の決意を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">美保関地域の交通手段</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">境港市との生活圏でタクシーの営業区域拡大が実現していない中、免許証返納者が増える美保関町の住民の交通の足をどう考えるかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">物価高騰への景気対策</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">物価高騰対策として予算計上した水道料金の減免の具体的内容と、賃上げが難しい市内の中小企業に対する支援策を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">松江市の景気状況</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">県内経済が緩やかに持ち直しているとの県の調査を踏まえ、松江市の経済状況の認識と継続する物価高騰への支援策の状況を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">物価高騰下の景気対策</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">価格転嫁が進まず人手不足も深刻な中小企業の現状を踏まえ、市内の業種別の賃金の状況、製造業省エネ対策支援や商業・サービス業等のエネルギーコスト削減対策の補助金の申請・活用状況、市独自の支援策の考えを質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_environment.html#topic-04">省エネルギーと節電</a></div></li><li><p class="qt">物価高騰対策</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">市内の製造業・サービス業・観光業の現状と課題、住民税非課税世帯への7万円給付の対象世帯数と予算、予算化のスケジュール、重点支援地方交付金の見込額、LPガスへの県・市の支援を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">LPガス利用世帯への支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">都市ガスには国の支援がある一方でLPガスは一律の値下げが難しいとして、市内のLPガス利用世帯の比率と、物価高騰対策としてLPガス利用家庭を支援する考えを質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">子育て支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">子どもの医療費無償化を中学生まで拡充できないか、物価高騰に直面する子育て世帯への応援給付金事業の考え、こども子育て部への名称変更の意義を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">コロナ禍の経済対策</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">松江市事業復活支援金の申請状況と見通し、当初推計1,520件との差異への見解と財源の使い道、地方創生臨時交付金の松江市への配分額、物価高騰に対するさらなる経済対策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">国の子育て・経済対策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">18歳以下への10万円相当の給付について、児童手当が支給されない高校生への給付方法と時期、所得制限で対象外となる人数と世帯数を問い、マイナンバーカードの普及状況とマイナポイント付与による消費喚起策を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a><a class="tag" href="../topic_administration.html#topic-09">行政のデジタル化</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">塩見縄手周辺の観光振興</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">朝ドラ「ばけばけ」の効果で塩見縄手周辺に訪れる人数の見込み、新設された小泉八雲・セツのドラマ応援室の役割、小泉八雲記念館やヘルン旧居、武家屋敷、土産店などを含む周辺地域の活性化策と、入館待ちの来訪者を周辺へ回遊させる整理券などの工夫を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">図書館と書店の連携</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">書店の減少を踏まえ、リニューアルした中央図書館の利用状況、イオン松江店の予約貸出し・返却ボックスの活用状況、書籍購入のルールと地元書店の活用、読書文化を守るための地域書店との情報共有・連携を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">中学校のクラブ活動</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">八束学園など希望する部活動がない地域や、保護者が新設したクラブチームに補助がない状況を踏まえ、国民スポーツ大会を目指す中での義務教育におけるスポーツの在り方を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-09">部活動</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">旧県知事公舎の活用策</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">回答期限が7月末に延長された旧県知事公舎の活用策について、提案の件数と内容、取得を前提に取り組んでいるかを尋ね、朝ドラのロケ準備室やおもてなし拠点としての活用に触れて質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">松江城周辺の樹木伐採</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">国宝松江城天守防火対策事業の樹木伐採について、目的の地域住民への周知と説明会の予定、今後の伐採スケジュール、天守入場者のうち小泉八雲記念館など北側へ回遊する割合を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">総合体育館とネーミングライツ</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">市民要望を受けた松江市総合体育館の名称変更、ネーミングライツが実現に至らなかった理由と契約金額を質し、苫小牧市の事例を踏まえて来年度からのネーミングライツ導入を求めた。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">保育所入所と産後ケア</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">保育所の不承諾者や待機児童への相談体制、産後ケア事業の受入れ病院を増やす予定、温泉ゆったり産後ケア事業の申請者数と選考方法を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-05">子育て世代の相談支援</a></div></li><li><p class="qt">放課後児童クラブ</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">放課後児童クラブの待機児童の現状と地域別の状況、民間クラブのない旧八束郡での夏休みだけの短期受入れ、公設クラブの指定管理者への移行を含む今後の在り方を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">子育て支援と少子化対策</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">市の出生率・出生数の現状と今後の計画、国の異次元の少子化対策とは別の市独自の少子化対策の有無、子ども医療費無償化の中学生までの拡充と県と連携した高校生までの拡充、公立幼稚園への給食導入の考えを質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">子育て支援</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">子どもの医療費無償化を中学生まで拡充できないか、物価高騰に直面する子育て世帯への応援給付金事業の考え、こども子育て部への名称変更の意義を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">出産育児一時金</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">松江市の出生数の状況と対策、市内の出産費用と42万円の出産育児一時金で賄えるか、少子化対策としての一時金の拡充について国や県から情報があるかを質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">地域の防災体制</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">地域防災指導員の公民館単位の配置状況と自主防災組織の体制、市の補助を受けた防災士の取得状況、高齢化や少子化で地域活動が減る中での防災体制の課題と対策を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">7月豪雨災害の被害と対策</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">観測史上最大となった7月9日の豪雨による床上・床下浸水や自動車の廃車等の被害状況と件数の把握方法、毎年のように起きる豪雨への対策、内水対策と併せた地域住民の連携などソフト面の取組を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li><li><p class="qt">防災・減災と自主防災組織</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">7月豪雨による崖崩れや土砂災害の復旧状況、自主防災組織と要配慮者支援組織、町内会の平常時及び災害時の連携、歩道や高齢者宅の玄関前の雪かき支援の担い手と自主防災組織による支援の可否を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li><p class="qt">7月豪雨災害への対応</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">美保関町北浦地区の観音崎トンネル前の土砂崩れのメカニズムと他地域での崩落の可能性、市道の全面通行止め箇所数と復旧の周知、激甚災害指定による市と被災者への支援を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="農林水産業" hidden>
+<ul class="qlist"><li><p class="qt">バス停のベンチと屋根</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">城北小学校前などバス停のベンチの設置費用と設置予定、交通局管理のバス停で設置が必要なベンチの数、地域公共交通計画での待合環境整備の考え方、森林環境譲与税の活用、屋根の設置計画を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a></div></li><li><p class="qt">農業政策</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">朝来市の就農支援の視察を踏まえ、市内の耕作放棄地の現状、特産品のブラックのジョーや玄丹そばの現状と今後の展開、農業従事者の高齢化と後継者不足の現状と対策を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-02">耕作放棄地と農地の利用</a></div></li><li><p class="qt">森林環境譲与税の活用</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">森林環境譲与税による松江市産木材を使った住宅新改築支援の状況を尋ね、楽山公園など公園へのベンチの計画的な設置と、松江城山公園の森林での植林・伐採への活用を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a></div></li><li><p class="qt">ＳＤＧｓとエシカル消費</p><p class="qm"><span>一般質問</span><span>令和３年第３回松江市議会定例会</span></p><p class="qs">ＳＤＧｓの目標の一部に当たるエシカル消費について、エシカル教育を取り入れた授業の実施状況と、ＳＤＧｓの理念を市政に取り入れる市長の決意を質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-03">鳥獣被害</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="エネルギー・環境" hidden>
+<ul class="qlist"><li><p class="qt">物価高騰下の景気対策</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">価格転嫁が進まず人手不足も深刻な中小企業の現状を踏まえ、市内の業種別の賃金の状況、製造業省エネ対策支援や商業・サービス業等のエネルギーコスト削減対策の補助金の申請・活用状況、市独自の支援策の考えを質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_environment.html#topic-04">省エネルギーと節電</a></div></li><li><p class="qt">条件付特定外来生物への対応</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">アカミミガメとアメリカザリガニの条件付特定外来生物指定を受け、生物多様性を脅かす外来生物対策と条例制定の考え、県の予算がなく活動できない駆除団体への県と連携した支援、飼育を含む市民への周知方法を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-05">生物多様性と自然保護</a></div></li><li><p class="qt">SDGs未来都市の目標</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">省エネ設備導入支援を主としてSDGs未来都市を目指すのか、SDGs未来都市の重点施策の内容、申請の目標時期を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-04">省エネルギーと節電</a></div></li><li><p class="qt">エネルギー政策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">太陽光発電導入や蓄電池開発支援、ブルーカーボン、玉湯の地熱発電など再生可能エネルギーの取組状況と、島根原発2号機に関する住民説明会で出た声、市長の福島原発視察での認識、再稼働した場合の稼働期間を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-01">国のエネルギー政策</a><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">中学校のクラブ活動</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">八束学園など希望する部活動がない地域や、保護者が新設したクラブチームに補助がない状況を踏まえ、国民スポーツ大会を目指す中での義務教育におけるスポーツの在り方を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-09">部活動</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">困窮家庭の学習・生活支援</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">足立区の取組を踏まえ、松江市の就学援助率と生活保護率、保護世帯の18歳未満の子どもの数、困窮世帯の生徒の居場所を兼ねた学習支援や食事支援の有無、不登校児童生徒数と居場所を兼ねた学習支援の場所を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">地域の防災体制</p><p class="qm"><span>一般質問</span><span>令和６年第６回松江市議会定例会</span></p><p class="qs">地域防災指導員の公民館単位の配置状況と自主防災組織の体制、市の補助を受けた防災士の取得状況、高齢化や少子化で地域活動が減る中での防災体制の課題と対策を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">高齢者のスマホ教室</p><p class="qm"><span>一般質問</span><span>令和４年第２回松江市議会定例会</span></p><p class="qs">コロナ禍で市内の高齢者スマホ教室に参加した人数、シルバー人材センターが公民館単位で開催した教室の状況、令和4年度の取組を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">相続登記の申請義務化</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">相続登記の義務化に関する市民相談の状況と担当部署・周知方法、法務局や司法書士会と連携した出前講座、相続登記されない特定空家の数、危険な空き家の解体費補助の条件と実績、相続人に寄り添った解決を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">コロナ禍の経済対策</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">松江市事業復活支援金の申請状況と見通し、当初推計1,520件との差異への見解と財源の使い道、地方創生臨時交付金の松江市への配分額、物価高騰に対するさらなる経済対策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="原子力" hidden>
+<ul class="qlist"><li><p class="qt">エネルギー政策</p><p class="qm"><span>代表質問</span><span>令和３年第５回松江市議会定例会</span></p><p class="qs">太陽光発電導入や蓄電池開発支援、ブルーカーボン、玉湯の地熱発電など再生可能エネルギーの取組状況と、島根原発2号機に関する住民説明会で出た声、市長の福島原発視察での認識、再稼働した場合の稼働期間を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-01">国のエネルギー政策</a><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">ひきこもり支援センター</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">市内で約2,200人と推計されるひきこもりの人数への認識と取組、ひきこもり支援ステーション事業の状況、身近で包括的な支援拠点となるひきこもり地域支援センターの設置を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ＳＮＳの口コミ被害</p><p class="qm"><span>一般質問</span><span>令和７年第２回松江市議会定例会</span></p><p class="qs">店舗や病院、開業医から市に寄せられた口コミによる被害の相談件数と、誹謗中傷で経営的にも深刻な被害に陥る病院などへの対応の見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小泉八雲の観光戦略</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">熊本市の旧居のデジタルミュージアム化や朗読劇の事例を挙げ、小泉八雲記念館と旧居の入り込み客数、朝ドラ決定に伴う熊本市との観光コラボや継続交流、没後120年の市民向け取組と観光戦略を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">松江水郷祭の成果と方向性</p><p class="qm"><span>代表質問</span><span>令和６年第５回松江市議会定例会</span></p><p class="qs">過去最高の来場者となった2024松江水郷祭湖上花火大会の成果と課題、宿泊客数など県外からの観覧者の状況、有料観覧席をはじめ規模拡大が続く中で市が目指す花火大会の姿を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">終活支援の取組</p><p class="qm"><span>一般質問</span><span>令和６年第４回松江市議会定例会</span></p><p class="qs">横須賀市のエンディングプラン・サポート事業を紹介し、身寄りのない独り暮らし高齢者の数や引取り手のない無縁遺骨の状況を尋ね、同事業を松江市でも導入すべきとして見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">県知事公舎の活用策</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">3月末で廃止される県知事公舎について、提案されている活用策と一般公開を見学した市長の感想を問い、大手前駐車場の代替や回遊拠点、松江北高の避難バス進入スペースの拡張への考慮を求め、市が購入する意思を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">観光の高付加価値化事業</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">国の観光地再生・高付加価値化事業で松江しんじ湖温泉群と面的DX化の計画が採択された理由と件数を問い、不採択の地区もある中、第4次募集の予定と来年度の事業に対する国や県の考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ごみ集積所の補助金</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">家庭用ごみ集積所の新設・修繕に対する補助金について、昨年意向調査書が提出された件数、来年度に申請件数に見合う予算が確保されているか、外れた場合に次年度採用される基準の有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">福祉タクシー利用券の拡充</p><p class="qm"><span>一般質問</span><span>令和６年第２回松江市議会定例会</span></p><p class="qs">市役所と病院以外に使えないとの要望やアンケートで通院以外の利用が優先課題とされたことを踏まえ、福祉タクシー利用券の利用状況と対象人数、来年度の拡充予定を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小中学校トイレの洋式化</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">洋式便器率45％にとどまる市内小中学校のトイレ洋式化の現状と計画の加速、低学年を優先した洋式化、古い校舎のトイレ環境を把握する保護者アンケートの実施を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">手話言語条例の制定</p><p class="qm"><span>代表質問</span><span>令和５年第５回松江市議会定例会</span></p><p class="qs">手話を主なコミュニケーション手段とする聾者の人数、手話通訳者の現状と増員の考え、手話言語条例の制定に向けた市の取組を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">松江藩の伝統武術</p><p class="qm"><span>一般質問</span><span>令和５年第４回松江市議会定例会</span></p><p class="qs">不伝流居合術や直信流柔道など松江藩の伝統武術を研究して市民に周知することと、松江市体育協会発足100周年を機に歴史館所蔵資料の企画展や演武会を計画する考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">コロナ5類移行後の対応</p><p class="qm"><span>代表質問</span><span>令和５年第３回松江市議会定例会</span></p><p class="qs">新型コロナの5類移行を受け、市の感染状況の現状と今後の見通し、通学時を含む小中学校でのマスク着用の指導と現状、市民への感染症予防の周知方法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">大手前駐車場の広場化</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">新聞で賛否両論が紹介された松江城大手前駐車場の交流広場化について、その考え方と計画、所管する部署を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">観光地の高付加価値化</p><p class="qm"><span>一般質問</span><span>令和５年第１回松江市議会定例会</span></p><p class="qs">令和4年度の高付加価値化事業の進捗状況、来年度に追加申請があった場合に県と連携して国の事業を受けられるか、観光戦略プランを踏まえた国際文化観光都市づくりへの市長の意気込みを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">観光地の高付加価値化事業</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">観光地の高付加価値化事業について、採択30事業者の実施状況と事業費の進捗、工期が3月にずれ込んだ場合の国・県・市の対応、申請を断念した施設の来年度の追加申請の可否を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">てんかんへの理解と対応</p><p class="qm"><span>一般質問</span><span>令和４年第５回松江市議会定例会</span></p><p class="qs">市内でてんかん発作に苦しむ本人と家族の推計数、偏見により社会参加が制限されることへの認識、小中学校の患者数と発作時の対応、ブコラム口腔用液の投与に関する国の事務連絡の学校への伝達を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">河川の雑草除去</p><p class="qm"><span>一般質問</span><span>令和４年第４回松江市議会定例会</span></p><p class="qs">北田川や北堀川の河川敷・川底の清掃を土木要望として出す必要があるか、一級河川における県と市の役割分担、清掃作業計画のデータベース化による効率的な管理を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">労働者協同組合法への対応</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">10月施行の労働者協同組合法について、市の窓口となる部署、県と連携したセミナー等による周知、市内で組合設立を計画する団体の有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">休眠預金の活用状況</p><p class="qm"><span>代表質問</span><span>令和４年第３回松江市議会定例会</span></p><p class="qs">民間公益活動の資金として活用できるようになった休眠預金について、松江市での活用事例と、ＮＰＯ法人などへの市の働きかけの有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">松江城堀川の環境</p><p class="qm"><span>一般質問</span><span>令和３年第４回松江市議会定例会</span></p><p class="qs">堀川などで捕獲されるミシシッピアカミミガメの料理や肥料への活用、民間と連携し市が主体的に予算をつけて外来種対策に取り組む考え、堀川の藻刈りの今年の計画を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第6期">
+<p class="qhead">2025年4月〜2029年4月・一般質問 2回・代表質問 3回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="エネルギー・環境" aria-pressed="false">エネルギー・環境</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">観光振興とふるさと住民登録</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">「ばけばけ」放送終了後の大型連休における観光地の入り込み客数と、観光客を松江や小泉八雲のファンとして関係人口につなげるため、関係部署が連携してふるさと住民登録制度の仕組みをつくることへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">「ばけばけ」効果と観光振興</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">堀川遊覧船を含む観光施設の入り込み客数と来年の見通し、道路渋滞や混雑への対策、小泉八雲記念館の博物館指定の可否とメリット、シェアサイクル導入に伴う駐輪場やバイクの駐車場所の確保を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">小泉八雲の蔵書</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">富山大学のヘルン文庫の視察を踏まえ、小泉家から松江市に八雲の蔵書を譲渡する話があったか、松江市立図書館と富山大学中央図書館との交流、松江歴史館で予定される小泉八雲の企画展の内容を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">中心市街地の拠点整備</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">ＪＲ松江駅前再開発のスケジュールと体制、4年後の姿、県立プール跡地の活用状況と体育館改修に伴う駐車場確保、総合体育館周辺エリアの整備計画、ホテル宍道湖跡地の活用状況と今後の予定を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">松江城周辺の観光振興</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">「ばけばけ」放送と天守国宝10周年を控え、松江城周辺の回遊性向上キャンペーン、シェアサイクルやツーリング客の駐輪場、小泉八雲記念館等の予約システム、水燈路で塩見縄手のイベントを行わない理由を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">観光振興とふるさと住民登録</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">空き家対策と旧知事公舎</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">県建築住宅センターに変更した空き家相談窓口の周知と相談件数・効果、家財処分費用支援や老朽危険空き家解体費用支援の活用状況、旧知事公舎を取得しない結論に至った経緯とにぎわい創出用途への補助の考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">空き家対策の体制</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">空き家の相談窓口が7月から島根県建築住宅センターに変わることによる変化と体制、相談件数の増加を踏まえ、水道が止まっているなど住んでいない空き家の数を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">景気と物価高騰対策</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">原油高騰や資材不足を受け、市内景気の分野ごとの認識、市発注工事の状況と夏以降の見通し、デジタル地域通貨と紙を併用するおまっちぇお買物券の仕組みの導入理由と今後の取組、製造業・サービス業・小売業への支援を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">市の物価高騰対策</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">米価高騰と担い手不足に対する市の農業政策の現状と今後、追加の重点支援地方交付金の額、プレミアム商品券等の検討を含む市民への追加の物価高騰対策を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li class="line"><p class="qt">中心市街地の拠点整備</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">不登校支援の連携強化</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">専門的な相談指導を受けていない不登校児童生徒の割合、青少年相談室・ふれあい教室の相談状況と活動、教育研究所の取組を尋ね、高知市の事例を踏まえて生徒指導推進室を中心とした今後の連携強化を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li><p class="qt">不登校支援</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">教室に入れないこどもへの対応に苦慮する学校の声を受け、校内フリースクールの現状とスクールソーシャルワーカーや教師の対応状況、主任児童委員が一時的にこどもに対応できるかを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">美保関地区の重伝建選定</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">美保関地区の重要伝統的建造物群保存地区の選定申請までの経過、対象地区内の建物数と特定物件の指定件数、選定後の修理や防災の具体的スケジュール、境港市や米子市など鳥取県へのＰＲを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li class="line"><p class="qt">中心市街地の拠点整備</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">公設児童クラブ</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">地区運営委員会体制の歴史と現状、民間事業者への移行に関する意向調査の状況と令和10年度移行のスケジュール、保護者ニーズの多様化や国の基準の厳格化の内容、1月の地震時の対応と課題、県の長期休業一時預かり事業の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">自主防災の推進</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">新たな防災気象情報の市民への伝え方、自主防災組織率の向上策と研修会や避難訓練など活動状況・実働数、町内会・自治会加入率が低下する中での自主防災に対する市長の思いを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">自主防災の推進</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="also">防災と地域の安全にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_environment.html">エネルギー・環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">脱炭素と再生可能エネルギー</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">脱炭素先行地域として、堀川遊覧船の電動推進機の運用面の課題と導入スケジュール、旧玉湯小学校での地熱バイナリー発電事業の現状と今後の予定、熱水の2次利用のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a><a class="tag" href="../topic_environment.html#topic-03">脱炭素とカーボンニュートラル</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">三菱マヒンドラ農機の支援</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">三菱マヒンドラ農機の事業撤退について、従業員の再就職支援と協力企業支援の状況および再就職支援の継続期間、撤退による経済的損失の試算、親会社三菱重工による敷地の活用や売却の現状、三菱重工とのコンタクトの日程を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">子育て世代の支援</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">こども1人当たり2万円の子育て応援手当が今年度中に支給されるかと、公立小学校の給食費の負担軽減が国立や私立の小学生に支給されない不公平への見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ひきこもり支援</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">家庭相談課で多い相談の傾向と相談件数、取組の状況と、ひきこもりステーション事業による居場所の市内の数を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">物価高対策と市内の景気</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">重点支援地方交付金の想定額とプレミアム商品券やおこめ券など物価高対策メニューの活用策、製造業・小売業・サービス産業など市内の景気の状況、ガソリン暫定税率廃止による市財源への影響を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ガンジー像の寄贈</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">インド政府からのガンジー像寄贈について、圏域市長会とケララ州との経済交流で評価された内容、市長の訪印で調印する内容、来年3月に設置予定の候補地の考え方を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">横断歩道の路面補修</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">横断歩道の路面標示が消えかかっている問題について、総務部の認識、国・県など道路管理者の初会合のメンバーと内容、市内の横断歩道数の把握、信号機のない横断歩道での車の一時停止の改善状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ガス局民営化と地元要望</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">ＬＰガス事業者団体や石油・米穀・酒類販売業者からの譲渡中止要望について話合いの有無と対応、譲渡先業者の幹部へ地元の懸念を伝えたか、今後その機会を設けるかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">観光振興とふるさと住民登録</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">「ばけばけ」放送終了後の大型連休における観光地の入り込み客数と、観光客を松江や小泉八雲のファンとして関係人口につなげるため、関係部署が連携してふるさと住民登録制度の仕組みをつくることへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">「ばけばけ」効果と観光振興</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">堀川遊覧船を含む観光施設の入り込み客数と来年の見通し、道路渋滞や混雑への対策、小泉八雲記念館の博物館指定の可否とメリット、シェアサイクル導入に伴う駐輪場やバイクの駐車場所の確保を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">小泉八雲の蔵書</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">富山大学のヘルン文庫の視察を踏まえ、小泉家から松江市に八雲の蔵書を譲渡する話があったか、松江市立図書館と富山大学中央図書館との交流、松江歴史館で予定される小泉八雲の企画展の内容を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">中心市街地の拠点整備</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">ＪＲ松江駅前再開発のスケジュールと体制、4年後の姿、県立プール跡地の活用状況と体育館改修に伴う駐車場確保、総合体育館周辺エリアの整備計画、ホテル宍道湖跡地の活用状況と今後の予定を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">松江城周辺の観光振興</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">「ばけばけ」放送と天守国宝10周年を控え、松江城周辺の回遊性向上キャンペーン、シェアサイクルやツーリング客の駐輪場、小泉八雲記念館等の予約システム、水燈路で塩見縄手のイベントを行わない理由を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">観光振興とふるさと住民登録</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">「ばけばけ」放送終了後の大型連休における観光地の入り込み客数と、観光客を松江や小泉八雲のファンとして関係人口につなげるため、関係部署が連携してふるさと住民登録制度の仕組みをつくることへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">空き家対策と旧知事公舎</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">県建築住宅センターに変更した空き家相談窓口の周知と相談件数・効果、家財処分費用支援や老朽危険空き家解体費用支援の活用状況、旧知事公舎を取得しない結論に至った経緯とにぎわい創出用途への補助の考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">空き家対策の体制</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">空き家の相談窓口が7月から島根県建築住宅センターに変わることによる変化と体制、相談件数の増加を踏まえ、水道が止まっているなど住んでいない空き家の数を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">景気と物価高騰対策</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">原油高騰や資材不足を受け、市内景気の分野ごとの認識、市発注工事の状況と夏以降の見通し、デジタル地域通貨と紙を併用するおまっちぇお買物券の仕組みの導入理由と今後の取組、製造業・サービス業・小売業への支援を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">市の物価高騰対策</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">米価高騰と担い手不足に対する市の農業政策の現状と今後、追加の重点支援地方交付金の額、プレミアム商品券等の検討を含む市民への追加の物価高騰対策を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">中心市街地の拠点整備</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">ＪＲ松江駅前再開発のスケジュールと体制、4年後の姿、県立プール跡地の活用状況と体育館改修に伴う駐車場確保、総合体育館周辺エリアの整備計画、ホテル宍道湖跡地の活用状況と今後の予定を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">不登校支援の連携強化</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">専門的な相談指導を受けていない不登校児童生徒の割合、青少年相談室・ふれあい教室の相談状況と活動、教育研究所の取組を尋ね、高知市の事例を踏まえて生徒指導推進室を中心とした今後の連携強化を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li><p class="qt">不登校支援</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">教室に入れないこどもへの対応に苦慮する学校の声を受け、校内フリースクールの現状とスクールソーシャルワーカーや教師の対応状況、主任児童委員が一時的にこどもに対応できるかを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">美保関地区の重伝建選定</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">美保関地区の重要伝統的建造物群保存地区の選定申請までの経過、対象地区内の建物数と特定物件の指定件数、選定後の修理や防災の具体的スケジュール、境港市や米子市など鳥取県へのＰＲを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">中心市街地の拠点整備</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">ＪＲ松江駅前再開発のスケジュールと体制、4年後の姿、県立プール跡地の活用状況と体育館改修に伴う駐車場確保、総合体育館周辺エリアの整備計画、ホテル宍道湖跡地の活用状況と今後の予定を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">公設児童クラブ</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">地区運営委員会体制の歴史と現状、民間事業者への移行に関する意向調査の状況と令和10年度移行のスケジュール、保護者ニーズの多様化や国の基準の厳格化の内容、1月の地震時の対応と課題、県の長期休業一時預かり事業の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">自主防災の推進</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">新たな防災気象情報の市民への伝え方、自主防災組織率の向上策と研修会や避難訓練など活動状況・実働数、町内会・自治会加入率が低下する中での自主防災に対する市長の思いを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">自主防災の推進</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">新たな防災気象情報の市民への伝え方、自主防災組織率の向上策と研修会や避難訓練など活動状況・実働数、町内会・自治会加入率が低下する中での自主防災に対する市長の思いを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="エネルギー・環境" hidden>
+<ul class="qlist"><li><p class="qt">脱炭素と再生可能エネルギー</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">脱炭素先行地域として、堀川遊覧船の電動推進機の運用面の課題と導入スケジュール、旧玉湯小学校での地熱バイナリー発電事業の現状と今後の予定、熱水の2次利用のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a><a class="tag" href="../topic_environment.html#topic-03">脱炭素とカーボンニュートラル</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">三菱マヒンドラ農機の支援</p><p class="qm"><span>代表質問</span><span>令和８年第２回松江市議会定例会</span></p><p class="qs">三菱マヒンドラ農機の事業撤退について、従業員の再就職支援と協力企業支援の状況および再就職支援の継続期間、撤退による経済的損失の試算、親会社三菱重工による敷地の活用や売却の現状、三菱重工とのコンタクトの日程を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">子育て世代の支援</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">こども1人当たり2万円の子育て応援手当が今年度中に支給されるかと、公立小学校の給食費の負担軽減が国立や私立の小学生に支給されない不公平への見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ひきこもり支援</p><p class="qm"><span>一般質問</span><span>令和８年第１回松江市議会定例会</span></p><p class="qs">家庭相談課で多い相談の傾向と相談件数、取組の状況と、ひきこもりステーション事業による居場所の市内の数を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">物価高対策と市内の景気</p><p class="qm"><span>代表質問</span><span>令和７年第６回松江市議会定例会</span></p><p class="qs">重点支援地方交付金の想定額とプレミアム商品券やおこめ券など物価高対策メニューの活用策、製造業・小売業・サービス産業など市内の景気の状況、ガソリン暫定税率廃止による市財源への影響を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ガンジー像の寄贈</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">インド政府からのガンジー像寄贈について、圏域市長会とケララ州との経済交流で評価された内容、市長の訪印で調印する内容、来年3月に設置予定の候補地の考え方を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">横断歩道の路面補修</p><p class="qm"><span>一般質問</span><span>令和７年第５回松江市議会定例会</span></p><p class="qs">横断歩道の路面標示が消えかかっている問題について、総務部の認識、国・県など道路管理者の初会合のメンバーと内容、市内の横断歩道数の把握、信号機のない横断歩道での車の一時停止の改善状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ガス局民営化と地元要望</p><p class="qm"><span>代表質問</span><span>令和７年第４回松江市議会定例会</span></p><p class="qs">ＬＰガス事業者団体や石油・米穀・酒類販売業者からの譲渡中止要望について話合いの有無と対応、譲渡先業者の幹部へ地元の懸念を伝えたか、今後その機会を設けるかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+
+<section class="sec count" id="s-count"><h2>このページの数え方</h2><dl><dt>質問の回数</dt><dd>その期に質問に立った定例会の回数を、会議録に記された質問の種別に従って「一般質問」と「代表質問」に分けて数えています（同じ定例会で両方に立った時は「代表質問」に1回と数えます）。数えているのは質問に立った定例会の回数で、論点の数ではありません。1回の質問で複数の論点を取り上げる事があり、同じ定例会の質問が議員毎のページの一覧では複数の項目に分かれて見える事が有ります。名簿の同じ期の回数と同じ数です。</dd><dt>取り上げた区分</dt><dd>質問毎に、その質問の論点に割り当てた話題の区分を数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数え、どの区分にも当たらない質問は「当たる話題なし」に数えます。マスの濃さは、この議員の表の中で最も多いマスに対する多さを示します。</dd><dt>質問の題と要約</dt><dd>会議録の実際の発言から、生成AIで論点毎に題と要約を付けています。松江市議会が公開する一般質問の通告ではない為、通告の項目とは区分や粒度が異なる事が有ります。区分の束は、その期に論点の多い区分から並べ、束の中は新しい会議から並べています。</dd><dt>区分と話題</dt><dd>題と要約に、話題毎に決めた語が含まれるかで話題を割り当て、話題を纏めた区分で数えています。どの話題にも当たらない論点は「当たる話題なし」として灰色の札で示します。</dd><dt>会派・役職・在任の途中の変化</dt><dd>会派は、会派の記録が有る期だけ示しています。議長・副議長は、その期の内に務めた事を示します。退任は期の途中で議員で無くなった事（その期の任期の中で最後に出席した会議を添えています）、加入は期の途中から議員になった事を示します。</dd><dt>期</dt><dd>期の範囲と定義は「<a href="../about.html#s-ki">このレポートについて › 期の定義</a>」に在ります。</dd></dl></section>
+
+</main>
+<footer class="foot">
+<p>v9.0.0</p>
+<p>松江市議会レポート — 車座プロジェクト ／ <a href="../about.html">このレポートについて</a></p>
+<p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+<p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+</footer>
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var doc = document;
+  /* Maps keyed by attribute values have no prototype, so a key such as "constructor"
+     never resolves to an inherited member. */
+  function dict() { return Object.create(null); }
+  var MORE_FIRST = dict();
+  MORE_FIRST.summary = 5;
+  MORE_FIRST.line = 10;
+  var seq = 0;
+
+  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+  function newId(prefix) {
+    var id;
+    do { seq += 1; id = prefix + seq; } while (doc.getElementById(id));
+    return id;
+  }
+  function idOf(el, prefix) { if (!el.id) { el.id = newId(prefix); } return el.id; }
+  /* Operators and panes belong to the nearest enclosing scope only (nesting). */
+  function scopeOf(el) { return el.closest("[data-switch]"); }
+  function own(scope, selector) {
+    return Array.prototype.filter.call(scope.querySelectorAll(selector), function (el) {
+      return scopeOf(el) === scope;
+    });
+  }
+  function keyOf(el) { return el.getAttribute("data-switch-key"); }
+  function isTab(el) { return el.getAttribute("role") === "tab"; }
+  function setOn(op, on) {
+    if (op.hasAttribute("aria-selected")) { op.setAttribute("aria-selected", on ? "true" : "false"); }
+    if (op.hasAttribute("aria-pressed")) { op.setAttribute("aria-pressed", on ? "true" : "false"); }
+    if (isTab(op)) { op.tabIndex = on ? 0 : -1; }
+  }
+  function isOn(op) {
+    return op.getAttribute("aria-selected") === "true" || op.getAttribute("aria-pressed") === "true";
+  }
+  /* Scroll only the operator's own strip sideways, so loading never moves the page (3.9). */
+  function nudge(op) {
+    var strip = op.parentElement;
+    if (!strip || strip.scrollWidth <= strip.clientWidth) { return; }
+    var s = strip.getBoundingClientRect();
+    var r = op.getBoundingClientRect();
+    if (r.left < s.left) { strip.scrollLeft -= s.left - r.left; }
+    else if (r.right > s.right) { strip.scrollLeft += r.right - s.right; }
+  }
+
+  /* ---- switch: pick one operator, show its pane, in its scope (3.6, 3.9) ---- */
+  function pick(op, focus) {
+    var scope = scopeOf(op);
+    if (!scope) { return; }
+    var key = keyOf(op);
+    each(own(scope, "[data-switch-key]"), function (o) { setOn(o, keyOf(o) === key); });
+    each(own(scope, "[data-switch-pane]"), function (p) {
+      p.hidden = p.getAttribute("data-switch-pane") !== key;
+    });
+    if (focus) { op.focus(); }
+    op.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  each(doc.querySelectorAll("[data-switch]"), function (scope) {
+    var panes = dict();
+    each(own(scope, "[data-switch-pane]"), function (p) { panes[p.getAttribute("data-switch-pane")] = p; });
+    each(own(scope, "[data-switch-key]"), function (op) {
+      var pane = panes[keyOf(op)];
+      if (pane) { op.setAttribute("aria-controls", idOf(pane, "v9-pane-")); }
+      if (isTab(op)) {
+        op.tabIndex = isOn(op) ? 0 : -1;
+        if (pane) {
+          pane.setAttribute("role", "tabpanel");
+          pane.setAttribute("aria-labelledby", idOf(op, "v9-tab-"));
+        }
+      }
+      if (isOn(op)) { nudge(op); }
+    });
+  });
+
+  doc.addEventListener("click", function (ev) {
+    var target = ev.target;
+    if (!(target instanceof Element)) { return; }
+    var op = target.closest("[data-switch-key]");
+    if (op) { pick(op, false); return; }
+    var row = target.closest("[data-pick-row]");
+    if (row && !target.closest("a, button, input, select, textarea, summary, label")) {
+      var rowOp = row.querySelector("[data-switch-key]");
+      if (rowOp) { pick(rowOp, true); }
+    }
+  });
+
+  /* ---- tabs: left / right arrows (Home / End) move the choice and the focus (2.10) ---- */
+  doc.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) { return; }
+    var tab = ev.target instanceof Element ? ev.target.closest("[role=tab][data-switch-key]") : null;
+    if (!tab) { return; }
+    var list = tab.closest("[role=tablist]");
+    if (!list) { return; }
+    var tabs = Array.prototype.filter.call(list.querySelectorAll("[role=tab][data-switch-key]"), function (t) {
+      return t.closest("[role=tablist]") === list;
+    });
+    var at = tabs.indexOf(tab);
+    var to = -1;
+    if (ev.key === "ArrowRight") { to = (at + 1) % tabs.length; }
+    else if (ev.key === "ArrowLeft") { to = (at - 1 + tabs.length) % tabs.length; }
+    else if (ev.key === "Home") { to = 0; }
+    else if (ev.key === "End") { to = tabs.length - 1; }
+    if (to < 0) { return; }
+    ev.preventDefault();
+    pick(tabs[to], true);
+  });
+
+  /* ---- 「残り○件」: first 5 / 10 items, the button shows all and back (3.10) ---- */
+  each(doc.querySelectorAll("[data-more]"), function (list) {
+    var first = MORE_FIRST[list.getAttribute("data-more")];
+    var button = list.nextElementSibling;
+    if (!first || !button || !button.classList.contains("more")) { return; }
+    var items = Array.prototype.filter.call(list.children, function (el) { return el.tagName === "LI"; });
+    var rest = items.length - first;
+    if (rest <= 0) { return; }
+    var open = false;
+    function apply() {
+      each(items, function (li, i) { li.hidden = !open && i >= first; });
+      button.textContent = open ? "最初の" + first + "件だけにする" : "残り" + rest + "件を表示";
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    button.setAttribute("aria-controls", idOf(list, "v9-more-"));
+    button.addEventListener("click", function () { open = !open; apply(); });
+    apply();
+    button.hidden = false;
+  });
+
+  /* ---- phone menu: .menu toggles .side.open with aria-expanded (2.8). At phone width the
+     closed sidebar is only moved off screen, so it is made inert: out of the tab order and
+     away from assistive tech until opened (2.10). Without JS nothing is inert. ---- */
+  var side = doc.getElementById("side");
+  var menu = doc.querySelector(".crumb .menu");
+  var phone = window.matchMedia ? window.matchMedia("(max-width:640px)") : null;
+  function sync() {
+    if (!side) { return; }
+    side.inert = !!(phone && phone.matches) && !side.classList.contains("open");
+  }
+  /* A sidebar that is the URL's target is shown by CSS (.side:target, the no-JS way in).
+     Closing it drops the target without moving the page, so it never stays shown but inert. */
+  function untarget() {
+    if (!side.matches(":target")) { return; }
+    var x = window.scrollX, y = window.scrollY;
+    location.replace("#");
+    window.scrollTo(x, y);
+  }
+  function setMenu(opened) {
+    if (!side || !menu) { return; }
+    side.classList.toggle("open", opened);
+    menu.setAttribute("aria-expanded", opened ? "true" : "false");
+    if (!opened) { untarget(); }
+    sync();
+  }
+  if (side && menu) {
+    sync();
+    /* The script runs before the target is applied, so read the URL's fragment. */
+    if (location.hash === "#side") { setMenu(true); }
+    if (phone) {
+      if (phone.addEventListener) { phone.addEventListener("change", sync); }
+      else if (phone.addListener) { phone.addListener(sync); }
+    }
+    menu.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      var opening = !side.classList.contains("open");
+      setMenu(opening);
+      if (opening) {
+        var first = side.querySelector("a[href]");
+        if (first) { first.focus(); }
+      }
+    });
+    doc.addEventListener("click", function (ev) {
+      if (side.classList.contains("open") && !side.contains(ev.target)) { setMenu(false); }
+    });
+    doc.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && side.classList.contains("open")) { setMenu(false); menu.focus(); }
+    });
+    each(side.querySelectorAll("a[href]"), function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+  }
+
+  /* ---- section TOC: mark the section in view, as the legacy shell does ---- */
+  var tocLinks = side ? side.querySelectorAll('.toc a[href^="#"]') : [];
+  var linkById = dict();
+  var sections = [];
+  function mark(link) {
+    each(tocLinks, function (a) { a.removeAttribute("aria-current"); });
+    link.setAttribute("aria-current", "location");
+  }
+  each(tocLinks, function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    var section = doc.getElementById(id);
+    if (!section) { return; }
+    linkById[id] = a;
+    sections.push(section);
+    a.addEventListener("click", function () { mark(a); });
+  });
+  if ("IntersectionObserver" in window && sections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      each(entries, function (en) {
+        if (en.isIntersecting && linkById[en.target.id]) { mark(linkById[en.target.id]); }
+      });
+    }, { rootMargin: "0px 0px -68% 0px", threshold: 0 });
+    each(sections, function (s) { spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
