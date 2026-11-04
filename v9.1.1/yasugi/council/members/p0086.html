@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ja" data-shell="v9">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>樋野智之 — 安来市議会レポート</title>
+<style>
+/* spacing-exceptions: 0 1px 2px 3px 5px 6px 7px 9px 10px 26px 34px */
+/* reason: every value above is kept from the mock (docs/mocks/v9/v9.css) so the look does not change. */
+/* v9 style layer of the council report (canonical; the mock is now a record of decisions).
+   Fixed layout: b (tinted page + left-ruled headings, white boxes only for data), body text capped at 45em, white page.
+   Raw colors live only in the :root token definitions below; everything else uses var(--*).
+   A dark scheme would swap the :root values only; no dark color-scheme media block is kept here.
+   Component CSS (tables, switches, question lists, cards, ...) is appended by the component tasks. */
+:root{
+  /* colors */
+  --bg:#ffffff; --surface:#ffffff; --side:#f7f8fa;
+  --ink:#1c1e26; --ink-soft:#4d5263; --ink-faint:#656a7e; --zero:#8a8fa3; --rest:#c3c6cf; --rest-soft:#eceef1;
+  --line:#e2e4ea; --line-soft:#eef0f4;
+  --accent:#3a4a8c; --accent-ink:#2c3a70; --accent-soft:#eceff8;
+  --a2:#6b76b0; --a3:#a9b0d3; --a4:#d5d9ec; --a5:#eceef7;
+  --on-accent:#ffffff; /* text on an --accent fill */
+  /* shadows (the mock's raw rgba() values, moved into tokens) */
+  --shadow-card:0 1px 2px rgba(28,30,38,.04),0 8px 24px -18px rgba(28,30,38,.25);
+  --shadow-hover:0 6px 18px -12px rgba(58,74,140,.5);
+  --shadow-overlay:0 0 40px rgba(0,0,0,.2);
+  /* per-person colors: the --accent hue (228deg, saturation 41%) at HSL lightness 17/28/39/50/61/72%,
+     dark to light; --person-3 is --accent itself. CIE L* steps are about 9-13 apart. */
+  --person-1:#19203d; --person-2:#2a3564; --person-3:#3a4a8c; --person-4:#4a5fb4; --person-5:#7282c4; --person-6:#99a5d5;
+  /* spacing steps */
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:24px; --sp6:40px; --sp7:64px;
+  --radius:8px;
+  --cap:45em; /* body text cap (45 characters) */
+  --fs:15px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ background:var(--bg); color:var(--ink); font-size:var(--fs); line-height:1.75;
+  font-family:"Yu Gothic UI","Yu Gothic","游ゴシック","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;
+  font-feature-settings:"palt"; -webkit-text-size-adjust:100%; }
+a{ color:var(--accent); text-underline-offset:3px; }
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible,.scroll:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+.ic{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+/* ---- shell: sidebar ---- */
+.shell{ display:flex; min-height:100vh; }
+.side{ width:252px; flex:none; background:var(--side); border-right:1px solid var(--line); padding:var(--sp4) var(--sp3);
+  position:sticky; top:0; height:100vh; overflow-y:auto; font-size:14px; }
+.side .back{ display:flex; gap:var(--sp2); align-items:center; color:var(--ink-faint); text-decoration:none; font-size:12.5px; padding:var(--sp1) var(--sp2); }
+.side .rep{ margin:var(--sp2) 0 var(--sp4); padding:var(--sp2) var(--sp3); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); font-weight:700; display:flex; gap:var(--sp2); align-items:center; }
+.side .grp{ margin-top:var(--sp4); }
+.side .gh{ font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; padding:0 var(--sp2) var(--sp1); }
+.side a.it{ display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); border-radius:6px; color:var(--ink-soft); text-decoration:none; }
+.side a.it:hover{ background:var(--accent-soft); color:var(--accent-ink); }
+.side a.it[aria-current]{ background:var(--accent-soft); color:var(--accent-ink); font-weight:700; }
+.side details > summary{ list-style:none; cursor:pointer; display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); color:var(--ink-soft); border-radius:6px; }
+.side details > summary::-webkit-details-marker{ display:none; }
+.side details > summary::after{ content:""; margin-left:auto; border:4px solid transparent; border-left-color:var(--ink-faint); transform:translateX(2px); transition:transform .15s; }
+.side details[open] > summary::after{ transform:rotate(90deg) translateX(2px); }
+.side .sub{ padding-left:26px; }
+.side .sub a.it{ padding:var(--sp1) var(--sp2); font-size:13.5px; }
+.side .toc{ margin:2px 0 var(--sp2) 34px; border-left:1px solid var(--line); }
+.side .toc a{ display:block; padding:3px var(--sp3); font-size:12.5px; color:var(--ink-faint); text-decoration:none; }
+.side .toc a:hover{ color:var(--accent-ink); }
+/* the section in view, marked by the shell script (not in the mock) */
+.side .toc a[aria-current]{ color:var(--accent-ink); font-weight:700; box-shadow:inset 2px 0 0 var(--accent); }
+/* report switch: the legacy cross-nav block sits in .rep under the report name */
+.side .rep{ flex-wrap:wrap; }
+.side .rep a.rep-link{ display:flex; gap:var(--sp2); align-items:center; flex:1 1 auto; color:inherit; text-decoration:none; }
+.side .rep a.rep-link:hover,.side .rep a.rep-link[aria-current]{ color:var(--accent-ink); }
+.side .rep .cross-nav{ flex-basis:100%; font-weight:400; font-size:12.5px; }
+.side .cross-nav-inner{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp2); }
+.side .cross-nav a{ color:var(--accent); text-decoration:none; }
+.side .cross-nav-sep{ color:var(--line); }
+
+/* ---- shell: breadcrumb and page frame ---- */
+.main{ flex:1; min-width:0; }
+.crumb{ font-size:12.5px; color:var(--ink-faint); padding:var(--sp3) var(--sp6); border-bottom:1px solid var(--line-soft); background:var(--bg); }
+.crumb b{ color:var(--ink); font-weight:600; }
+.page{ max-width:1080px; padding:var(--sp6) var(--sp6) var(--sp7); }
+.menu{ display:none; }
+
+/* ---- page head: kicker, title, lead (the how-to box is a component) ---- */
+.kicker{ display:inline-block; font-size:12px; color:var(--accent-ink); background:var(--accent-soft); border-radius:999px; padding:1px 10px; margin-bottom:var(--sp2); }
+h1{ font-size:28px; line-height:1.35; margin:0 0 var(--sp3); letter-spacing:.02em; }
+.lead{ max-width:var(--cap); color:var(--ink-soft); margin:0 0 var(--sp5); }
+
+/* ---- sections: layout b (tinted page + left-ruled heading; white box only for data) ---- */
+/* --measure is the wrap width of body text in a section: the cap by default;
+   .sec.fit follows the section (= table) width and still stops at the cap. */
+.sec{ --measure:var(--cap); margin:0 0 var(--sp7); }
+.sec.fit{ --measure:min(var(--cap), 100%); }
+.sec > h2{ font-size:20px; line-height:1.4; margin:0 0 var(--sp3); border-left:4px solid var(--accent); padding-left:var(--sp3); }
+.sec h3{ font-size:17px; margin:var(--sp6) 0 var(--sp2); }
+.sec h4.sub{ font-size:14px; margin:var(--sp4) 0 var(--sp2); color:var(--ink-soft); }
+.prose{ max-width:var(--measure, var(--cap)); margin:0 0 var(--sp4); color:var(--ink-soft); }
+.meta{ max-width:var(--measure, var(--cap)); font-size:13px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.terms{ max-width:var(--measure, var(--cap)); font-size:12.5px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.data{ margin:0 0 var(--sp4); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:var(--sp4);
+  box-shadow:var(--shadow-card); }
+
+/* ---- footer (tinted) ---- */
+.foot{ border-top:1px solid var(--line); padding:var(--sp5) var(--sp6); font-size:12.5px; color:var(--ink-faint); background:var(--side); }
+.foot a{ color:var(--accent); }
+.foot p{ margin:0; }
+.foot p + p{ margin-top:var(--sp1); }
+/* the one <noscript> note of the shell (requirement 3.8) */
+.noscript{ margin:0; padding:var(--sp2) var(--sp6); font-size:12.5px; background:var(--accent-soft); color:var(--accent-ink); }
+
+/* ---- mobile: sidebar becomes an overlay menu, body is one column ---- */
+@media (max-width:640px){
+  .side{ position:fixed; left:0; top:0; z-index:40; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow-overlay); }
+  .side.open{ transform:none; }
+  .side:target{ transform:none; }
+  .menu{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; margin-right:var(--sp2); border:1px solid var(--line); border-radius:8px; background:var(--surface); vertical-align:middle; }
+  .crumb{ padding:var(--sp2) var(--sp4); position:sticky; top:0; z-index:30; }
+  .page{ padding:var(--sp5) var(--sp4) var(--sp6); }
+  h1{ font-size:23px; }
+  .data{ padding:var(--sp3); }
+  .foot{ padding:var(--sp4); }
+  .noscript{ padding:var(--sp2) var(--sp4); }
+}
+
+/* ---- components (4.1): how-to box, counting section, tag, link rows, stacked band, policy marks ---- */
+/* how-to box: the mock's list indent of 1.2em is put on the --sp4 step (16px at 14px text vs 16.8px). */
+.howto{ max-width:var(--cap); border-left:3px solid var(--a3); background:var(--accent-soft); padding:var(--sp3) var(--sp4); border-radius:0 var(--radius) var(--radius) 0; margin:0 0 var(--sp6); font-size:14px; }
+.howto h2{ all:unset; display:block; font-weight:700; font-size:13px; color:var(--accent-ink); margin-bottom:var(--sp1); }
+.howto ul{ margin:0; padding-left:var(--sp4); }
+.howto li{ margin:2px 0; }
+.count{ font-size:14px; }
+.count dl{ margin:0; max-width:var(--cap); }
+.count dt{ font-weight:700; margin-top:var(--sp3); }
+.count dd{ margin:var(--sp1) 0 0; color:var(--ink-soft); }
+/* small tag: one part, four variants (legacy tag / ab / sk / rtag) */
+.tag{ display:inline-block; font-size:12px; line-height:1.6; padding:0 9px; border-radius:999px; border:1px solid var(--a4); background:var(--accent-soft); color:var(--accent-ink); }
+.tag.rest{ border-color:var(--line); background:var(--line-soft); color:var(--ink-faint); }
+.tag.role{ background:var(--surface); }
+.tag.out{ border-color:var(--line); background:var(--line-soft); color:var(--ink-soft); }
+/* link rows: page name + one-line description + arrow, ruled rows (not cards) */
+.llist{ list-style:none; margin:var(--sp2) 0 0; padding:0; max-width:var(--cap); border-top:1px solid var(--line); }
+.llist li{ border-bottom:1px solid var(--line); }
+.lrow{ display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:var(--sp3); padding:var(--sp3) var(--sp2); text-decoration:none; color:var(--ink); }
+.lrow:hover{ background:var(--accent-soft); }
+.lrow .lt{ display:flex; gap:var(--sp2); align-items:center; font-weight:700; color:var(--accent-ink); }
+.lrow:hover .lt{ text-decoration:underline; text-underline-offset:3px; }
+.lrow .lt .ic{ color:var(--accent); }
+.lrow .ld{ grid-column:1; font-size:13px; color:var(--ink-soft); }
+.lrow .ar{ grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--accent); }
+/* stacked band: tones 1-5 run dark to light; a legend may reuse the same tone classes */
+.stack{ display:flex; height:16px; border-radius:2px; overflow:hidden; }
+.stack .seg{ width:var(--w); }
+.stack .t1, .stacklegend .t1{ background:var(--accent-ink); }
+.stack .t2, .stacklegend .t2{ background:var(--accent); }
+.stack .t3, .stacklegend .t3{ background:var(--a2); }
+.stack .t4, .stacklegend .t4{ background:var(--a3); }
+.stack .t5, .stacklegend .t5{ background:var(--a4); }
+.stacklegend{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp4); font-size:12.5px; color:var(--ink-soft); margin:var(--sp3) 0 0; }
+.stacklegend i{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+/* policy marks: fixed-width columns so the marks line up across items */
+.pmarks{ display:inline-grid; grid-template-columns:8.6em 8.2em; column-gap:var(--sp3); align-items:baseline; }
+.pmark{ font-size:11.5px; padding:0 var(--sp2); border-radius:999px; line-height:1.7; white-space:nowrap; text-align:center; }
+.pmark.council{ background:var(--accent); color:var(--on-accent); }
+.pmark.executive{ background:var(--a3); color:var(--ink); }
+.pmark.after{ border:1px solid var(--a2); color:var(--accent-ink); }
+.pmark.none{ border:1px dashed var(--a3); color:var(--ink-faint); }
+
+/* ---- components (4.2): table + scale bar, heat cells, number cells ---- */
+/* a table wider than the page scrolls inside this wrapper, never the page (2.8; the mock's .scroll) */
+.scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tbl{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+.tbl th,.tbl td{ padding:7px 10px; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:middle; }
+.tbl thead th{ font-size:12px; color:var(--ink-faint); font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap; }
+.tbl tbody th{ font-weight:600; }
+.tbl tbody tr:last-child > *{ border-bottom:0; }
+.tbl .num{ text-align:right; white-space:nowrap; }
+.tbl a{ text-decoration:none; }
+.tbl a:hover{ text-decoration:underline; }
+.tbl tr.total > *{ border-top:1px solid var(--line); font-weight:700; }
+/* the caption names the table for assistive tech only; the visible title is the heading above the box */
+.tbl > caption{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+/* unified columns: name, scale bar (takes the rest), numbers */
+.cols{ table-layout:fixed; }
+.cols .c-name{ width:15em; }
+.cols .c-num{ width:5.5em; }
+.barcell{ padding-right:var(--sp4)!important; }
+/* the bar element is left out for 0, so no width rule hides it */
+.hbar{ display:block; height:10px; width:var(--w); min-width:2px; background:var(--accent); border-radius:2px; }
+/* catch-all rows (その他・当たる話題なし) are grey */
+.hbar.rest{ background:var(--rest); }
+.tbl tr.rest th{ font-weight:400; color:var(--ink-soft); }
+/* minor row: a sub-item indented under its parent (scale_table row key "minor"). */
+.tbl tr.minor th{ padding-left:var(--sp5); font-weight:400; color:var(--ink-soft); }
+/* heat steps (light type), both families always on: table.heat fills the cell (td.l3-l0),
+   any table fills the number's pill (td.num .h3-.h1). Steps are chosen by the caller. */
+.heat td.l3, td.num .h3{ background:var(--a4); color:var(--accent-ink); font-weight:700; }
+.heat td.l2, td.num .h2{ background:var(--a5); color:var(--ink-soft); }
+.heat td.l1, td.num .h1{ background:none; color:var(--ink-faint); }
+td.num .hr{ background:var(--rest-soft); color:var(--ink-soft); }
+td.num .h3, td.num .h2, td.num .h1, td.num .hr{ display:inline-block; min-width:2.6em; padding:1px var(--sp1); border-radius:3px; text-align:center; }
+/* a table zero is a faint 0; 「—」 is only for "no data / not applicable" */
+.zero, .heat td.l0{ color:var(--zero); }
+
+/* ---- mobile: the scale bar goes under the numbers at full width ---- */
+@media (max-width:640px){
+  .tbl.cols, .tbl.cols thead, .tbl.cols tbody{ display:block; }
+  .tbl.cols colgroup, .tbl.cols thead th:nth-child(2){ display:none; }
+  /* --n (number columns) is set on the table by the scale_table macro */
+  .tbl.cols tr{ display:grid; grid-template-columns:minmax(0,1fr) repeat(var(--n),auto); column-gap:var(--sp3); align-items:baseline; border-bottom:1px solid var(--line-soft); }
+  .tbl.cols thead tr{ border-bottom-color:var(--line); }
+  .tbl.cols tr > *{ border-bottom:0!important; }
+  .tbl.cols td.barcell{ grid-column:1 / -1; grid-row:2; padding-top:0; padding-bottom:var(--sp2); }
+  /* as on the desktop, the last row has no rule of its own (the box edge or .panes draws it) */
+  .tbl.cols tbody tr:last-child{ border-bottom:0; }
+  /* the total row has no bar: drop its empty bar cell (it made a blank second line) and draw
+     the rule on the row, since per-cell rules break at the grid's column gaps */
+  .tbl.cols tr.total td.barcell{ display:none; }
+  .tbl.cols tr.total{ border-top:1px solid var(--line); }
+  .tbl.cols tr.total > *{ border-top:0; }
+}
+
+/* ---- components (4.3): switches, pick rows, 「残り○件」, question ---- */
+/* hidden always wins, also over a component's display (grid rows, flex lists) */
+[hidden]{ display:none!important; }
+/* period tabs, year buttons, chips: one row that scrolls sideways on a phone (3.9) */
+.tabs{ display:flex; gap:2px; border-bottom:1px solid var(--line); margin:0 0 var(--sp3); overflow-x:auto; }
+.tab{ font:inherit; font-size:14px; background:none; border:0; border-bottom:3px solid transparent; padding:var(--sp2) var(--sp4); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.tab[aria-selected="true"]{ color:var(--accent-ink); border-bottom-color:var(--accent); font-weight:700; }
+.ystrip{ display:flex; gap:var(--sp1); overflow-x:auto; padding-bottom:var(--sp2); margin:0 0 var(--sp4); border-bottom:1px solid var(--line); }
+.ybtn{ font:inherit; font-size:12.5px; font-weight:600; line-height:1.35; flex:1 0 40px; padding:5px 0 var(--sp1); border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.ybtn:hover{ border-color:var(--a3); }
+.ybtn[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* year buttons, form "count" (council-v9-topics, mock 05): the year over its topic count, 「途中」 under a year in progress */
+.ystrip.count .ybtn{ display:flex; flex-direction:column; align-items:center; gap:0; }
+.ystrip.count .ybtn .yl{ font-size:12.5px; font-weight:600; white-space:nowrap; }
+.ystrip.count .ybtn b{ font-size:10.5px; font-weight:400; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+.ystrip.count .ybtn b::after{ content:"話題"; }
+.ystrip.count .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; font-weight:400; text-align:center; }
+.ystrip.count .ybtn[aria-pressed="true"] b{ color:var(--on-accent); opacity:.85; }
+/* year buttons, form "bars" (council-v9-topics, mock 06): a bar per year, faded when it cannot be pressed,
+   a dot at the bar's root for a year with policy items only, a faint ground when pressed */
+.ystrip.bars .ybtn{ display:flex; flex-direction:column; align-items:center; gap:2px; flex:1 0 34px; padding:var(--sp1) 0; border:0; background:none; font-weight:400; }
+.ystrip.bars .ybtn .yv{ display:block; width:12px; height:56px; background:linear-gradient(to top,var(--a3) var(--h),transparent var(--h)); border-radius:2px; }
+.ystrip.bars .ybtn .yl{ font-size:10.5px; color:var(--ink-faint); white-space:nowrap; }
+.ystrip.bars .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; text-align:center; }
+.ystrip.bars .ybtn:hover:not([disabled]){ background:var(--line-soft); }
+.ystrip.bars .ybtn[disabled]{ cursor:default; opacity:.45; }
+.ystrip.bars .ybtn.pol .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--a3) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn.pol[aria-pressed="true"] .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--accent) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn[aria-pressed="true"]{ background:var(--accent-soft); color:var(--accent-ink); }
+.ystrip.bars .ybtn[aria-pressed="true"] .yv{ background:linear-gradient(to top,var(--accent) var(--h),transparent var(--h)); }
+.chips{ display:flex; gap:var(--sp2); flex-wrap:nowrap; overflow-x:auto; margin:0 0 var(--sp3); padding-bottom:2px; }
+.chip{ font:inherit; font-size:13px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:3px var(--sp3); cursor:pointer; white-space:nowrap; }
+.chip[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* rows-pick table: the whole row is pressable; the chosen row is tinted with a left rule */
+.pickbtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:600; color:var(--ink); width:100%; }
+tr.pick{ cursor:pointer; }
+tr.pick:hover > *{ background:var(--line-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) > *{ background:var(--accent-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) .pickbtn{ color:var(--accent-ink); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) th{ box-shadow:inset 3px 0 0 var(--accent); }
+.panes{ margin-top:var(--sp4); padding-top:var(--sp2); border-top:1px solid var(--line); }
+.panes h4.sub{ margin-top:var(--sp2); }
+/* one question: title -> meta line (member, kind, meeting) -> summary -> tags; li.line is the one-line form */
+.qlist{ list-style:none; margin:0; padding:0; }
+.qlist li{ padding:var(--sp3) 0; border-top:1px dashed var(--line); }
+.qlist li:first-child{ border-top:0; }
+.qt{ margin:0; font-weight:700; }
+.qm{ margin:2px 0 var(--sp1); font-size:12.5px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:0 var(--sp3); }
+.qm a{ font-weight:600; }
+.qs{ margin:0; max-width:var(--cap); color:var(--ink-soft); font-size:14px; }
+.qlist .tg{ display:flex; flex-wrap:wrap; gap:var(--sp1); margin:var(--sp1) 0 0; }
+.qlist .tg a.tag{ text-decoration:none; }
+.qlist li.line{ padding:var(--sp1) 0; border-top:1px solid var(--line-soft); }
+.qlist li.line .qt{ font-weight:600; font-size:13.5px; }
+.qlist li.line .qm{ margin:0; }
+/* 「残り○件を表示」: drawn hidden; the behaviour script shows it and sets its text */
+.more{ font:inherit; font-size:13.5px; margin:var(--sp3) 0 0; padding:var(--sp2) var(--sp4); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--accent); cursor:pointer; }
+.more:hover{ border-color:var(--a3); }
+/* member pages (council-v9-members): 「…にも当たる」 under a question; a lone key button in a table
+   cell (the period name, mock 08's plink); a period row with no term (「在任していない」) */
+.qlist .also{ margin:var(--sp1) 0 0; font-size:12px; color:var(--ink-faint); }
+.keybtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:700; color:var(--accent); }
+.keybtn:hover{ text-decoration:underline; }
+.keybtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.tbl tr.off > *{ color:var(--ink-faint); }
+.tbl tr.off th{ font-weight:400; }
+
+/* ---- mobile: a picked row of a unified-column table is tinted as one band ---- */
+@media (max-width:640px){
+  .tbl.cols tr.pick:has([aria-pressed="true"]){ background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
+  .tbl.cols tr.pick > *{ background:none!important; box-shadow:none!important; }
+}
+
+</style>
+<style>
+
+.prof{ display:grid; grid-template-columns:max-content 1fr; gap:var(--sp1) var(--sp4); margin:0 0 var(--sp5); font-size:14px; max-width:var(--cap); }
+.prof dt{ color:var(--ink-faint); }
+.prof dd{ margin:0; }
+.ptbl{ max-width:52em; }
+.ptbl .c-p{ width:5em; }
+.ptbl .c-span{ width:12.5em; }
+.ptbl .c-n{ width:5em; }
+.ptbl td.span{ color:var(--ink-soft); font-size:13px; white-space:nowrap; }
+.ptbl tr.off td.note{ font-size:12.5px; }
+.dtbl .c-d{ width:13em; }
+.dtbl .c-n{ width:4.2em; }
+.dtbl .c-bar{ min-width:5em; }
+.dtbl td.num{ text-align:center; }
+.dtbl td.num.tot{ text-align:right; font-weight:700; }
+.empty{ color:var(--ink-faint); font-size:14px; margin:var(--sp3) 0; }
+.qhead{ font-size:13.5px; color:var(--ink-soft); margin:0 0 var(--sp3); }
+.mtg{ margin:var(--sp5) 0 0; }
+.mtg:first-child{ margin-top:0; }
+.sec .mtg h3{ font-size:15px; margin:0 0 var(--sp1); }
+@media (max-width:640px){
+  .ptbl .c-span, .ptbl .span{ display:none; }
+  .prof{ grid-template-columns:1fr; gap:0; }
+  .prof dt{ margin-top:var(--sp2); font-size:12.5px; }
+  .dtbl{ font-size:12px; }
+  .dtbl .c-bar, .dtbl .bar, .dtbl td.barcell{ display:none; }
+  .dtbl th,.dtbl td{ padding:6px 3px; }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="ic-hall" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9.5 10v9M14.5 10v9M3 21h18"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11"/></symbol>
+  <symbol id="ic-topics" viewBox="0 0 24 24"><path d="M4 6h10v7H8l-4 3z"/><path d="M14 9h6v7l-3-2h-5v-1"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><path d="M6 21V4h12v17M3 21h18M9.5 8h1M13.5 8h1M9.5 12h1M13.5 12h1M10.5 21v-4h3v4"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+</svg>
+<div class="shell">
+<nav class="side sidebar" id="side" aria-label="レポートの目次">
+<a class="back" href="../../../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-back"/></svg>安来市／車座プロジェクト</a>
+<div class="rep"><a class="rep-link" href="../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-hall"/></svg>議会レポート</a>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../../index.html" class="cross-nav-portal">ポータル</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../../financial/index.html" class="cross-nav-link">財政レポート</a>
+            <span class="cross-nav-sep" aria-hidden="true">|</span>
+            <a href="../../plan/index.html" class="cross-nav-link">総合計画レポート</a>
+        </div>
+    </nav>
+</div>
+<a class="it" href="../about.html"><svg class="ic" aria-hidden="true"><use href="#ic-book"/></svg>このレポートについて</a>
+<div class="grp"><div class="gh">話題</div>
+<a class="it" href="../topics.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>議会で語られてきた話題</a>
+<details><summary><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>区分</summary><div class="sub">
+<a class="it" href="../topic_childcare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>子育てと少子化</a>
+<a class="it" href="../topic_education.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>学校教育</a>
+<a class="it" href="../topic_welfare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>医療・介護・福祉</a>
+<a class="it" href="../topic_safety.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>防災と地域の安全</a>
+<a class="it" href="../topic_infrastructure.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>都市基盤と生活環境</a>
+<a class="it" href="../topic_community.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>市民自治と人権</a>
+<a class="it" href="../topic_population.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>人口減少と地域の維持</a>
+<a class="it" href="../topic_industry.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>産業・雇用</a>
+<a class="it" href="../topic_agriculture.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>農林水産業</a>
+<a class="it" href="../topic_tourism.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>観光・文化・交流</a>
+<a class="it" href="../topic_environment.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>エネルギー・環境</a>
+<a class="it" href="../topic_nuclear.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>原子力</a>
+<a class="it" href="../topic_administration.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>行財政運営</a>
+</div></details>
+</div>
+<div class="grp"><div class="gh">議員の活動</div>
+<a class="it" href="../members.html" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#ic-person"/></svg>議員の名簿</a>
+<div class="toc"><a href="#s-periods">期ごとの質問の回数</a><a href="#s-divs">取り上げた区分</a><a href="#s-qs">質問の題と要約</a><a href="#s-count">このページの数え方</a></div>
+</div>
+<div class="grp"><div class="gh">首長と執行部</div>
+<a class="it" href="../policy_speech.html"><svg class="ic" aria-hidden="true"><use href="#ic-speech"/></svg>施政方針と議会の動き</a>
+<a class="it" href="../executives.html"><svg class="ic" aria-hidden="true"><use href="#ic-building"/></svg>首長と執行部の答弁</a>
+</div>
+<div class="grp"><div class="gh">議会の活動</div>
+<a class="it" href="../bill_breakdown.html"><svg class="ic" aria-hidden="true"><use href="#ic-pie"/></svg>議案</a>
+</div>
+</nav>
+<div class="main">
+<div class="crumb"><button class="menu" type="button" aria-controls="side" aria-expanded="false" aria-label="目次をひらく"><svg class="ic" aria-hidden="true"><use href="#ic-menu"/></svg></button>安来市・議会レポート / <a href="../members.html">議員の名簿</a> / <b>樋野智之</b></div>
+<noscript><p class="noscript">期・年度などの切替には JavaScript を使います。JavaScript が無効の時は、それぞれ最初に選ばれている内容だけを表示しています。<a href="#side">目次をひらく</a></p></noscript>
+<main class="page">
+<span class="kicker">議員の活動</span>
+<h1 class="page-title">樋野智之</h1>
+
+<p class="lead">第3期から第5期まで在任した議員です。本会議で質問に立った回数の移り変わりと、質問の題と要約を並べています。</p>
+<dl class="prof"><dt>会派</dt><dd>創世（第5期）</dd></dl>
+
+
+<aside class="howto"><h2>このページの読み方</h2><ul><li>本会議で質問に立った回数と、そこで取り上げた質問の題と要約を並べています。委員会での発言や、質問以外の活動は含みません。</li><li>回数や区分の多い少ないは、議員の活動の良し悪しを示す物ではありません。</li></ul></aside>
+
+
+<div class="switch" data-switch="期">
+<section class="sec" id="s-periods"><h2>期ごとの質問の回数</h2>
+<p class="prose">表示している全ての期を並べています。在任した期の質問の題と要約は、下の「質問の題と要約」に有ります。</p>
+<div class="data"><div class="scroll"><table class="tbl ptbl">
+<caption>樋野智之の期ごとの質問の回数</caption>
+<colgroup><col class="c-p"><col class="c-span"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-bar"></colgroup>
+<thead><tr><th scope="col">期</th><th scope="col" class="span">期間</th><th scope="col" class="num">一般質問</th><th scope="col" class="num">代表質問</th><th scope="col" class="num">計</th><th scope="col">回数の計</th></tr></thead>
+<tbody>
+<tr class="off"><th scope="row">第2期</th><td class="span">2005年11月〜2009年10月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第3期" aria-pressed="false">第3期</button></th><td class="span">2009年11月〜2013年10月</td><td class="num">10</td><td class="num"><span class="zero">0</span></td><td class="num">10</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第4期" aria-pressed="false">第4期</button></th><td class="span">2013年11月〜2017年10月</td><td class="num">7</td><td class="num">1</td><td class="num">8</td><td class="barcell"><span class="hbar" style="--w:80.0%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第5期" aria-pressed="true">第5期</button></th><td class="span">2017年11月〜2021年10月</td><td class="num">7</td><td class="num">1</td><td class="num">8</td><td class="barcell"><span class="hbar" style="--w:80.0%"></span></td></tr>
+<tr class="off"><th scope="row">第6期</th><td class="span">2021年11月〜2025年10月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="off"><th scope="row">第7期</th><td class="span">2025年11月〜2029年10月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="total"><th scope="row">計</th><td class="span"></td><td class="num">24</td><td class="num">2</td><td class="num">26</td><td class="barcell"></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-divs"><h2>取り上げた区分</h2>
+<p class="prose">本会議の質問を、取り上げた論点の話題の区分毎に、在任した期を追って数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数えます。どの区分にも当たらない質問は「当たる話題なし」に数えます。</p>
+<div class="data"><div class="scroll"><table class="tbl dtbl">
+<caption>樋野智之が取り上げた区分（質問の数）</caption>
+<colgroup><col class="c-d"><col class="c-n"><col class="c-bar"><col class="c-n"><col class="c-n"><col class="c-n"></colgroup>
+<thead><tr><th scope="col">区分</th><th scope="col" class="num">計</th><th scope="col" class="bar">計の棒</th><th scope="col" class="num">第3期</th><th scope="col" class="num">第4期</th><th scope="col" class="num">第5期</th></tr></thead>
+<tbody>
+<tr><th scope="row"><a href="../topic_administration.html">行財政運営</a></th><td class="num tot">26</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td><td class="num l3"><span class="h3">10</span></td><td class="num l3"><span class="h3">8</span></td><td class="num l3"><span class="h3">8</span></td></tr>
+<tr><th scope="row"><a href="../topic_tourism.html">観光・文化・交流</a></th><td class="num tot">16</td><td class="barcell"><span class="hbar" style="--w:61.5%"></span></td><td class="num l3"><span class="h3">6</span></td><td class="num l3"><span class="h3">6</span></td><td class="num l2"><span class="h2">4</span></td></tr>
+<tr><th scope="row"><a href="../topic_infrastructure.html">都市基盤と生活環境</a></th><td class="num tot">13</td><td class="barcell"><span class="hbar" style="--w:50.0%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l3"><span class="h3">5</span></td><td class="num l3"><span class="h3">6</span></td></tr>
+<tr><th scope="row"><a href="../topic_welfare.html">医療・介護・福祉</a></th><td class="num tot">12</td><td class="barcell"><span class="hbar" style="--w:46.2%"></span></td><td class="num l2"><span class="h2">3</span></td><td class="num l3"><span class="h3">5</span></td><td class="num l2"><span class="h2">4</span></td></tr>
+<tr><th scope="row"><a href="../topic_industry.html">産業・雇用</a></th><td class="num tot">9</td><td class="barcell"><span class="hbar" style="--w:34.6%"></span></td><td class="num l2"><span class="h2">4</span></td><td class="num l2"><span class="h2">3</span></td><td class="num l2"><span class="h2">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_education.html">学校教育</a></th><td class="num tot">8</td><td class="barcell"><span class="hbar" style="--w:30.8%"></span></td><td class="num l2"><span class="h2">3</span></td><td class="num l2"><span class="h2">3</span></td><td class="num l2"><span class="h2">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_population.html">人口減少と地域の維持</a></th><td class="num tot">8</td><td class="barcell"><span class="hbar" style="--w:30.8%"></span></td><td class="num l2"><span class="h2">3</span></td><td class="num l2"><span class="h2">4</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_community.html">市民自治と人権</a></th><td class="num tot">5</td><td class="barcell"><span class="hbar" style="--w:19.2%"></span></td><td class="num l2"><span class="h2">3</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_safety.html">防災と地域の安全</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:7.7%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_childcare.html">子育てと少子化</a></th><td class="num tot">1</td><td class="barcell"><span class="hbar" style="--w:3.8%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l1"><span class="h1">1</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-qs"><h2>質問の題と要約</h2>
+<p class="prose">期毎、区分毎に、質問の論点を並べています。1回の質問で複数の論点を取り上げる事が有る為、上の表の質問の数とは合わない事が有ります。2つ以上の区分に当たる論点は、その期に論点の多い方の区分で要約まで出し、他の区分の側には題の一行と「…にも当たる」の印だけを置いています。</p>
+<div class="tabs" role="tablist" aria-label="期"><button type="button" role="tab" class="tab" data-switch-key="第3期" aria-selected="false">第3期</button><button type="button" role="tab" class="tab" data-switch-key="第4期" aria-selected="false">第4期</button><button type="button" role="tab" class="tab" data-switch-key="第5期" aria-selected="true">第5期</button></div>
+<div class="pane" data-switch-pane="第3期" hidden>
+<p class="qhead">2009年11月〜2013年10月・一般質問 10回・代表質問 0回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="qs">市の保有施設は人口1人当たり床面積が全国平均を大きく上回り築20年以上が7割を占めるとしてファシリティマネジメント導入に向けた市長の決断と組織体制・時期を尋ね、松江のフォーラムに参加した職員の評価とＩＳＯとの相違、職員配置計画、建築資格者の採用計画、建築確認申請の件数と対応職員数・業務バランスを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">市長2期目の公約であるファシリティマネジメントの導入に向け新年度に専門部署を設けるか外部人材の登用を含めた市長の考え、保有施設の平均築年数と今後10年間の総維持管理費の見込み、公共施設マネジメントプロジェクトの協議内容と成果物、市有財産整備基金の積立額と使途の内訳を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">公約のファシリティマネジメントと「公共施設マネジメント」の違いと方針を尋ね、全庁一元化の組織と導入のスケジュール、市有建物934棟の調査の完了棟数・面積と評価、今後の指針を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメントの導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５４回　６月定例会  06月04日－02号</span></p><p class="qs">松江市視察の報告と市長の所感、全施設の今後10年のライフサイクルコスト総額と中長期財政見通しへの反映、担当部署新設や職員配置の有無、保有934棟の調査データ化とシステムの現状・活用法、職員の意識向上策、導入時期を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">地産地消と学校給食</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">合併協議会で示された地産地消循環システムと給食センター建設計画の進捗、広瀬中学校の弁当給食を市外業者へ発注する理由と入札のあり方、小学校給食や市立病院・指定管理施設での地元食材の調達割合を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">ファシリティマネジメント</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">市有建物934棟の現状調査の進捗と調査項目、市独自システムの内容、佐倉市での研修を踏まえたＢＥＡＭＳ導入の必要性、ＦＭ導入に向けた担当部署の配置予定や若手職員のワーキンググループ設置を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="qs">公共施設調査の進捗と今後のスケジュール、評価基準の策定と分析の方法、施設保有に伴う財政負担と削減すべき維持費、先進地視察の実績、ＢＩＭＭＳの導入、市長が導入へかじを切る時期を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメントの導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４６回　３月定例会  03月07日－04号</span></p><p class="qs">ファシリティマネジメント研修の役職別受講人数と報告・育成、全施設の調査方法と評価・施設譲渡の進め方、横断的に担う専門部署の新設、市長のトップマネジメントの時期と専門職員の補充を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">旧広瀬町開発公社の問題</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">合併協議で先送りされた旧広瀬町開発公社の問題について、合併後5年経っても結論を出さない理由と経緯、問題が起きた原因と説明責任、市民が納得する解決策と解決の期限を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">ファシリティーマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">12月議会で導入を検討するとした答弁以降の半年間の進捗と、日本ファシリティマネジメント推進協会への入会を踏まえた今後の行動計画を尋ね、千葉県佐倉市長を招いた職員研修の実施を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">物品・食材の地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">市の物品調達や指定管理・業務委託施設の食材調達が地元商工業者を優先しているかを尋ね、市立病院の食材の年間発注額と地元発注の社数・金額の委託前後の比較、地元仕入れの一部義務づけや生鮮食品・野菜の地元限定、市内業者を優先する価格差の許容範囲を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">情報公開と文書管理</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">情報公開請求の受理から決定までの日数とその理由、文書の公開・非公開を明確にする時点、文書の保管基準やファイル基準表の有無を尋ね、ファイリングシステムの導入による執務スペースの有効活用と新庁舎のコンパクト化について市長の見解を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">公共施設の維持管理</p><p class="qm"><span>一般質問</span><span>安来市  平成２１年第　３８回１２月定例会  12月08日－04号</span></p><p class="qs">市保有の土地建物の実態と維持管理費・利用状況、築20年以上の施設数を尋ね、修繕の優先順位の評価指標、清掃委託など個別管理業務の適正化のチェック体制、施設実態を把握する組織の有無、ファシリティーマネジメント導入への市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">住みたくなるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="qs">人口減少の推計を踏まえ安来・広瀬・伯太の均衡ある発展に向けたまちづくりの方針を尋ね、あらエッサくんの活用と各地域のゆるキャラ、空き家・商店街調査を安来町内に限った理由、定住計画とＵターン支援の助成、ふるさと読本の活用、広瀬の古民家とイエローバス広瀬駅舎・広瀬図書館・広瀬庁舎の方針、尼子の史跡の誘導サインとスマートフォンを使った観光案内を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">広瀬図書館の整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">交流センターの一室を借りた広瀬図書室の劣悪な環境や市長選での公約、交流センター運営協議会の要望書を踏まえ、広瀬への図書館整備について中長期財政計画への計上と市長・教育長の考え、整備の着手時期を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">尼子の里のサイン計画</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">第6回尼子一族全国大集会と戦国尼子フェスティバルを控え、広瀬の史跡や町なかの誘導・ルートサインと個別詳細サイン、ふれあい館の観光情報発信の機能への見解を尋ね、統一的サインの早期設置を求めつつ民地や寺院境内の墓所での詳細サインの計画を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">観光客の誘導と情報発信</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">足立美術館との協議やイベントのタイアップ、パンフレット設置の状況、来館者を市内観光へ誘導する環境づくり、道の駅や安来駅観光交流プラザでの観光誘導の工夫や装置、双方向で情報発信できるホームページの活用を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">広瀬の歴史文献と観光振興</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">広瀬町に残る貴重な文献資料を集約・公開して観光資源化する考え、名誉町民顕彰館・歴史資料館・広瀬図書室の整備、商工観光課と文化課の連携や組織統合、月山富田城址の誘導サインと回遊観光マップの整備を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="qs">昨年9月の答弁以降の観光施策の推移と観光入れ込みの変化、滞在型誘致に向けた宿泊施設の整備状況、山陰文化観光圏協議会へのかかわりと掲載内容の依頼、官民協働で事業を民間へ移していく考えを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">島根県の宿泊実績や知名度の低さを踏まえ、市の滞在型観光振興策と公共宿泊施設の改修計画、富田山荘のバリアフリー化・周辺整備・利用増加策、月山の湯の送湯の使用規定と契約、太鼓壇・千畳平の環境整備、オートキャンプ場の整備、商工観光課の人員配置を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">地産地消と学校給食</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">内需振興と地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">市立病院の食材調達の地元発注について委託業者との協議結果や問題点、発注内訳と段階的な地元移行の具体策、市長の考えを尋ね、商店街活性化のため市長直轄プロジェクトを設置し商工団体と協議すべきではないかと質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li class="line"><p class="qt">物品・食材の地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">住みたくなるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">中心市街地の活性化</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">市長の言う中心市街地のエリア、中心市街地活性化協議会の設置と推進体制の進捗、基本計画の策定時期、均衡ある発展の考え方を尋ね、企画プロポーザルで広く提案を求める手法や高齢者ひとり住まい世帯の調査を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li class="line"><p class="qt">内需振興と地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li class="line"><p class="qt">物品・食材の地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ふるさと教育副読本</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">昨年6月議会の答弁で今年度完成予定とされた安来学教育読本について、具体的な内容と、それを使用したカリキュラムをどのように考えているかを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li><p class="qt">ふるさと教育</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５４回　６月定例会  06月04日－02号</span></p><p class="qs">歴史文化を伝える副読本の内容と市のカリキュラムの有無、井上赳展の所見と地元作品の市内公開、山中鹿介の教え方、滝秋方のマナヅルの絵の修復、旧広瀬中の山中鹿介の絵の所在と統合校への掲示を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li class="line"><p class="qt">地産地消と学校給食</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">広瀬図書館の整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li class="line"><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li class="line"><p class="qt">情報公開と文書管理</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">住みたくなるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">ＵＩターンと空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">合併以降のＵＩターン誘致の施策と実績、ふるさとモニターツアーの効果、定住支援の体制や窓口の一本化、定住希望者に向けたホームページの改善、空き家の実態調査と空き家バンク、所管の一元化、空き家適正管理条例の制定を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">まちづくりと空き家の定住対策</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４６回　３月定例会  03月07日－04号</span></p><p class="qs">人口減少と無人化エリアの拡大を見据え、まちづくりで重視する施策と横断的組織、地域センター長を実践部隊の長とする提言への考え、安来・広瀬・伯太の空き家の状況把握と空き家を活用した定住施策を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">地籍調査の推進</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５４回　６月定例会  06月04日－02号</span></p><p class="qs">調査完了に200年を要する現状を踏まえ、予算と担当職員数の関係、他市の予算と職員数、目標年度と専門部署・職員増強をしない理由、国直轄調査着手に伴う国・県の指示や予算変更の有無、アウトソーシングの考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-09">地籍調査</a></div></li><li><p class="qt">地籍調査の実態と今後</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="qs">自主財源確保の観点から、進捗率20.4％の調査で判明した面積の増減、土地改良済み区域の扱い、年間の調査筆数と面積、未調査範囲、完了までの年数、間縄方式で調査した広瀬・伯太地域の再調査の必要性を尋ね、完了目標の設定と調査体制の強化を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-09">地籍調査</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">安来市開発公社の債務処理</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４６回　３月定例会  03月07日－04号</span></p><p class="qs">安来市開発公社の問題について、意思決定の資料が整った市としての考え方と残余財産の取り扱い、弁護士等を入れた第三者機関に判断を委ねることも含めた方針を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="qs">市の保有施設は人口1人当たり床面積が全国平均を大きく上回り築20年以上が7割を占めるとしてファシリティマネジメント導入に向けた市長の決断と組織体制・時期を尋ね、松江のフォーラムに参加した職員の評価とＩＳＯとの相違、職員配置計画、建築資格者の採用計画、建築確認申請の件数と対応職員数・業務バランスを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">市長2期目の公約であるファシリティマネジメントの導入に向け新年度に専門部署を設けるか外部人材の登用を含めた市長の考え、保有施設の平均築年数と今後10年間の総維持管理費の見込み、公共施設マネジメントプロジェクトの協議内容と成果物、市有財産整備基金の積立額と使途の内訳を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">公約のファシリティマネジメントと「公共施設マネジメント」の違いと方針を尋ね、全庁一元化の組織と導入のスケジュール、市有建物934棟の調査の完了棟数・面積と評価、今後の指針を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメントの導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５４回　６月定例会  06月04日－02号</span></p><p class="qs">松江市視察の報告と市長の所感、全施設の今後10年のライフサイクルコスト総額と中長期財政見通しへの反映、担当部署新設や職員配置の有無、保有934棟の調査データ化とシステムの現状・活用法、職員の意識向上策、導入時期を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">地産地消と学校給食</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">合併協議会で示された地産地消循環システムと給食センター建設計画の進捗、広瀬中学校の弁当給食を市外業者へ発注する理由と入札のあり方、小学校給食や市立病院・指定管理施設での地元食材の調達割合を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">ファシリティマネジメント</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">市有建物934棟の現状調査の進捗と調査項目、市独自システムの内容、佐倉市での研修を踏まえたＢＥＡＭＳ導入の必要性、ＦＭ導入に向けた担当部署の配置予定や若手職員のワーキンググループ設置を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="qs">公共施設調査の進捗と今後のスケジュール、評価基準の策定と分析の方法、施設保有に伴う財政負担と削減すべき維持費、先進地視察の実績、ＢＩＭＭＳの導入、市長が導入へかじを切る時期を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメントの導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４６回　３月定例会  03月07日－04号</span></p><p class="qs">ファシリティマネジメント研修の役職別受講人数と報告・育成、全施設の調査方法と評価・施設譲渡の進め方、横断的に担う専門部署の新設、市長のトップマネジメントの時期と専門職員の補充を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">旧広瀬町開発公社の問題</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">合併協議で先送りされた旧広瀬町開発公社の問題について、合併後5年経っても結論を出さない理由と経緯、問題が起きた原因と説明責任、市民が納得する解決策と解決の期限を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">ファシリティーマネジメント導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">12月議会で導入を検討するとした答弁以降の半年間の進捗と、日本ファシリティマネジメント推進協会への入会を踏まえた今後の行動計画を尋ね、千葉県佐倉市長を招いた職員研修の実施を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">物品・食材の地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">市の物品調達や指定管理・業務委託施設の食材調達が地元商工業者を優先しているかを尋ね、市立病院の食材の年間発注額と地元発注の社数・金額の委託前後の比較、地元仕入れの一部義務づけや生鮮食品・野菜の地元限定、市内業者を優先する価格差の許容範囲を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">情報公開と文書管理</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">情報公開請求の受理から決定までの日数とその理由、文書の公開・非公開を明確にする時点、文書の保管基準やファイル基準表の有無を尋ね、ファイリングシステムの導入による執務スペースの有効活用と新庁舎のコンパクト化について市長の見解を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">公共施設の維持管理</p><p class="qm"><span>一般質問</span><span>安来市  平成２１年第　３８回１２月定例会  12月08日－04号</span></p><p class="qs">市保有の土地建物の実態と維持管理費・利用状況、築20年以上の施設数を尋ね、修繕の優先順位の評価指標、清掃委託など個別管理業務の適正化のチェック体制、施設実態を把握する組織の有無、ファシリティーマネジメント導入への市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">住みたくなるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="qs">人口減少の推計を踏まえ安来・広瀬・伯太の均衡ある発展に向けたまちづくりの方針を尋ね、あらエッサくんの活用と各地域のゆるキャラ、空き家・商店街調査を安来町内に限った理由、定住計画とＵターン支援の助成、ふるさと読本の活用、広瀬の古民家とイエローバス広瀬駅舎・広瀬図書館・広瀬庁舎の方針、尼子の史跡の誘導サインとスマートフォンを使った観光案内を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">広瀬図書館の整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">交流センターの一室を借りた広瀬図書室の劣悪な環境や市長選での公約、交流センター運営協議会の要望書を踏まえ、広瀬への図書館整備について中長期財政計画への計上と市長・教育長の考え、整備の着手時期を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">尼子の里のサイン計画</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">第6回尼子一族全国大集会と戦国尼子フェスティバルを控え、広瀬の史跡や町なかの誘導・ルートサインと個別詳細サイン、ふれあい館の観光情報発信の機能への見解を尋ね、統一的サインの早期設置を求めつつ民地や寺院境内の墓所での詳細サインの計画を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">観光客の誘導と情報発信</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">足立美術館との協議やイベントのタイアップ、パンフレット設置の状況、来館者を市内観光へ誘導する環境づくり、道の駅や安来駅観光交流プラザでの観光誘導の工夫や装置、双方向で情報発信できるホームページの活用を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">広瀬の歴史文献と観光振興</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">広瀬町に残る貴重な文献資料を集約・公開して観光資源化する考え、名誉町民顕彰館・歴史資料館・広瀬図書室の整備、商工観光課と文化課の連携や組織統合、月山富田城址の誘導サインと回遊観光マップの整備を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="qs">昨年9月の答弁以降の観光施策の推移と観光入れ込みの変化、滞在型誘致に向けた宿泊施設の整備状況、山陰文化観光圏協議会へのかかわりと掲載内容の依頼、官民協働で事業を民間へ移していく考えを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">島根県の宿泊実績や知名度の低さを踏まえ、市の滞在型観光振興策と公共宿泊施設の改修計画、富田山荘のバリアフリー化・周辺整備・利用増加策、月山の湯の送湯の使用規定と契約、太鼓壇・千畳平の環境整備、オートキャンプ場の整備、商工観光課の人員配置を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">地産地消と学校給食</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">合併協議会で示された地産地消循環システムと給食センター建設計画の進捗、広瀬中学校の弁当給食を市外業者へ発注する理由と入札のあり方、小学校給食や市立病院・指定管理施設での地元食材の調達割合を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">島根県の宿泊実績や知名度の低さを踏まえ、市の滞在型観光振興策と公共宿泊施設の改修計画、富田山荘のバリアフリー化・周辺整備・利用増加策、月山の湯の送湯の使用規定と契約、太鼓壇・千畳平の環境整備、オートキャンプ場の整備、商工観光課の人員配置を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">内需振興と地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">市立病院の食材調達の地元発注について委託業者との協議結果や問題点、発注内訳と段階的な地元移行の具体策、市長の考えを尋ね、商店街活性化のため市長直轄プロジェクトを設置し商工団体と協議すべきではないかと質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li><p class="qt">物品・食材の地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">市の物品調達や指定管理・業務委託施設の食材調達が地元商工業者を優先しているかを尋ね、市立病院の食材の年間発注額と地元発注の社数・金額の委託前後の比較、地元仕入れの一部義務づけや生鮮食品・野菜の地元限定、市内業者を優先する価格差の許容範囲を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">住みたくなるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="qs">人口減少の推計を踏まえ安来・広瀬・伯太の均衡ある発展に向けたまちづくりの方針を尋ね、あらエッサくんの活用と各地域のゆるキャラ、空き家・商店街調査を安来町内に限った理由、定住計画とＵターン支援の助成、ふるさと読本の活用、広瀬の古民家とイエローバス広瀬駅舎・広瀬図書館・広瀬庁舎の方針、尼子の史跡の誘導サインとスマートフォンを使った観光案内を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">中心市街地の活性化</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">市長の言う中心市街地のエリア、中心市街地活性化協議会の設置と推進体制の進捗、基本計画の策定時期、均衡ある発展の考え方を尋ね、企画プロポーザルで広く提案を求める手法や高齢者ひとり住まい世帯の調査を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li><p class="qt">内需振興と地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４２回　９月定例会  09月03日－03号</span></p><p class="qs">市立病院の食材調達の地元発注について委託業者との協議結果や問題点、発注内訳と段階的な地元移行の具体策、市長の考えを尋ね、商店街活性化のため市長直轄プロジェクトを設置し商工団体と協議すべきではないかと質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a></div></li><li><p class="qt">物品・食材の地元調達</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">市の物品調達や指定管理・業務委託施設の食材調達が地元商工業者を優先しているかを尋ね、市立病院の食材の年間発注額と地元発注の社数・金額の委託前後の比較、地元仕入れの一部義務づけや生鮮食品・野菜の地元限定、市内業者を優先する価格差の許容範囲を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">ふるさと教育副読本</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">昨年6月議会の答弁で今年度完成予定とされた安来学教育読本について、具体的な内容と、それを使用したカリキュラムをどのように考えているかを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li><p class="qt">ふるさと教育</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５４回　６月定例会  06月04日－02号</span></p><p class="qs">歴史文化を伝える副読本の内容と市のカリキュラムの有無、井上赳展の所見と地元作品の市内公開、山中鹿介の教え方、滝秋方のマナヅルの絵の修復、旧広瀬中の山中鹿介の絵の所在と統合校への掲示を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li><p class="qt">地産地消と学校給食</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５２回　３月定例会  03月06日－04号</span></p><p class="qs">合併協議会で示された地産地消循環システムと給食センター建設計画の進捗、広瀬中学校の弁当給食を市外業者へ発注する理由と入札のあり方、小学校給食や市立病院・指定管理施設での地元食材の調達割合を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">広瀬図書館の整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　５９回　３月定例会  03月06日－03号</span></p><p class="qs">交流センターの一室を借りた広瀬図書室の劣悪な環境や市長選での公約、交流センター運営協議会の要望書を踏まえ、広瀬への図書館整備について中長期財政計画への計上と市長・教育長の考え、整備の着手時期を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">滞在型の観光振興策</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="qs">昨年9月の答弁以降の観光施策の推移と観光入れ込みの変化、滞在型誘致に向けた宿泊施設の整備状況、山陰文化観光圏協議会へのかかわりと掲載内容の依頼、官民協働で事業を民間へ移していく考えを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">情報公開と文書管理</p><p class="qm"><span>一般質問</span><span>安来市  平成２２年第　４１回　６月定例会  06月03日－02号</span></p><p class="qs">情報公開請求の受理から決定までの日数とその理由、文書の公開・非公開を明確にする時点、文書の保管基準やファイル基準表の有無を尋ね、ファイリングシステムの導入による執務スペースの有効活用と新庁舎のコンパクト化について市長の見解を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">住みたくなるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６３回　９月定例会  09月04日－02号</span></p><p class="qs">人口減少の推計を踏まえ安来・広瀬・伯太の均衡ある発展に向けたまちづくりの方針を尋ね、あらエッサくんの活用と各地域のゆるキャラ、空き家・商店街調査を安来町内に限った理由、定住計画とＵターン支援の助成、ふるさと読本の活用、広瀬の古民家とイエローバス広瀬駅舎・広瀬図書館・広瀬庁舎の方針、尼子の史跡の誘導サインとスマートフォンを使った観光案内を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">ＵＩターンと空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５８回１２月定例会  12月06日－03号</span></p><p class="qs">合併以降のＵＩターン誘致の施策と実績、ふるさとモニターツアーの効果、定住支援の体制や窓口の一本化、定住希望者に向けたホームページの改善、空き家の実態調査と空き家バンク、所管の一元化、空き家適正管理条例の制定を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">まちづくりと空き家の定住対策</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４６回　３月定例会  03月07日－04号</span></p><p class="qs">人口減少と無人化エリアの拡大を見据え、まちづくりで重視する施策と横断的組織、地域センター長を実践部隊の長とする提言への考え、安来・広瀬・伯太の空き家の状況把握と空き家を活用した定住施策を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">地籍調査の推進</p><p class="qm"><span>一般質問</span><span>安来市  平成２４年第　５４回　６月定例会  06月04日－02号</span></p><p class="qs">調査完了に200年を要する現状を踏まえ、予算と担当職員数の関係、他市の予算と職員数、目標年度と専門部署・職員増強をしない理由、国直轄調査着手に伴う国・県の指示や予算変更の有無、アウトソーシングの考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-09">地籍調査</a></div></li><li><p class="qt">地籍調査の実態と今後</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４９回　９月定例会  09月05日－03号</span></p><p class="qs">自主財源確保の観点から、進捗率20.4％の調査で判明した面積の増減、土地改良済み区域の扱い、年間の調査筆数と面積、未調査範囲、完了までの年数、間縄方式で調査した広瀬・伯太地域の再調査の必要性を尋ね、完了目標の設定と調査体制の強化を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-09">地籍調査</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">安来市開発公社の債務処理</p><p class="qm"><span>一般質問</span><span>安来市  平成２３年第　４６回　３月定例会  03月07日－04号</span></p><p class="qs">安来市開発公社の問題について、意思決定の資料が整った市としての考え方と残余財産の取り扱い、弁護士等を入れた第三者機関に判断を委ねることも含めた方針を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第4期" hidden>
+<p class="qhead">2013年11月〜2017年10月・一般質問 7回・代表質問 1回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">公共施設等総合管理計画</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">公共施設等総合管理計画について、旧市町別の施設棟数・延べ床面積や固定資産台帳の整理状況、老朽化施設の面積と維持管理費、25％削減の根拠、総務省試算ソフトの活用を尋ね、実践行動計画の策定時期と職員研修、首長直轄の専任部署の設置、新地方公会計制度への対応、教育施設との横断や人事異動後も続くマネジメント人材の確保を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設等総合管理計画の策定</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">前橋市の取り組みを踏まえ、計画の進捗と10月策定の見通し、専門知識を持つ兼務職員2人を解消した理由と今後の組織体制、人口等からの一律の総量縮減率設定をやめることへの見解、更新費用の概算を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">奥州市の協働のまちづくり指針や地域自治組織への指定管理・交付金による支援を紹介し、交流センター単位で地域自主の動きを底上げするまちづくりへの転換を市がどう考えるかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">道の駅あらえっさの運営</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">道の駅あらえっさについて、前年比の売上額と入場者数の増減、提供すべきサービスと商品、来場者の多い地域、指定管理の計画や方向性、駅長の役割と権限を尋ね、交流館のスペースや備品倉庫、駐車場の整備を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">ファシリティマネジメントの推進</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">公共施設マネジメントセクションの専属職員が1名のままであることへの市長の見解、この1年半の推移と最終目標・進捗、国が求める時期までの総合管理計画策定の見通しと背景・内容・安来市版の特徴、遊休資産の程度、施設カルテの内容と活用を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">月山富田城跡整備を観光誘客につなげるため、物販・食事・宿泊施設の施策改善、滞留策や商店街への誘導策、バリアフリー誘導サインや多言語案内などユニバーサルデザインの整備、老朽化した富田山荘の改善計画と、利用促進協議会で指摘された指定管理者の運営姿勢への市長の認識を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">合併算定替えの影響</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">臨時財政対策債の発行抑制が今後の課題となる中、合併算定替えの段階的廃止による影響額が7割程度圧縮される見込みについて、夏ごろとされる決定を踏まえた市財政計画への変化と影響を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-11">地方交付税と地方分権</a></div></li><li><p class="qt">外国人観光客と滞在型観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">米子鬼太郎空港や境港に近い立地を生かした外国人観光客の受け入れに向け中海圏域の自治体と連携した地方版総合計画の策定と、通過型観光の解消に向けた入り込み客数と宿泊収容力の比率分析、中海圏域自治体との比較、目標とする入り込み数に対する収容問題の分析を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">富田城址整備と周辺観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">史跡富田城址整備で得る発掘調査や文献資料の公表と開示の方法、老朽化し狭隘な歴史資料館の整備の考え方とスケジュール、想定する入り込み客数、道の駅・遊歩道・サインの整備と三日月公園のふれあい館の活用、富田山荘の整備と源泉の湯量問題への考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメントの推進</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">財政課に担当職員1名を配置した公共施設マネジメントの1年間の目的・内容・進捗状況と残された課題、2017年度末を目指す複式簿記による新公会計制度への考え、公共施設の統廃合と公共施設等最適化事業の進め方と期限の設定、市長直轄組織の立ち上げや専門知識を持つ人材の招聘を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-01">小中学校の統廃合と小規模校</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">合併10周年を節目に20年・30年後の安来市の展望と人口を維持増進する施策を尋ね、中学校までの医療費無償化と学校給食費の無償化を提言し、旧1市2町の均衡あるまちづくりの具体的な詳細設計と、安来らしい目玉施策を総合計画に打ち出す考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">公共インフラの長寿命化</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">道路・橋・トンネル・上下水道の土木系インフラについて、国県市道の量と建設後年数、建設後40年超の現状と長寿命化の進捗、過去5年の道路補修の予算執行と地元要望に応えるための年数・総額を尋ね、公共施設等総合管理計画の策定と組織横断の担当組織の編成を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメントの導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６５回１２月定例会  12月04日－02号</span></p><p class="qs">総務省が求める固定資産台帳の整備の進捗と市が進めているとするファシリティマネジメントの具体的内容、導入の期限と組織体制や外部人員の招聘、建設が集中する施設の修繕・維持管理費を中長期財政見通しに反映させることを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">広瀬のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">月山富田城跡の今後の整備と、大木戸跡の空き地を活用した観光案内拠点や町なか散策の商店街づくりの提言への考え、図書館の調査の成果と富田山荘など老朽施設の方向性、富田山荘へのバス乗り入れと福祉バスの連携、市道新町3号線拡幅への市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">広瀬町の図書館整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">市長の2期目公約である広瀬町の図書館整備について、調査費100万円による今年度の進捗と調査内容、旧秦邸を改装して町中に建設する案への考え、来年度の建設へのステップアップの有無を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">広瀬への図書館整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">市長公約の広瀬への図書館整備について、3月議会の「近い将来建設を検討」との答弁が曖昧で中長期の財政見通しにも計上されていないとして、任期中の実現に向けどこにいつ建設を考えているのかを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">富田城跡整備と鉄の道構想</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">市長公約の月山整備・歴史的遺産の保護について、今年度から5カ年の史跡富田城跡保存整備事業の全体像の市民への説明が遅い理由と問題点の有無、近隣自治体と連携する鉄の道構想の具体的な進捗状況を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li class="line"><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">外国人観光客と滞在型観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">富田城址整備と周辺観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">市長マニフェストの中間評価</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">2期目の半ばを過ぎた市長のマニフェストの中間時点での評価と、古民家風または古民家を利活用した建設も含めた広瀬の図書館建設の時期のめどを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">図書館を生かした人づくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">子どもの読書活動優秀実践図書館の表彰を機に、関連機関と連携した資料収集や課題解決型の地域の情報拠点として市立図書館を発展させる考えを尋ね、広瀬町に人が集まる図書館をコストを抑えて設置する考えを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">富田城跡と観光振興</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">史跡月山富田城跡の保存管理計画と整備基本計画が目指すものと進捗状況、商工観光課と文化課の連携事業、来訪者数の把握を尋ね、観光案内所がない現状やふれあい館の位置づけと活用、無人の観光案内機器の設置、道の駅の工夫、地元商店街が潤う工夫と地元のにぎわい創出への市の支援を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">均衡あるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">均衡あるまちづくりの課題として、旧市町別の空き家の現状と家主の意思確認、空き家解消策やＵＩターン者への支援策、目標人口と将来推計の乖離を踏まえた人口流入策を尋ね、図書館3館の格差への対応と開館日・時間の拡大、広瀬図書館の整備時期を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">広瀬のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">運転免許の自主返納と移動手段</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">市の運転免許自主返納の近年の実績と特典、サービス向上策を尋ね、イエローバスのバス停への歩行圏外に住む人口の割合と対策、全市民が等しくサービスを受けられる時期、タクシー利用補助の必要性を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">新電力の導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">来年4月からの電力小売全面自由化を控え、米子市や境港市の電力入札の事例を挙げ、平成25年3月に検討するとの答弁から2年半経過しても導入に至らない理由と、維持管理コスト削減の観点からの新電力導入の考え方を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li class="line"><p class="qt">外国人観光客と滞在型観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">富田城址整備と周辺観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">公共インフラの長寿命化</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">地方創生交付金の活用</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">地域住民生活等緊急支援のための交付金について、あらえっさ振興券の反省点を踏まえたプレミアム付商品券の計画と、定住サポート事業での積極的な情報発信や関係機関との連携、介護福祉士応援事業などと結びつけたシングルマザーの移住促進策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a></div></li><li class="line"><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">均衡あるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">認知症対策と見守りの仕組み</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６５回１２月定例会  12月04日－02号</span></p><p class="qs">第5期高齢者福祉計画のもとで、市内の認知症の方の人数と施設の床数、在宅者の見守りの仕組み、民生委員と自主防災組織の連携の実施状況、新たな入居施設の考え方を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">人口対策と住まいづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">住宅セーフティーネット法の改正案を踏まえ、旧市町別の高齢者単身世帯数と見守りの施策を尋ね、広瀬町中心部で安来市独自のセーフティーネット特区として住宅整備や空き家対策を進めるまちづくりの考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">地方版総合戦略の策定</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">市町村淘汰の到来ともいえる地方創生政策の下で、他の市町村に負けない安来市版総合戦略を早期かつ有効に策定することについて、市としての考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a></div></li><li class="line"><p class="qt">地方創生交付金の活用</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li class="line"><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">均衡あるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ふるさと教育の実態と課題</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">子供のころの思いがふるさと回帰につながるとして、安来ふるさと読本の発行や交流センターの地域紹介ガイド製作などを踏まえ、現状のふるさと教育の実態と成果、今後の課題を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li class="line"><p class="qt">公共施設マネジメントの推進</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">広瀬のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="also">観光・文化・交流にも当たる</p></li><li class="line"><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">富田城跡と観光振興</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">台風11号時の避難所運営</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">台風11号接近時の避難所開設から閉鎖までの対応を検証するとして、想定規模に基づく人員体制とマニュアル・組織の周知、対策本部から避難所への情報提供と告知放送未設置世帯への周知、職員の研修・訓練、土砂災害警戒区域の指定に向けた体制、各センターの開設状況と利用人数、最大規模災害時の131施設への職員配置計画を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li class="line"><p class="qt">認知症対策と見守りの仕組み</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６５回１２月定例会  12月04日－02号</span></p><p class="also">医療・介護・福祉にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">ふるさと教育の実態と課題</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="also">学校教育にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">幼保一体化と認定こども園</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">幼稚園・保育所の数と園児数、今後の入園・入所見込み、中学校区単位での幼保一体化の計画と実施年度を尋ね、荒島認定こども園の総括と所管部署、この2年間の協議の回数と方向性を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">建設業の担い手確保</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">地域の担い手である建設業界の厳しい経営環境と改正品確法を踏まえ、松江市・出雲市・大田市や島根県の格付点数での加点を例に、本市独自の評価・加点による業界育成の施策を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">マイナンバー制度の普及</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">マイナンバー制度の開始に伴い本市の個人番号カードの申請率が3.4％にとどまる中、カードの普及に対する市の現況認識と、普及啓発に向けた市独自の考えがあるかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">広瀬まちづくり事業の検証</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">平成19年度から23年度の広瀬地区まちづくり事業について、事業効果の検証報告の内容、ふれあい館の今後、当初計画から修正中止に至った経緯と予算執行状況、反省点と今後の整備、部署間の連携不足の理由、大手口周辺の改善計画の有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">広瀬町市街地の活性化</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">月山富田城跡を生かした広瀬町市街地の活性化について、町なかへの誘導サインの今後の計画、地域活性化の組織づくりへの市の積極的な支援の考え、全職員を区割りした地域のアドバイザー役とする案への市長の所感を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">安来道路のスマートインター</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">市長公約のうち安来道路西地区へのスマートインター設置について、荒島側へのパーキングエリアとスマートインターチェンジ整備要望に対する県の感触と実現に向けた考え方・動き、安来道路の無料化実現に向けた感触と施策を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">子供の水辺と河川環境の整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">川や山を自然学習の場・遊び場として推奨することへの教育長の考え方、子供の水辺に登録された伯太川・木戸川・久白川の登録経緯と利用促進、飯梨川が登録されない理由と魚道整備が遅れた理由・建設時期、富田川の破損した堰の復元とあわせた魚道整備の考え方を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">公共施設等総合管理計画</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">公共施設等総合管理計画について、旧市町別の施設棟数・延べ床面積や固定資産台帳の整理状況、老朽化施設の面積と維持管理費、25％削減の根拠、総務省試算ソフトの活用を尋ね、実践行動計画の策定時期と職員研修、首長直轄の専任部署の設置、新地方公会計制度への対応、教育施設との横断や人事異動後も続くマネジメント人材の確保を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設等総合管理計画の策定</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">前橋市の取り組みを踏まえ、計画の進捗と10月策定の見通し、専門知識を持つ兼務職員2人を解消した理由と今後の組織体制、人口等からの一律の総量縮減率設定をやめることへの見解、更新費用の概算を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">奥州市の協働のまちづくり指針や地域自治組織への指定管理・交付金による支援を紹介し、交流センター単位で地域自主の動きを底上げするまちづくりへの転換を市がどう考えるかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">道の駅あらえっさの運営</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">道の駅あらえっさについて、前年比の売上額と入場者数の増減、提供すべきサービスと商品、来場者の多い地域、指定管理の計画や方向性、駅長の役割と権限を尋ね、交流館のスペースや備品倉庫、駐車場の整備を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">ファシリティマネジメントの推進</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">公共施設マネジメントセクションの専属職員が1名のままであることへの市長の見解、この1年半の推移と最終目標・進捗、国が求める時期までの総合管理計画策定の見通しと背景・内容・安来市版の特徴、遊休資産の程度、施設カルテの内容と活用を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">月山富田城跡整備を観光誘客につなげるため、物販・食事・宿泊施設の施策改善、滞留策や商店街への誘導策、バリアフリー誘導サインや多言語案内などユニバーサルデザインの整備、老朽化した富田山荘の改善計画と、利用促進協議会で指摘された指定管理者の運営姿勢への市長の認識を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">合併算定替えの影響</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">臨時財政対策債の発行抑制が今後の課題となる中、合併算定替えの段階的廃止による影響額が7割程度圧縮される見込みについて、夏ごろとされる決定を踏まえた市財政計画への変化と影響を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-11">地方交付税と地方分権</a></div></li><li><p class="qt">外国人観光客と滞在型観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">米子鬼太郎空港や境港に近い立地を生かした外国人観光客の受け入れに向け中海圏域の自治体と連携した地方版総合計画の策定と、通過型観光の解消に向けた入り込み客数と宿泊収容力の比率分析、中海圏域自治体との比較、目標とする入り込み数に対する収容問題の分析を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">富田城址整備と周辺観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">史跡富田城址整備で得る発掘調査や文献資料の公表と開示の方法、老朽化し狭隘な歴史資料館の整備の考え方とスケジュール、想定する入り込み客数、道の駅・遊歩道・サインの整備と三日月公園のふれあい館の活用、富田山荘の整備と源泉の湯量問題への考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメントの推進</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">財政課に担当職員1名を配置した公共施設マネジメントの1年間の目的・内容・進捗状況と残された課題、2017年度末を目指す複式簿記による新公会計制度への考え、公共施設の統廃合と公共施設等最適化事業の進め方と期限の設定、市長直轄組織の立ち上げや専門知識を持つ人材の招聘を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-01">小中学校の統廃合と小規模校</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">合併10周年を節目に20年・30年後の安来市の展望と人口を維持増進する施策を尋ね、中学校までの医療費無償化と学校給食費の無償化を提言し、旧1市2町の均衡あるまちづくりの具体的な詳細設計と、安来らしい目玉施策を総合計画に打ち出す考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">公共インフラの長寿命化</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">道路・橋・トンネル・上下水道の土木系インフラについて、国県市道の量と建設後年数、建設後40年超の現状と長寿命化の進捗、過去5年の道路補修の予算執行と地元要望に応えるための年数・総額を尋ね、公共施設等総合管理計画の策定と組織横断の担当組織の編成を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ファシリティマネジメントの導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６５回１２月定例会  12月04日－02号</span></p><p class="qs">総務省が求める固定資産台帳の整備の進捗と市が進めているとするファシリティマネジメントの具体的内容、導入の期限と組織体制や外部人員の招聘、建設が集中する施設の修繕・維持管理費を中長期財政見通しに反映させることを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">広瀬のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">月山富田城跡の今後の整備と、大木戸跡の空き地を活用した観光案内拠点や町なか散策の商店街づくりの提言への考え、図書館の調査の成果と富田山荘など老朽施設の方向性、富田山荘へのバス乗り入れと福祉バスの連携、市道新町3号線拡幅への市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">広瀬町の図書館整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">市長の2期目公約である広瀬町の図書館整備について、調査費100万円による今年度の進捗と調査内容、旧秦邸を改装して町中に建設する案への考え、来年度の建設へのステップアップの有無を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">広瀬への図書館整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">市長公約の広瀬への図書館整備について、3月議会の「近い将来建設を検討」との答弁が曖昧で中長期の財政見通しにも計上されていないとして、任期中の実現に向けどこにいつ建設を考えているのかを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">富田城跡整備と鉄の道構想</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">市長公約の月山整備・歴史的遺産の保護について、今年度から5カ年の史跡富田城跡保存整備事業の全体像の市民への説明が遅い理由と問題点の有無、近隣自治体と連携する鉄の道構想の具体的な進捗状況を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">月山富田城跡整備を観光誘客につなげるため、物販・食事・宿泊施設の施策改善、滞留策や商店街への誘導策、バリアフリー誘導サインや多言語案内などユニバーサルデザインの整備、老朽化した富田山荘の改善計画と、利用促進協議会で指摘された指定管理者の運営姿勢への市長の認識を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">外国人観光客と滞在型観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">米子鬼太郎空港や境港に近い立地を生かした外国人観光客の受け入れに向け中海圏域の自治体と連携した地方版総合計画の策定と、通過型観光の解消に向けた入り込み客数と宿泊収容力の比率分析、中海圏域自治体との比較、目標とする入り込み数に対する収容問題の分析を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">富田城址整備と周辺観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">史跡富田城址整備で得る発掘調査や文献資料の公表と開示の方法、老朽化し狭隘な歴史資料館の整備の考え方とスケジュール、想定する入り込み客数、道の駅・遊歩道・サインの整備と三日月公園のふれあい館の活用、富田山荘の整備と源泉の湯量問題への考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">市長マニフェストの中間評価</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">2期目の半ばを過ぎた市長のマニフェストの中間時点での評価と、古民家風または古民家を利活用した建設も含めた広瀬の図書館建設の時期のめどを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">図書館を生かした人づくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">子どもの読書活動優秀実践図書館の表彰を機に、関連機関と連携した資料収集や課題解決型の地域の情報拠点として市立図書館を発展させる考えを尋ね、広瀬町に人が集まる図書館をコストを抑えて設置する考えを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">富田城跡と観光振興</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">史跡月山富田城跡の保存管理計画と整備基本計画が目指すものと進捗状況、商工観光課と文化課の連携事業、来訪者数の把握を尋ね、観光案内所がない現状やふれあい館の位置づけと活用、無人の観光案内機器の設置、道の駅の工夫、地元商店街が潤う工夫と地元のにぎわい創出への市の支援を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">均衡あるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">均衡あるまちづくりの課題として、旧市町別の空き家の現状と家主の意思確認、空き家解消策やＵＩターン者への支援策、目標人口と将来推計の乖離を踏まえた人口流入策を尋ね、図書館3館の格差への対応と開館日・時間の拡大、広瀬図書館の整備時期を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">広瀬のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">月山富田城跡の今後の整備と、大木戸跡の空き地を活用した観光案内拠点や町なか散策の商店街づくりの提言への考え、図書館の調査の成果と富田山荘など老朽施設の方向性、富田山荘へのバス乗り入れと福祉バスの連携、市道新町3号線拡幅への市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">運転免許の自主返納と移動手段</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">市の運転免許自主返納の近年の実績と特典、サービス向上策を尋ね、イエローバスのバス停への歩行圏外に住む人口の割合と対策、全市民が等しくサービスを受けられる時期、タクシー利用補助の必要性を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">新電力の導入</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">来年4月からの電力小売全面自由化を控え、米子市や境港市の電力入札の事例を挙げ、平成25年3月に検討するとの答弁から2年半経過しても導入に至らない理由と、維持管理コスト削減の観点からの新電力導入の考え方を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">外国人観光客と滞在型観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">米子鬼太郎空港や境港に近い立地を生かした外国人観光客の受け入れに向け中海圏域の自治体と連携した地方版総合計画の策定と、通過型観光の解消に向けた入り込み客数と宿泊収容力の比率分析、中海圏域自治体との比較、目標とする入り込み数に対する収容問題の分析を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a><a class="tag" href="../topic_administration.html#topic-08">広域連携と圏域</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">富田城址整備と周辺観光</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">史跡富田城址整備で得る発掘調査や文献資料の公表と開示の方法、老朽化し狭隘な歴史資料館の整備の考え方とスケジュール、想定する入り込み客数、道の駅・遊歩道・サインの整備と三日月公園のふれあい館の活用、富田山荘の整備と源泉の湯量問題への考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共インフラの長寿命化</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">道路・橋・トンネル・上下水道の土木系インフラについて、国県市道の量と建設後年数、建設後40年超の現状と長寿命化の進捗、過去5年の道路補修の予算執行と地元要望に応えるための年数・総額を尋ね、公共施設等総合管理計画の策定と組織横断の担当組織の編成を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">月山富田城跡整備を観光誘客につなげるため、物販・食事・宿泊施設の施策改善、滞留策や商店街への誘導策、バリアフリー誘導サインや多言語案内などユニバーサルデザインの整備、老朽化した富田山荘の改善計画と、利用促進協議会で指摘された指定管理者の運営姿勢への市長の認識を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">地方創生交付金の活用</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">地域住民生活等緊急支援のための交付金について、あらえっさ振興券の反省点を踏まえたプレミアム付商品券の計画と、定住サポート事業での積極的な情報発信や関係機関との連携、介護福祉士応援事業などと結びつけたシングルマザーの移住促進策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a></div></li><li><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">合併10周年を節目に20年・30年後の安来市の展望と人口を維持増進する施策を尋ね、中学校までの医療費無償化と学校給食費の無償化を提言し、旧1市2町の均衡あるまちづくりの具体的な詳細設計と、安来らしい目玉施策を総合計画に打ち出す考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">均衡あるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">均衡あるまちづくりの課題として、旧市町別の空き家の現状と家主の意思確認、空き家解消策やＵＩターン者への支援策、目標人口と将来推計の乖離を踏まえた人口流入策を尋ね、図書館3館の格差への対応と開館日・時間の拡大、広瀬図書館の整備時期を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">認知症対策と見守りの仕組み</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６５回１２月定例会  12月04日－02号</span></p><p class="qs">第5期高齢者福祉計画のもとで、市内の認知症の方の人数と施設の床数、在宅者の見守りの仕組み、民生委員と自主防災組織の連携の実施状況、新たな入居施設の考え方を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">人口対策と住まいづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">住宅セーフティーネット法の改正案を踏まえ、旧市町別の高齢者単身世帯数と見守りの施策を尋ね、広瀬町中心部で安来市独自のセーフティーネット特区として住宅整備や空き家対策を進めるまちづくりの考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li><li><p class="qt">地方版総合戦略の策定</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">市町村淘汰の到来ともいえる地方創生政策の下で、他の市町村に負けない安来市版総合戦略を早期かつ有効に策定することについて、市としての考えを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a></div></li><li><p class="qt">地方創生交付金の活用</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">地域住民生活等緊急支援のための交付金について、あらえっさ振興券の反省点を踏まえたプレミアム付商品券の計画と、定住サポート事業での積極的な情報発信や関係機関との連携、介護福祉士応援事業などと結びつけたシングルマザーの移住促進策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-06">地方創生と総合戦略</a></div></li><li><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">合併10周年を節目に20年・30年後の安来市の展望と人口を維持増進する施策を尋ね、中学校までの医療費無償化と学校給食費の無償化を提言し、旧1市2町の均衡あるまちづくりの具体的な詳細設計と、安来らしい目玉施策を総合計画に打ち出す考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">均衡あるまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">均衡あるまちづくりの課題として、旧市町別の空き家の現状と家主の意思確認、空き家解消策やＵＩターン者への支援策、目標人口と将来推計の乖離を踏まえた人口流入策を尋ね、図書館3館の格差への対応と開館日・時間の拡大、広瀬図書館の整備時期を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">ふるさと教育の実態と課題</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">子供のころの思いがふるさと回帰につながるとして、安来ふるさと読本の発行や交流センターの地域紹介ガイド製作などを踏まえ、現状のふるさと教育の実態と成果、今後の課題を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">公共施設マネジメントの推進</p><p class="qm"><span>代表質問</span><span>安来市  平成２７年第　７４回　３月定例会  03月04日－03号</span></p><p class="qs">財政課に担当職員1名を配置した公共施設マネジメントの1年間の目的・内容・進捗状況と残された課題、2017年度末を目指す複式簿記による新公会計制度への考え、公共施設の統廃合と公共施設等最適化事業の進め方と期限の設定、市長直轄組織の立ち上げや専門知識を持つ人材の招聘を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-01">小中学校の統廃合と小規模校</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">人口減少対策とまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">合併10周年を節目に20年・30年後の安来市の展望と人口を維持増進する施策を尋ね、中学校までの医療費無償化と学校給食費の無償化を提言し、旧1市2町の均衡あるまちづくりの具体的な詳細設計と、安来らしい目玉施策を総合計画に打ち出す考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a><a class="tag" href="../topic_welfare.html#topic-10">医療費の抑制</a><a class="tag" href="../topic_population.html#topic-01">人口減少</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">広瀬のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">月山富田城跡の今後の整備と、大木戸跡の空き地を活用した観光案内拠点や町なか散策の商店街づくりの提言への考え、図書館の調査の成果と富田山荘など老朽施設の方向性、富田山荘へのバス乗り入れと福祉バスの連携、市道新町3号線拡幅への市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">観光誘客と富田山荘の改善</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">月山富田城跡整備を観光誘客につなげるため、物販・食事・宿泊施設の施策改善、滞留策や商店街への誘導策、バリアフリー誘導サインや多言語案内などユニバーサルデザインの整備、老朽化した富田山荘の改善計画と、利用促進協議会で指摘された指定管理者の運営姿勢への市長の認識を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">富田城跡と観光振興</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　７０回　９月定例会  09月03日－02号</span></p><p class="qs">史跡月山富田城跡の保存管理計画と整備基本計画が目指すものと進捗状況、商工観光課と文化課の連携事業、来訪者数の把握を尋ね、観光案内所がない現状やふれあい館の位置づけと活用、無人の観光案内機器の設置、道の駅の工夫、地元商店街が潤う工夫と地元のにぎわい創出への市の支援を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">台風11号時の避難所運営</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">台風11号接近時の避難所開設から閉鎖までの対応を検証するとして、想定規模に基づく人員体制とマニュアル・組織の周知、対策本部から避難所への情報提供と告知放送未設置世帯への周知、職員の研修・訓練、土砂災害警戒区域の指定に向けた体制、各センターの開設状況と利用人数、最大規模災害時の131施設への職員配置計画を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">認知症対策と見守りの仕組み</p><p class="qm"><span>一般質問</span><span>安来市  平成２５年第　６５回１２月定例会  12月04日－02号</span></p><p class="qs">第5期高齢者福祉計画のもとで、市内の認知症の方の人数と施設の床数、在宅者の見守りの仕組み、民生委員と自主防災組織の連携の実施状況、新たな入居施設の考え方を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８４回　９月定例会  09月05日－02号</span></p><p class="qs">奥州市の協働のまちづくり指針や地域自治組織への指定管理・交付金による支援を紹介し、交流センター単位で地域自主の動きを底上げするまちづくりへの転換を市がどう考えるかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">ふるさと教育の実態と課題</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">子供のころの思いがふるさと回帰につながるとして、安来ふるさと読本の発行や交流センターの地域紹介ガイド製作などを踏まえ、現状のふるさと教育の実態と成果、今後の課題を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">幼保一体化と認定こども園</p><p class="qm"><span>一般質問</span><span>安来市  平成２６年第　６７回　３月定例会  03月06日－04号</span></p><p class="qs">幼稚園・保育所の数と園児数、今後の入園・入所見込み、中学校区単位での幼保一体化の計画と実施年度を尋ね、荒島認定こども園の総括と所管部署、この2年間の協議の回数と方向性を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">建設業の担い手確保</p><p class="qm"><span>一般質問</span><span>安来市  平成２９年第　８８回　３月定例会  03月06日－03号</span></p><p class="qs">地域の担い手である建設業界の厳しい経営環境と改正品確法を踏まえ、松江市・出雲市・大田市や島根県の格付点数での加点を例に、本市独自の評価・加点による業界育成の施策を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">マイナンバー制度の普及</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">マイナンバー制度の開始に伴い本市の個人番号カードの申請率が3.4％にとどまる中、カードの普及に対する市の現況認識と、普及啓発に向けた市独自の考えがあるかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">広瀬まちづくり事業の検証</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">平成19年度から23年度の広瀬地区まちづくり事業について、事業効果の検証報告の内容、ふれあい館の今後、当初計画から修正中止に至った経緯と予算執行状況、反省点と今後の整備、部署間の連携不足の理由、大手口周辺の改善計画の有無を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">広瀬町市街地の活性化</p><p class="qm"><span>一般質問</span><span>安来市  平成２８年第　８２回　３月定例会  03月04日－04号</span></p><p class="qs">月山富田城跡を生かした広瀬町市街地の活性化について、町なかへの誘導サインの今後の計画、地域活性化の組織づくりへの市の積極的な支援の考え、全職員を区割りした地域のアドバイザー役とする案への市長の所感を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">安来道路のスマートインター</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">市長公約のうち安来道路西地区へのスマートインター設置について、荒島側へのパーキングエリアとスマートインターチェンジ整備要望に対する県の感触と実現に向けた考え方・動き、安来道路の無料化実現に向けた感触と施策を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">子供の水辺と河川環境の整備</p><p class="qm"><span>一般質問</span><span>安来市  平成２７年第　７９回　９月定例会  09月03日－02号</span></p><p class="qs">川や山を自然学習の場・遊び場として推奨することへの教育長の考え方、子供の水辺に登録された伯太川・木戸川・久白川の登録経緯と利用促進、飯梨川が登録されない理由と魚道整備が遅れた理由・建設時期、富田川の破損した堰の復元とあわせた魚道整備の考え方を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第5期">
+<p class="qhead">2017年11月〜2021年10月・一般質問 7回・代表質問 1回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">公共施設等総合管理計画</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年3月</span></p><p class="qs">国の通知に沿った計画の動向、1次・2次・総合評価の実績と縮減コスト、Ａ〜Ｃランクとまちづくりの関係、進める上の問題、アルテピア等の維持管理費を加えた計画修正、まちづくりの体系への転換、一元管理の組織体制、総務省のアドバイザー派遣事業の活用を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメント</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">公共施設マネジメントの具体的な考え方と来年度以降の組織体制・進め方、外部アドバイザーとの関わりと令和4年度以降の継続、当初予算1,000万円の執行状況、公共施設利活用推進会議の目的と開催状況を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">障がい者に優しいまちづくり</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">県が老人週間に行った高齢者の入館料無料化と同様の本市公共施設での実施状況を尋ね、障がい者差別解消法を踏まえた障がい者に優しい町の姿と現状の取り組み、将来の課題、施設ごとに異なる障がい者の入館料減免に対する優遇制度の考え方を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">交通空白地帯の高齢者支援</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">公共施設のバリアフリー化の現状とバス停から400メートル以上離れた交通空白地帯の住民への支援策、運転免許自主返納者への支援が他市と大差ない内容に落ち着いた理由を尋ね、空白地帯に住む高齢者数や免許保有状況の把握、行動パターン調査の有無、南部の東西路線を含む来年3月のダイヤ改正での抜本改正を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設等総合管理計画</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">Ａ区分の多くが手つかずの状況を指摘し、個別行動計画の所管部署からの回答状況と経緯、3年間の削減施設数と面積、維持管理費の削減額、2次評価と最終結論の状況を尋ね、行政改革推進部に諮らず無償貸与に至った2件の経緯と、兼務1名の技術者体制に対する市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">財政の見通しと立て直し</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">昨年12月の中期財政計画の収支が前年から大きく変わった理由と、増加する公債費に対し繰上償還や人件費抑制を考えなかったのかを尋ね、財政調整基金の枯渇に伴う収支バランスの立て直し策を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a></div></li><li><p class="qt">検査体制と人材登用</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">公共事業の不祥事を踏まえた設計段階から関与する独立した検査機関の設置と、公共施設の統廃合を進める専門組織の必要性、優秀な退職者の再任用や外部専門員の招聘を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-01">小中学校の統廃合と小規模校</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメント</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年）</span><span>平成31年3月</span></p><p class="qs">クラスター型コンパクトシティーと公共施設等総合管理計画の整合性と進捗、個別計画の進捗と基軸、施設群ごとの責任と期限、2060年までの人口動態を踏まえた公共施設の構想、専門組織の設置と内外からの人材登用を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">広瀬への図書館整備</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="qs">市長公約である広瀬への図書館整備について、クラスター型拠点づくりに基づく長期の公共施設のあり方と将来の施設群の構想の有無を尋ね、基本構想策定から3年たった整備の現況と今後を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">ファシリティマネジメント</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="qs">公約であるファシリティマネジメント導入について、公共施設等総合管理計画のＡランク施設の意思決定の進捗とＢ・Ｃランクの状況、資産評価が可能な施設数、国の公共ＦＭマイスター制度への参加を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設の検査体制の構築</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９６回　９月定例会  09月05日－02号</span></p><p class="qs">大阪北部地震のブロック塀倒壊事故を踏まえ、本市の公共施設で欠陥の指摘があったかと修繕対応、土木・建築工事の検査体制マニュアルや有資格職員数・配置基準、管財が検査担当者を指名する制度の妥当性を尋ね、松江市の例を引いて利害関係のない独立した検査部門を来年度の機構改革で設ける考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">市営住宅と住宅政策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９６回　９月定例会  09月05日－02号</span></p><p class="qs">住宅ストックと空き状況を旧市町別に尋ね、公営住宅等長寿命化計画の進捗、下條村の例を引いた民間住宅の借り上げによる独自の住宅政策、住宅供給公社への管理委託前後の入居率と空室拡大の理由、公社との連携や修繕対応、収入超過者の転居対応、公社住宅の空き月数を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメントの推進</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">1人当たり延べ床面積7.78平米や総床面積25％削減の目標を踏まえ、公共施設等総合管理計画で重点とする課題、市長・副市長をトップとする横断的な推進組織、目標値の根拠と将来のまちづくり構想との整合、国の地方債措置への対応と立地適正化計画の取り組み、ファシリティマネジャーの資格取得支援と人材育成、市民への説明を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ユニバーサルデザインと駅</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">安来駅・荒島駅を中心とした一体的なまちづくり計画の有無とユニバーサルデザイン・バリアフリー計画策定の考え、JRへの駅舎改善の要望内容を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">広瀬地区のまちづくり構想</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">広瀬地区の将来のまちづくり構想図の有無、ワークショップで取り上げた施設の考え方と目的、富田山荘の利活用の検討状況、市立病院の建て替えの進捗を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a></div></li><li class="line"><p class="qt">交通空白地帯の高齢者支援</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">観光地のバリアフリー化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">観光客数に見合った障がい者用を含むトイレの設置数になっているかを尋ね、ＪＲ安来駅の移動円滑化に向けたＪＲ西日本への申し入れ経緯と交渉の進捗、月山富田城跡周辺に滞在する高齢者や障がい者をまちなかへ誘導する乗り物の将来展望を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">市長の企業誘致と訪問活動</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">企業誘致活動への取り組みと、日立金属や足立美術館、市立病院の改革や医師派遣に向けた鳥取大学医学部や病院長への訪問の具体的な内容と頻度を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_industry.html#topic-04">鉄鋼業と地場産業</a></div></li><li><p class="qt">健康寿命の延伸と健診</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="qs">健康寿命を延ばす具体的な取り組みと健診の受診啓発、受診率が上がらない理由、ミニドックの受診者数と300名の制限、60歳代の受診率と案内方法を尋ね、60歳代が毎年人間ドックを受けられる市独自施策の考えを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">中海架橋の早期実現</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年3月</span></p><p class="qs">中海架橋を圏域に不可欠とする米子市長の発言への市長の考え、国・県・米子市との折衝状況、事業費削減効果を基にしたＢバイＣの再調査と要望、圏域市長会をまとめて県・国に実現を働きかける行動を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li><p class="qt">中海架橋の実現</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">県の重点要望項目とした中海架橋の早期実現に向けた市の取組を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li class="line"><p class="qt">観光地のバリアフリー化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">中海架橋の早期実現</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">令和元年度の知事要望に対する県の受けとめと反応、米子市との連携を高める協議の現状を尋ね、架橋実現に向けた市長の決意を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li class="line"><p class="qt">市営住宅と住宅政策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９６回　９月定例会  09月05日－02号</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">ＩＴ企業誘致による空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">市内全域に整備した高速通信網ブロードバンドを生かし、徳島県神山町のサテライトオフィスの例を挙げて、中山間地の空き家解消策としてのＩＴ企業の誘致施策と担当部署の対策、誘致に必要な通信速度が十分かを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-12">情報通信基盤の整備</a><a class="tag" href="../topic_population.html#topic-03">過疎地域と中山間地域</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">観光地のバリアフリー化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">低速電動車両の導入</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">雲南市でのヤマハ発動機の低速電動車両の実証実験を紹介し、本市で同様の試みを検討したことがあるかを尋ね、登山できない観光客の城下町観光や交通空白地帯対策への活用と採用について商工観光課と地域振興課の双方の考えを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">広瀬図書館の建設</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">合併以来の地元の念願である広瀬図書館の建設について、現在の進め方と竣工時期の考えを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">観光振興と民需喚起の支援策</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年）</span><span>平成31年3月</span></p><p class="qs">外国人宿泊者が鳥取より少ない理由と訪日客の宿泊・滞在状況、ハガネのＳＮＳ発信、古民家の宿泊活用、京羅木山の整備、月山富田城整備の今後、ＡＲや映像の導入、着地型観光、オートキャンプ場、富田山荘へのイエローバス乗り入れ、誘客チームの見直しを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li class="line"><p class="qt">広瀬への図書館整備</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">学校給食費の無償化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">文科省の調査結果や視察した相馬市の例を挙げ、現在の生徒数と給食費の実態、10年後の見込み生徒数と給食費、市の財政負担と無償化実現へのハードルを尋ね、給食費無償化に対する市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li><li class="line"><p class="qt">検査体制と人材登用</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">公立小・中学校のあるべき姿</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">ＩＣＴへの取り組みの遅れや県の少人数学級編制見直しへの市長の立場に触れ、児童・生徒数の減少で部活動の縮減などが懸念される中での公立小・中学校のあるべき姿とその実現への取り組みを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-09">部活動</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">市長の企業誘致と訪問活動</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li class="line"><p class="qt">ＩＴ企業誘致による空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">ＩＴ企業誘致による空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">市長公約の総評</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">近藤市政3期目の最後の年を迎えるに当たり、市民と交わした公約に対する総評を問うた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">職員の政策提言の環境</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">職員が組織横断で自由に議論し提言書を市長へ提案できる環境づくりと、提案を市政運営に反映させる考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">スマートＩＣと高速バス</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">アルテピア周辺での山陰道スマートインターチェンジ設置のその後の動きと高速バス乗り入れの進捗、バス運行会社との交渉状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">どじょっこ電話の現状と推進</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">市内全域の加入者同士で通話が無料のどじょっこ電話で通話できない例や解約が目立つとして、旧市町別の当初と現在の加入状況、加入促進の手段、新たな電話帳の作成、庁舎や病院など市施設での設置状況、ケーブルプラス電話への統合の見通しを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">公共施設等総合管理計画</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年3月</span></p><p class="qs">国の通知に沿った計画の動向、1次・2次・総合評価の実績と縮減コスト、Ａ〜Ｃランクとまちづくりの関係、進める上の問題、アルテピア等の維持管理費を加えた計画修正、まちづくりの体系への転換、一元管理の組織体制、総務省のアドバイザー派遣事業の活用を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメント</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">公共施設マネジメントの具体的な考え方と来年度以降の組織体制・進め方、外部アドバイザーとの関わりと令和4年度以降の継続、当初予算1,000万円の執行状況、公共施設利活用推進会議の目的と開催状況を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">障がい者に優しいまちづくり</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">県が老人週間に行った高齢者の入館料無料化と同様の本市公共施設での実施状況を尋ね、障がい者差別解消法を踏まえた障がい者に優しい町の姿と現状の取り組み、将来の課題、施設ごとに異なる障がい者の入館料減免に対する優遇制度の考え方を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">交通空白地帯の高齢者支援</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">公共施設のバリアフリー化の現状とバス停から400メートル以上離れた交通空白地帯の住民への支援策、運転免許自主返納者への支援が他市と大差ない内容に落ち着いた理由を尋ね、空白地帯に住む高齢者数や免許保有状況の把握、行動パターン調査の有無、南部の東西路線を含む来年3月のダイヤ改正での抜本改正を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設等総合管理計画</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">Ａ区分の多くが手つかずの状況を指摘し、個別行動計画の所管部署からの回答状況と経緯、3年間の削減施設数と面積、維持管理費の削減額、2次評価と最終結論の状況を尋ね、行政改革推進部に諮らず無償貸与に至った2件の経緯と、兼務1名の技術者体制に対する市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">財政の見通しと立て直し</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">昨年12月の中期財政計画の収支が前年から大きく変わった理由と、増加する公債費に対し繰上償還や人件費抑制を考えなかったのかを尋ね、財政調整基金の枯渇に伴う収支バランスの立て直し策を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a></div></li><li><p class="qt">検査体制と人材登用</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">公共事業の不祥事を踏まえた設計段階から関与する独立した検査機関の設置と、公共施設の統廃合を進める専門組織の必要性、優秀な退職者の再任用や外部専門員の招聘を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-01">小中学校の統廃合と小規模校</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメント</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年）</span><span>平成31年3月</span></p><p class="qs">クラスター型コンパクトシティーと公共施設等総合管理計画の整合性と進捗、個別計画の進捗と基軸、施設群ごとの責任と期限、2060年までの人口動態を踏まえた公共施設の構想、専門組織の設置と内外からの人材登用を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">広瀬への図書館整備</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="qs">市長公約である広瀬への図書館整備について、クラスター型拠点づくりに基づく長期の公共施設のあり方と将来の施設群の構想の有無を尋ね、基本構想策定から3年たった整備の現況と今後を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">ファシリティマネジメント</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="qs">公約であるファシリティマネジメント導入について、公共施設等総合管理計画のＡランク施設の意思決定の進捗とＢ・Ｃランクの状況、資産評価が可能な施設数、国の公共ＦＭマイスター制度への参加を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設の検査体制の構築</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９６回　９月定例会  09月05日－02号</span></p><p class="qs">大阪北部地震のブロック塀倒壊事故を踏まえ、本市の公共施設で欠陥の指摘があったかと修繕対応、土木・建築工事の検査体制マニュアルや有資格職員数・配置基準、管財が検査担当者を指名する制度の妥当性を尋ね、松江市の例を引いて利害関係のない独立した検査部門を来年度の機構改革で設ける考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">市営住宅と住宅政策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９６回　９月定例会  09月05日－02号</span></p><p class="qs">住宅ストックと空き状況を旧市町別に尋ね、公営住宅等長寿命化計画の進捗、下條村の例を引いた民間住宅の借り上げによる独自の住宅政策、住宅供給公社への管理委託前後の入居率と空室拡大の理由、公社との連携や修繕対応、収入超過者の転居対応、公社住宅の空き月数を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公共施設マネジメントの推進</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">1人当たり延べ床面積7.78平米や総床面積25％削減の目標を踏まえ、公共施設等総合管理計画で重点とする課題、市長・副市長をトップとする横断的な推進組織、目標値の根拠と将来のまちづくり構想との整合、国の地方債措置への対応と立地適正化計画の取り組み、ファシリティマネジャーの資格取得支援と人材育成、市民への説明を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">ユニバーサルデザインと駅</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">安来駅・荒島駅を中心とした一体的なまちづくり計画の有無とユニバーサルデザイン・バリアフリー計画策定の考え、JRへの駅舎改善の要望内容を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">広瀬地区のまちづくり構想</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">広瀬地区の将来のまちづくり構想図の有無、ワークショップで取り上げた施設の考え方と目的、富田山荘の利活用の検討状況、市立病院の建て替えの進捗を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a></div></li><li><p class="qt">交通空白地帯の高齢者支援</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">公共施設のバリアフリー化の現状とバス停から400メートル以上離れた交通空白地帯の住民への支援策、運転免許自主返納者への支援が他市と大差ない内容に落ち着いた理由を尋ね、空白地帯に住む高齢者数や免許保有状況の把握、行動パターン調査の有無、南部の東西路線を含む来年3月のダイヤ改正での抜本改正を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">観光地のバリアフリー化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">観光客数に見合った障がい者用を含むトイレの設置数になっているかを尋ね、ＪＲ安来駅の移動円滑化に向けたＪＲ西日本への申し入れ経緯と交渉の進捗、月山富田城跡周辺に滞在する高齢者や障がい者をまちなかへ誘導する乗り物の将来展望を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">市長の企業誘致と訪問活動</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">企業誘致活動への取り組みと、日立金属や足立美術館、市立病院の改革や医師派遣に向けた鳥取大学医学部や病院長への訪問の具体的な内容と頻度を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_industry.html#topic-04">鉄鋼業と地場産業</a></div></li><li><p class="qt">健康寿命の延伸と健診</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="qs">健康寿命を延ばす具体的な取り組みと健診の受診啓発、受診率が上がらない理由、ミニドックの受診者数と300名の制限、60歳代の受診率と案内方法を尋ね、60歳代が毎年人間ドックを受けられる市独自施策の考えを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">中海架橋の早期実現</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年3月</span></p><p class="qs">中海架橋を圏域に不可欠とする米子市長の発言への市長の考え、国・県・米子市との折衝状況、事業費削減効果を基にしたＢバイＣの再調査と要望、圏域市長会をまとめて県・国に実現を働きかける行動を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li><p class="qt">中海架橋の実現</p><p class="qm"><span>一般質問</span><span>第９９回安来市議会定例会（令和２年・令和３年）</span><span>令和3年9月</span></p><p class="qs">県の重点要望項目とした中海架橋の早期実現に向けた市の取組を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li><p class="qt">観光地のバリアフリー化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">観光客数に見合った障がい者用を含むトイレの設置数になっているかを尋ね、ＪＲ安来駅の移動円滑化に向けたＪＲ西日本への申し入れ経緯と交渉の進捗、月山富田城跡周辺に滞在する高齢者や障がい者をまちなかへ誘導する乗り物の将来展望を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">中海架橋の早期実現</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">令和元年度の知事要望に対する県の受けとめと反応、米子市との連携を高める協議の現状を尋ね、架橋実現に向けた市長の決意を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li><p class="qt">市営住宅と住宅政策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９６回　９月定例会  09月05日－02号</span></p><p class="qs">住宅ストックと空き状況を旧市町別に尋ね、公営住宅等長寿命化計画の進捗、下條村の例を引いた民間住宅の借り上げによる独自の住宅政策、住宅供給公社への管理委託前後の入居率と空室拡大の理由、公社との連携や修繕対応、収入超過者の転居対応、公社住宅の空き月数を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">ＩＴ企業誘致による空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">市内全域に整備した高速通信網ブロードバンドを生かし、徳島県神山町のサテライトオフィスの例を挙げて、中山間地の空き家解消策としてのＩＴ企業の誘致施策と担当部署の対策、誘致に必要な通信速度が十分かを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-12">情報通信基盤の整備</a><a class="tag" href="../topic_population.html#topic-03">過疎地域と中山間地域</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">観光地のバリアフリー化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">観光客数に見合った障がい者用を含むトイレの設置数になっているかを尋ね、ＪＲ安来駅の移動円滑化に向けたＪＲ西日本への申し入れ経緯と交渉の進捗、月山富田城跡周辺に滞在する高齢者や障がい者をまちなかへ誘導する乗り物の将来展望を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">低速電動車両の導入</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">雲南市でのヤマハ発動機の低速電動車両の実証実験を紹介し、本市で同様の試みを検討したことがあるかを尋ね、登山できない観光客の城下町観光や交通空白地帯対策への活用と採用について商工観光課と地域振興課の双方の考えを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">広瀬図書館の建設</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">合併以来の地元の念願である広瀬図書館の建設について、現在の進め方と竣工時期の考えを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">観光振興と民需喚起の支援策</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年）</span><span>平成31年3月</span></p><p class="qs">外国人宿泊者が鳥取より少ない理由と訪日客の宿泊・滞在状況、ハガネのＳＮＳ発信、古民家の宿泊活用、京羅木山の整備、月山富田城整備の今後、ＡＲや映像の導入、着地型観光、オートキャンプ場、富田山荘へのイエローバス乗り入れ、誘客チームの見直しを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">広瀬への図書館整備</p><p class="qm"><span>一般質問</span><span>第９７回安来市議会定例会（平成３０年・平成３１年・令和元年）</span><span>令和元年9月</span></p><p class="qs">市長公約である広瀬への図書館整備について、クラスター型拠点づくりに基づく長期の公共施設のあり方と将来の施設群の構想の有無を尋ね、基本構想策定から3年たった整備の現況と今後を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">学校給食費の無償化</p><p class="qm"><span>一般質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和元年12月</span></p><p class="qs">文科省の調査結果や視察した相馬市の例を挙げ、現在の生徒数と給食費の実態、10年後の見込み生徒数と給食費、市の財政負担と無償化実現へのハードルを尋ね、給食費無償化に対する市長の考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li><li><p class="qt">検査体制と人材登用</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">公共事業の不祥事を踏まえた設計段階から関与する独立した検査機関の設置と、公共施設の統廃合を進める専門組織の必要性、優秀な退職者の再任用や外部専門員の招聘を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-01">小中学校の統廃合と小規模校</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">公立小・中学校のあるべき姿</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">ＩＣＴへの取り組みの遅れや県の少人数学級編制見直しへの市長の立場に触れ、児童・生徒数の減少で部活動の縮減などが懸念される中での公立小・中学校のあるべき姿とその実現への取り組みを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-09">部活動</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">市長の企業誘致と訪問活動</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">企業誘致活動への取り組みと、日立金属や足立美術館、市立病院の改革や医師派遣に向けた鳥取大学医学部や病院長への訪問の具体的な内容と頻度を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_industry.html#topic-04">鉄鋼業と地場産業</a></div></li><li><p class="qt">ＩＴ企業誘致による空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">市内全域に整備した高速通信網ブロードバンドを生かし、徳島県神山町のサテライトオフィスの例を挙げて、中山間地の空き家解消策としてのＩＴ企業の誘致施策と担当部署の対策、誘致に必要な通信速度が十分かを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-12">情報通信基盤の整備</a><a class="tag" href="../topic_population.html#topic-03">過疎地域と中山間地域</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">ＩＴ企業誘致による空き家対策</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">市内全域に整備した高速通信網ブロードバンドを生かし、徳島県神山町のサテライトオフィスの例を挙げて、中山間地の空き家解消策としてのＩＴ企業の誘致施策と担当部署の対策、誘致に必要な通信速度が十分かを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-12">情報通信基盤の整備</a><a class="tag" href="../topic_population.html#topic-03">過疎地域と中山間地域</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">市長公約の総評</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">近藤市政3期目の最後の年を迎えるに当たり、市民と交わした公約に対する総評を問うた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">職員の政策提言の環境</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">職員が組織横断で自由に議論し提言書を市長へ提案できる環境づくりと、提案を市政運営に反映させる考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">スマートＩＣと高速バス</p><p class="qm"><span>代表質問</span><span>第９８回安来市議会定例会（令和元年・令和２年）</span><span>令和2年3月</span></p><p class="qs">アルテピア周辺での山陰道スマートインターチェンジ設置のその後の動きと高速バス乗り入れの進捗、バス運行会社との交渉状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">どじょっこ電話の現状と推進</p><p class="qm"><span>一般質問</span><span>安来市  平成３０年第　９４回　３月定例会  03月06日－03号</span></p><p class="qs">市内全域の加入者同士で通話が無料のどじょっこ電話で通話できない例や解約が目立つとして、旧市町別の当初と現在の加入状況、加入促進の手段、新たな電話帳の作成、庁舎や病院など市施設での設置状況、ケーブルプラス電話への統合の見通しを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+
+<section class="sec count" id="s-count"><h2>このページの数え方</h2><dl><dt>質問の回数</dt><dd>その期に質問に立った定例会の回数を、会議録に記された質問の種別に従って「一般質問」と「代表質問」に分けて数えています（同じ定例会で両方に立った時は「代表質問」に1回と数えます）。数えているのは質問に立った定例会の回数で、論点の数ではありません。1回の質問で複数の論点を取り上げる事があり、同じ定例会の質問が議員毎のページの一覧では複数の項目に分かれて見える事が有ります。名簿の同じ期の回数と同じ数です。</dd><dt>取り上げた区分</dt><dd>質問毎に、その質問の論点に割り当てた話題の区分を数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数え、どの区分にも当たらない質問は「当たる話題なし」に数えます。マスの濃さは、この議員の表の中で最も多いマスに対する多さを示します。</dd><dt>質問の題と要約</dt><dd>会議録の実際の発言から、生成AIで論点毎に題と要約を付けています。安来市議会が公開する一般質問の通告ではない為、通告の項目とは区分や粒度が異なる事が有ります。区分の束は、その期に論点の多い区分から並べ、束の中は新しい会議から並べています。</dd><dt>区分と話題</dt><dd>題と要約に、話題毎に決めた語が含まれるかで話題を割り当て、話題を纏めた区分で数えています。どの話題にも当たらない論点は「当たる話題なし」として灰色の札で示します。</dd><dt>会派・役職・在任の途中の変化</dt><dd>会派は、会派の記録が有る期だけ示しています。議長・副議長は、その期の内に務めた事を示します。退任は期の途中で議員で無くなった事（その期の任期の中で最後に出席した会議を添えています）、加入は期の途中から議員になった事を示します。</dd><dt>期</dt><dd>期の範囲と定義は「<a href="../about.html#s-ki">このレポートについて › 期の定義</a>」に在ります。</dd></dl></section>
+
+</main>
+<footer class="foot">
+<p>v9.1.1</p>
+<p>安来市議会レポート — 車座プロジェクト ／ <a href="../about.html">このレポートについて</a></p>
+<p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+<p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+</footer>
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var doc = document;
+  /* Maps keyed by attribute values have no prototype, so a key such as "constructor"
+     never resolves to an inherited member. */
+  function dict() { return Object.create(null); }
+  var MORE_FIRST = dict();
+  MORE_FIRST.summary = 5;
+  MORE_FIRST.line = 10;
+  var seq = 0;
+
+  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+  function newId(prefix) {
+    var id;
+    do { seq += 1; id = prefix + seq; } while (doc.getElementById(id));
+    return id;
+  }
+  function idOf(el, prefix) { if (!el.id) { el.id = newId(prefix); } return el.id; }
+  /* Operators and panes belong to the nearest enclosing scope only (nesting). */
+  function scopeOf(el) { return el.closest("[data-switch]"); }
+  function own(scope, selector) {
+    return Array.prototype.filter.call(scope.querySelectorAll(selector), function (el) {
+      return scopeOf(el) === scope;
+    });
+  }
+  function keyOf(el) { return el.getAttribute("data-switch-key"); }
+  function isTab(el) { return el.getAttribute("role") === "tab"; }
+  function setOn(op, on) {
+    if (op.hasAttribute("aria-selected")) { op.setAttribute("aria-selected", on ? "true" : "false"); }
+    if (op.hasAttribute("aria-pressed")) { op.setAttribute("aria-pressed", on ? "true" : "false"); }
+    if (isTab(op)) { op.tabIndex = on ? 0 : -1; }
+  }
+  function isOn(op) {
+    return op.getAttribute("aria-selected") === "true" || op.getAttribute("aria-pressed") === "true";
+  }
+  /* Scroll only the operator's own strip sideways, so loading never moves the page (3.9). */
+  function nudge(op) {
+    var strip = op.parentElement;
+    if (!strip || strip.scrollWidth <= strip.clientWidth) { return; }
+    var s = strip.getBoundingClientRect();
+    var r = op.getBoundingClientRect();
+    if (r.left < s.left) { strip.scrollLeft -= s.left - r.left; }
+    else if (r.right > s.right) { strip.scrollLeft += r.right - s.right; }
+  }
+
+  /* ---- switch: pick one operator, show its pane, in its scope (3.6, 3.9) ---- */
+  function pick(op, focus) {
+    var scope = scopeOf(op);
+    if (!scope) { return; }
+    var key = keyOf(op);
+    each(own(scope, "[data-switch-key]"), function (o) { setOn(o, keyOf(o) === key); });
+    each(own(scope, "[data-switch-pane]"), function (p) {
+      p.hidden = p.getAttribute("data-switch-pane") !== key;
+    });
+    if (focus) { op.focus(); }
+    op.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  each(doc.querySelectorAll("[data-switch]"), function (scope) {
+    var panes = dict();
+    each(own(scope, "[data-switch-pane]"), function (p) { panes[p.getAttribute("data-switch-pane")] = p; });
+    each(own(scope, "[data-switch-key]"), function (op) {
+      var pane = panes[keyOf(op)];
+      if (pane) { op.setAttribute("aria-controls", idOf(pane, "v9-pane-")); }
+      if (isTab(op)) {
+        op.tabIndex = isOn(op) ? 0 : -1;
+        if (pane) {
+          pane.setAttribute("role", "tabpanel");
+          pane.setAttribute("aria-labelledby", idOf(op, "v9-tab-"));
+        }
+      }
+      if (isOn(op)) { nudge(op); }
+    });
+  });
+
+  doc.addEventListener("click", function (ev) {
+    var target = ev.target;
+    if (!(target instanceof Element)) { return; }
+    var op = target.closest("[data-switch-key]");
+    if (op) { pick(op, false); return; }
+    var row = target.closest("[data-pick-row]");
+    if (row && !target.closest("a, button, input, select, textarea, summary, label")) {
+      var rowOp = row.querySelector("[data-switch-key]");
+      if (rowOp) { pick(rowOp, true); }
+    }
+  });
+
+  /* ---- tabs: left / right arrows (Home / End) move the choice and the focus (2.10) ---- */
+  doc.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) { return; }
+    var tab = ev.target instanceof Element ? ev.target.closest("[role=tab][data-switch-key]") : null;
+    if (!tab) { return; }
+    var list = tab.closest("[role=tablist]");
+    if (!list) { return; }
+    var tabs = Array.prototype.filter.call(list.querySelectorAll("[role=tab][data-switch-key]"), function (t) {
+      return t.closest("[role=tablist]") === list;
+    });
+    var at = tabs.indexOf(tab);
+    var to = -1;
+    if (ev.key === "ArrowRight") { to = (at + 1) % tabs.length; }
+    else if (ev.key === "ArrowLeft") { to = (at - 1 + tabs.length) % tabs.length; }
+    else if (ev.key === "Home") { to = 0; }
+    else if (ev.key === "End") { to = tabs.length - 1; }
+    if (to < 0) { return; }
+    ev.preventDefault();
+    pick(tabs[to], true);
+  });
+
+  /* ---- 「残り○件」: first 5 / 10 items, the button shows all and back (3.10) ---- */
+  each(doc.querySelectorAll("[data-more]"), function (list) {
+    var first = MORE_FIRST[list.getAttribute("data-more")];
+    var button = list.nextElementSibling;
+    if (!first || !button || !button.classList.contains("more")) { return; }
+    var items = Array.prototype.filter.call(list.children, function (el) { return el.tagName === "LI"; });
+    var rest = items.length - first;
+    if (rest <= 0) { return; }
+    var open = false;
+    function apply() {
+      each(items, function (li, i) { li.hidden = !open && i >= first; });
+      button.textContent = open ? "最初の" + first + "件だけにする" : "残り" + rest + "件を表示";
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    button.setAttribute("aria-controls", idOf(list, "v9-more-"));
+    button.addEventListener("click", function () { open = !open; apply(); });
+    apply();
+    button.hidden = false;
+  });
+
+  /* ---- phone menu: .menu toggles .side.open with aria-expanded (2.8). At phone width the
+     closed sidebar is only moved off screen, so it is made inert: out of the tab order and
+     away from assistive tech until opened (2.10). Without JS nothing is inert. ---- */
+  var side = doc.getElementById("side");
+  var menu = doc.querySelector(".crumb .menu");
+  var phone = window.matchMedia ? window.matchMedia("(max-width:640px)") : null;
+  function sync() {
+    if (!side) { return; }
+    side.inert = !!(phone && phone.matches) && !side.classList.contains("open");
+  }
+  /* A sidebar that is the URL's target is shown by CSS (.side:target, the no-JS way in).
+     Closing it drops the target without moving the page, so it never stays shown but inert. */
+  function untarget() {
+    if (!side.matches(":target")) { return; }
+    var x = window.scrollX, y = window.scrollY;
+    location.replace("#");
+    window.scrollTo(x, y);
+  }
+  function setMenu(opened) {
+    if (!side || !menu) { return; }
+    side.classList.toggle("open", opened);
+    menu.setAttribute("aria-expanded", opened ? "true" : "false");
+    if (!opened) { untarget(); }
+    sync();
+  }
+  if (side && menu) {
+    sync();
+    /* The script runs before the target is applied, so read the URL's fragment. */
+    if (location.hash === "#side") { setMenu(true); }
+    if (phone) {
+      if (phone.addEventListener) { phone.addEventListener("change", sync); }
+      else if (phone.addListener) { phone.addListener(sync); }
+    }
+    menu.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      var opening = !side.classList.contains("open");
+      setMenu(opening);
+      if (opening) {
+        var first = side.querySelector("a[href]");
+        if (first) { first.focus(); }
+      }
+    });
+    doc.addEventListener("click", function (ev) {
+      if (side.classList.contains("open") && !side.contains(ev.target)) { setMenu(false); }
+    });
+    doc.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && side.classList.contains("open")) { setMenu(false); menu.focus(); }
+    });
+    each(side.querySelectorAll("a[href]"), function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+  }
+
+  /* ---- section TOC: mark the section in view, as the legacy shell does ---- */
+  var tocLinks = side ? side.querySelectorAll('.toc a[href^="#"]') : [];
+  var linkById = dict();
+  var sections = [];
+  function mark(link) {
+    each(tocLinks, function (a) { a.removeAttribute("aria-current"); });
+    link.setAttribute("aria-current", "location");
+  }
+  each(tocLinks, function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    var section = doc.getElementById(id);
+    if (!section) { return; }
+    linkById[id] = a;
+    sections.push(section);
+    a.addEventListener("click", function () { mark(a); });
+  });
+  if ("IntersectionObserver" in window && sections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      each(entries, function (en) {
+        if (en.isIntersecting && linkById[en.target.id]) { mark(linkById[en.target.id]); }
+      });
+    }, { rootMargin: "0px 0px -68% 0px", threshold: 0 });
+    each(sections, function (s) { spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ja" data-shell="v9">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>木佐宏 — 出雲市議会レポート</title>
+<style>
+/* spacing-exceptions: 0 1px 2px 3px 5px 6px 7px 9px 10px 26px 34px */
+/* reason: every value above is kept from the mock (docs/mocks/v9/v9.css) so the look does not change. */
+/* v9 style layer of the council report (canonical; the mock is now a record of decisions).
+   Fixed layout: b (tinted page + left-ruled headings, white boxes only for data), body text capped at 45em, white page.
+   Raw colors live only in the :root token definitions below; everything else uses var(--*).
+   A dark scheme would swap the :root values only; no dark color-scheme media block is kept here.
+   Component CSS (tables, switches, question lists, cards, ...) is appended by the component tasks. */
+:root{
+  /* colors */
+  --bg:#ffffff; --surface:#ffffff; --side:#f7f8fa;
+  --ink:#1c1e26; --ink-soft:#4d5263; --ink-faint:#656a7e; --zero:#8a8fa3; --rest:#c3c6cf; --rest-soft:#eceef1;
+  --line:#e2e4ea; --line-soft:#eef0f4;
+  --accent:#3a4a8c; --accent-ink:#2c3a70; --accent-soft:#eceff8;
+  --a2:#6b76b0; --a3:#a9b0d3; --a4:#d5d9ec; --a5:#eceef7;
+  --on-accent:#ffffff; /* text on an --accent fill */
+  /* shadows (the mock's raw rgba() values, moved into tokens) */
+  --shadow-card:0 1px 2px rgba(28,30,38,.04),0 8px 24px -18px rgba(28,30,38,.25);
+  --shadow-hover:0 6px 18px -12px rgba(58,74,140,.5);
+  --shadow-overlay:0 0 40px rgba(0,0,0,.2);
+  /* per-person colors: the --accent hue (228deg, saturation 41%) at HSL lightness 17/28/39/50/61/72%,
+     dark to light; --person-3 is --accent itself. CIE L* steps are about 9-13 apart. */
+  --person-1:#19203d; --person-2:#2a3564; --person-3:#3a4a8c; --person-4:#4a5fb4; --person-5:#7282c4; --person-6:#99a5d5;
+  /* spacing steps */
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:24px; --sp6:40px; --sp7:64px;
+  --radius:8px;
+  --cap:45em; /* body text cap (45 characters) */
+  --fs:15px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ background:var(--bg); color:var(--ink); font-size:var(--fs); line-height:1.75;
+  font-family:"Yu Gothic UI","Yu Gothic","游ゴシック","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;
+  font-feature-settings:"palt"; -webkit-text-size-adjust:100%; }
+a{ color:var(--accent); text-underline-offset:3px; }
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible,.scroll:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+.ic{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+/* ---- shell: sidebar ---- */
+.shell{ display:flex; min-height:100vh; }
+.side{ width:252px; flex:none; background:var(--side); border-right:1px solid var(--line); padding:var(--sp4) var(--sp3);
+  position:sticky; top:0; height:100vh; overflow-y:auto; font-size:14px; }
+.side .back{ display:flex; gap:var(--sp2); align-items:center; color:var(--ink-faint); text-decoration:none; font-size:12.5px; padding:var(--sp1) var(--sp2); }
+.side .rep{ margin:var(--sp2) 0 var(--sp4); padding:var(--sp2) var(--sp3); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); font-weight:700; display:flex; gap:var(--sp2); align-items:center; }
+.side .grp{ margin-top:var(--sp4); }
+.side .gh{ font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; padding:0 var(--sp2) var(--sp1); }
+.side a.it{ display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); border-radius:6px; color:var(--ink-soft); text-decoration:none; }
+.side a.it:hover{ background:var(--accent-soft); color:var(--accent-ink); }
+.side a.it[aria-current]{ background:var(--accent-soft); color:var(--accent-ink); font-weight:700; }
+.side details > summary{ list-style:none; cursor:pointer; display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); color:var(--ink-soft); border-radius:6px; }
+.side details > summary::-webkit-details-marker{ display:none; }
+.side details > summary::after{ content:""; margin-left:auto; border:4px solid transparent; border-left-color:var(--ink-faint); transform:translateX(2px); transition:transform .15s; }
+.side details[open] > summary::after{ transform:rotate(90deg) translateX(2px); }
+.side .sub{ padding-left:26px; }
+.side .sub a.it{ padding:var(--sp1) var(--sp2); font-size:13.5px; }
+.side .toc{ margin:2px 0 var(--sp2) 34px; border-left:1px solid var(--line); }
+.side .toc a{ display:block; padding:3px var(--sp3); font-size:12.5px; color:var(--ink-faint); text-decoration:none; }
+.side .toc a:hover{ color:var(--accent-ink); }
+/* the section in view, marked by the shell script (not in the mock) */
+.side .toc a[aria-current]{ color:var(--accent-ink); font-weight:700; box-shadow:inset 2px 0 0 var(--accent); }
+/* report switch: the legacy cross-nav block sits in .rep under the report name */
+.side .rep{ flex-wrap:wrap; }
+.side .rep a.rep-link{ display:flex; gap:var(--sp2); align-items:center; flex:1 1 auto; color:inherit; text-decoration:none; }
+.side .rep a.rep-link:hover,.side .rep a.rep-link[aria-current]{ color:var(--accent-ink); }
+.side .rep .cross-nav{ flex-basis:100%; font-weight:400; font-size:12.5px; }
+.side .cross-nav-inner{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp2); }
+.side .cross-nav a{ color:var(--accent); text-decoration:none; }
+.side .cross-nav-sep{ color:var(--line); }
+
+/* ---- shell: breadcrumb and page frame ---- */
+.main{ flex:1; min-width:0; }
+.crumb{ font-size:12.5px; color:var(--ink-faint); padding:var(--sp3) var(--sp6); border-bottom:1px solid var(--line-soft); background:var(--bg); }
+.crumb b{ color:var(--ink); font-weight:600; }
+.page{ max-width:1080px; padding:var(--sp6) var(--sp6) var(--sp7); }
+.menu{ display:none; }
+
+/* ---- page head: kicker, title, lead (the how-to box is a component) ---- */
+.kicker{ display:inline-block; font-size:12px; color:var(--accent-ink); background:var(--accent-soft); border-radius:999px; padding:1px 10px; margin-bottom:var(--sp2); }
+h1{ font-size:28px; line-height:1.35; margin:0 0 var(--sp3); letter-spacing:.02em; }
+.lead{ max-width:var(--cap); color:var(--ink-soft); margin:0 0 var(--sp5); }
+
+/* ---- sections: layout b (tinted page + left-ruled heading; white box only for data) ---- */
+/* --measure is the wrap width of body text in a section: the cap by default;
+   .sec.fit follows the section (= table) width and still stops at the cap. */
+.sec{ --measure:var(--cap); margin:0 0 var(--sp7); }
+.sec.fit{ --measure:min(var(--cap), 100%); }
+.sec > h2{ font-size:20px; line-height:1.4; margin:0 0 var(--sp3); border-left:4px solid var(--accent); padding-left:var(--sp3); }
+.sec h3{ font-size:17px; margin:var(--sp6) 0 var(--sp2); }
+.sec h4.sub{ font-size:14px; margin:var(--sp4) 0 var(--sp2); color:var(--ink-soft); }
+.prose{ max-width:var(--measure, var(--cap)); margin:0 0 var(--sp4); color:var(--ink-soft); }
+.meta{ max-width:var(--measure, var(--cap)); font-size:13px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.terms{ max-width:var(--measure, var(--cap)); font-size:12.5px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.data{ margin:0 0 var(--sp4); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:var(--sp4);
+  box-shadow:var(--shadow-card); }
+
+/* ---- footer (tinted) ---- */
+.foot{ border-top:1px solid var(--line); padding:var(--sp5) var(--sp6); font-size:12.5px; color:var(--ink-faint); background:var(--side); }
+.foot a{ color:var(--accent); }
+.foot p{ margin:0; }
+.foot p + p{ margin-top:var(--sp1); }
+/* the one <noscript> note of the shell (requirement 3.8) */
+.noscript{ margin:0; padding:var(--sp2) var(--sp6); font-size:12.5px; background:var(--accent-soft); color:var(--accent-ink); }
+
+/* ---- mobile: sidebar becomes an overlay menu, body is one column ---- */
+@media (max-width:640px){
+  .side{ position:fixed; left:0; top:0; z-index:40; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow-overlay); }
+  .side.open{ transform:none; }
+  .side:target{ transform:none; }
+  .menu{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; margin-right:var(--sp2); border:1px solid var(--line); border-radius:8px; background:var(--surface); vertical-align:middle; }
+  .crumb{ padding:var(--sp2) var(--sp4); position:sticky; top:0; z-index:30; }
+  .page{ padding:var(--sp5) var(--sp4) var(--sp6); }
+  h1{ font-size:23px; }
+  .data{ padding:var(--sp3); }
+  .foot{ padding:var(--sp4); }
+  .noscript{ padding:var(--sp2) var(--sp4); }
+}
+
+/* ---- components (4.1): how-to box, counting section, tag, link rows, stacked band, policy marks ---- */
+/* how-to box: the mock's list indent of 1.2em is put on the --sp4 step (16px at 14px text vs 16.8px). */
+.howto{ max-width:var(--cap); border-left:3px solid var(--a3); background:var(--accent-soft); padding:var(--sp3) var(--sp4); border-radius:0 var(--radius) var(--radius) 0; margin:0 0 var(--sp6); font-size:14px; }
+.howto h2{ all:unset; display:block; font-weight:700; font-size:13px; color:var(--accent-ink); margin-bottom:var(--sp1); }
+.howto ul{ margin:0; padding-left:var(--sp4); }
+.howto li{ margin:2px 0; }
+.count{ font-size:14px; }
+.count dl{ margin:0; max-width:var(--cap); }
+.count dt{ font-weight:700; margin-top:var(--sp3); }
+.count dd{ margin:var(--sp1) 0 0; color:var(--ink-soft); }
+/* small tag: one part, four variants (legacy tag / ab / sk / rtag) */
+.tag{ display:inline-block; font-size:12px; line-height:1.6; padding:0 9px; border-radius:999px; border:1px solid var(--a4); background:var(--accent-soft); color:var(--accent-ink); }
+.tag.rest{ border-color:var(--line); background:var(--line-soft); color:var(--ink-faint); }
+.tag.role{ background:var(--surface); }
+.tag.out{ border-color:var(--line); background:var(--line-soft); color:var(--ink-soft); }
+/* link rows: page name + one-line description + arrow, ruled rows (not cards) */
+.llist{ list-style:none; margin:var(--sp2) 0 0; padding:0; max-width:var(--cap); border-top:1px solid var(--line); }
+.llist li{ border-bottom:1px solid var(--line); }
+.lrow{ display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:var(--sp3); padding:var(--sp3) var(--sp2); text-decoration:none; color:var(--ink); }
+.lrow:hover{ background:var(--accent-soft); }
+.lrow .lt{ display:flex; gap:var(--sp2); align-items:center; font-weight:700; color:var(--accent-ink); }
+.lrow:hover .lt{ text-decoration:underline; text-underline-offset:3px; }
+.lrow .lt .ic{ color:var(--accent); }
+.lrow .ld{ grid-column:1; font-size:13px; color:var(--ink-soft); }
+.lrow .ar{ grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--accent); }
+/* stacked band: tones 1-5 run dark to light; a legend may reuse the same tone classes */
+.stack{ display:flex; height:16px; border-radius:2px; overflow:hidden; }
+.stack .seg{ width:var(--w); }
+.stack .t1, .stacklegend .t1{ background:var(--accent-ink); }
+.stack .t2, .stacklegend .t2{ background:var(--accent); }
+.stack .t3, .stacklegend .t3{ background:var(--a2); }
+.stack .t4, .stacklegend .t4{ background:var(--a3); }
+.stack .t5, .stacklegend .t5{ background:var(--a4); }
+.stacklegend{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp4); font-size:12.5px; color:var(--ink-soft); margin:var(--sp3) 0 0; }
+.stacklegend i{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+/* policy marks: fixed-width columns so the marks line up across items */
+.pmarks{ display:inline-grid; grid-template-columns:8.6em 8.2em; column-gap:var(--sp3); align-items:baseline; }
+.pmark{ font-size:11.5px; padding:0 var(--sp2); border-radius:999px; line-height:1.7; white-space:nowrap; text-align:center; }
+.pmark.council{ background:var(--accent); color:var(--on-accent); }
+.pmark.executive{ background:var(--a3); color:var(--ink); }
+.pmark.after{ border:1px solid var(--a2); color:var(--accent-ink); }
+.pmark.none{ border:1px dashed var(--a3); color:var(--ink-faint); }
+
+/* ---- components (4.2): table + scale bar, heat cells, number cells ---- */
+/* a table wider than the page scrolls inside this wrapper, never the page (2.8; the mock's .scroll) */
+.scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tbl{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+.tbl th,.tbl td{ padding:7px 10px; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:middle; }
+.tbl thead th{ font-size:12px; color:var(--ink-faint); font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap; }
+.tbl tbody th{ font-weight:600; }
+.tbl tbody tr:last-child > *{ border-bottom:0; }
+.tbl .num{ text-align:right; white-space:nowrap; }
+.tbl a{ text-decoration:none; }
+.tbl a:hover{ text-decoration:underline; }
+.tbl tr.total > *{ border-top:1px solid var(--line); font-weight:700; }
+/* the caption names the table for assistive tech only; the visible title is the heading above the box */
+.tbl > caption{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+/* unified columns: name, scale bar (takes the rest), numbers */
+.cols{ table-layout:fixed; }
+.cols .c-name{ width:15em; }
+.cols .c-num{ width:5.5em; }
+.barcell{ padding-right:var(--sp4)!important; }
+/* the bar element is left out for 0, so no width rule hides it */
+.hbar{ display:block; height:10px; width:var(--w); min-width:2px; background:var(--accent); border-radius:2px; }
+/* catch-all rows (その他・当たる話題なし) are grey */
+.hbar.rest{ background:var(--rest); }
+.tbl tr.rest th{ font-weight:400; color:var(--ink-soft); }
+/* minor row: a sub-item indented under its parent (scale_table row key "minor"). */
+.tbl tr.minor th{ padding-left:var(--sp5); font-weight:400; color:var(--ink-soft); }
+/* heat steps (light type), both families always on: table.heat fills the cell (td.l3-l0),
+   any table fills the number's pill (td.num .h3-.h1). Steps are chosen by the caller. */
+.heat td.l3, td.num .h3{ background:var(--a4); color:var(--accent-ink); font-weight:700; }
+.heat td.l2, td.num .h2{ background:var(--a5); color:var(--ink-soft); }
+.heat td.l1, td.num .h1{ background:none; color:var(--ink-faint); }
+td.num .hr{ background:var(--rest-soft); color:var(--ink-soft); }
+td.num .h3, td.num .h2, td.num .h1, td.num .hr{ display:inline-block; min-width:2.6em; padding:1px var(--sp1); border-radius:3px; text-align:center; }
+/* a table zero is a faint 0; 「—」 is only for "no data / not applicable" */
+.zero, .heat td.l0{ color:var(--zero); }
+
+/* ---- mobile: the scale bar goes under the numbers at full width ---- */
+@media (max-width:640px){
+  .tbl.cols, .tbl.cols thead, .tbl.cols tbody{ display:block; }
+  .tbl.cols colgroup, .tbl.cols thead th:nth-child(2){ display:none; }
+  /* --n (number columns) is set on the table by the scale_table macro */
+  .tbl.cols tr{ display:grid; grid-template-columns:minmax(0,1fr) repeat(var(--n),auto); column-gap:var(--sp3); align-items:baseline; border-bottom:1px solid var(--line-soft); }
+  .tbl.cols thead tr{ border-bottom-color:var(--line); }
+  .tbl.cols tr > *{ border-bottom:0!important; }
+  .tbl.cols td.barcell{ grid-column:1 / -1; grid-row:2; padding-top:0; padding-bottom:var(--sp2); }
+  /* as on the desktop, the last row has no rule of its own (the box edge or .panes draws it) */
+  .tbl.cols tbody tr:last-child{ border-bottom:0; }
+  /* the total row has no bar: drop its empty bar cell (it made a blank second line) and draw
+     the rule on the row, since per-cell rules break at the grid's column gaps */
+  .tbl.cols tr.total td.barcell{ display:none; }
+  .tbl.cols tr.total{ border-top:1px solid var(--line); }
+  .tbl.cols tr.total > *{ border-top:0; }
+}
+
+/* ---- components (4.3): switches, pick rows, 「残り○件」, question ---- */
+/* hidden always wins, also over a component's display (grid rows, flex lists) */
+[hidden]{ display:none!important; }
+/* period tabs, year buttons, chips: one row that scrolls sideways on a phone (3.9) */
+.tabs{ display:flex; gap:2px; border-bottom:1px solid var(--line); margin:0 0 var(--sp3); overflow-x:auto; }
+.tab{ font:inherit; font-size:14px; background:none; border:0; border-bottom:3px solid transparent; padding:var(--sp2) var(--sp4); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.tab[aria-selected="true"]{ color:var(--accent-ink); border-bottom-color:var(--accent); font-weight:700; }
+.ystrip{ display:flex; gap:var(--sp1); overflow-x:auto; padding-bottom:var(--sp2); margin:0 0 var(--sp4); border-bottom:1px solid var(--line); }
+.ybtn{ font:inherit; font-size:12.5px; font-weight:600; line-height:1.35; flex:1 0 40px; padding:5px 0 var(--sp1); border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.ybtn:hover{ border-color:var(--a3); }
+.ybtn[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* year buttons, form "count" (council-v9-topics, mock 05): the year over its topic count, 「途中」 under a year in progress */
+.ystrip.count .ybtn{ display:flex; flex-direction:column; align-items:center; gap:0; }
+.ystrip.count .ybtn .yl{ font-size:12.5px; font-weight:600; white-space:nowrap; }
+.ystrip.count .ybtn b{ font-size:10.5px; font-weight:400; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+.ystrip.count .ybtn b::after{ content:"話題"; }
+.ystrip.count .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; font-weight:400; text-align:center; }
+.ystrip.count .ybtn[aria-pressed="true"] b{ color:var(--on-accent); opacity:.85; }
+/* year buttons, form "bars" (council-v9-topics, mock 06): a bar per year, faded when it cannot be pressed,
+   a dot at the bar's root for a year with policy items only, a faint ground when pressed */
+.ystrip.bars .ybtn{ display:flex; flex-direction:column; align-items:center; gap:2px; flex:1 0 34px; padding:var(--sp1) 0; border:0; background:none; font-weight:400; }
+.ystrip.bars .ybtn .yv{ display:block; width:12px; height:56px; background:linear-gradient(to top,var(--a3) var(--h),transparent var(--h)); border-radius:2px; }
+.ystrip.bars .ybtn .yl{ font-size:10.5px; color:var(--ink-faint); white-space:nowrap; }
+.ystrip.bars .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; text-align:center; }
+.ystrip.bars .ybtn:hover:not([disabled]){ background:var(--line-soft); }
+.ystrip.bars .ybtn[disabled]{ cursor:default; opacity:.45; }
+.ystrip.bars .ybtn.pol .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--a3) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn.pol[aria-pressed="true"] .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--accent) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn[aria-pressed="true"]{ background:var(--accent-soft); color:var(--accent-ink); }
+.ystrip.bars .ybtn[aria-pressed="true"] .yv{ background:linear-gradient(to top,var(--accent) var(--h),transparent var(--h)); }
+.chips{ display:flex; gap:var(--sp2); flex-wrap:nowrap; overflow-x:auto; margin:0 0 var(--sp3); padding-bottom:2px; }
+.chip{ font:inherit; font-size:13px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:3px var(--sp3); cursor:pointer; white-space:nowrap; }
+.chip[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* rows-pick table: the whole row is pressable; the chosen row is tinted with a left rule */
+.pickbtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:600; color:var(--ink); width:100%; }
+tr.pick{ cursor:pointer; }
+tr.pick:hover > *{ background:var(--line-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) > *{ background:var(--accent-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) .pickbtn{ color:var(--accent-ink); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) th{ box-shadow:inset 3px 0 0 var(--accent); }
+.panes{ margin-top:var(--sp4); padding-top:var(--sp2); border-top:1px solid var(--line); }
+.panes h4.sub{ margin-top:var(--sp2); }
+/* one question: title -> meta line (member, kind, meeting) -> summary -> tags; li.line is the one-line form */
+.qlist{ list-style:none; margin:0; padding:0; }
+.qlist li{ padding:var(--sp3) 0; border-top:1px dashed var(--line); }
+.qlist li:first-child{ border-top:0; }
+.qt{ margin:0; font-weight:700; }
+.qm{ margin:2px 0 var(--sp1); font-size:12.5px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:0 var(--sp3); }
+.qm a{ font-weight:600; }
+.qs{ margin:0; max-width:var(--cap); color:var(--ink-soft); font-size:14px; }
+.qlist .tg{ display:flex; flex-wrap:wrap; gap:var(--sp1); margin:var(--sp1) 0 0; }
+.qlist .tg a.tag{ text-decoration:none; }
+.qlist li.line{ padding:var(--sp1) 0; border-top:1px solid var(--line-soft); }
+.qlist li.line .qt{ font-weight:600; font-size:13.5px; }
+.qlist li.line .qm{ margin:0; }
+/* 「残り○件を表示」: drawn hidden; the behaviour script shows it and sets its text */
+.more{ font:inherit; font-size:13.5px; margin:var(--sp3) 0 0; padding:var(--sp2) var(--sp4); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--accent); cursor:pointer; }
+.more:hover{ border-color:var(--a3); }
+/* member pages (council-v9-members): 「…にも当たる」 under a question; a lone key button in a table
+   cell (the period name, mock 08's plink); a period row with no term (「在任していない」) */
+.qlist .also{ margin:var(--sp1) 0 0; font-size:12px; color:var(--ink-faint); }
+.keybtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:700; color:var(--accent); }
+.keybtn:hover{ text-decoration:underline; }
+.keybtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.tbl tr.off > *{ color:var(--ink-faint); }
+.tbl tr.off th{ font-weight:400; }
+
+/* ---- mobile: a picked row of a unified-column table is tinted as one band ---- */
+@media (max-width:640px){
+  .tbl.cols tr.pick:has([aria-pressed="true"]){ background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
+  .tbl.cols tr.pick > *{ background:none!important; box-shadow:none!important; }
+}
+
+</style>
+<style>
+
+.prof{ display:grid; grid-template-columns:max-content 1fr; gap:var(--sp1) var(--sp4); margin:0 0 var(--sp5); font-size:14px; max-width:var(--cap); }
+.prof dt{ color:var(--ink-faint); }
+.prof dd{ margin:0; }
+.ptbl{ max-width:52em; }
+.ptbl .c-p{ width:5em; }
+.ptbl .c-span{ width:12.5em; }
+.ptbl .c-n{ width:5em; }
+.ptbl td.span{ color:var(--ink-soft); font-size:13px; white-space:nowrap; }
+.ptbl tr.off td.note{ font-size:12.5px; }
+.dtbl .c-d{ width:13em; }
+.dtbl .c-n{ width:4.2em; }
+.dtbl .c-bar{ min-width:5em; }
+.dtbl td.num{ text-align:center; }
+.dtbl td.num.tot{ text-align:right; font-weight:700; }
+.empty{ color:var(--ink-faint); font-size:14px; margin:var(--sp3) 0; }
+.qhead{ font-size:13.5px; color:var(--ink-soft); margin:0 0 var(--sp3); }
+.mtg{ margin:var(--sp5) 0 0; }
+.mtg:first-child{ margin-top:0; }
+.sec .mtg h3{ font-size:15px; margin:0 0 var(--sp1); }
+@media (max-width:640px){
+  .ptbl .c-span, .ptbl .span{ display:none; }
+  .prof{ grid-template-columns:1fr; gap:0; }
+  .prof dt{ margin-top:var(--sp2); font-size:12.5px; }
+  .dtbl{ font-size:12px; }
+  .dtbl .c-bar, .dtbl .bar, .dtbl td.barcell{ display:none; }
+  .dtbl th,.dtbl td{ padding:6px 3px; }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="ic-hall" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9.5 10v9M14.5 10v9M3 21h18"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11"/></symbol>
+  <symbol id="ic-topics" viewBox="0 0 24 24"><path d="M4 6h10v7H8l-4 3z"/><path d="M14 9h6v7l-3-2h-5v-1"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><path d="M6 21V4h12v17M3 21h18M9.5 8h1M13.5 8h1M9.5 12h1M13.5 12h1M10.5 21v-4h3v4"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+</svg>
+<div class="shell">
+<nav class="side sidebar" id="side" aria-label="レポートの目次">
+<a class="back" href="../../../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-back"/></svg>出雲市／車座プロジェクト</a>
+<div class="rep"><a class="rep-link" href="../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-hall"/></svg>議会レポート</a>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../../index.html" class="cross-nav-portal">ポータル</a>
+        </div>
+    </nav>
+</div>
+<a class="it" href="../about.html"><svg class="ic" aria-hidden="true"><use href="#ic-book"/></svg>このレポートについて</a>
+<div class="grp"><div class="gh">話題</div>
+<a class="it" href="../topics.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>議会で語られてきた話題</a>
+<details><summary><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>区分</summary><div class="sub">
+<a class="it" href="../topic_childcare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>子育てと少子化</a>
+<a class="it" href="../topic_education.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>学校教育</a>
+<a class="it" href="../topic_welfare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>医療・介護・福祉</a>
+<a class="it" href="../topic_safety.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>防災と地域の安全</a>
+<a class="it" href="../topic_infrastructure.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>都市基盤と生活環境</a>
+<a class="it" href="../topic_community.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>市民自治と人権</a>
+<a class="it" href="../topic_population.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>人口減少と地域の維持</a>
+<a class="it" href="../topic_industry.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>産業・雇用</a>
+<a class="it" href="../topic_agriculture.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>農林水産業</a>
+<a class="it" href="../topic_tourism.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>観光・文化・交流</a>
+<a class="it" href="../topic_environment.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>エネルギー・環境</a>
+<a class="it" href="../topic_nuclear.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>原子力</a>
+<a class="it" href="../topic_administration.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>行財政運営</a>
+</div></details>
+</div>
+<div class="grp"><div class="gh">議員の活動</div>
+<a class="it" href="../members.html" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#ic-person"/></svg>議員の名簿</a>
+<div class="toc"><a href="#s-periods">期ごとの質問の回数</a><a href="#s-divs">取り上げた区分</a><a href="#s-qs">質問の題と要約</a><a href="#s-count">このページの数え方</a></div>
+</div>
+<div class="grp"><div class="gh">首長と執行部</div>
+<a class="it" href="../policy_speech.html"><svg class="ic" aria-hidden="true"><use href="#ic-speech"/></svg>施政方針と議会の動き</a>
+<a class="it" href="../executives.html"><svg class="ic" aria-hidden="true"><use href="#ic-building"/></svg>首長と執行部の答弁</a>
+</div>
+<div class="grp"><div class="gh">議会の活動</div>
+<a class="it" href="../bill_breakdown.html"><svg class="ic" aria-hidden="true"><use href="#ic-pie"/></svg>議案</a>
+</div>
+</nav>
+<div class="main">
+<div class="crumb"><button class="menu" type="button" aria-controls="side" aria-expanded="false" aria-label="目次をひらく"><svg class="ic" aria-hidden="true"><use href="#ic-menu"/></svg></button>出雲市・議会レポート / <a href="../members.html">議員の名簿</a> / <b>木佐宏</b></div>
+<noscript><p class="noscript">期・年度などの切替には JavaScript を使います。JavaScript が無効の時は、それぞれ最初に選ばれている内容だけを表示しています。<a href="#side">目次をひらく</a></p></noscript>
+<main class="page">
+<span class="kicker">議員の活動</span>
+<h1 class="page-title">木佐宏</h1>
+
+<p class="lead">第2期、第5期に在任した議員です。本会議で質問に立った回数の移り変わりと、質問の題と要約を並べています。</p>
+
+
+<aside class="howto"><h2>このページの読み方</h2><ul><li>本会議で質問に立った回数と、そこで取り上げた質問の題と要約を並べています。委員会での発言や、質問以外の活動は含みません。</li><li>回数や区分の多い少ないは、議員の活動の良し悪しを示す物ではありません。</li></ul></aside>
+
+
+<div class="switch" data-switch="期">
+<section class="sec" id="s-periods"><h2>期ごとの質問の回数</h2>
+<p class="prose">表示している全ての期を並べています。在任した期の質問の題と要約は、下の「質問の題と要約」に有ります。</p>
+<div class="data"><div class="scroll"><table class="tbl ptbl">
+<caption>木佐宏の期ごとの質問の回数</caption>
+<colgroup><col class="c-p"><col class="c-span"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-bar"></colgroup>
+<thead><tr><th scope="col">期</th><th scope="col" class="span">期間</th><th scope="col" class="num">一般質問</th><th scope="col" class="num">代表質問</th><th scope="col" class="num">計</th><th scope="col">回数の計</th></tr></thead>
+<tbody>
+<tr class="off"><th scope="row">第1期</th><td class="span">2005年4月〜2009年4月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第2期" aria-pressed="false">第2期</button></th><td class="span">2009年4月〜2013年4月</td><td class="num">16</td><td class="num"><span class="zero">0</span></td><td class="num">16</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td></tr>
+<tr class="off"><th scope="row">第3期</th><td class="span">2013年4月〜2017年4月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="off"><th scope="row">第4期</th><td class="span">2017年4月〜2021年4月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第5期" aria-pressed="true">第5期</button></th><td class="span">2021年4月〜2025年4月</td><td class="num">16</td><td class="num"><span class="zero">0</span></td><td class="num">16</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td></tr>
+<tr class="off"><th scope="row">第6期</th><td class="span">2025年4月〜2029年4月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="total"><th scope="row">計</th><td class="span"></td><td class="num">32</td><td class="num"><span class="zero">0</span></td><td class="num">32</td><td class="barcell"></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-divs"><h2>取り上げた区分</h2>
+<p class="prose">本会議の質問を、取り上げた論点の話題の区分毎に、在任した期を追って数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数えます。どの区分にも当たらない質問は「当たる話題なし」に数えます。</p>
+<div class="data"><div class="scroll"><table class="tbl dtbl">
+<caption>木佐宏が取り上げた区分（質問の数）</caption>
+<colgroup><col class="c-d"><col class="c-n"><col class="c-bar"><col class="c-n"><col class="c-n"></colgroup>
+<thead><tr><th scope="col">区分</th><th scope="col" class="num">計</th><th scope="col" class="bar">計の棒</th><th scope="col" class="num">第2期</th><th scope="col" class="num">第5期</th></tr></thead>
+<tbody>
+<tr><th scope="row"><a href="../topic_infrastructure.html">都市基盤と生活環境</a></th><td class="num tot">14</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td><td class="num l3"><span class="h3">8</span></td><td class="num l3"><span class="h3">6</span></td></tr>
+<tr><th scope="row"><a href="../topic_nuclear.html">原子力</a></th><td class="num tot">12</td><td class="barcell"><span class="hbar" style="--w:85.7%"></span></td><td class="num l3"><span class="h3">8</span></td><td class="num l3"><span class="h3">4</span></td></tr>
+<tr><th scope="row"><a href="../topic_administration.html">行財政運営</a></th><td class="num tot">12</td><td class="barcell"><span class="hbar" style="--w:85.7%"></span></td><td class="num l3"><span class="h3">6</span></td><td class="num l3"><span class="h3">6</span></td></tr>
+<tr><th scope="row"><a href="../topic_safety.html">防災と地域の安全</a></th><td class="num tot">11</td><td class="barcell"><span class="hbar" style="--w:78.6%"></span></td><td class="num l3"><span class="h3">7</span></td><td class="num l3"><span class="h3">4</span></td></tr>
+<tr><th scope="row"><a href="../topic_community.html">市民自治と人権</a></th><td class="num tot">10</td><td class="barcell"><span class="hbar" style="--w:71.4%"></span></td><td class="num l3"><span class="h3">8</span></td><td class="num l2"><span class="h2">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_education.html">学校教育</a></th><td class="num tot">6</td><td class="barcell"><span class="hbar" style="--w:42.9%"></span></td><td class="num l2"><span class="h2">3</span></td><td class="num l2"><span class="h2">3</span></td></tr>
+<tr><th scope="row"><a href="../topic_welfare.html">医療・介護・福祉</a></th><td class="num tot">4</td><td class="barcell"><span class="hbar" style="--w:28.6%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l2"><span class="h2">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_industry.html">産業・雇用</a></th><td class="num tot">3</td><td class="barcell"><span class="hbar" style="--w:21.4%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">3</span></td></tr>
+<tr><th scope="row"><a href="../topic_agriculture.html">農林水産業</a></th><td class="num tot">3</td><td class="barcell"><span class="hbar" style="--w:21.4%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_childcare.html">子育てと少子化</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:14.3%"></span></td><td class="num l1"><span class="h1">1</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_population.html">人口減少と地域の維持</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:14.3%"></span></td><td class="num l1"><span class="h1">1</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_tourism.html">観光・文化・交流</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:14.3%"></span></td><td class="num l1"><span class="h1">1</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr class="rest"><th scope="row">当たる話題なし</th><td class="num tot">3</td><td class="barcell"></td><td class="num l0"><span class="zero">0</span></td><td class="num"><span class="hr">3</span></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-qs"><h2>質問の題と要約</h2>
+<p class="prose">期毎、区分毎に、質問の論点を並べています。1回の質問で複数の論点を取り上げる事が有る為、上の表の質問の数とは合わない事が有ります。2つ以上の区分に当たる論点は、その期に論点の多い方の区分で要約まで出し、他の区分の側には題の一行と「…にも当たる」の印だけを置いています。</p>
+<div class="tabs" role="tablist" aria-label="期"><button type="button" role="tab" class="tab" data-switch-key="第2期" aria-selected="false">第2期</button><button type="button" role="tab" class="tab" data-switch-key="第5期" aria-selected="true">第5期</button></div>
+<div class="pane" data-switch-pane="第2期" hidden>
+<p class="qhead">2009年4月〜2013年4月・一般質問 16回・代表質問 0回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="原子力" aria-pressed="false">原子力</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="農林水産業" aria-pressed="false">農林水産業</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">市営住宅の建て替え方針</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">財政事情が北海道夕張市と同等の危機的現実にあるとされながら市営直江東住宅建替事業6世帯に1億1千万円を当初予算計上したことに危機感がないとして、向こう4年間に老朽化で建て替えを迫られる市営住宅の実態を尋ね、松江市のように新設をやめ民間の空き物件を借り上げる手法への転換を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">下水道事業と公平性</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">旧平田地域で不可解な下水道事業を連発する一方、湯谷川や南橋のような喫緊の課題は関係機関を訪問して引き伸ばされ、全市民に対する中立、公平、公正が損なわれ続けているとして、都市計画税の廃止を撤回したことに関係地区の納税者が納得するのかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li><li><p class="qt">道路改良への市の姿勢</p><p class="qm"><span>一般質問</span><span>平成24年度第4回定例会</span></p><p class="qs">市道国富大津線や国道431号の拡幅について、隣接地権者の同意を得た五百分の一の平面図まで示した地域の最大公約数の民意を取り上げず、資格のない会議で北側既存位置を決めたとして、これが開かれた市政・市民本位の施策と言えるのかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">一畑電車への資金援助</p><p class="qm"><span>一般質問</span><span>平成24年度第4回定例会</span></p><p class="qs">一畑電車へ平成18年から平成22年に15億7,600万円、うち出雲市が4億7,000万円を支援しながら9か所のトイレも踏切の事故防止も進まないとし、親会社が子会社から2.5％の金利を取る一方で県や市が無利子で貸し付けている扱いを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">国道431と道路整備</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">平成17年に平田地域の総意として県へ出した通称灘分ルートがほ場整備で寸断された経緯、国富の大田医院交差点から上流部に3.5メートルの歩道を設ける計画、40年放置された平田の中町かいわいの整備が後回しにされている扱いを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">通学路の歩道整備要請</p><p class="qm"><span>一般質問</span><span>平成24年度第2回定例会</span></p><p class="qs">口宇賀西代本線について出雲警察署国富駐在所の統合閉鎖に伴う競売の前に約20メートル、40平方メートル、総額89万2,000円程度の歩道用地を分筆取得するよう求めた要請が文書回答で黙殺されたことと、前教育委員長が重要と答弁した市道国富大津線の歩道整備要請が用水路の問題を理由に進まないことを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">通学路の安全への責任</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">市道国富大津線の二十有余年にわたる歩道整備の要望の経緯と経過を鑑みてどのような対応措置を考えているのかを尋ね、教育委員長として通学路の安全責任をどう考え、教育長のもとで傍観し漫然と執務して職責を完遂したと自らの行為に誇りが持てるのかを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">用水路事業と通学路整備</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="qs">国富幹線用水路の南側移設をめぐり副市長が設けた三者協議に平成23年（2011）11月30日付で決裂宣言の文書が出された経過を挙げてその後の見解を尋ね、市道国富大津線の歩道新設について現場を見て検討するとした答弁のその後の対応と、他地区との差別がないかの実態調査を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">一畑電車の駅と踏切</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">映画の舞台となる伊野灘駅など九つの駅に便所が整備されておらず一駅100万円で簡易トイレができるのに取り組む姿勢がないことと一か所10万円で済む踏切の夜間照明も予算がないとされたことを挙げ、これまで国や県や三市一町が支出した補助金の総額を尋ねて市の姿勢を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">大社と松江を結ぶルート</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">正遷宮に向けた出雲大社から一畑薬師など宍道湖北岸を経て松江方面へ至る具体的な観光ルートを尋ね、国道四三一号の国富地内の拡幅計画は湯谷川の下流部を放置したまま上流部から改修するもので人的災害を招くとして、民意の合意形成を欠いた計画の再検証を求めた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li><p class="qt">国道431号バイパス</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">合併特例債の三分の二が使われながら平田地域協議会が最善とした国道431号バイパスと河下港、陰陽横断道を結ぶ南北アクセス幹線道路が形になっていない理由を問い、出雲・境港間の高規格道路四．一キロを無駄と指摘し、大社の一方通行化や駅周辺の大駐車場化を含む道路網全体の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">長期放置の市道改良</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">地元説明から40年近くたつ都市計画道路元町中の島線の改良が放置されてきたとして、木綿街道に予算を投じる前に交差点付近の立ち退きや駐車場を含む周辺整備を前倒しして一体的に進めるべきだとし、新市長としての決意を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">原発避難道路と道路発注</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">喫緊の課題である島根原発の避難道路計画が全く示されない一方、財政難のもとで計画に挙げなくてよい高額な道路改良事業が特定業者に連続発注されているとして、情報公開して解析した結果を挙げ、伊野の玄関口や国富の踏切の拡張を含め避難道路のルートをいつまでにどのような方針で定めるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">退職職員の再採用</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">岩國市長や西尾市長のときと比べ長岡市政は天国だと職員が語っていたとして職務の弛緩を指摘し、支所の部課長職経歴者が退職金を得た数か月後に外郭団体の天下りポストへ就く扱いを地位利用の事前運動だとして、Ｕターン者からの公募採用へ改めるよう質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-14">第三セクターと外郭団体</a></div></li><li><p class="qt">自治基本条例と顧問弁護士</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">住民監査請求で違法と認めながら訴訟で応訴して対決を続けることは税金の無駄だとし、顧問弁護士を3人も雇う体制についても3年ごとの更新で順番に委嘱すれば足りるとして、市の対応を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-01">住民投票と自治基本条例</a></div></li><li><p class="qt">三役人事と副市長の対応</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">市長が常に1,000案件に向き合うと公言するなかで市長ポスト案件は迅速に対処しながら平田支所産業建設課の対応が放置されていること、国から迎えた副市長の採用の意図を尋ね、国富幹線用水路をめぐって中立性を欠く私案を示し事前の裏工作があったとして三役の専任人事と資質を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">副市長の防災への認識</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">美野本線を10か年計画で整備すると述べた6月議会の答弁を挙げて福島原発の事故を踏まえた防災担当副市長としての認識をただし、5月12日の豪雨で土のう50袋を求めた高齢の夫婦にコミセンまで取りに来るよう答えたことや、電車不通時の学生への情報提供、遠方から消防団員を呼び戻した土のうづくりなど平田支所の対応を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">医療センターの案内看板</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">総合医療センターへの急患搬入や家族の来院に備えて導入看板の整備を進言したにもかかわらず平田支所から南に向かう位置や西代橋を下りたところの小さな看板など役に立たない設置がなされたとして、消防の救急隊員などの知恵を借りずに進めた対応を時間と税金の無駄だと質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">平田地域の公共施設建設</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="qs">平田の幼稚園は現地建て替えではなく国富コミュニティセンター周辺への分割移転が送り迎えの利便性と伝染性疾患のリスク分散、駐車場と安価な用地の確保の面で優れると述べ、平田小学校の放課後児童クラブの校庭への建設中止と平田消防署の移転用地をめぐる情報の是非を提起した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">国道431号のルート</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="qs">旧平田市議会と地域協議会が求めた国道431号の平たん地ルートが進まない一方、地元の民意を集約せずに期成同盟会の名で40軒の立ち退きを伴う五メートル拡幅へ多額の予算がついた経緯をただし、40年放置された湯谷川沿いの立ち退きとの優先順位、原発事故時の避難道路として西部の幹線ルートをどう構想するのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li class="line"><p class="qt">国道431号バイパス</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_nuclear.html">原子力</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">原発避難道路と道路発注</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li><li><p class="qt">原発防災の認識のずれ</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">30キロ圏外を安全と唱えること、差し止め訴訟の判決を引き合いに安全を唱えること、1号機の40年寿命、未稼働の3号機の構造、3・11を安全神話の崩壊日とすること、県主導の避難訓練、いまだ着手されない防災避難道路、原子力発電への恐れの希薄さという八項目を挙げ、代表質問の質疑応答が市民意識と乖離しているとして次元のずれを質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">原子力災害の避難道整備</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="qs">県の指針を待つのではなく首長自らの政治理念により避難道路と避難場所の確保に取り組むべきだとして、松江市から東部への避難道路の整備状況を把握しているかを尋ね、脱原発と三号機への燃料棒挿入の中止を国や県へ申し入れるよう質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-02">原子力防災と広域避難</a></div></li><li class="line"><p class="qt">副市長の防災への認識</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li><li><p class="qt">防災危機管理組織の改革</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">島根原発の有事に対する防災危機管理を生活バスや防犯灯も担う総務部防災交通課が兼ねる現行体制では市民の負託に応えられないとして、松江市が防災安全部長を置き島根県が危機管理監へ昇格させた例を挙げ、原発対策室を独立させ部長級の専任専従者を置く機構改革と、警察官や自衛隊幹部の経験者を長に配置することを提起した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_administration.html#topic-16">自衛隊と基地</a></div></li><li><p class="qt">原発事故に備える避難道路</p><p class="qm"><span>一般質問</span><span>平成23年度第2回定例会</span></p><p class="qs">総務大臣発令の防災機関としての立場から、島根原発の事故に備える伊野地区の美野バイパスの避難道路としての整備について、地元主導に委ねる回答では話が進まないとして、松江市や県の動きも踏まえ行政トップレベルで決断すべきだと述べ、福島原発の実態を踏まえた新たな認識に立つ見識を質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">防災危機管理の認識</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">内閣総理大臣が原子力緊急事態宣言を発出する原発災害避難訓練に対する見識を問い、平成20年度に約束された湯谷川の中流拡幅改良事業が停滞していることを防災危機管理の点からどう認識しているのかと、国富郵便局前一帯の恒常的な冠水や糸川屋橋のかけ替えの遅れを踏まえたゲリラ豪雨への予防防災対策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">原発事故の避難道路</p><p class="qm"><span>一般質問</span><span>平成22年度第1回定例会</span></p><p class="qs">内閣総理大臣の発令による原子力災害の避難訓練が重ねられる一方で避難道路の事業推進の姿勢が見えないとして、国道四三一号と美野本線を結ぶバイパスルートや伊野川を渡り松江市へ延ばすルートの早期実現を求め、原子力発電所の災害防災管理についての認識を質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-02">原子力防災と広域避難</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li class="line"><p class="qt">国道431号のルート</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">通学路の歩道整備要請</p><p class="qm"><span>一般質問</span><span>平成24年度第2回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li class="line"><p class="qt">通学路の安全への責任</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li class="line"><p class="qt">用水路事業と通学路整備</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li class="line"><p class="qt">副市長の防災への認識</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li><li class="line"><p class="qt">防災危機管理組織の改革</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="also">原子力にも当たる</p></li><li><p class="qt">主要施策への疑義</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">木綿街道を主体にしたまちづくり建物修景助成事業について個人の家屋の修繕に数百万円を助成する一方で通学路の整備は何十年も放置されているとして公共事業の施策順序の矛盾と公金の無駄遣いの認識はないのかを尋ね、平成20年10月に26人の地権者の同意を添えて要望した県道出雲平田線の古土手踏切から西代交差点まで550メートル区間の歩道新設整備の以後のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a></div></li><li><p class="qt">国富幹線用水路の移設</p><p class="qm"><span>一般質問</span><span>平成22年度第3回定例会</span></p><p class="qs">斐伊川沿岸かんがい対策事業の国富幹線用水路未改修1,100メートル区間について受益水田耕作面積のほぼ100％が道路南側にあり実印と印鑑証明を添えた約30名の直訴や延長300メートルの立看板があるのに市長は今も木佐議員一人の反対と認識するのかを尋ね県からの全体会議の日程調整を3か月放置した理由を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li><li><p class="qt">船川と湯谷川の治水</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">平田船川と湯谷川の改修について、県が平成20年度に用地を取得すると地権者へ説明しながら南橋で止めたことを契約不履行と指摘し、市も議会も黙っていることを問うたうえ、国道431号の五メートル拡幅で40軒の立ち退きを求める動きを含め今後どのように取り組むのかを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">市営住宅の建て替え方針</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li class="line"><p class="qt">退職職員の再採用</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li><li class="line"><p class="qt">防災危機管理組織の改革</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="also">原子力にも当たる</p></li><li><p class="qt">県産木材の需要拡大</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">林業の振興には需要拡大が肝要だとして平田東部中学校の新築を県内産木材と県内産石州瓦を活かす設計へ転換するよう進言し、軟弱な造成地での重量建築の危うさと建築大工の仕事や雇用への効果を挙げ、荒廃した危険渓流の枯れ倒木の処理を自衛隊の訓練の一環として行うよう提起した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_administration.html#topic-16">自衛隊と基地</a></div></li><li class="line"><p class="qt">平田地域の公共施設建設</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li><li class="line"><p class="qt">国道431号バイパス</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">合併に関連する給食</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">平田市と斐川町の給食センターを併合する計画が10年前から論じられてきたとして斐川町の給食センターの改築課題に触れずに新東部給食センターを予算化したことへの疑念と斐川町の給食センターの現状を尋ね、文科省と環境省で調査の温度条件が異なり結果も異なるとして出雲市の給食センター主要食器の安全性の確たる論証を求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li><li><p class="qt">学校給食食器の安全</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">市のすべての学校給食食器にポリエチレン樹脂容器を使っていることは環境ホルモンの悪影響への配慮を欠くとして、島根県内では六割以上が既に安全な食器へ替えており5000食分でも2000万円ほどで強化磁器に替えられるとして食器の切り替えを求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li><li><p class="qt">学校給食の食器の変更</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="qs">学校給食で環境ホルモンの溶け出すおそれのあるプラスチックの食器が使われているとして、県内では強化磁器やステンレスが六割を超えていることを挙げ、安全な食器への変更と洗剤を使わない洗浄機の導入を求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">防災危機管理の認識</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="also">原子力にも当たる</p></li><li><p class="qt">テニスコートの整備格差</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">平田地域の愛宕山庭球場はネットの交換すら遅れ人工芝への改良も進んでいないとして、人口2万8000人の旧平田市エリアに一か所も人工芝のコートがない実態を挙げ、中央偏重に陥りがちな予算執行を改めて地域のバランスの取れた整備を求めた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_agriculture.html">農林水産業</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">県産木材の需要拡大</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">農地の水害対策と国富川</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="qs">美談から国富下地区の国富川流域で転作田のビニールハウスが冠水している実態と拡幅改良事業が途中で止まっている経緯を挙げ、所管が連携して現地の実態視察と検証を行い農家から直接生の声を聴取したうえで施策指針を示すよう求めた。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-02">耕作放棄地と農地の利用</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">平田地域の公共施設建設</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">退職職員の再採用</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="also">市民自治と人権にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">神話博へのおもてなし</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">神話博と正遷宮への未曾有の観光客の襲来にどう対応するのかと、「おもてなしの心」とは何でありその具体的な施策をどう認識しているのかを尋ね、成人式の日に大鳥居から勢溜までの700メートルに一時間かかった実態を挙げて避難道路と観光ルートを兼ねる431号バイパスの整備が先だと質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">子どもと弱者への理念</p><p class="qm"><span>一般質問</span><span>平成24年度第4回定例会</span></p><p class="qs">湯谷川南橋の存続を求める要望書に2か月以上回答がないことや、美談から北の歩道や口宇賀西代本線が手つかずである一方で小・中学生が11人しか通らない路線へ多額を投じていることを挙げ、子どもや生活弱者への為政者としての理念が欠如していると質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市長の退任の要求</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">長岡市政は哲学心に欠け決断力もなく市長としての資質がないとして、来年の市長選に立候補するつもりかという真意を尋ねたうえで、新制出雲市の未来のために一日も早く身を引くよう提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">国富幹線用水路の改修</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">国富幹線用水路は既存の構造物を南へ移せば法面でおさまるのに市の職員がプラス80センチから1メートルの余剰地が要ると説明していると指摘し、印鑑証明付きで30人が訴えた経緯や地元議員を協議に入れない進め方を挙げて、市民主役の市政と言えるのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">湯谷川南橋の存続</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">平成19年に4回説明して同意を得たとする市の答弁に対し、住民が自主的に88名の追加署名を集めている事実を挙げ、歩行者や手押し車、自転車が通る橋であれば鋼管を立てて20センチのかさ上げで架けられるとして存続を求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">一畑電鉄への支援</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">上下分離方式となった一畑電鉄へ市が今年度も2億数千万円を支援する一方、親会社の一畑電気鉄道は子会社へ利率2.5％で5億円を貸し付けており、県や市が無利子で貸し付けていることとの均衡がとれていないと問題提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">湯谷川南橋の存続</p><p class="qm"><span>一般質問</span><span>平成24年度第2回定例会</span></p><p class="qs">湯谷川拡幅改良事業に絡む南橋の廃止計画について、平成19年に市が撤去廃止へ同意したものの周辺住民の真の合意は図られておらず存続要望がくすぶり続けているとして、生活弱者の視点で実情を検証し周辺居住民の民意を集約したうえで事業発注者と再協議することを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市内企業への発注の擁護</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="qs">本市に本社が存在しない企業への公共事業発注の禁止事項の遵守と市内企業への入札参加の公平な扱い、旧市町それぞれのエリアの企業への優先発注が災害時の緊急出動の支援体制につながることを挙げ、旧出雲市時代の扱いから後退した理由と、県外企業が受注する国や県の事業への申し入れを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">国富幹線用水路と歩道</p><p class="qm"><span>一般質問</span><span>平成23年度第2回定例会</span></p><p class="qs">国富幹線用水路改修事業をめぐり実印と印鑑証明を添えた直訴状の写しが町内会に回覧された経緯と地元同意についての説明の食い違いをただし、水路の断面と用地の余地から新たな用地取得なしでメーンスクールゾーンに歩道を新設できるとして、副市長には自ら現地を調べて関係者の声を聞く機会を持つこと、教育長には通学の実態を調査することを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">執行部の公僕の姿勢</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">2月26日の国富幹線用水路の意見聴取の集会がどういう経過で実施されたのかを尋ね、農民が実印を押し印鑑証明をつけて出したものをばらまいてよいのかという前回の答弁も含め、市職員が市民の民意を抹殺しているとして市長や副市長や上級管理職の公僕としての姿勢を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">職員の天下りと渡り</p><p class="qm"><span>一般質問</span><span>平成22年度第3回定例会</span></p><p class="qs">退職金を受け取った市職員が助役や国営事業対策室や商工会議所事務局長へと採用され続けているとして信望が厚いとか即戦力という理由は市長個人の主観に過ぎず弊害あるのみだと指摘し一人でも多くの若者の就職口を確保するため市職員退職者を特別扱いしない指針の大変革を求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">公共道路事業の優先順位</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">公共事業は行政が旗振りをして進める時代ではないとした発言に心変わりはないかを尋ね、40年待たされている元町中ノ島線の事業計画の明示、踏切の拡幅ができない県道出雲平田線の歩道整備計画、平成18年に示された湯谷川の改修計画が一方的にほごにされた経緯について住民目線での対応を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">平田消防署の改築</p><p class="qm"><span>一般質問</span><span>平成22年度第1回定例会</span></p><p class="qs">平田消防署の改築について所管でどのような構想を起こしているかを尋ね、火災現場への到着を第一に三方が道路に面した新田町の土地を移転先の最優先の選択肢とすることと、救急車について松江市秋鹿町のような分駐署方式を採ることを提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">内水処理計画の見直し</p><p class="qm"><span>一般質問</span><span>平成22年度第1回定例会</span></p><p class="qs">建設水道委員会協議会で配付された平田湯谷川水系の浸水地帯の資料が実態を反映していないとして宅地六戸とした調査の年月日と根拠を示すよう尋ね、市街地の湯谷川改修が中途半端に放置されてきたことについて当事者と親族縁者が納得できる説明を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市長の政治活動への支援</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">参議院選挙を前に公党主催の会合への臨席要請が高まる中で人様の選挙戦にどのようなスタンスでかかわり臨むのかを尋ね、特定候補者へ街頭でマイクを握る応援活動を考えているのかと、市長選で応援を受けた自民党への恩義から政権与党である民主党と対立し対決までする所存かを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">退職者の再雇用の是非</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="qs">定年や特別職を退いた職員が短期間で嘱託などに再び採用されている実態を挙げ、旧平田市エリアで前市長からの人事が引き継がれていると指摘し、一般職の臨時雇用も公平性を期して公募により採用すべきだとして、市民が納得できる詳細な説明を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">市営住宅の建て替え方針</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">財政事情が北海道夕張市と同等の危機的現実にあるとされながら市営直江東住宅建替事業6世帯に1億1千万円を当初予算計上したことに危機感がないとして、向こう4年間に老朽化で建て替えを迫られる市営住宅の実態を尋ね、松江市のように新設をやめ民間の空き物件を借り上げる手法への転換を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">下水道事業と公平性</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">旧平田地域で不可解な下水道事業を連発する一方、湯谷川や南橋のような喫緊の課題は関係機関を訪問して引き伸ばされ、全市民に対する中立、公平、公正が損なわれ続けているとして、都市計画税の廃止を撤回したことに関係地区の納税者が納得するのかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li><li><p class="qt">道路改良への市の姿勢</p><p class="qm"><span>一般質問</span><span>平成24年度第4回定例会</span></p><p class="qs">市道国富大津線や国道431号の拡幅について、隣接地権者の同意を得た五百分の一の平面図まで示した地域の最大公約数の民意を取り上げず、資格のない会議で北側既存位置を決めたとして、これが開かれた市政・市民本位の施策と言えるのかを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">一畑電車への資金援助</p><p class="qm"><span>一般質問</span><span>平成24年度第4回定例会</span></p><p class="qs">一畑電車へ平成18年から平成22年に15億7,600万円、うち出雲市が4億7,000万円を支援しながら9か所のトイレも踏切の事故防止も進まないとし、親会社が子会社から2.5％の金利を取る一方で県や市が無利子で貸し付けている扱いを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">国道431と道路整備</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">平成17年に平田地域の総意として県へ出した通称灘分ルートがほ場整備で寸断された経緯、国富の大田医院交差点から上流部に3.5メートルの歩道を設ける計画、40年放置された平田の中町かいわいの整備が後回しにされている扱いを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">通学路の歩道整備要請</p><p class="qm"><span>一般質問</span><span>平成24年度第2回定例会</span></p><p class="qs">口宇賀西代本線について出雲警察署国富駐在所の統合閉鎖に伴う競売の前に約20メートル、40平方メートル、総額89万2,000円程度の歩道用地を分筆取得するよう求めた要請が文書回答で黙殺されたことと、前教育委員長が重要と答弁した市道国富大津線の歩道整備要請が用水路の問題を理由に進まないことを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">通学路の安全への責任</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">市道国富大津線の二十有余年にわたる歩道整備の要望の経緯と経過を鑑みてどのような対応措置を考えているのかを尋ね、教育委員長として通学路の安全責任をどう考え、教育長のもとで傍観し漫然と執務して職責を完遂したと自らの行為に誇りが持てるのかを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">用水路事業と通学路整備</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="qs">国富幹線用水路の南側移設をめぐり副市長が設けた三者協議に平成23年（2011）11月30日付で決裂宣言の文書が出された経過を挙げてその後の見解を尋ね、市道国富大津線の歩道新設について現場を見て検討するとした答弁のその後の対応と、他地区との差別がないかの実態調査を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">一畑電車の駅と踏切</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">映画の舞台となる伊野灘駅など九つの駅に便所が整備されておらず一駅100万円で簡易トイレができるのに取り組む姿勢がないことと一か所10万円で済む踏切の夜間照明も予算がないとされたことを挙げ、これまで国や県や三市一町が支出した補助金の総額を尋ねて市の姿勢を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">大社と松江を結ぶルート</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">正遷宮に向けた出雲大社から一畑薬師など宍道湖北岸を経て松江方面へ至る具体的な観光ルートを尋ね、国道四三一号の国富地内の拡幅計画は湯谷川の下流部を放置したまま上流部から改修するもので人的災害を招くとして、民意の合意形成を欠いた計画の再検証を求めた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a></div></li><li><p class="qt">国道431号バイパス</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">合併特例債の三分の二が使われながら平田地域協議会が最善とした国道431号バイパスと河下港、陰陽横断道を結ぶ南北アクセス幹線道路が形になっていない理由を問い、出雲・境港間の高規格道路四．一キロを無駄と指摘し、大社の一方通行化や駅周辺の大駐車場化を含む道路網全体の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">長期放置の市道改良</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">地元説明から40年近くたつ都市計画道路元町中の島線の改良が放置されてきたとして、木綿街道に予算を投じる前に交差点付近の立ち退きや駐車場を含む周辺整備を前倒しして一体的に進めるべきだとし、新市長としての決意を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">原発避難道路と道路発注</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">喫緊の課題である島根原発の避難道路計画が全く示されない一方、財政難のもとで計画に挙げなくてよい高額な道路改良事業が特定業者に連続発注されているとして、情報公開して解析した結果を挙げ、伊野の玄関口や国富の踏切の拡張を含め避難道路のルートをいつまでにどのような方針で定めるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">退職職員の再採用</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">岩國市長や西尾市長のときと比べ長岡市政は天国だと職員が語っていたとして職務の弛緩を指摘し、支所の部課長職経歴者が退職金を得た数か月後に外郭団体の天下りポストへ就く扱いを地位利用の事前運動だとして、Ｕターン者からの公募採用へ改めるよう質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-14">第三セクターと外郭団体</a></div></li><li><p class="qt">自治基本条例と顧問弁護士</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">住民監査請求で違法と認めながら訴訟で応訴して対決を続けることは税金の無駄だとし、顧問弁護士を3人も雇う体制についても3年ごとの更新で順番に委嘱すれば足りるとして、市の対応を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-01">住民投票と自治基本条例</a></div></li><li><p class="qt">三役人事と副市長の対応</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">市長が常に1,000案件に向き合うと公言するなかで市長ポスト案件は迅速に対処しながら平田支所産業建設課の対応が放置されていること、国から迎えた副市長の採用の意図を尋ね、国富幹線用水路をめぐって中立性を欠く私案を示し事前の裏工作があったとして三役の専任人事と資質を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">副市長の防災への認識</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">美野本線を10か年計画で整備すると述べた6月議会の答弁を挙げて福島原発の事故を踏まえた防災担当副市長としての認識をただし、5月12日の豪雨で土のう50袋を求めた高齢の夫婦にコミセンまで取りに来るよう答えたことや、電車不通時の学生への情報提供、遠方から消防団員を呼び戻した土のうづくりなど平田支所の対応を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">医療センターの案内看板</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">総合医療センターへの急患搬入や家族の来院に備えて導入看板の整備を進言したにもかかわらず平田支所から南に向かう位置や西代橋を下りたところの小さな看板など役に立たない設置がなされたとして、消防の救急隊員などの知恵を借りずに進めた対応を時間と税金の無駄だと質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a></div></li><li><p class="qt">平田地域の公共施設建設</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="qs">平田の幼稚園は現地建て替えではなく国富コミュニティセンター周辺への分割移転が送り迎えの利便性と伝染性疾患のリスク分散、駐車場と安価な用地の確保の面で優れると述べ、平田小学校の放課後児童クラブの校庭への建設中止と平田消防署の移転用地をめぐる情報の是非を提起した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">国道431号のルート</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="qs">旧平田市議会と地域協議会が求めた国道431号の平たん地ルートが進まない一方、地元の民意を集約せずに期成同盟会の名で40軒の立ち退きを伴う五メートル拡幅へ多額の予算がついた経緯をただし、40年放置された湯谷川沿いの立ち退きとの優先順位、原発事故時の避難道路として西部の幹線ルートをどう構想するのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">国道431号バイパス</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">合併特例債の三分の二が使われながら平田地域協議会が最善とした国道431号バイパスと河下港、陰陽横断道を結ぶ南北アクセス幹線道路が形になっていない理由を問い、出雲・境港間の高規格道路四．一キロを無駄と指摘し、大社の一方通行化や駅周辺の大駐車場化を含む道路網全体の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="原子力" hidden>
+<ul class="qlist"><li><p class="qt">原発避難道路と道路発注</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">喫緊の課題である島根原発の避難道路計画が全く示されない一方、財政難のもとで計画に挙げなくてよい高額な道路改良事業が特定業者に連続発注されているとして、情報公開して解析した結果を挙げ、伊野の玄関口や国富の踏切の拡張を含め避難道路のルートをいつまでにどのような方針で定めるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">原発防災の認識のずれ</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">30キロ圏外を安全と唱えること、差し止め訴訟の判決を引き合いに安全を唱えること、1号機の40年寿命、未稼働の3号機の構造、3・11を安全神話の崩壊日とすること、県主導の避難訓練、いまだ着手されない防災避難道路、原子力発電への恐れの希薄さという八項目を挙げ、代表質問の質疑応答が市民意識と乖離しているとして次元のずれを質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">原子力災害の避難道整備</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="qs">県の指針を待つのではなく首長自らの政治理念により避難道路と避難場所の確保に取り組むべきだとして、松江市から東部への避難道路の整備状況を把握しているかを尋ね、脱原発と三号機への燃料棒挿入の中止を国や県へ申し入れるよう質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-02">原子力防災と広域避難</a></div></li><li><p class="qt">副市長の防災への認識</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">美野本線を10か年計画で整備すると述べた6月議会の答弁を挙げて福島原発の事故を踏まえた防災担当副市長としての認識をただし、5月12日の豪雨で土のう50袋を求めた高齢の夫婦にコミセンまで取りに来るよう答えたことや、電車不通時の学生への情報提供、遠方から消防団員を呼び戻した土のうづくりなど平田支所の対応を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">防災危機管理組織の改革</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">島根原発の有事に対する防災危機管理を生活バスや防犯灯も担う総務部防災交通課が兼ねる現行体制では市民の負託に応えられないとして、松江市が防災安全部長を置き島根県が危機管理監へ昇格させた例を挙げ、原発対策室を独立させ部長級の専任専従者を置く機構改革と、警察官や自衛隊幹部の経験者を長に配置することを提起した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_administration.html#topic-16">自衛隊と基地</a></div></li><li><p class="qt">原発事故に備える避難道路</p><p class="qm"><span>一般質問</span><span>平成23年度第2回定例会</span></p><p class="qs">総務大臣発令の防災機関としての立場から、島根原発の事故に備える伊野地区の美野バイパスの避難道路としての整備について、地元主導に委ねる回答では話が進まないとして、松江市や県の動きも踏まえ行政トップレベルで決断すべきだと述べ、福島原発の実態を踏まえた新たな認識に立つ見識を質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">防災危機管理の認識</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">内閣総理大臣が原子力緊急事態宣言を発出する原発災害避難訓練に対する見識を問い、平成20年度に約束された湯谷川の中流拡幅改良事業が停滞していることを防災危機管理の点からどう認識しているのかと、国富郵便局前一帯の恒常的な冠水や糸川屋橋のかけ替えの遅れを踏まえたゲリラ豪雨への予防防災対策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">原発事故の避難道路</p><p class="qm"><span>一般質問</span><span>平成22年度第1回定例会</span></p><p class="qs">内閣総理大臣の発令による原子力災害の避難訓練が重ねられる一方で避難道路の事業推進の姿勢が見えないとして、国道四三一号と美野本線を結ぶバイパスルートや伊野川を渡り松江市へ延ばすルートの早期実現を求め、原子力発電所の災害防災管理についての認識を質した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_nuclear.html#topic-02">原子力防災と広域避難</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">国道431号のルート</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="qs">旧平田市議会と地域協議会が求めた国道431号の平たん地ルートが進まない一方、地元の民意を集約せずに期成同盟会の名で40軒の立ち退きを伴う五メートル拡幅へ多額の予算がついた経緯をただし、40年放置された湯谷川沿いの立ち退きとの優先順位、原発事故時の避難道路として西部の幹線ルートをどう構想するのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">通学路の歩道整備要請</p><p class="qm"><span>一般質問</span><span>平成24年度第2回定例会</span></p><p class="qs">口宇賀西代本線について出雲警察署国富駐在所の統合閉鎖に伴う競売の前に約20メートル、40平方メートル、総額89万2,000円程度の歩道用地を分筆取得するよう求めた要請が文書回答で黙殺されたことと、前教育委員長が重要と答弁した市道国富大津線の歩道整備要請が用水路の問題を理由に進まないことを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">通学路の安全への責任</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">市道国富大津線の二十有余年にわたる歩道整備の要望の経緯と経過を鑑みてどのような対応措置を考えているのかを尋ね、教育委員長として通学路の安全責任をどう考え、教育長のもとで傍観し漫然と執務して職責を完遂したと自らの行為に誇りが持てるのかを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">用水路事業と通学路整備</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="qs">国富幹線用水路の南側移設をめぐり副市長が設けた三者協議に平成23年（2011）11月30日付で決裂宣言の文書が出された経過を挙げてその後の見解を尋ね、市道国富大津線の歩道新設について現場を見て検討するとした答弁のその後の対応と、他地区との差別がないかの実態調査を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">副市長の防災への認識</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">美野本線を10か年計画で整備すると述べた6月議会の答弁を挙げて福島原発の事故を踏まえた防災担当副市長としての認識をただし、5月12日の豪雨で土のう50袋を求めた高齢の夫婦にコミセンまで取りに来るよう答えたことや、電車不通時の学生への情報提供、遠方から消防団員を呼び戻した土のうづくりなど平田支所の対応を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">防災危機管理組織の改革</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">島根原発の有事に対する防災危機管理を生活バスや防犯灯も担う総務部防災交通課が兼ねる現行体制では市民の負託に応えられないとして、松江市が防災安全部長を置き島根県が危機管理監へ昇格させた例を挙げ、原発対策室を独立させ部長級の専任専従者を置く機構改革と、警察官や自衛隊幹部の経験者を長に配置することを提起した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_administration.html#topic-16">自衛隊と基地</a></div></li><li><p class="qt">主要施策への疑義</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">木綿街道を主体にしたまちづくり建物修景助成事業について個人の家屋の修繕に数百万円を助成する一方で通学路の整備は何十年も放置されているとして公共事業の施策順序の矛盾と公金の無駄遣いの認識はないのかを尋ね、平成20年10月に26人の地権者の同意を添えて要望した県道出雲平田線の古土手踏切から西代交差点まで550メートル区間の歩道新設整備の以後のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a></div></li><li><p class="qt">国富幹線用水路の移設</p><p class="qm"><span>一般質問</span><span>平成22年度第3回定例会</span></p><p class="qs">斐伊川沿岸かんがい対策事業の国富幹線用水路未改修1,100メートル区間について受益水田耕作面積のほぼ100％が道路南側にあり実印と印鑑証明を添えた約30名の直訴や延長300メートルの立看板があるのに市長は今も木佐議員一人の反対と認識するのかを尋ね県からの全体会議の日程調整を3か月放置した理由を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li><li><p class="qt">船川と湯谷川の治水</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">平田船川と湯谷川の改修について、県が平成20年度に用地を取得すると地権者へ説明しながら南橋で止めたことを契約不履行と指摘し、市も議会も黙っていることを問うたうえ、国道431号の五メートル拡幅で40軒の立ち退きを求める動きを含め今後どのように取り組むのかを質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">市営住宅の建て替え方針</p><p class="qm"><span>一般質問</span><span>平成24年度第5回定例会</span></p><p class="qs">財政事情が北海道夕張市と同等の危機的現実にあるとされながら市営直江東住宅建替事業6世帯に1億1千万円を当初予算計上したことに危機感がないとして、向こう4年間に老朽化で建て替えを迫られる市営住宅の実態を尋ね、松江市のように新設をやめ民間の空き物件を借り上げる手法への転換を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">退職職員の再採用</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">岩國市長や西尾市長のときと比べ長岡市政は天国だと職員が語っていたとして職務の弛緩を指摘し、支所の部課長職経歴者が退職金を得た数か月後に外郭団体の天下りポストへ就く扱いを地位利用の事前運動だとして、Ｕターン者からの公募採用へ改めるよう質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-14">第三セクターと外郭団体</a></div></li><li><p class="qt">防災危機管理組織の改革</p><p class="qm"><span>一般質問</span><span>平成23年度第4回定例会</span></p><p class="qs">島根原発の有事に対する防災危機管理を生活バスや防犯灯も担う総務部防災交通課が兼ねる現行体制では市民の負託に応えられないとして、松江市が防災安全部長を置き島根県が危機管理監へ昇格させた例を挙げ、原発対策室を独立させ部長級の専任専従者を置く機構改革と、警察官や自衛隊幹部の経験者を長に配置することを提起した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a><a class="tag" href="../topic_administration.html#topic-16">自衛隊と基地</a></div></li><li><p class="qt">県産木材の需要拡大</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">林業の振興には需要拡大が肝要だとして平田東部中学校の新築を県内産木材と県内産石州瓦を活かす設計へ転換するよう進言し、軟弱な造成地での重量建築の危うさと建築大工の仕事や雇用への効果を挙げ、荒廃した危険渓流の枯れ倒木の処理を自衛隊の訓練の一環として行うよう提起した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_administration.html#topic-16">自衛隊と基地</a></div></li><li><p class="qt">平田地域の公共施設建設</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="qs">平田の幼稚園は現地建て替えではなく国富コミュニティセンター周辺への分割移転が送り迎えの利便性と伝染性疾患のリスク分散、駐車場と安価な用地の確保の面で優れると述べ、平田小学校の放課後児童クラブの校庭への建設中止と平田消防署の移転用地をめぐる情報の是非を提起した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">国道431号バイパス</p><p class="qm"><span>一般質問</span><span>平成21年度第2回定例会</span></p><p class="qs">合併特例債の三分の二が使われながら平田地域協議会が最善とした国道431号バイパスと河下港、陰陽横断道を結ぶ南北アクセス幹線道路が形になっていない理由を問い、出雲・境港間の高規格道路四．一キロを無駄と指摘し、大社の一方通行化や駅周辺の大駐車場化を含む道路網全体の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">合併に関連する給食</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">平田市と斐川町の給食センターを併合する計画が10年前から論じられてきたとして斐川町の給食センターの改築課題に触れずに新東部給食センターを予算化したことへの疑念と斐川町の給食センターの現状を尋ね、文科省と環境省で調査の温度条件が異なり結果も異なるとして出雲市の給食センター主要食器の安全性の確たる論証を求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li><li><p class="qt">学校給食食器の安全</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">市のすべての学校給食食器にポリエチレン樹脂容器を使っていることは環境ホルモンの悪影響への配慮を欠くとして、島根県内では六割以上が既に安全な食器へ替えており5000食分でも2000万円ほどで強化磁器に替えられるとして食器の切り替えを求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li><li><p class="qt">学校給食の食器の変更</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="qs">学校給食で環境ホルモンの溶け出すおそれのあるプラスチックの食器が使われているとして、県内では強化磁器やステンレスが六割を超えていることを挙げ、安全な食器への変更と洗剤を使わない洗浄機の導入を求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">防災危機管理の認識</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">内閣総理大臣が原子力緊急事態宣言を発出する原発災害避難訓練に対する見識を問い、平成20年度に約束された湯谷川の中流拡幅改良事業が停滞していることを防災危機管理の点からどう認識しているのかと、国富郵便局前一帯の恒常的な冠水や糸川屋橋のかけ替えの遅れを踏まえたゲリラ豪雨への予防防災対策を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">テニスコートの整備格差</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">平田地域の愛宕山庭球場はネットの交換すら遅れ人工芝への改良も進んでいないとして、人口2万8000人の旧平田市エリアに一か所も人工芝のコートがない実態を挙げ、中央偏重に陥りがちな予算執行を改めて地域のバランスの取れた整備を求めた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="農林水産業" hidden>
+<ul class="qlist"><li><p class="qt">県産木材の需要拡大</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">林業の振興には需要拡大が肝要だとして平田東部中学校の新築を県内産木材と県内産石州瓦を活かす設計へ転換するよう進言し、軟弱な造成地での重量建築の危うさと建築大工の仕事や雇用への効果を挙げ、荒廃した危険渓流の枯れ倒木の処理を自衛隊の訓練の一環として行うよう提起した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_administration.html#topic-16">自衛隊と基地</a></div></li><li><p class="qt">農地の水害対策と国富川</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="qs">美談から国富下地区の国富川流域で転作田のビニールハウスが冠水している実態と拡幅改良事業が途中で止まっている経緯を挙げ、所管が連携して現地の実態視察と検証を行い農家から直接生の声を聴取したうえで施策指針を示すよう求めた。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-02">耕作放棄地と農地の利用</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">平田地域の公共施設建設</p><p class="qm"><span>一般質問</span><span>平成21年度第4回定例会</span></p><p class="qs">平田の幼稚園は現地建て替えではなく国富コミュニティセンター周辺への分割移転が送り迎えの利便性と伝染性疾患のリスク分散、駐車場と安価な用地の確保の面で優れると述べ、平田小学校の放課後児童クラブの校庭への建設中止と平田消防署の移転用地をめぐる情報の是非を提起した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">退職職員の再採用</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">岩國市長や西尾市長のときと比べ長岡市政は天国だと職員が語っていたとして職務の弛緩を指摘し、支所の部課長職経歴者が退職金を得た数か月後に外郭団体の天下りポストへ就く扱いを地位利用の事前運動だとして、Ｕターン者からの公募採用へ改めるよう質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-07">支所と行政センターの体制</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-14">第三セクターと外郭団体</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">神話博へのおもてなし</p><p class="qm"><span>一般質問</span><span>平成23年度第7回定例会</span></p><p class="qs">神話博と正遷宮への未曾有の観光客の襲来にどう対応するのかと、「おもてなしの心」とは何でありその具体的な施策をどう認識しているのかを尋ね、成人式の日に大鳥居から勢溜までの700メートルに一時間かかった実態を挙げて避難道路と観光ルートを兼ねる431号バイパスの整備が先だと質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">子どもと弱者への理念</p><p class="qm"><span>一般質問</span><span>平成24年度第4回定例会</span></p><p class="qs">湯谷川南橋の存続を求める要望書に2か月以上回答がないことや、美談から北の歩道や口宇賀西代本線が手つかずである一方で小・中学生が11人しか通らない路線へ多額を投じていることを挙げ、子どもや生活弱者への為政者としての理念が欠如していると質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市長の退任の要求</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">長岡市政は哲学心に欠け決断力もなく市長としての資質がないとして、来年の市長選に立候補するつもりかという真意を尋ねたうえで、新制出雲市の未来のために一日も早く身を引くよう提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">国富幹線用水路の改修</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">国富幹線用水路は既存の構造物を南へ移せば法面でおさまるのに市の職員がプラス80センチから1メートルの余剰地が要ると説明していると指摘し、印鑑証明付きで30人が訴えた経緯や地元議員を協議に入れない進め方を挙げて、市民主役の市政と言えるのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">湯谷川南橋の存続</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">平成19年に4回説明して同意を得たとする市の答弁に対し、住民が自主的に88名の追加署名を集めている事実を挙げ、歩行者や手押し車、自転車が通る橋であれば鋼管を立てて20センチのかさ上げで架けられるとして存続を求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">一畑電鉄への支援</p><p class="qm"><span>一般質問</span><span>平成24年度第3回定例会</span></p><p class="qs">上下分離方式となった一畑電鉄へ市が今年度も2億数千万円を支援する一方、親会社の一畑電気鉄道は子会社へ利率2.5％で5億円を貸し付けており、県や市が無利子で貸し付けていることとの均衡がとれていないと問題提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">湯谷川南橋の存続</p><p class="qm"><span>一般質問</span><span>平成24年度第2回定例会</span></p><p class="qs">湯谷川拡幅改良事業に絡む南橋の廃止計画について、平成19年に市が撤去廃止へ同意したものの周辺住民の真の合意は図られておらず存続要望がくすぶり続けているとして、生活弱者の視点で実情を検証し周辺居住民の民意を集約したうえで事業発注者と再協議することを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市内企業への発注の擁護</p><p class="qm"><span>一般質問</span><span>平成23年度第6回定例会</span></p><p class="qs">本市に本社が存在しない企業への公共事業発注の禁止事項の遵守と市内企業への入札参加の公平な扱い、旧市町それぞれのエリアの企業への優先発注が災害時の緊急出動の支援体制につながることを挙げ、旧出雲市時代の扱いから後退した理由と、県外企業が受注する国や県の事業への申し入れを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">国富幹線用水路と歩道</p><p class="qm"><span>一般質問</span><span>平成23年度第2回定例会</span></p><p class="qs">国富幹線用水路改修事業をめぐり実印と印鑑証明を添えた直訴状の写しが町内会に回覧された経緯と地元同意についての説明の食い違いをただし、水路の断面と用地の余地から新たな用地取得なしでメーンスクールゾーンに歩道を新設できるとして、副市長には自ら現地を調べて関係者の声を聞く機会を持つこと、教育長には通学の実態を調査することを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">執行部の公僕の姿勢</p><p class="qm"><span>一般質問</span><span>平成22年度第5回定例会</span></p><p class="qs">2月26日の国富幹線用水路の意見聴取の集会がどういう経過で実施されたのかを尋ね、農民が実印を押し印鑑証明をつけて出したものをばらまいてよいのかという前回の答弁も含め、市職員が市民の民意を抹殺しているとして市長や副市長や上級管理職の公僕としての姿勢を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">職員の天下りと渡り</p><p class="qm"><span>一般質問</span><span>平成22年度第3回定例会</span></p><p class="qs">退職金を受け取った市職員が助役や国営事業対策室や商工会議所事務局長へと採用され続けているとして信望が厚いとか即戦力という理由は市長個人の主観に過ぎず弊害あるのみだと指摘し一人でも多くの若者の就職口を確保するため市職員退職者を特別扱いしない指針の大変革を求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">公共道路事業の優先順位</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">公共事業は行政が旗振りをして進める時代ではないとした発言に心変わりはないかを尋ね、40年待たされている元町中ノ島線の事業計画の明示、踏切の拡幅ができない県道出雲平田線の歩道整備計画、平成18年に示された湯谷川の改修計画が一方的にほごにされた経緯について住民目線での対応を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">平田消防署の改築</p><p class="qm"><span>一般質問</span><span>平成22年度第1回定例会</span></p><p class="qs">平田消防署の改築について所管でどのような構想を起こしているかを尋ね、火災現場への到着を第一に三方が道路に面した新田町の土地を移転先の最優先の選択肢とすることと、救急車について松江市秋鹿町のような分駐署方式を採ることを提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">内水処理計画の見直し</p><p class="qm"><span>一般質問</span><span>平成22年度第1回定例会</span></p><p class="qs">建設水道委員会協議会で配付された平田湯谷川水系の浸水地帯の資料が実態を反映していないとして宅地六戸とした調査の年月日と根拠を示すよう尋ね、市街地の湯谷川改修が中途半端に放置されてきたことについて当事者と親族縁者が納得できる説明を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市長の政治活動への支援</p><p class="qm"><span>一般質問</span><span>平成21年度第5回定例会</span></p><p class="qs">参議院選挙を前に公党主催の会合への臨席要請が高まる中で人様の選挙戦にどのようなスタンスでかかわり臨むのかを尋ね、特定候補者へ街頭でマイクを握る応援活動を考えているのかと、市長選で応援を受けた自民党への恩義から政権与党である民主党と対立し対決までする所存かを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">退職者の再雇用の是非</p><p class="qm"><span>一般質問</span><span>平成21年度第3回定例会</span></p><p class="qs">定年や特別職を退いた職員が短期間で嘱託などに再び採用されている実態を挙げ、旧平田市エリアで前市長からの人事が引き継がれていると指摘し、一般職の臨時雇用も公平性を期して公募により採用すべきだとして、市民が納得できる詳細な説明を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第5期">
+<p class="qhead">2021年4月〜2025年4月・一般質問 16回・代表質問 0回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="原子力" aria-pressed="false">原子力</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="農林水産業" aria-pressed="false">農林水産業</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">8の字高規格道路構想</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">中海・宍道湖圏域8の字高規格道路構想について、合併協議会当時の平田市議会が提出した国道431号のルート構想を無視して進めていると思われるとして、市の見解を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">旧平田地域の防災施策</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">旧平田地域の総合防災施策が無策だと重ねて厳しく糾弾し、国富地区の湯谷川沿いの道路の防災対策と水害、一畑電車旅伏駅踏切の拡幅事業、伊野地区の市道美野本線バイパス事業について所見を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">旧平田地域の防災課題</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">島根原発の避難道路とすべき伊野地区の市道美野本線バイパス事業、大雨増水時に道路が冠水する国富地区の湯谷川の河川改修、数十年進展しない市道口宇賀・西代本線旅伏駅踏切の拡幅事業を挙げ、旧平田地域の総合防災意識の欠如と無責任な執務を糾弾して所見を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">本庁舎南側の立体駐車場</p><p class="qm"><span>一般質問</span><span>令和6年度第2回定例会</span></p><p class="qs">旧出雲市役所跡地は絶対に手放してはならないとしたうえで、周辺25か所に点在する職員の759台分の駐車場を本庁舎南側公園敷地8,400平米に立体駐車場を建設して集約し、南側緑地帯の代替地には旧市役所跡地を充てること、あわせて耐震設計の強靱な避難施設を兼ねることを提起した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">美談地内の越水対策</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">一畑電車の美談地内で20年あまり越水により電車が止まっているのに何らの対応もされていないとして、線路を7〜8メートル南へ出しＬ型のものを置くなど下流部から対策を取ること、国や県に責任転嫁せず市が主体となって施策を持つことを提起した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">公共施設の維持管理</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">公共施設の維持管理について一の谷公園で13基のうち10基の遊具が壊れ黄色いテープを張っただけでは子どもの使用は止められないこと、市営住宅の側溝の蓋が10センチほど開くこと、和式トイレに手すりが1本もついていないことを挙げ、洋式化より安価な手すりの設置など日常の小さな不具合への迅速な対応を求めた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">土木建設業界の担い手</p><p class="qm"><span>一般質問</span><span>令和3年度第5回定例会</span></p><p class="qs">人手不足と建設業企業数の激減により本市の入札参加登録業者が要請に満足に対応できない現況で何が課題であり今後の施策支援はどうあるべきか、雲南市が隣接行政区の業者に救援を要請した例を挙げて本市の指針を尋ね、オール出雲でのランク別入札による受注の偏りで旧市町村単位の業者のバランスが崩壊すれば除雪作業や小規模工事に弊害が生じるとして発注制度の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-08">除雪</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li><li><p class="qt">平田地域の総合防災対策</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">国道431号バイパス事業、伊野地域の災害避難道路、一畑電車旅伏駅の踏切拡幅と周辺市道の改良、西代町と国富下地域住民の避難場所の確保という長年提言してきた課題について、島根原発の避難道路も絡めて部長ではなく市長自身の所見を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">8の字高規格道路構想</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li class="line"><p class="qt">本庁舎南側の立体駐車場</p><p class="qm"><span>一般質問</span><span>令和6年度第2回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li class="line"><p class="qt">公共施設の維持管理</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和4年度第6回定例会</span></p><p class="qs">会計年度任用職員の正規雇用化にこれまでどのように対峙してきたのかを時系列で尋ね、900人にも及ぶ職員を月収16万円程度で働かせながら格言を引用することを批判して採用枠拡大の施策指針に全力を傾けるよう求めたうえで、35歳・45歳・55歳の正規雇用職員と会計年度任用職員の毎月の報酬の比較と60歳定年退職時の実収入の落差、島根県が50歳・52歳まで認めているのに本市が受験資格を40歳で切る根拠と見直す考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">会計年度任用職員の正規職員採用について、就職氷河期と言われる35歳から55歳前後の職員は子育ての中で教育費への影響が大きく、子どもの人生に不公平・不公正と貧困の連鎖が懸念されるとして、思いは同じと回答した後の改善施策の進捗を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">正規職員と同等かそれ以上の業務に携わりながら所得は半分以下でボーナスや退職金にも格差があるとして、本市会計年度任用職員の現状実態と正規労働契約への将来展望、島根県の指針との差異、差別処遇を是認するのか、就職氷河期と表される年齢層の雇用形態処遇改善の施策指針、教育の貧困が懸念されることへの所見を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">消防団員の処遇改善</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">年間僅か1万7,500円の報酬を3万5,000円程度としたのは団員を見下した不誠実な対処であるとして、報酬総額が10万円を超える土木委員の制度の即時撤廃と併せ、消防団員への真の処遇改善を求めた。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li class="line"><p class="qt">旧平田地域の防災課題</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">学校用地の災害危険性</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校の取得用地は島根県のハザードマップで土石流災害警戒が指摘された区域のど真ん中にあり、従前から船川の氾濫で県道が通行止めとなる常襲地帯であるとして、用地決定に関わった関係者の問題意識と自覚のなさを提起した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">消防団員の公務災害補償</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">震災や原発事故に応援に出向いた消防団員の死亡に至る程度の公務災害への損害補償は最高限度額300万円と情報を得ているとして、日本の消防団員の公務災害補償規程の詳細と金銭的補償以外の規定、市民の生命財産を守る立場からの市長の所見を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">消防団員の処遇改善</p><p class="qm"><span>一般質問</span><span>令和3年度第3回定例会</span></p><p class="qs">年俸1万7,500円という出雲市消防団員の処遇について、不規則な時間に招集され過酷で危険な作業を担うにもかかわらず土木委員の処遇に比べて劣悪であるとして、消防団員に対する市長の見識を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_nuclear.html">原子力</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">旧平田地域の防災課題</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">美野本線と避難道路</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">合併前に実施詳細設計まで行いながら1人の地権者の反対で進んでいない美野本線について、原発の避難道路としての必要性も踏まえ、市長自らが地元を歩いてでもまとめるなど主体性を持って取り組むよう提起した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li class="line"><p class="qt">消防団員の公務災害補償</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="also">防災と地域の安全にも当たる</p></li><li class="line"><p class="qt">平田地域の総合防災対策</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">不登校児童への対策</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">不登校児童対策について教育委員会が予算を組み半年から1年かけて専門のスタッフをつくること、相談してもきちんとした対応がなかったという保護者の声を真摯に受け止めて対応することを提起した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li><p class="qt">周辺道路の水没対策</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">学校の敷地は見上げるほどかさ上げされた一方で周辺道路のかさ上げは全く計画になく、既に2度も水没して歩行者も自家用車の送迎もスクールバスも出入りできなくなるとして、市がどのような解決策を計画しているのか校区全住民が納得できる説明を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a></div></li><li><p class="qt">統合小学校移転と水害</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="qs">西部地区統合小学校の移転用地決定は県議に主体性を欠いた市政が従った結果だとして、その埋立てにより7月の水害で家族5人が救命ボートで脱出した被害者宅について市の責任と全額負担で速やかに転宅を実現するよう求め、国富地区から3町歩の用地提供の申出があったのに用地がなかったとする説明や、原則4キロ未満でもスクールバスを出すとして同意を得た経緯を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="also">行財政運営にも当たる</p></li><li class="line"><p class="qt">土木建設業界の担い手</p><p class="qm"><span>一般質問</span><span>令和3年度第5回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="also">行財政運営にも当たる</p></li><li><p class="qt">田舎流デイサービスの復活</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">元平田市長の発案による田舎流デイサービス事業について、空き家などを月1万円か2万円で借りて自由に趣味や話をする形が認知症の進行を防いでいたとして、現在の新しい制度がどこまで近づいているかの再検証と事業の復活を求めた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">選挙運動の公正化</p><p class="qm"><span>一般質問</span><span>令和6年度第3回定例会</span></p><p class="qs">旧平田行政区で票の買収や酒食摂待、自治会推薦や各種団体による推薦行為など不公平な選挙運動が続いてきたとして、選挙管理委員会による違法な選挙活動の取締りに触れ、立候補者のポスター貼りを選挙管理委員会が事前にシルバー人材センターと協議し地区ごとに一括すべしと提起した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">旅伏小学校の用地</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">旅伏小学校の用地について土石流の災害が及ぶ場所の真ん中にある窪地で水が出るのに教育長が休めばよいと答えたこと、地元が一反1,000平米を12万円程度と言い近隣の地権者が15万円で売買している土地を500万円で買っていることを挙げ、コミュニティセンターの近くで16軒の地権者が連判状を出している三町歩の土地でやるべきだと質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">水道蛇口の自動化</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">新型コロナ感染対策として提言した保育所・幼稚園・小学校低学年における水道の蛇口の自動化について、昨年7月に市長と教育長から検討課題との回答があった後も1年以上経過して1ミリも前進していないとして、改善の実行を求めた。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">田舎流デイサービスの復活</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_agriculture.html">農林水産業</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">学校用地の買収価格</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校の事業用地は1反500万円で買収されているが、国富中心地区の一等地の農地でも近年の実際の売買価格は1反15万円であり、実勢価格の40倍にあたるとして買収価額の妥当性を提起した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-02">耕作放棄地と農地の利用</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">自転車競技場新設と陳情</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">国民スポーツ大会のための自転車競技場新設整備について、大会終了後の維持管理費を誰が責任を持って対処するのかを尋ね、市政執行者の長として県へ陳情する行為は主権者不在で看過できないとして市の見解を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">統合小学校事業の補償</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">平田西部統合小学校事業により大雨降雨時に家族全員が救命ボートで救助される状態となった至近距離の住民について、人権と居住権の侵害を救済する補償施策を具体的に明言し、安住を復活させる責任を果たすことを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">学校用地選定の答弁</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校の用地について9月議会で適切な用地がなかったと答弁されたが、国富地域活性化協議会から16件の地権者による3万平米の用地を学校に使ってほしいとの申入れが書面で出されており、この答弁は事実に反すると提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">被災者への対応の欠如</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校至近距離のお宅が昨年から床下浸水し本年7月の大雨では消防職員の救援ボートで家族が避難する状況となったにもかかわらず、教育長も市長も一度も見舞いに訪れず、ボランティアセンター関係者も後片づけに訪れていないとして、公平・公正を欠いた対処を提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">庁舎内の業者の営業行為</p><p class="qm"><span>一般質問</span><span>令和5年度第2回定例会</span></p><p class="qs">担当課で協議中に特定業者から肩もみ行為で接触され退去を命じても暴言を吐かれた事件や、議員控室へ無断で入室されていた事例を挙げ、市民のプライバシーに関わる情報を扱う執務現場への業者の徘回行為を十数年にわたり容認してきた市の姿勢と、市長・副市長として今後どう対応するのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">旧平田行政区の防災施策</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">一歩も進まない旧平田行政区の総合防災施策について、市長が執行部の誰が答弁しても同じだとして建設部長に答弁させ、自らが解決すると応答した建設部長も何一つ進展させないまま退職したことを挙げ、その無責任な対応と市長の姿勢を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">中学校の制服選択制</p><p class="qm"><span>一般質問</span><span>令和4年度第3回定例会</span></p><p class="qs">本市中学校の制服選択制について教育長の所見を尋ね、町部と田舎では冬の通学環境が違い、向陽中学校では歩道もない田んぼの中の吹きさらしを女子生徒がスカートで通っている実態を挙げ、性的な観点だけでなく健康上の視点からも速やかに学校へ提案するよう質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市管理施設のトイレ改善</p><p class="qm"><span>一般質問</span><span>令和4年度第3回定例会</span></p><p class="qs">出雲市が管理する施設のトイレに改善課題が存在するか市長の認識を尋ね、平田の本陣記念館下の駐車場のトイレが数年間封鎖されていること、和式トイレに手すりやつかまり棒をつけること、幼保や小学校低学年への自動の蛇口の設置が1年たっても検討課題のままであることを挙げ、身近な課題への速やかな対応を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">介護施設での異性介助</p><p class="qm"><span>一般質問</span><span>令和4年度第2回定例会</span></p><p class="qs">新聞への投稿で明らかになった介護施設の女性浴室に男性職員がいた事例を挙げ、市内の施設で同様のことがないか万全を期して緊急に調査し、その結果に対する適切妥当な対処を行うよう求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">夏休みのラジオ体操の時間</p><p class="qm"><span>一般質問</span><span>令和4年度第2回定例会</span></p><p class="qs">夏休みのラジオ体操が朝6時半に始まり8月10日頃に終わる設定は児童と保護者の負担で本末転倒だとして、開始時刻や実施期間を保護者の意見を聞いて見直すよう提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">職員の名刺の携行と負担</p><p class="qm"><span>一般質問</span><span>令和3年度第3回定例会</span></p><p class="qs">災害現場を戸別訪問した職員が名乗らず名前が分からなかったとして、公務で相手に名刺を差し出すことの組織としての徹底と、名刺に面談・訪問の日時の記載欄を設けること、薄く雨にぬれても書ける用紙による一色刷りとして作成費用を全額公費負担とすることを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">不燃物持込回収の区域</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">東林木の住民が近い河下ではなく神西や湖陵まで持ち込み、斐川町の原鹿の住民が雲南市境の山の中まで運ばなければならない不燃物持込回収エリアの不合理を、合併から20年がたつ今こそ直ちに正すよう求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">8の字高規格道路構想</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">中海・宍道湖圏域8の字高規格道路構想について、合併協議会当時の平田市議会が提出した国道431号のルート構想を無視して進めていると思われるとして、市の見解を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">旧平田地域の防災施策</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">旧平田地域の総合防災施策が無策だと重ねて厳しく糾弾し、国富地区の湯谷川沿いの道路の防災対策と水害、一畑電車旅伏駅踏切の拡幅事業、伊野地区の市道美野本線バイパス事業について所見を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">旧平田地域の防災課題</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">島根原発の避難道路とすべき伊野地区の市道美野本線バイパス事業、大雨増水時に道路が冠水する国富地区の湯谷川の河川改修、数十年進展しない市道口宇賀・西代本線旅伏駅踏切の拡幅事業を挙げ、旧平田地域の総合防災意識の欠如と無責任な執務を糾弾して所見を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">本庁舎南側の立体駐車場</p><p class="qm"><span>一般質問</span><span>令和6年度第2回定例会</span></p><p class="qs">旧出雲市役所跡地は絶対に手放してはならないとしたうえで、周辺25か所に点在する職員の759台分の駐車場を本庁舎南側公園敷地8,400平米に立体駐車場を建設して集約し、南側緑地帯の代替地には旧市役所跡地を充てること、あわせて耐震設計の強靱な避難施設を兼ねることを提起した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">美談地内の越水対策</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">一畑電車の美談地内で20年あまり越水により電車が止まっているのに何らの対応もされていないとして、線路を7〜8メートル南へ出しＬ型のものを置くなど下流部から対策を取ること、国や県に責任転嫁せず市が主体となって施策を持つことを提起した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a></div></li><li><p class="qt">公共施設の維持管理</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">公共施設の維持管理について一の谷公園で13基のうち10基の遊具が壊れ黄色いテープを張っただけでは子どもの使用は止められないこと、市営住宅の側溝の蓋が10センチほど開くこと、和式トイレに手すりが1本もついていないことを挙げ、洋式化より安価な手すりの設置など日常の小さな不具合への迅速な対応を求めた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">土木建設業界の担い手</p><p class="qm"><span>一般質問</span><span>令和3年度第5回定例会</span></p><p class="qs">人手不足と建設業企業数の激減により本市の入札参加登録業者が要請に満足に対応できない現況で何が課題であり今後の施策支援はどうあるべきか、雲南市が隣接行政区の業者に救援を要請した例を挙げて本市の指針を尋ね、オール出雲でのランク別入札による受注の偏りで旧市町村単位の業者のバランスが崩壊すれば除雪作業や小規模工事に弊害が生じるとして発注制度の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-08">除雪</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li><li><p class="qt">平田地域の総合防災対策</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">国道431号バイパス事業、伊野地域の災害避難道路、一畑電車旅伏駅の踏切拡幅と周辺市道の改良、西代町と国富下地域住民の避難場所の確保という長年提言してきた課題について、島根原発の避難道路も絡めて部長ではなく市長自身の所見を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">8の字高規格道路構想</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">中海・宍道湖圏域8の字高規格道路構想について、合併協議会当時の平田市議会が提出した国道431号のルート構想を無視して進めていると思われるとして、市の見解を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-11">湖沼と水質保全</a><a class="tag" href="../topic_administration.html#topic-07">市町村合併の検証</a></div></li><li><p class="qt">本庁舎南側の立体駐車場</p><p class="qm"><span>一般質問</span><span>令和6年度第2回定例会</span></p><p class="qs">旧出雲市役所跡地は絶対に手放してはならないとしたうえで、周辺25か所に点在する職員の759台分の駐車場を本庁舎南側公園敷地8,400平米に立体駐車場を建設して集約し、南側緑地帯の代替地には旧市役所跡地を充てること、あわせて耐震設計の強靱な避難施設を兼ねることを提起した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">公共施設の維持管理</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">公共施設の維持管理について一の谷公園で13基のうち10基の遊具が壊れ黄色いテープを張っただけでは子どもの使用は止められないこと、市営住宅の側溝の蓋が10センチほど開くこと、和式トイレに手すりが1本もついていないことを挙げ、洋式化より安価な手すりの設置など日常の小さな不具合への迅速な対応を求めた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-04">公営住宅と住宅政策</a><a class="tag" href="../topic_infrastructure.html#topic-06">公園と遊具の整備</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和4年度第6回定例会</span></p><p class="qs">会計年度任用職員の正規雇用化にこれまでどのように対峙してきたのかを時系列で尋ね、900人にも及ぶ職員を月収16万円程度で働かせながら格言を引用することを批判して採用枠拡大の施策指針に全力を傾けるよう求めたうえで、35歳・45歳・55歳の正規雇用職員と会計年度任用職員の毎月の報酬の比較と60歳定年退職時の実収入の落差、島根県が50歳・52歳まで認めているのに本市が受験資格を40歳で切る根拠と見直す考えを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">会計年度任用職員の正規職員採用について、就職氷河期と言われる35歳から55歳前後の職員は子育ての中で教育費への影響が大きく、子どもの人生に不公平・不公正と貧困の連鎖が懸念されるとして、思いは同じと回答した後の改善施策の進捗を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">正規職員と同等かそれ以上の業務に携わりながら所得は半分以下でボーナスや退職金にも格差があるとして、本市会計年度任用職員の現状実態と正規労働契約への将来展望、島根県の指針との差異、差別処遇を是認するのか、就職氷河期と表される年齢層の雇用形態処遇改善の施策指針、教育の貧困が懸念されることへの所見を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">消防団員の処遇改善</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">年間僅か1万7,500円の報酬を3万5,000円程度としたのは団員を見下した不誠実な対処であるとして、報酬総額が10万円を超える土木委員の制度の即時撤廃と併せ、消防団員への真の処遇改善を求めた。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li><li><p class="qt">旧平田地域の防災課題</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">島根原発の避難道路とすべき伊野地区の市道美野本線バイパス事業、大雨増水時に道路が冠水する国富地区の湯谷川の河川改修、数十年進展しない市道口宇賀・西代本線旅伏駅踏切の拡幅事業を挙げ、旧平田地域の総合防災意識の欠如と無責任な執務を糾弾して所見を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">学校用地の災害危険性</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校の取得用地は島根県のハザードマップで土石流災害警戒が指摘された区域のど真ん中にあり、従前から船川の氾濫で県道が通行止めとなる常襲地帯であるとして、用地決定に関わった関係者の問題意識と自覚のなさを提起した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">消防団員の公務災害補償</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">震災や原発事故に応援に出向いた消防団員の死亡に至る程度の公務災害への損害補償は最高限度額300万円と情報を得ているとして、日本の消防団員の公務災害補償規程の詳細と金銭的補償以外の規定、市民の生命財産を守る立場からの市長の所見を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">消防団員の処遇改善</p><p class="qm"><span>一般質問</span><span>令和3年度第3回定例会</span></p><p class="qs">年俸1万7,500円という出雲市消防団員の処遇について、不規則な時間に招集され過酷で危険な作業を担うにもかかわらず土木委員の処遇に比べて劣悪であるとして、消防団員に対する市長の見識を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="原子力" hidden>
+<ul class="qlist"><li><p class="qt">旧平田地域の防災課題</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">島根原発の避難道路とすべき伊野地区の市道美野本線バイパス事業、大雨増水時に道路が冠水する国富地区の湯谷川の河川改修、数十年進展しない市道口宇賀・西代本線旅伏駅踏切の拡幅事業を挙げ、旧平田地域の総合防災意識の欠如と無責任な執務を糾弾して所見を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">美野本線と避難道路</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">合併前に実施詳細設計まで行いながら1人の地権者の反対で進んでいない美野本線について、原発の避難道路としての必要性も踏まえ、市長自らが地元を歩いてでもまとめるなど主体性を持って取り組むよう提起した。</p><div class="tg"><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li><li><p class="qt">消防団員の公務災害補償</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">震災や原発事故に応援に出向いた消防団員の死亡に至る程度の公務災害への損害補償は最高限度額300万円と情報を得ているとして、日本の消防団員の公務災害補償規程の詳細と金銭的補償以外の規定、市民の生命財産を守る立場からの市長の所見を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-04">自主防災組織と消防団</a><a class="tag" href="../topic_nuclear.html#topic-06">原発事故と安全性への不信</a></div></li><li><p class="qt">平田地域の総合防災対策</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">国道431号バイパス事業、伊野地域の災害避難道路、一畑電車旅伏駅の踏切拡幅と周辺市道の改良、西代町と国富下地域住民の避難場所の確保という長年提言してきた課題について、島根原発の避難道路も絡めて部長ではなく市長自身の所見を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_nuclear.html#topic-01">原発再稼働</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">不登校児童への対策</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">不登校児童対策について教育委員会が予算を組み半年から1年かけて専門のスタッフをつくること、相談してもきちんとした対応がなかったという保護者の声を真摯に受け止めて対応することを提起した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li><p class="qt">周辺道路の水没対策</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">学校の敷地は見上げるほどかさ上げされた一方で周辺道路のかさ上げは全く計画になく、既に2度も水没して歩行者も自家用車の送迎もスクールバスも出入りできなくなるとして、市がどのような解決策を計画しているのか校区全住民が納得できる説明を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a></div></li><li><p class="qt">統合小学校移転と水害</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="qs">西部地区統合小学校の移転用地決定は県議に主体性を欠いた市政が従った結果だとして、その埋立てにより7月の水害で家族5人が救命ボートで脱出した被害者宅について市の責任と全額負担で速やかに転宅を実現するよう求め、国富地区から3町歩の用地提供の申出があったのに用地がなかったとする説明や、原則4キロ未満でもスクールバスを出すとして同意を得た経緯を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">会計年度任用職員の正規職員採用について、就職氷河期と言われる35歳から55歳前後の職員は子育ての中で教育費への影響が大きく、子どもの人生に不公平・不公正と貧困の連鎖が懸念されるとして、思いは同じと回答した後の改善施策の進捗を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">正規職員と同等かそれ以上の業務に携わりながら所得は半分以下でボーナスや退職金にも格差があるとして、本市会計年度任用職員の現状実態と正規労働契約への将来展望、島根県の指針との差異、差別処遇を是認するのか、就職氷河期と表される年齢層の雇用形態処遇改善の施策指針、教育の貧困が懸念されることへの所見を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">土木建設業界の担い手</p><p class="qm"><span>一般質問</span><span>令和3年度第5回定例会</span></p><p class="qs">人手不足と建設業企業数の激減により本市の入札参加登録業者が要請に満足に対応できない現況で何が課題であり今後の施策支援はどうあるべきか、雲南市が隣接行政区の業者に救援を要請した例を挙げて本市の指針を尋ね、オール出雲でのランク別入札による受注の偏りで旧市町村単位の業者のバランスが崩壊すれば除雪作業や小規模工事に弊害が生じるとして発注制度の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-08">除雪</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">会計年度任用職員の処遇</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">正規職員と同等かそれ以上の業務に携わりながら所得は半分以下でボーナスや退職金にも格差があるとして、本市会計年度任用職員の現状実態と正規労働契約への将来展望、島根県の指針との差異、差別処遇を是認するのか、就職氷河期と表される年齢層の雇用形態処遇改善の施策指針、教育の貧困が懸念されることへの所見を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-07">生活保護と生活困窮</a><a class="tag" href="../topic_industry.html#topic-06">人手不足と働き方</a><a class="tag" href="../topic_administration.html#topic-03">会計年度任用職員と非正規職員</a></div></li><li><p class="qt">田舎流デイサービスの復活</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">元平田市長の発案による田舎流デイサービス事業について、空き家などを月1万円か2万円で借りて自由に趣味や話をする形が認知症の進行を防いでいたとして、現在の新しい制度がどこまで近づいているかの再検証と事業の復活を求めた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">選挙運動の公正化</p><p class="qm"><span>一般質問</span><span>令和6年度第3回定例会</span></p><p class="qs">旧平田行政区で票の買収や酒食摂待、自治会推薦や各種団体による推薦行為など不公平な選挙運動が続いてきたとして、選挙管理委員会による違法な選挙活動の取締りに触れ、立候補者のポスター貼りを選挙管理委員会が事前にシルバー人材センターと協議し地区ごとに一括すべしと提起した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">旅伏小学校の用地</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">旅伏小学校の用地について土石流の災害が及ぶ場所の真ん中にある窪地で水が出るのに教育長が休めばよいと答えたこと、地元が一反1,000平米を12万円程度と言い近隣の地権者が15万円で売買している土地を500万円で買っていることを挙げ、コミュニティセンターの近くで16軒の地権者が連判状を出している三町歩の土地でやるべきだと質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">水道蛇口の自動化</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">新型コロナ感染対策として提言した保育所・幼稚園・小学校低学年における水道の蛇口の自動化について、昨年7月に市長と教育長から検討課題との回答があった後も1年以上経過して1ミリも前進していないとして、改善の実行を求めた。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">田舎流デイサービスの復活</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">元平田市長の発案による田舎流デイサービス事業について、空き家などを月1万円か2万円で借りて自由に趣味や話をする形が認知症の進行を防いでいたとして、現在の新しい制度がどこまで近づいているかの再検証と事業の復活を求めた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_population.html#topic-04">空き家対策</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="農林水産業" hidden>
+<ul class="qlist"><li><p class="qt">学校用地の買収価格</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校の事業用地は1反500万円で買収されているが、国富中心地区の一等地の農地でも近年の実際の売買価格は1反15万円であり、実勢価格の40倍にあたるとして買収価額の妥当性を提起した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-02">耕作放棄地と農地の利用</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">自転車競技場新設と陳情</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">国民スポーツ大会のための自転車競技場新設整備について、大会終了後の維持管理費を誰が責任を持って対処するのかを尋ね、市政執行者の長として県へ陳情する行為は主権者不在で看過できないとして市の見解を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">統合小学校事業の補償</p><p class="qm"><span>一般質問</span><span>令和6年度第4回定例会</span></p><p class="qs">平田西部統合小学校事業により大雨降雨時に家族全員が救命ボートで救助される状態となった至近距離の住民について、人権と居住権の侵害を救済する補償施策を具体的に明言し、安住を復活させる責任を果たすことを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">学校用地選定の答弁</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校の用地について9月議会で適切な用地がなかったと答弁されたが、国富地域活性化協議会から16件の地権者による3万平米の用地を学校に使ってほしいとの申入れが書面で出されており、この答弁は事実に反すると提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">被災者への対応の欠如</p><p class="qm"><span>一般質問</span><span>令和5年度第4回定例会</span></p><p class="qs">統合小学校至近距離のお宅が昨年から床下浸水し本年7月の大雨では消防職員の救援ボートで家族が避難する状況となったにもかかわらず、教育長も市長も一度も見舞いに訪れず、ボランティアセンター関係者も後片づけに訪れていないとして、公平・公正を欠いた対処を提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">庁舎内の業者の営業行為</p><p class="qm"><span>一般質問</span><span>令和5年度第2回定例会</span></p><p class="qs">担当課で協議中に特定業者から肩もみ行為で接触され退去を命じても暴言を吐かれた事件や、議員控室へ無断で入室されていた事例を挙げ、市民のプライバシーに関わる情報を扱う執務現場への業者の徘回行為を十数年にわたり容認してきた市の姿勢と、市長・副市長として今後どう対応するのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">旧平田行政区の防災施策</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">一歩も進まない旧平田行政区の総合防災施策について、市長が執行部の誰が答弁しても同じだとして建設部長に答弁させ、自らが解決すると応答した建設部長も何一つ進展させないまま退職したことを挙げ、その無責任な対応と市長の姿勢を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">中学校の制服選択制</p><p class="qm"><span>一般質問</span><span>令和4年度第3回定例会</span></p><p class="qs">本市中学校の制服選択制について教育長の所見を尋ね、町部と田舎では冬の通学環境が違い、向陽中学校では歩道もない田んぼの中の吹きさらしを女子生徒がスカートで通っている実態を挙げ、性的な観点だけでなく健康上の視点からも速やかに学校へ提案するよう質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市管理施設のトイレ改善</p><p class="qm"><span>一般質問</span><span>令和4年度第3回定例会</span></p><p class="qs">出雲市が管理する施設のトイレに改善課題が存在するか市長の認識を尋ね、平田の本陣記念館下の駐車場のトイレが数年間封鎖されていること、和式トイレに手すりやつかまり棒をつけること、幼保や小学校低学年への自動の蛇口の設置が1年たっても検討課題のままであることを挙げ、身近な課題への速やかな対応を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">介護施設での異性介助</p><p class="qm"><span>一般質問</span><span>令和4年度第2回定例会</span></p><p class="qs">新聞への投稿で明らかになった介護施設の女性浴室に男性職員がいた事例を挙げ、市内の施設で同様のことがないか万全を期して緊急に調査し、その結果に対する適切妥当な対処を行うよう求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">夏休みのラジオ体操の時間</p><p class="qm"><span>一般質問</span><span>令和4年度第2回定例会</span></p><p class="qs">夏休みのラジオ体操が朝6時半に始まり8月10日頃に終わる設定は児童と保護者の負担で本末転倒だとして、開始時刻や実施期間を保護者の意見を聞いて見直すよう提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">職員の名刺の携行と負担</p><p class="qm"><span>一般質問</span><span>令和3年度第3回定例会</span></p><p class="qs">災害現場を戸別訪問した職員が名乗らず名前が分からなかったとして、公務で相手に名刺を差し出すことの組織としての徹底と、名刺に面談・訪問の日時の記載欄を設けること、薄く雨にぬれても書ける用紙による一色刷りとして作成費用を全額公費負担とすることを求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">不燃物持込回収の区域</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">東林木の住民が近い河下ではなく神西や湖陵まで持ち込み、斐川町の原鹿の住民が雲南市境の山の中まで運ばなければならない不燃物持込回収エリアの不合理を、合併から20年がたつ今こそ直ちに正すよう求めた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+
+<section class="sec count" id="s-count"><h2>このページの数え方</h2><dl><dt>質問の回数</dt><dd>その期に質問に立った定例会の回数を、会議録に記された質問の種別に従って「一般質問」と「代表質問」に分けて数えています（同じ定例会で両方に立った時は「代表質問」に1回と数えます）。数えているのは質問に立った定例会の回数で、論点の数ではありません。1回の質問で複数の論点を取り上げる事があり、同じ定例会の質問が議員毎のページの一覧では複数の項目に分かれて見える事が有ります。名簿の同じ期の回数と同じ数です。</dd><dt>取り上げた区分</dt><dd>質問毎に、その質問の論点に割り当てた話題の区分を数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数え、どの区分にも当たらない質問は「当たる話題なし」に数えます。マスの濃さは、この議員の表の中で最も多いマスに対する多さを示します。</dd><dt>質問の題と要約</dt><dd>会議録の実際の発言から、生成AIで論点毎に題と要約を付けています。出雲市議会が公開する一般質問の通告ではない為、通告の項目とは区分や粒度が異なる事が有ります。区分の束は、その期に論点の多い区分から並べ、束の中は新しい会議から並べています。</dd><dt>区分と話題</dt><dd>題と要約に、話題毎に決めた語が含まれるかで話題を割り当て、話題を纏めた区分で数えています。どの話題にも当たらない論点は「当たる話題なし」として灰色の札で示します。</dd><dt>会派・役職・在任の途中の変化</dt><dd>会派は、会派の記録が有る期だけ示しています。議長・副議長は、その期の内に務めた事を示します。退任は期の途中で議員で無くなった事（その期の任期の中で最後に出席した会議を添えています）、加入は期の途中から議員になった事を示します。</dd><dt>期</dt><dd>期の範囲と定義は「<a href="../about.html#s-ki">このレポートについて › 期の定義</a>」に在ります。</dd></dl></section>
+
+</main>
+<footer class="foot">
+<p>v9.1.1</p>
+<p>出雲市議会レポート — 車座プロジェクト ／ <a href="../about.html">このレポートについて</a></p>
+<p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+<p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+</footer>
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var doc = document;
+  /* Maps keyed by attribute values have no prototype, so a key such as "constructor"
+     never resolves to an inherited member. */
+  function dict() { return Object.create(null); }
+  var MORE_FIRST = dict();
+  MORE_FIRST.summary = 5;
+  MORE_FIRST.line = 10;
+  var seq = 0;
+
+  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+  function newId(prefix) {
+    var id;
+    do { seq += 1; id = prefix + seq; } while (doc.getElementById(id));
+    return id;
+  }
+  function idOf(el, prefix) { if (!el.id) { el.id = newId(prefix); } return el.id; }
+  /* Operators and panes belong to the nearest enclosing scope only (nesting). */
+  function scopeOf(el) { return el.closest("[data-switch]"); }
+  function own(scope, selector) {
+    return Array.prototype.filter.call(scope.querySelectorAll(selector), function (el) {
+      return scopeOf(el) === scope;
+    });
+  }
+  function keyOf(el) { return el.getAttribute("data-switch-key"); }
+  function isTab(el) { return el.getAttribute("role") === "tab"; }
+  function setOn(op, on) {
+    if (op.hasAttribute("aria-selected")) { op.setAttribute("aria-selected", on ? "true" : "false"); }
+    if (op.hasAttribute("aria-pressed")) { op.setAttribute("aria-pressed", on ? "true" : "false"); }
+    if (isTab(op)) { op.tabIndex = on ? 0 : -1; }
+  }
+  function isOn(op) {
+    return op.getAttribute("aria-selected") === "true" || op.getAttribute("aria-pressed") === "true";
+  }
+  /* Scroll only the operator's own strip sideways, so loading never moves the page (3.9). */
+  function nudge(op) {
+    var strip = op.parentElement;
+    if (!strip || strip.scrollWidth <= strip.clientWidth) { return; }
+    var s = strip.getBoundingClientRect();
+    var r = op.getBoundingClientRect();
+    if (r.left < s.left) { strip.scrollLeft -= s.left - r.left; }
+    else if (r.right > s.right) { strip.scrollLeft += r.right - s.right; }
+  }
+
+  /* ---- switch: pick one operator, show its pane, in its scope (3.6, 3.9) ---- */
+  function pick(op, focus) {
+    var scope = scopeOf(op);
+    if (!scope) { return; }
+    var key = keyOf(op);
+    each(own(scope, "[data-switch-key]"), function (o) { setOn(o, keyOf(o) === key); });
+    each(own(scope, "[data-switch-pane]"), function (p) {
+      p.hidden = p.getAttribute("data-switch-pane") !== key;
+    });
+    if (focus) { op.focus(); }
+    op.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  each(doc.querySelectorAll("[data-switch]"), function (scope) {
+    var panes = dict();
+    each(own(scope, "[data-switch-pane]"), function (p) { panes[p.getAttribute("data-switch-pane")] = p; });
+    each(own(scope, "[data-switch-key]"), function (op) {
+      var pane = panes[keyOf(op)];
+      if (pane) { op.setAttribute("aria-controls", idOf(pane, "v9-pane-")); }
+      if (isTab(op)) {
+        op.tabIndex = isOn(op) ? 0 : -1;
+        if (pane) {
+          pane.setAttribute("role", "tabpanel");
+          pane.setAttribute("aria-labelledby", idOf(op, "v9-tab-"));
+        }
+      }
+      if (isOn(op)) { nudge(op); }
+    });
+  });
+
+  doc.addEventListener("click", function (ev) {
+    var target = ev.target;
+    if (!(target instanceof Element)) { return; }
+    var op = target.closest("[data-switch-key]");
+    if (op) { pick(op, false); return; }
+    var row = target.closest("[data-pick-row]");
+    if (row && !target.closest("a, button, input, select, textarea, summary, label")) {
+      var rowOp = row.querySelector("[data-switch-key]");
+      if (rowOp) { pick(rowOp, true); }
+    }
+  });
+
+  /* ---- tabs: left / right arrows (Home / End) move the choice and the focus (2.10) ---- */
+  doc.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) { return; }
+    var tab = ev.target instanceof Element ? ev.target.closest("[role=tab][data-switch-key]") : null;
+    if (!tab) { return; }
+    var list = tab.closest("[role=tablist]");
+    if (!list) { return; }
+    var tabs = Array.prototype.filter.call(list.querySelectorAll("[role=tab][data-switch-key]"), function (t) {
+      return t.closest("[role=tablist]") === list;
+    });
+    var at = tabs.indexOf(tab);
+    var to = -1;
+    if (ev.key === "ArrowRight") { to = (at + 1) % tabs.length; }
+    else if (ev.key === "ArrowLeft") { to = (at - 1 + tabs.length) % tabs.length; }
+    else if (ev.key === "Home") { to = 0; }
+    else if (ev.key === "End") { to = tabs.length - 1; }
+    if (to < 0) { return; }
+    ev.preventDefault();
+    pick(tabs[to], true);
+  });
+
+  /* ---- 「残り○件」: first 5 / 10 items, the button shows all and back (3.10) ---- */
+  each(doc.querySelectorAll("[data-more]"), function (list) {
+    var first = MORE_FIRST[list.getAttribute("data-more")];
+    var button = list.nextElementSibling;
+    if (!first || !button || !button.classList.contains("more")) { return; }
+    var items = Array.prototype.filter.call(list.children, function (el) { return el.tagName === "LI"; });
+    var rest = items.length - first;
+    if (rest <= 0) { return; }
+    var open = false;
+    function apply() {
+      each(items, function (li, i) { li.hidden = !open && i >= first; });
+      button.textContent = open ? "最初の" + first + "件だけにする" : "残り" + rest + "件を表示";
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    button.setAttribute("aria-controls", idOf(list, "v9-more-"));
+    button.addEventListener("click", function () { open = !open; apply(); });
+    apply();
+    button.hidden = false;
+  });
+
+  /* ---- phone menu: .menu toggles .side.open with aria-expanded (2.8). At phone width the
+     closed sidebar is only moved off screen, so it is made inert: out of the tab order and
+     away from assistive tech until opened (2.10). Without JS nothing is inert. ---- */
+  var side = doc.getElementById("side");
+  var menu = doc.querySelector(".crumb .menu");
+  var phone = window.matchMedia ? window.matchMedia("(max-width:640px)") : null;
+  function sync() {
+    if (!side) { return; }
+    side.inert = !!(phone && phone.matches) && !side.classList.contains("open");
+  }
+  /* A sidebar that is the URL's target is shown by CSS (.side:target, the no-JS way in).
+     Closing it drops the target without moving the page, so it never stays shown but inert. */
+  function untarget() {
+    if (!side.matches(":target")) { return; }
+    var x = window.scrollX, y = window.scrollY;
+    location.replace("#");
+    window.scrollTo(x, y);
+  }
+  function setMenu(opened) {
+    if (!side || !menu) { return; }
+    side.classList.toggle("open", opened);
+    menu.setAttribute("aria-expanded", opened ? "true" : "false");
+    if (!opened) { untarget(); }
+    sync();
+  }
+  if (side && menu) {
+    sync();
+    /* The script runs before the target is applied, so read the URL's fragment. */
+    if (location.hash === "#side") { setMenu(true); }
+    if (phone) {
+      if (phone.addEventListener) { phone.addEventListener("change", sync); }
+      else if (phone.addListener) { phone.addListener(sync); }
+    }
+    menu.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      var opening = !side.classList.contains("open");
+      setMenu(opening);
+      if (opening) {
+        var first = side.querySelector("a[href]");
+        if (first) { first.focus(); }
+      }
+    });
+    doc.addEventListener("click", function (ev) {
+      if (side.classList.contains("open") && !side.contains(ev.target)) { setMenu(false); }
+    });
+    doc.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && side.classList.contains("open")) { setMenu(false); menu.focus(); }
+    });
+    each(side.querySelectorAll("a[href]"), function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+  }
+
+  /* ---- section TOC: mark the section in view, as the legacy shell does ---- */
+  var tocLinks = side ? side.querySelectorAll('.toc a[href^="#"]') : [];
+  var linkById = dict();
+  var sections = [];
+  function mark(link) {
+    each(tocLinks, function (a) { a.removeAttribute("aria-current"); });
+    link.setAttribute("aria-current", "location");
+  }
+  each(tocLinks, function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    var section = doc.getElementById(id);
+    if (!section) { return; }
+    linkById[id] = a;
+    sections.push(section);
+    a.addEventListener("click", function () { mark(a); });
+  });
+  if ("IntersectionObserver" in window && sections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      each(entries, function (en) {
+        if (en.isIntersecting && linkById[en.target.id]) { mark(linkById[en.target.id]); }
+      });
+    }, { rootMargin: "0px 0px -68% 0px", threshold: 0 });
+    each(sections, function (s) { spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
