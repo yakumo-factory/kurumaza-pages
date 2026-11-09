@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ja" data-shell="v9">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宮本享 — 出雲市議会レポート</title>
+<style>
+/* spacing-exceptions: 0 1px 2px 3px 5px 6px 7px 9px 10px 26px 34px */
+/* reason: every value above is kept from the mock (docs/mocks/v9/v9.css) so the look does not change. */
+/* v9 style layer of the council report (canonical; the mock is now a record of decisions).
+   Fixed layout: b (tinted page + left-ruled headings, white boxes only for data), body text capped at 45em, white page.
+   Raw colors live only in the :root token definitions below; everything else uses var(--*).
+   A dark scheme would swap the :root values only; no dark color-scheme media block is kept here.
+   Component CSS (tables, switches, question lists, cards, ...) is appended by the component tasks. */
+:root{
+  /* colors */
+  --bg:#ffffff; --surface:#ffffff; --side:#f7f8fa;
+  --ink:#1c1e26; --ink-soft:#4d5263; --ink-faint:#656a7e; --zero:#8a8fa3; --rest:#c3c6cf; --rest-soft:#eceef1;
+  --line:#e2e4ea; --line-soft:#eef0f4;
+  --accent:#3a4a8c; --accent-ink:#2c3a70; --accent-soft:#eceff8;
+  --a2:#6b76b0; --a3:#a9b0d3; --a4:#d5d9ec; --a5:#eceef7;
+  --on-accent:#ffffff; /* text on an --accent fill */
+  /* shadows (the mock's raw rgba() values, moved into tokens) */
+  --shadow-card:0 1px 2px rgba(28,30,38,.04),0 8px 24px -18px rgba(28,30,38,.25);
+  --shadow-hover:0 6px 18px -12px rgba(58,74,140,.5);
+  --shadow-overlay:0 0 40px rgba(0,0,0,.2);
+  /* per-person colors: the --accent hue (228deg, saturation 41%) at HSL lightness 17/28/39/50/61/72%,
+     dark to light; --person-3 is --accent itself. CIE L* steps are about 9-13 apart. */
+  --person-1:#19203d; --person-2:#2a3564; --person-3:#3a4a8c; --person-4:#4a5fb4; --person-5:#7282c4; --person-6:#99a5d5;
+  /* spacing steps */
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:24px; --sp6:40px; --sp7:64px;
+  --radius:8px;
+  --cap:45em; /* body text cap (45 characters) */
+  --fs:15px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ background:var(--bg); color:var(--ink); font-size:var(--fs); line-height:1.75;
+  font-family:"Yu Gothic UI","Yu Gothic","游ゴシック","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;
+  font-feature-settings:"palt"; -webkit-text-size-adjust:100%; }
+a{ color:var(--accent); text-underline-offset:3px; }
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible,.scroll:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+.ic{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+/* ---- shell: sidebar ---- */
+.shell{ display:flex; min-height:100vh; }
+.side{ width:252px; flex:none; background:var(--side); border-right:1px solid var(--line); padding:var(--sp4) var(--sp3);
+  position:sticky; top:0; height:100vh; overflow-y:auto; font-size:14px; }
+.side .back{ display:flex; gap:var(--sp2); align-items:center; color:var(--ink-faint); text-decoration:none; font-size:12.5px; padding:var(--sp1) var(--sp2); }
+.side .rep{ margin:var(--sp2) 0 var(--sp4); padding:var(--sp2) var(--sp3); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); font-weight:700; display:flex; gap:var(--sp2); align-items:center; }
+.side .grp{ margin-top:var(--sp4); }
+.side .gh{ font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; padding:0 var(--sp2) var(--sp1); }
+.side a.it{ display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); border-radius:6px; color:var(--ink-soft); text-decoration:none; }
+.side a.it:hover{ background:var(--accent-soft); color:var(--accent-ink); }
+.side a.it[aria-current]{ background:var(--accent-soft); color:var(--accent-ink); font-weight:700; }
+.side details > summary{ list-style:none; cursor:pointer; display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); color:var(--ink-soft); border-radius:6px; }
+.side details > summary::-webkit-details-marker{ display:none; }
+.side details > summary::after{ content:""; margin-left:auto; border:4px solid transparent; border-left-color:var(--ink-faint); transform:translateX(2px); transition:transform .15s; }
+.side details[open] > summary::after{ transform:rotate(90deg) translateX(2px); }
+.side .sub{ padding-left:26px; }
+.side .sub a.it{ padding:var(--sp1) var(--sp2); font-size:13.5px; }
+.side .toc{ margin:2px 0 var(--sp2) 34px; border-left:1px solid var(--line); }
+.side .toc a{ display:block; padding:3px var(--sp3); font-size:12.5px; color:var(--ink-faint); text-decoration:none; }
+.side .toc a:hover{ color:var(--accent-ink); }
+/* the section in view, marked by the shell script (not in the mock) */
+.side .toc a[aria-current]{ color:var(--accent-ink); font-weight:700; box-shadow:inset 2px 0 0 var(--accent); }
+/* report switch: the legacy cross-nav block sits in .rep under the report name */
+.side .rep{ flex-wrap:wrap; }
+.side .rep a.rep-link{ display:flex; gap:var(--sp2); align-items:center; flex:1 1 auto; color:inherit; text-decoration:none; }
+.side .rep a.rep-link:hover,.side .rep a.rep-link[aria-current]{ color:var(--accent-ink); }
+.side .rep .cross-nav{ flex-basis:100%; font-weight:400; font-size:12.5px; }
+.side .cross-nav-inner{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp2); }
+.side .cross-nav a{ color:var(--accent); text-decoration:none; }
+.side .cross-nav-sep{ color:var(--line); }
+
+/* ---- shell: breadcrumb and page frame ---- */
+.main{ flex:1; min-width:0; }
+.crumb{ font-size:12.5px; color:var(--ink-faint); padding:var(--sp3) var(--sp6); border-bottom:1px solid var(--line-soft); background:var(--bg); }
+.crumb b{ color:var(--ink); font-weight:600; }
+.page{ max-width:1080px; padding:var(--sp6) var(--sp6) var(--sp7); }
+.menu{ display:none; }
+
+/* ---- page head: kicker, title, lead (the how-to box is a component) ---- */
+.kicker{ display:inline-block; font-size:12px; color:var(--accent-ink); background:var(--accent-soft); border-radius:999px; padding:1px 10px; margin-bottom:var(--sp2); }
+h1{ font-size:28px; line-height:1.35; margin:0 0 var(--sp3); letter-spacing:.02em; }
+.lead{ max-width:var(--cap); color:var(--ink-soft); margin:0 0 var(--sp5); }
+
+/* ---- sections: layout b (tinted page + left-ruled heading; white box only for data) ---- */
+/* --measure is the wrap width of body text in a section: the cap by default;
+   .sec.fit follows the section (= table) width and still stops at the cap. */
+.sec{ --measure:var(--cap); margin:0 0 var(--sp7); }
+.sec.fit{ --measure:min(var(--cap), 100%); }
+.sec > h2{ font-size:20px; line-height:1.4; margin:0 0 var(--sp3); border-left:4px solid var(--accent); padding-left:var(--sp3); }
+.sec h3{ font-size:17px; margin:var(--sp6) 0 var(--sp2); }
+.sec h4.sub{ font-size:14px; margin:var(--sp4) 0 var(--sp2); color:var(--ink-soft); }
+.prose{ max-width:var(--measure, var(--cap)); margin:0 0 var(--sp4); color:var(--ink-soft); }
+.meta{ max-width:var(--measure, var(--cap)); font-size:13px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.terms{ max-width:var(--measure, var(--cap)); font-size:12.5px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.data{ margin:0 0 var(--sp4); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:var(--sp4);
+  box-shadow:var(--shadow-card); }
+
+/* ---- footer (tinted) ---- */
+.foot{ border-top:1px solid var(--line); padding:var(--sp5) var(--sp6); font-size:12.5px; color:var(--ink-faint); background:var(--side); }
+.foot a{ color:var(--accent); }
+.foot p{ margin:0; }
+.foot p + p{ margin-top:var(--sp1); }
+/* the one <noscript> note of the shell (requirement 3.8) */
+.noscript{ margin:0; padding:var(--sp2) var(--sp6); font-size:12.5px; background:var(--accent-soft); color:var(--accent-ink); }
+
+/* ---- mobile: sidebar becomes an overlay menu, body is one column ---- */
+@media (max-width:640px){
+  .side{ position:fixed; left:0; top:0; z-index:40; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow-overlay); }
+  .side.open{ transform:none; }
+  .side:target{ transform:none; }
+  .menu{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; margin-right:var(--sp2); border:1px solid var(--line); border-radius:8px; background:var(--surface); vertical-align:middle; }
+  .crumb{ padding:var(--sp2) var(--sp4); position:sticky; top:0; z-index:30; }
+  .page{ padding:var(--sp5) var(--sp4) var(--sp6); }
+  h1{ font-size:23px; }
+  .data{ padding:var(--sp3); }
+  .foot{ padding:var(--sp4); }
+  .noscript{ padding:var(--sp2) var(--sp4); }
+}
+
+/* ---- components (4.1): how-to box, counting section, tag, link rows, stacked band, policy marks ---- */
+/* how-to box: the mock's list indent of 1.2em is put on the --sp4 step (16px at 14px text vs 16.8px). */
+.howto{ max-width:var(--cap); border-left:3px solid var(--a3); background:var(--accent-soft); padding:var(--sp3) var(--sp4); border-radius:0 var(--radius) var(--radius) 0; margin:0 0 var(--sp6); font-size:14px; }
+.howto h2{ all:unset; display:block; font-weight:700; font-size:13px; color:var(--accent-ink); margin-bottom:var(--sp1); }
+.howto ul{ margin:0; padding-left:var(--sp4); }
+.howto li{ margin:2px 0; }
+.count{ font-size:14px; }
+.count dl{ margin:0; max-width:var(--cap); }
+.count dt{ font-weight:700; margin-top:var(--sp3); }
+.count dd{ margin:var(--sp1) 0 0; color:var(--ink-soft); }
+/* small tag: one part, four variants (legacy tag / ab / sk / rtag) */
+.tag{ display:inline-block; font-size:12px; line-height:1.6; padding:0 9px; border-radius:999px; border:1px solid var(--a4); background:var(--accent-soft); color:var(--accent-ink); }
+.tag.rest{ border-color:var(--line); background:var(--line-soft); color:var(--ink-faint); }
+.tag.role{ background:var(--surface); }
+.tag.out{ border-color:var(--line); background:var(--line-soft); color:var(--ink-soft); }
+/* link rows: page name + one-line description + arrow, ruled rows (not cards) */
+.llist{ list-style:none; margin:var(--sp2) 0 0; padding:0; max-width:var(--cap); border-top:1px solid var(--line); }
+.llist li{ border-bottom:1px solid var(--line); }
+.lrow{ display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:var(--sp3); padding:var(--sp3) var(--sp2); text-decoration:none; color:var(--ink); }
+.lrow:hover{ background:var(--accent-soft); }
+.lrow .lt{ display:flex; gap:var(--sp2); align-items:center; font-weight:700; color:var(--accent-ink); }
+.lrow:hover .lt{ text-decoration:underline; text-underline-offset:3px; }
+.lrow .lt .ic{ color:var(--accent); }
+.lrow .ld{ grid-column:1; font-size:13px; color:var(--ink-soft); }
+.lrow .ar{ grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--accent); }
+/* stacked band: tones 1-5 run dark to light; a legend may reuse the same tone classes */
+.stack{ display:flex; height:16px; border-radius:2px; overflow:hidden; }
+.stack .seg{ width:var(--w); }
+.stack .t1, .stacklegend .t1{ background:var(--accent-ink); }
+.stack .t2, .stacklegend .t2{ background:var(--accent); }
+.stack .t3, .stacklegend .t3{ background:var(--a2); }
+.stack .t4, .stacklegend .t4{ background:var(--a3); }
+.stack .t5, .stacklegend .t5{ background:var(--a4); }
+.stacklegend{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp4); font-size:12.5px; color:var(--ink-soft); margin:var(--sp3) 0 0; }
+.stacklegend i{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+/* policy marks: fixed-width columns so the marks line up across items */
+.pmarks{ display:inline-grid; grid-template-columns:8.6em 8.2em; column-gap:var(--sp3); align-items:baseline; }
+.pmark{ font-size:11.5px; padding:0 var(--sp2); border-radius:999px; line-height:1.7; white-space:nowrap; text-align:center; }
+.pmark.council{ background:var(--accent); color:var(--on-accent); }
+.pmark.executive{ background:var(--a3); color:var(--ink); }
+.pmark.after{ border:1px solid var(--a2); color:var(--accent-ink); }
+.pmark.none{ border:1px dashed var(--a3); color:var(--ink-faint); }
+
+/* ---- components (4.2): table + scale bar, heat cells, number cells ---- */
+/* a table wider than the page scrolls inside this wrapper, never the page (2.8; the mock's .scroll) */
+.scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tbl{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+.tbl th,.tbl td{ padding:7px 10px; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:middle; }
+.tbl thead th{ font-size:12px; color:var(--ink-faint); font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap; }
+.tbl tbody th{ font-weight:600; }
+.tbl tbody tr:last-child > *{ border-bottom:0; }
+.tbl .num{ text-align:right; white-space:nowrap; }
+.tbl a{ text-decoration:none; }
+.tbl a:hover{ text-decoration:underline; }
+.tbl tr.total > *{ border-top:1px solid var(--line); font-weight:700; }
+/* the caption names the table for assistive tech only; the visible title is the heading above the box */
+.tbl > caption{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+/* unified columns: name, scale bar (takes the rest), numbers */
+.cols{ table-layout:fixed; }
+.cols .c-name{ width:15em; }
+.cols .c-num{ width:5.5em; }
+.barcell{ padding-right:var(--sp4)!important; }
+/* the bar element is left out for 0, so no width rule hides it */
+.hbar{ display:block; height:10px; width:var(--w); min-width:2px; background:var(--accent); border-radius:2px; }
+/* catch-all rows (その他・当たる話題なし) are grey */
+.hbar.rest{ background:var(--rest); }
+.tbl tr.rest th{ font-weight:400; color:var(--ink-soft); }
+/* minor row: a sub-item indented under its parent (scale_table row key "minor"). */
+.tbl tr.minor th{ padding-left:var(--sp5); font-weight:400; color:var(--ink-soft); }
+/* heat steps (light type), both families always on: table.heat fills the cell (td.l3-l0),
+   any table fills the number's pill (td.num .h3-.h1). Steps are chosen by the caller. */
+.heat td.l3, td.num .h3{ background:var(--a4); color:var(--accent-ink); font-weight:700; }
+.heat td.l2, td.num .h2{ background:var(--a5); color:var(--ink-soft); }
+.heat td.l1, td.num .h1{ background:none; color:var(--ink-faint); }
+td.num .hr{ background:var(--rest-soft); color:var(--ink-soft); }
+td.num .h3, td.num .h2, td.num .h1, td.num .hr{ display:inline-block; min-width:2.6em; padding:1px var(--sp1); border-radius:3px; text-align:center; }
+/* a table zero is a faint 0; 「—」 is only for "no data / not applicable" */
+.zero, .heat td.l0{ color:var(--zero); }
+
+/* ---- mobile: the scale bar goes under the numbers at full width ---- */
+@media (max-width:640px){
+  .tbl.cols, .tbl.cols thead, .tbl.cols tbody{ display:block; }
+  .tbl.cols colgroup, .tbl.cols thead th:nth-child(2){ display:none; }
+  /* --n (number columns) is set on the table by the scale_table macro */
+  .tbl.cols tr{ display:grid; grid-template-columns:minmax(0,1fr) repeat(var(--n),auto); column-gap:var(--sp3); align-items:baseline; border-bottom:1px solid var(--line-soft); }
+  .tbl.cols thead tr{ border-bottom-color:var(--line); }
+  .tbl.cols tr > *{ border-bottom:0!important; }
+  .tbl.cols td.barcell{ grid-column:1 / -1; grid-row:2; padding-top:0; padding-bottom:var(--sp2); }
+  /* as on the desktop, the last row has no rule of its own (the box edge or .panes draws it) */
+  .tbl.cols tbody tr:last-child{ border-bottom:0; }
+  /* the total row has no bar: drop its empty bar cell (it made a blank second line) and draw
+     the rule on the row, since per-cell rules break at the grid's column gaps */
+  .tbl.cols tr.total td.barcell{ display:none; }
+  .tbl.cols tr.total{ border-top:1px solid var(--line); }
+  .tbl.cols tr.total > *{ border-top:0; }
+}
+
+/* ---- components (4.3): switches, pick rows, 「残り○件」, question ---- */
+/* hidden always wins, also over a component's display (grid rows, flex lists) */
+[hidden]{ display:none!important; }
+/* period tabs, year buttons, chips: one row that scrolls sideways on a phone (3.9) */
+.tabs{ display:flex; gap:2px; border-bottom:1px solid var(--line); margin:0 0 var(--sp3); overflow-x:auto; }
+.tab{ font:inherit; font-size:14px; background:none; border:0; border-bottom:3px solid transparent; padding:var(--sp2) var(--sp4); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.tab[aria-selected="true"]{ color:var(--accent-ink); border-bottom-color:var(--accent); font-weight:700; }
+.ystrip{ display:flex; gap:var(--sp1); overflow-x:auto; padding-bottom:var(--sp2); margin:0 0 var(--sp4); border-bottom:1px solid var(--line); }
+.ybtn{ font:inherit; font-size:12.5px; font-weight:600; line-height:1.35; flex:1 0 40px; padding:5px 0 var(--sp1); border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.ybtn:hover{ border-color:var(--a3); }
+.ybtn[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* year buttons, form "count" (council-v9-topics, mock 05): the year over its topic count, 「途中」 under a year in progress */
+.ystrip.count .ybtn{ display:flex; flex-direction:column; align-items:center; gap:0; }
+.ystrip.count .ybtn .yl{ font-size:12.5px; font-weight:600; white-space:nowrap; }
+.ystrip.count .ybtn b{ font-size:10.5px; font-weight:400; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+.ystrip.count .ybtn b::after{ content:"話題"; }
+.ystrip.count .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; font-weight:400; text-align:center; }
+.ystrip.count .ybtn[aria-pressed="true"] b{ color:var(--on-accent); opacity:.85; }
+/* year buttons, form "bars" (council-v9-topics, mock 06): a bar per year, faded when it cannot be pressed,
+   a dot at the bar's root for a year with policy items only, a faint ground when pressed */
+.ystrip.bars .ybtn{ display:flex; flex-direction:column; align-items:center; gap:2px; flex:1 0 34px; padding:var(--sp1) 0; border:0; background:none; font-weight:400; }
+.ystrip.bars .ybtn .yv{ display:block; width:12px; height:56px; background:linear-gradient(to top,var(--a3) var(--h),transparent var(--h)); border-radius:2px; }
+.ystrip.bars .ybtn .yl{ font-size:10.5px; color:var(--ink-faint); white-space:nowrap; }
+.ystrip.bars .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; text-align:center; }
+.ystrip.bars .ybtn:hover:not([disabled]){ background:var(--line-soft); }
+.ystrip.bars .ybtn[disabled]{ cursor:default; opacity:.45; }
+.ystrip.bars .ybtn.pol .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--a3) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn.pol[aria-pressed="true"] .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--accent) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn[aria-pressed="true"]{ background:var(--accent-soft); color:var(--accent-ink); }
+.ystrip.bars .ybtn[aria-pressed="true"] .yv{ background:linear-gradient(to top,var(--accent) var(--h),transparent var(--h)); }
+.chips{ display:flex; gap:var(--sp2); flex-wrap:nowrap; overflow-x:auto; margin:0 0 var(--sp3); padding-bottom:2px; }
+.chip{ font:inherit; font-size:13px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:3px var(--sp3); cursor:pointer; white-space:nowrap; }
+.chip[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* rows-pick table: the whole row is pressable; the chosen row is tinted with a left rule */
+.pickbtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:600; color:var(--ink); width:100%; }
+tr.pick{ cursor:pointer; }
+tr.pick:hover > *{ background:var(--line-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) > *{ background:var(--accent-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) .pickbtn{ color:var(--accent-ink); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) th{ box-shadow:inset 3px 0 0 var(--accent); }
+.panes{ margin-top:var(--sp4); padding-top:var(--sp2); border-top:1px solid var(--line); }
+.panes h4.sub{ margin-top:var(--sp2); }
+/* one question: title -> meta line (member, kind, meeting) -> summary -> tags; li.line is the one-line form */
+.qlist{ list-style:none; margin:0; padding:0; }
+.qlist li{ padding:var(--sp3) 0; border-top:1px dashed var(--line); }
+.qlist li:first-child{ border-top:0; }
+.qt{ margin:0; font-weight:700; }
+.qm{ margin:2px 0 var(--sp1); font-size:12.5px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:0 var(--sp3); }
+.qm a{ font-weight:600; }
+.qs{ margin:0; max-width:var(--cap); color:var(--ink-soft); font-size:14px; }
+.qlist .tg{ display:flex; flex-wrap:wrap; gap:var(--sp1); margin:var(--sp1) 0 0; }
+.qlist .tg a.tag{ text-decoration:none; }
+.qlist li.line{ padding:var(--sp1) 0; border-top:1px solid var(--line-soft); }
+.qlist li.line .qt{ font-weight:600; font-size:13.5px; }
+.qlist li.line .qm{ margin:0; }
+/* 「残り○件を表示」: drawn hidden; the behaviour script shows it and sets its text */
+.more{ font:inherit; font-size:13.5px; margin:var(--sp3) 0 0; padding:var(--sp2) var(--sp4); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--accent); cursor:pointer; }
+.more:hover{ border-color:var(--a3); }
+/* member pages (council-v9-members): 「…にも当たる」 under a question; a lone key button in a table
+   cell (the period name, mock 08's plink); a period row with no term (「在任していない」) */
+.qlist .also{ margin:var(--sp1) 0 0; font-size:12px; color:var(--ink-faint); }
+.keybtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:700; color:var(--accent); }
+.keybtn:hover{ text-decoration:underline; }
+.keybtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.tbl tr.off > *{ color:var(--ink-faint); }
+.tbl tr.off th{ font-weight:400; }
+
+/* ---- mobile: a picked row of a unified-column table is tinted as one band ---- */
+@media (max-width:640px){
+  .tbl.cols tr.pick:has([aria-pressed="true"]){ background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
+  .tbl.cols tr.pick > *{ background:none!important; box-shadow:none!important; }
+}
+
+</style>
+<style>
+
+.prof{ display:grid; grid-template-columns:max-content 1fr; gap:var(--sp1) var(--sp4); margin:0 0 var(--sp5); font-size:14px; max-width:var(--cap); }
+.prof dt{ color:var(--ink-faint); }
+.prof dd{ margin:0; }
+.ptbl{ max-width:52em; }
+.ptbl .c-p{ width:5em; }
+.ptbl .c-span{ width:12.5em; }
+.ptbl .c-n{ width:5em; }
+.ptbl td.span{ color:var(--ink-soft); font-size:13px; white-space:nowrap; }
+.ptbl tr.off td.note{ font-size:12.5px; }
+.dtbl .c-d{ width:13em; }
+.dtbl .c-n{ width:4.2em; }
+.dtbl .c-bar{ min-width:5em; }
+.dtbl td.num{ text-align:center; }
+.dtbl td.num.tot{ text-align:right; font-weight:700; }
+.empty{ color:var(--ink-faint); font-size:14px; margin:var(--sp3) 0; }
+.qhead{ font-size:13.5px; color:var(--ink-soft); margin:0 0 var(--sp3); }
+.mtg{ margin:var(--sp5) 0 0; }
+.mtg:first-child{ margin-top:0; }
+.sec .mtg h3{ font-size:15px; margin:0 0 var(--sp1); }
+@media (max-width:640px){
+  .ptbl .c-span, .ptbl .span{ display:none; }
+  .prof{ grid-template-columns:1fr; gap:0; }
+  .prof dt{ margin-top:var(--sp2); font-size:12.5px; }
+  .dtbl{ font-size:12px; }
+  .dtbl .c-bar, .dtbl .bar, .dtbl td.barcell{ display:none; }
+  .dtbl th,.dtbl td{ padding:6px 3px; }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="ic-hall" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9.5 10v9M14.5 10v9M3 21h18"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11"/></symbol>
+  <symbol id="ic-topics" viewBox="0 0 24 24"><path d="M4 6h10v7H8l-4 3z"/><path d="M14 9h6v7l-3-2h-5v-1"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><path d="M6 21V4h12v17M3 21h18M9.5 8h1M13.5 8h1M9.5 12h1M13.5 12h1M10.5 21v-4h3v4"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+</svg>
+<div class="shell">
+<nav class="side sidebar" id="side" aria-label="レポートの目次">
+<a class="back" href="../../../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-back"/></svg>出雲市／車座プロジェクト</a>
+<div class="rep"><a class="rep-link" href="../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-hall"/></svg>議会レポート</a>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../../index.html" class="cross-nav-portal">ポータル</a>
+        </div>
+    </nav>
+</div>
+<a class="it" href="../about.html"><svg class="ic" aria-hidden="true"><use href="#ic-book"/></svg>このレポートについて</a>
+<div class="grp"><div class="gh">話題</div>
+<a class="it" href="../topics.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>議会で語られてきた話題</a>
+<details><summary><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>区分</summary><div class="sub">
+<a class="it" href="../topic_childcare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>子育てと少子化</a>
+<a class="it" href="../topic_education.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>学校教育</a>
+<a class="it" href="../topic_welfare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>医療・介護・福祉</a>
+<a class="it" href="../topic_safety.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>防災と地域の安全</a>
+<a class="it" href="../topic_infrastructure.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>都市基盤と生活環境</a>
+<a class="it" href="../topic_community.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>市民自治と人権</a>
+<a class="it" href="../topic_population.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>人口減少と地域の維持</a>
+<a class="it" href="../topic_industry.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>産業・雇用</a>
+<a class="it" href="../topic_agriculture.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>農林水産業</a>
+<a class="it" href="../topic_tourism.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>観光・文化・交流</a>
+<a class="it" href="../topic_environment.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>エネルギー・環境</a>
+<a class="it" href="../topic_nuclear.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>原子力</a>
+<a class="it" href="../topic_administration.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>行財政運営</a>
+</div></details>
+</div>
+<div class="grp"><div class="gh">議員の活動</div>
+<a class="it" href="../members.html" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#ic-person"/></svg>議員の名簿</a>
+<div class="toc"><a href="#s-periods">期ごとの質問の回数</a><a href="#s-divs">取り上げた区分</a><a href="#s-qs">質問の題と要約</a><a href="#s-count">このページの数え方</a></div>
+</div>
+<div class="grp"><div class="gh">首長と執行部</div>
+<a class="it" href="../policy_speech.html"><svg class="ic" aria-hidden="true"><use href="#ic-speech"/></svg>施政方針と議会の動き</a>
+<a class="it" href="../executives.html"><svg class="ic" aria-hidden="true"><use href="#ic-building"/></svg>首長と執行部の答弁</a>
+</div>
+<div class="grp"><div class="gh">議会の活動</div>
+<a class="it" href="../bill_breakdown.html"><svg class="ic" aria-hidden="true"><use href="#ic-pie"/></svg>議案</a>
+</div>
+</nav>
+<div class="main">
+<div class="crumb"><button class="menu" type="button" aria-controls="side" aria-expanded="false" aria-label="目次をひらく"><svg class="ic" aria-hidden="true"><use href="#ic-menu"/></svg></button>出雲市・議会レポート / <a href="../members.html">議員の名簿</a> / <b>宮本享</b></div>
+<noscript><p class="noscript">期・年度などの切替には JavaScript を使います。JavaScript が無効の時は、それぞれ最初に選ばれている内容だけを表示しています。<a href="#side">目次をひらく</a></p></noscript>
+<main class="page">
+<span class="kicker">議員の活動</span>
+<h1 class="page-title">宮本享</h1>
+
+<p class="lead">第1期から第6期まで在任した議員です。本会議で質問に立った回数の移り変わりと、質問の題と要約を並べています。</p>
+<dl class="prof"><dt>会派</dt><dd>平成クラブ（第4期）、平成クラブ（第5期）、平成クラブ（第6期）</dd><dt>役職</dt><dd>第1期に副議長、第2期に議長</dd></dl>
+
+
+<aside class="howto"><h2>このページの読み方</h2><ul><li>本会議で質問に立った回数と、そこで取り上げた質問の題と要約を並べています。委員会での発言や議案への質疑、質問以外の活動は含みません。</li><li>回数や区分の多い少ないは、議員の活動の良し悪しを示す物ではありません。</li></ul></aside>
+
+
+<div class="switch" data-switch="期">
+<section class="sec" id="s-periods"><h2>期ごとの質問の回数</h2>
+<p class="prose">表示している全ての期を並べています。在任した期の質問の題と要約は、下の「質問の題と要約」に有ります。</p>
+<div class="data"><div class="scroll"><table class="tbl ptbl">
+<caption>宮本享の期ごとの質問の回数</caption>
+<colgroup><col class="c-p"><col class="c-span"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-bar"></colgroup>
+<thead><tr><th scope="col">期</th><th scope="col" class="span">期間</th><th scope="col" class="num">一般質問</th><th scope="col" class="num">代表質問</th><th scope="col" class="num">計</th><th scope="col">回数の計</th></tr></thead>
+<tbody>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第1期" aria-pressed="false">第1期</button></th><td class="span">2005年4月〜2009年4月</td><td class="num"><span class="zero">0</span></td><td class="num">2</td><td class="num">2</td><td class="barcell"><span class="hbar" style="--w:22.2%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第2期" aria-pressed="false">第2期</button></th><td class="span">2009年4月〜2013年4月</td><td class="num">1</td><td class="num">3</td><td class="num">4</td><td class="barcell"><span class="hbar" style="--w:44.4%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第3期" aria-pressed="false">第3期</button></th><td class="span">2013年4月〜2017年4月</td><td class="num"><span class="zero">0</span></td><td class="num">2</td><td class="num">2</td><td class="barcell"><span class="hbar" style="--w:22.2%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第4期" aria-pressed="false">第4期</button></th><td class="span">2017年4月〜2021年4月</td><td class="num">5</td><td class="num"><span class="zero">0</span></td><td class="num">5</td><td class="barcell"><span class="hbar" style="--w:55.6%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第5期" aria-pressed="false">第5期</button></th><td class="span">2021年4月〜2025年4月</td><td class="num">8</td><td class="num">1</td><td class="num">9</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第6期" aria-pressed="true">第6期</button></th><td class="span">2025年4月〜2029年4月</td><td class="num">2</td><td class="num"><span class="zero">0</span></td><td class="num">2</td><td class="barcell"><span class="hbar" style="--w:22.2%"></span></td></tr>
+<tr class="total"><th scope="row">計</th><td class="span"></td><td class="num">16</td><td class="num">8</td><td class="num">24</td><td class="barcell"></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-divs"><h2>取り上げた区分</h2>
+<p class="prose">本会議の質問を、取り上げた論点の話題の区分毎に、在任した期を追って数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数えます。どの区分にも当たらない質問は「当たる話題なし」に数えます。</p>
+<div class="data"><div class="scroll"><table class="tbl dtbl">
+<caption>宮本享が取り上げた区分（質問の数）</caption>
+<colgroup><col class="c-d"><col class="c-n"><col class="c-bar"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-n"></colgroup>
+<thead><tr><th scope="col">区分</th><th scope="col" class="num">計</th><th scope="col" class="bar">計の棒</th><th scope="col" class="num">第1期</th><th scope="col" class="num">第2期</th><th scope="col" class="num">第3期</th><th scope="col" class="num">第4期</th><th scope="col" class="num">第5期</th><th scope="col" class="num">第6期</th></tr></thead>
+<tbody>
+<tr><th scope="row"><a href="../topic_infrastructure.html">都市基盤と生活環境</a></th><td class="num tot">11</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l3"><span class="h3">3</span></td><td class="num l3"><span class="h3">3</span></td><td class="num l2"><span class="h2">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_tourism.html">観光・文化・交流</a></th><td class="num tot">11</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td><td class="num l2"><span class="h2">1</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l3"><span class="h3">5</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_welfare.html">医療・介護・福祉</a></th><td class="num tot">8</td><td class="barcell"><span class="hbar" style="--w:72.7%"></span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l3"><span class="h3">3</span></td><td class="num l3"><span class="h3">3</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_community.html">市民自治と人権</a></th><td class="num tot">6</td><td class="barcell"><span class="hbar" style="--w:54.5%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l2"><span class="h2">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_administration.html">行財政運営</a></th><td class="num tot">6</td><td class="barcell"><span class="hbar" style="--w:54.5%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_population.html">人口減少と地域の維持</a></th><td class="num tot">4</td><td class="barcell"><span class="hbar" style="--w:36.4%"></span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_agriculture.html">農林水産業</a></th><td class="num tot">4</td><td class="barcell"><span class="hbar" style="--w:36.4%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l3"><span class="h3">3</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_education.html">学校教育</a></th><td class="num tot">3</td><td class="barcell"><span class="hbar" style="--w:27.3%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l2"><span class="h2">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_safety.html">防災と地域の安全</a></th><td class="num tot">3</td><td class="barcell"><span class="hbar" style="--w:27.3%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">2</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_industry.html">産業・雇用</a></th><td class="num tot">3</td><td class="barcell"><span class="hbar" style="--w:27.3%"></span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_environment.html">エネルギー・環境</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:18.2%"></span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr><th scope="row"><a href="../topic_childcare.html">子育てと少子化</a></th><td class="num tot">1</td><td class="barcell"><span class="hbar" style="--w:9.1%"></span></td><td class="num l2"><span class="h2">1</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr class="rest"><th scope="row">当たる話題なし</th><td class="num tot">1</td><td class="barcell"></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num l0"><span class="zero">0</span></td><td class="num"><span class="hr">1</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-qs"><h2>質問の題と要約</h2>
+<p class="prose">期毎、区分毎に、質問の論点を並べています。1回の質問で複数の論点を取り上げる事が有る為、上の表の質問の数とは合わない事が有ります。2つ以上の区分に当たる論点は、その期に論点の多い方の区分で要約まで出し、他の区分の側には題の一行と「…にも当たる」の印だけを置いています。</p>
+<div class="tabs" role="tablist" aria-label="期"><button type="button" role="tab" class="tab" data-switch-key="第1期" aria-selected="false">第1期</button><button type="button" role="tab" class="tab" data-switch-key="第2期" aria-selected="false">第2期</button><button type="button" role="tab" class="tab" data-switch-key="第3期" aria-selected="false">第3期</button><button type="button" role="tab" class="tab" data-switch-key="第4期" aria-selected="false">第4期</button><button type="button" role="tab" class="tab" data-switch-key="第5期" aria-selected="false">第5期</button><button type="button" role="tab" class="tab" data-switch-key="第6期" aria-selected="true">第6期</button></div>
+<div class="pane" data-switch-pane="第1期" hidden>
+<p class="qhead">2005年4月〜2009年4月・一般質問 0回・代表質問 2回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="エネルギー・環境" aria-pressed="false">エネルギー・環境</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">市役所本庁舎の建設</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">昨年12月に議決された庁舎建設促進の決議の要望事項に施政方針が触れていないとして、建設用地の候補地と複数ある場合の選定手続、平成20年12月を目途とする竣工時期を目標にスケジュールを組み立てているのか、中期財政計画に建設費が明確に盛り込まれているのかを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">行財政改革と組織改革</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">行財政改革を断行するにあたり最初に行うべき重要な取り組み事項は何かを尋ね、地域活性化や定住促進により歳入を増やす来年度の代表的な施策、外郭団体の見直しの具体的な方法、新市主要プロジェクトの推進体制として新設されるプロジェクト事業担当課の名称を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a><a class="tag" href="../topic_administration.html#topic-14">第三セクターと外郭団体</a></div></li><li><p class="qt">行財政改革の推進体制</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">合併に伴う議員定数の選択で人件費だけでも11億円を超す経費節減になった経緯を踏まえ、行財政改革推進本部がどのような組織なのか、住民の意見をどのように集約するのか、専門家による調査分析を取り入れる考えがあるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-04">議員定数と議会改革</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a></div></li><li><p class="qt">市役所本庁舎の改築</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">合併から2カ月余りで市役所が分散して不便だという声が多く寄せられているとして、現用地や中央病院跡地、駅の西側のＪＲ用地なども候補に挙げ、まちづくりの核となる庁舎の検討組織を早急に立ち上げるべきではないかと質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">電子市役所の構築</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">電子市役所の構築に向けて本年10月から運用するとされた、住民票交付申請をはじめとする各種行政手続きが自宅でできる電子申請等受付システムの内容を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-09">行政のデジタル化</a></div></li><li><p class="qt">高齢者福祉の充実</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">介護保険制度の見直しを新市がどう受けとめ第3期介護事業計画にどう反映するのか、保険料の動向や財政状況の見通しと介護施設の充実状況を尋ね、旧市町の運行実績や利用者の評価、財政負担を明らかにした上での生活バス、福祉バスの運行方針を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">新ビジネスパークの整備</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">山陰自動車道出雲インターチェンジの予定地周辺に整備する新ビジネスパークの敷地面積と事業費、完成時期、進出意向を示している企業の数、出雲ビジネスパーク創設懇話会の構成メンバーを尋ね、新産業創出を目指す試験研究機関の誘致と新ビジネス創業支援事業の拡充を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li><li><p class="qt">風力発電所事業の推進</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">松江市の観光旅館団体が歴史的景観を損なうとして反対する新出雲風力発電所について改めて推進の決意を尋ね、整備スケジュールと市の具体的な支援策、事業の必要性を全市民へ知らせる今後の取り組み、県の景観審議会が建設に否定的な答申を出した場合の対応と決断を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a></div></li><li><p class="qt">下水道事業の区域拡大</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">新市における下水道事業の基本的な取り組み方と、出雲、平田、大社、湖陵で拡大する事業認可区域の地域ごとの面積と接続率、旧出雲市内の用途地域全体で供用開始できる時期を尋ね、都市計画税を負担する区域の住民の思いを踏まえた進め方を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">神話観光大国の創造</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">交流人口1,000万人の実現に向けた具体的な戦略と島根県最大の観光地である出雲大社の門前町の整備の考えを尋ね、アメリカの庭園専門誌で上位に紹介された康国寺の庭を目玉とする観光ルートを神話の国縁結び観光振興協会を通じて設けること、大社の温泉施設に障害者が入れる風呂を設けることを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li class="line"><p class="qt">高齢者福祉の充実</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">市政フォーラムと地域協議会</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">市政フォーラムで各地域から受けた要望や意見をどのように整理して来年度の予算に反映したのかを尋ね、地域協議会を差し置いた格好となりその存在や役割が希薄になっていないかという見解、地域まちづくり計画への評価、来年度は地域協議会と合同で開催してはどうかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li class="line"><p class="qt">行財政改革の推進体制</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">新ビジネスパークの整備</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li><li><p class="qt">人材の育成と雇用支援</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">総合雇用情報センターの設置場所と取り組み内容、実施体制を尋ね、経験と技術豊かな団塊世代の人材の受け入れ体制の具体的な方策と、退職後に自ら起業しＮＰＯを立ち上げるなど地域貢献につながる新ビジネスへ転換していく考え方を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">神話観光大国の創造</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li><p class="qt">国際交流事業の進め方</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">国際交流事業の基本的な考え方と、サンタクララ市、漢中市、エビアン市、カラヨキ市との交流の経過、市ごとに差のある今年度予算の具体的な交流計画、広域事務組合が行っていた韓国との中学生交流の継続、国際交流団体との役割分担を含む今後の進め方を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-06">国際交流と姉妹都市</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">少子化対策と幼児教育</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">国や県、企業と役割分担するだけでなく市単独で有効な少子化対策を行う考えがないかを尋ね、市内の待機児童の人数とすべての幼稚園で三歳児保育を実施することによる解消の見込み、国における子ども園構想の詳細を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">行財政改革と組織改革</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="also">行財政運営にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_environment.html">エネルギー・環境</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">風力発電所事業の推進</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="also">都市基盤と生活環境にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">小中一貫教育の実施</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">教育研究所に立ち上げる小中一貫教育プロジェクトチームのスタッフ体制と専門家を雇用する考え、平成19年度からの実施に向けて一年という準備期間は短くないか、県の教育委員会との調整、教員配置や指導方法、小学校と中学校のカリキュラムの編成と内容を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">市役所本庁舎の建設</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">昨年12月に議決された庁舎建設促進の決議の要望事項に施政方針が触れていないとして、建設用地の候補地と複数ある場合の選定手続、平成20年12月を目途とする竣工時期を目標にスケジュールを組み立てているのか、中期財政計画に建設費が明確に盛り込まれているのかを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a><a class="tag" href="../topic_administration.html#topic-13">総合計画と施政方針</a></div></li><li><p class="qt">行財政改革と組織改革</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">行財政改革を断行するにあたり最初に行うべき重要な取り組み事項は何かを尋ね、地域活性化や定住促進により歳入を増やす来年度の代表的な施策、外郭団体の見直しの具体的な方法、新市主要プロジェクトの推進体制として新設されるプロジェクト事業担当課の名称を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a><a class="tag" href="../topic_administration.html#topic-14">第三セクターと外郭団体</a></div></li><li><p class="qt">行財政改革の推進体制</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">合併に伴う議員定数の選択で人件費だけでも11億円を超す経費節減になった経緯を踏まえ、行財政改革推進本部がどのような組織なのか、住民の意見をどのように集約するのか、専門家による調査分析を取り入れる考えがあるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-04">議員定数と議会改革</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a></div></li><li><p class="qt">市役所本庁舎の改築</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">合併から2カ月余りで市役所が分散して不便だという声が多く寄せられているとして、現用地や中央病院跡地、駅の西側のＪＲ用地なども候補に挙げ、まちづくりの核となる庁舎の検討組織を早急に立ち上げるべきではないかと質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-05">庁舎の整備</a></div></li><li><p class="qt">電子市役所の構築</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">電子市役所の構築に向けて本年10月から運用するとされた、住民票交付申請をはじめとする各種行政手続きが自宅でできる電子申請等受付システムの内容を質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-09">行政のデジタル化</a></div></li><li><p class="qt">高齢者福祉の充実</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">介護保険制度の見直しを新市がどう受けとめ第3期介護事業計画にどう反映するのか、保険料の動向や財政状況の見通しと介護施設の充実状況を尋ね、旧市町の運行実績や利用者の評価、財政負担を明らかにした上での生活バス、福祉バスの運行方針を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">新ビジネスパークの整備</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">山陰自動車道出雲インターチェンジの予定地周辺に整備する新ビジネスパークの敷地面積と事業費、完成時期、進出意向を示している企業の数、出雲ビジネスパーク創設懇話会の構成メンバーを尋ね、新産業創出を目指す試験研究機関の誘致と新ビジネス創業支援事業の拡充を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li><li><p class="qt">風力発電所事業の推進</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">松江市の観光旅館団体が歴史的景観を損なうとして反対する新出雲風力発電所について改めて推進の決意を尋ね、整備スケジュールと市の具体的な支援策、事業の必要性を全市民へ知らせる今後の取り組み、県の景観審議会が建設に否定的な答申を出した場合の対応と決断を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a></div></li><li><p class="qt">下水道事業の区域拡大</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">新市における下水道事業の基本的な取り組み方と、出雲、平田、大社、湖陵で拡大する事業認可区域の地域ごとの面積と接続率、旧出雲市内の用途地域全体で供用開始できる時期を尋ね、都市計画税を負担する区域の住民の思いを踏まえた進め方を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-03">上下水道の経営</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">神話観光大国の創造</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">交流人口1,000万人の実現に向けた具体的な戦略と島根県最大の観光地である出雲大社の門前町の整備の考えを尋ね、アメリカの庭園専門誌で上位に紹介された康国寺の庭を目玉とする観光ルートを神話の国縁結び観光振興協会を通じて設けること、大社の温泉施設に障害者が入れる風呂を設けることを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">高齢者福祉の充実</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">介護保険制度の見直しを新市がどう受けとめ第3期介護事業計画にどう反映するのか、保険料の動向や財政状況の見通しと介護施設の充実状況を尋ね、旧市町の運行実績や利用者の評価、財政負担を明らかにした上での生活バス、福祉バスの運行方針を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">市政フォーラムと地域協議会</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">市政フォーラムで各地域から受けた要望や意見をどのように整理して来年度の予算に反映したのかを尋ね、地域協議会を差し置いた格好となりその存在や役割が希薄になっていないかという見解、地域まちづくり計画への評価、来年度は地域協議会と合同で開催してはどうかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">行財政改革の推進体制</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">合併に伴う議員定数の選択で人件費だけでも11億円を超す経費節減になった経緯を踏まえ、行財政改革推進本部がどのような組織なのか、住民の意見をどのように集約するのか、専門家による調査分析を取り入れる考えがあるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-04">議員定数と議会改革</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">新ビジネスパークの整備</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">山陰自動車道出雲インターチェンジの予定地周辺に整備する新ビジネスパークの敷地面積と事業費、完成時期、進出意向を示している企業の数、出雲ビジネスパーク創設懇話会の構成メンバーを尋ね、新産業創出を目指す試験研究機関の誘致と新ビジネス創業支援事業の拡充を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li><li><p class="qt">人材の育成と雇用支援</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">総合雇用情報センターの設置場所と取り組み内容、実施体制を尋ね、経験と技術豊かな団塊世代の人材の受け入れ体制の具体的な方策と、退職後に自ら起業しＮＰＯを立ち上げるなど地域貢献につながる新ビジネスへ転換していく考え方を質した。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">神話観光大国の創造</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">交流人口1,000万人の実現に向けた具体的な戦略と島根県最大の観光地である出雲大社の門前町の整備の考えを尋ね、アメリカの庭園専門誌で上位に紹介された康国寺の庭を目玉とする観光ルートを神話の国縁結び観光振興協会を通じて設けること、大社の温泉施設に障害者が入れる風呂を設けることを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">国際交流事業の進め方</p><p class="qm"><span>代表質問</span><span>平成17年度第2回定例会</span></p><p class="qs">国際交流事業の基本的な考え方と、サンタクララ市、漢中市、エビアン市、カラヨキ市との交流の経過、市ごとに差のある今年度予算の具体的な交流計画、広域事務組合が行っていた韓国との中学生交流の継続、国際交流団体との役割分担を含む今後の進め方を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-06">国際交流と姉妹都市</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">少子化対策と幼児教育</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">国や県、企業と役割分担するだけでなく市単独で有効な少子化対策を行う考えがないかを尋ね、市内の待機児童の人数とすべての幼稚園で三歳児保育を実施することによる解消の見込み、国における子ども園構想の詳細を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">行財政改革と組織改革</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">行財政改革を断行するにあたり最初に行うべき重要な取り組み事項は何かを尋ね、地域活性化や定住促進により歳入を増やす来年度の代表的な施策、外郭団体の見直しの具体的な方法、新市主要プロジェクトの推進体制として新設されるプロジェクト事業担当課の名称を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a><a class="tag" href="../topic_administration.html#topic-14">第三セクターと外郭団体</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="エネルギー・環境" hidden>
+<ul class="qlist"><li><p class="qt">風力発電所事業の推進</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">松江市の観光旅館団体が歴史的景観を損なうとして反対する新出雲風力発電所について改めて推進の決意を尋ね、整備スケジュールと市の具体的な支援策、事業の必要性を全市民へ知らせる今後の取り組み、県の景観審議会が建設に否定的な答申を出した場合の対応と決断を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_environment.html#topic-02">再生可能エネルギーの導入</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">小中一貫教育の実施</p><p class="qm"><span>代表質問</span><span>平成17年度第7回定例会</span></p><p class="qs">教育研究所に立ち上げる小中一貫教育プロジェクトチームのスタッフ体制と専門家を雇用する考え、平成19年度からの実施に向けて一年という準備期間は短くないか、県の教育委員会との調整、教員配置や指導方法、小学校と中学校のカリキュラムの編成と内容を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第2期" hidden>
+<p class="qhead">2009年4月〜2013年4月・一般質問 1回・代表質問 3回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="農林水産業" aria-pressed="false">農林水産業</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_agriculture.html">農林水産業</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">斐川町の資源と出雲ブランド</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">合併効果を発揮するには斐川町の豊富な地域資源をうまく活用することが求められるとして数多くある資源の中でどれに最も着目しどう活用したいのかと、その中で出雲ブランドに値するものとして何を挙げるのかを尋ね、出雲ブランド化推進市民委員会の10月1日以降の運営はどうなるのかを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a></div></li><li><p class="qt">出雲の真のブランド化</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">出雲の魅力とは具体的にどのようなものを指し候補として何が挙がっているのかを尋ね、市民による検討組織で何をどのように実践するのかを例を挙げて示すよう求め、その組織のメンバー構成と、充実した医療機関を出雲のブランドに加える考えを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a></div></li><li><p class="qt">出雲の真のブランド化</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">トータル的なイメージ戦略をつくる産業や教育、福祉、芸術文化、スポーツなどの各分野と出雲の風土が育てた歴史や文化が具体的に何を指すのか、市全体のブランド化の実現に向けてどのような取り組みを行うのかを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">自治基本条例の制定</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">市民懇話会を中心に約2年にわたり検討されてきた自治基本条例について盛り込むべき事項としてどのような意見が出ており執行部としてどう集約していくのかと、最終的に可否を決定する議会に正式に提案されるのはいつごろになるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-01">住民投票と自治基本条例</a></div></li><li><p class="qt">住民参加型システムの構築</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">選挙期間中に市民から具体的にどのような声を聞いたのか、長岡ポストの活用方法と市長面会日の開催頻度、陳情合戦を懸念する市政フォーラムの実施方法、自治基本条例に盛り込む住民投票の常設化と議会の議決を経る住民投票条例との違いを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-01">住民投票と自治基本条例</a><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">発達障がい児の夏の療法</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">注意欠陥多動性障がいのある児童を対象に久留米大学などの指導を受けて今年八月に島根県立大学短期大学部出雲キャンパスで開かれたサマースクールを挙げて、この行動療法を新しい特別支援教育の取り組みとして市が応援し金銭面でも協力することを求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">地籍調査事業の進め方</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">出雲市での地籍調査の実施状況を尋ね、今後どのように進めていくのかと効率よく進めるよい方法がないかを問い、境界を知る高齢者がいなくなる前に平田や市南部の未実施地域を早く進めることを求めた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-09">地籍調査</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">出雲の真のブランド化</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="also">農林水産業にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">財政健全化と阿國座中止</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">見直す財政計画の策定と公表の時期、後期五年の行財政改革実施計画を集中的に担う専門の部署を設置する考え、白紙撤回から中止へ早々に決断した経過と終息に向けた取り組みの内容や経費の見込みを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ゼロベース評価の検証</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">地域の実情をよく理解していない中で一方的な意見が出され結果的に廃止や縮減と判断されたものもあったとして今年度のゼロベース評価委員会の効果と反省点を十分に整理したうえで来年度は慎重に行うべきだと述べ、事業の選定段階から市民の参画を得る具体的な手続と手法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">産業の振興と東アジア</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">本市の経済環境が受けている深刻な影響を表す具体的な数値をこの場で示して市民と共通理解を図りたいとして、新たな取り組みとされる成長著しい東アジアに向けたマーケティングについて具体的な国名とその取り組みと手法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">看護系専門学校の誘致</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">西日本で看護系専門学校を経営する21法人への意向調査で2法人から関心ありとの回答を得て支援内容を検討中とされていた誘致について現在の進捗状況を尋ね、誘致の際に施す優遇措置として具体的にどのようなものを考えているのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">総合医療センターの体制</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">平成24年度から地方公営企業法全部適用とする総合医療センターについて病院事業管理者にどのような方をお願いしようと考えているのかと、市長と病院事業管理者の責任の範囲をどのように明確にしていくのかを尋ね、深刻な医師確保と看護師確保に向けての取り組みを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小学校の服装と卒業式</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">市内小学校の制服と自由服の実態と学校数、それぞれのメリットとデメリット、自由服を制服化する場合の手順と現在の動き、卒業式にふさわしい服装への指導の有無、市内小中学校の卒業式が対面式かどうかの実態と対面式が多い理由を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">看護学校の誘致と連携</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">医師や看護師の不足が深刻で県内の高校生が毎年100名以上県外の看護学校へ進学している現状を挙げて市内への看護学校誘致の流れを加速することを求め、四年制化が表明された島根県立大学短期大学部出雲キャンパスとの連携や誘致にあたっての助成について考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">外部監査制度の導入</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">議会選出を含め三人に拡充された監査委員による監査が行われている中であえて外部監査制度を導入しなければならない理由と現在の監査体制に問題があるのかを尋ね、新たに必要となる経費の額を問い、費用を伴う導入は是非を考えるべきだと質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ゼロベース評価の反映</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">予算担当課の一次評価とゼロベース評価プロジェクト会議の二次評価を経て平成22年度当初予算に反映させた主な事業を尋ね、新年度に設置するゼロベース評価委員会にはどのような事業がかけられていくのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">専門学校等の誘致</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">若い人たちがふるさとを離れることなく学び働ける環境づくりとして取り組む看護系専門学校の誘致について、おおむね目指している学校の規模と生徒数および誘致する場所を尋ね、若い学生には交通の便のよい中心地がよいとして考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">トキ事業の広報と運営費</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">分散飼育地に選ばれた価値が市民に十分浸透していないとして学習センターや近似種観察ケージの整備を含む今後の広報を含めた戦略を尋ね、野鳥保護の全国規模の会合の誘致やまちづくりへの展開といったソフト事業の展望と、管理費や運営費への国と県の支援の見通しを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市長就任後の所感</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">就任から一か月余りを経た現在の所感、副市長を辞して市長となった経緯の中で混乱した市職員の反応をどう感じているか、大多数の市民が市長に最も大きく期待を寄せているものは何かを問うた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">新エネ産業と学校誘致</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">新エネルギー関連産業の誘致にあたって企業の判断材料となる優遇制度をどのようなものと考えているか、若者が全国から集う専門学校や各種学校について具体的にどのような分野の学校の誘致を目指すのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="農林水産業" hidden>
+<ul class="qlist"><li><p class="qt">斐川町の資源と出雲ブランド</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">合併効果を発揮するには斐川町の豊富な地域資源をうまく活用することが求められるとして数多くある資源の中でどれに最も着目しどう活用したいのかと、その中で出雲ブランドに値するものとして何を挙げるのかを尋ね、出雲ブランド化推進市民委員会の10月1日以降の運営はどうなるのかを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a></div></li><li><p class="qt">出雲の真のブランド化</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">出雲の魅力とは具体的にどのようなものを指し候補として何が挙がっているのかを尋ね、市民による検討組織で何をどのように実践するのかを例を挙げて示すよう求め、その組織のメンバー構成と、充実した医療機関を出雲のブランドに加える考えを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a></div></li><li><p class="qt">出雲の真のブランド化</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">トータル的なイメージ戦略をつくる産業や教育、福祉、芸術文化、スポーツなどの各分野と出雲の風土が育てた歴史や文化が具体的に何を指すのか、市全体のブランド化の実現に向けてどのような取り組みを行うのかを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">自治基本条例の制定</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">市民懇話会を中心に約2年にわたり検討されてきた自治基本条例について盛り込むべき事項としてどのような意見が出ており執行部としてどう集約していくのかと、最終的に可否を決定する議会に正式に提案されるのはいつごろになるのかを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-01">住民投票と自治基本条例</a></div></li><li><p class="qt">住民参加型システムの構築</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">選挙期間中に市民から具体的にどのような声を聞いたのか、長岡ポストの活用方法と市長面会日の開催頻度、陳情合戦を懸念する市政フォーラムの実施方法、自治基本条例に盛り込む住民投票の常設化と議会の議決を経る住民投票条例との違いを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-01">住民投票と自治基本条例</a><a class="tag" href="../topic_community.html#topic-02">情報公開とパブリックコメント</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">発達障がい児の夏の療法</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">注意欠陥多動性障がいのある児童を対象に久留米大学などの指導を受けて今年八月に島根県立大学短期大学部出雲キャンパスで開かれたサマースクールを挙げて、この行動療法を新しい特別支援教育の取り組みとして市が応援し金銭面でも協力することを求めた。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">地籍調査事業の進め方</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">出雲市での地籍調査の実施状況を尋ね、今後どのように進めていくのかと効率よく進めるよい方法がないかを問い、境界を知る高齢者がいなくなる前に平田や市南部の未実施地域を早く進めることを求めた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-09">地籍調査</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">出雲の真のブランド化</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">トータル的なイメージ戦略をつくる産業や教育、福祉、芸術文化、スポーツなどの各分野と出雲の風土が育てた歴史や文化が具体的に何を指すのか、市全体のブランド化の実現に向けてどのような取り組みを行うのかを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-06">地域ブランドと販路拡大</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">財政健全化と阿國座中止</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">見直す財政計画の策定と公表の時期、後期五年の行財政改革実施計画を集中的に担う専門の部署を設置する考え、白紙撤回から中止へ早々に決断した経過と終息に向けた取り組みの内容や経費の見込みを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">ゼロベース評価の検証</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">地域の実情をよく理解していない中で一方的な意見が出され結果的に廃止や縮減と判断されたものもあったとして今年度のゼロベース評価委員会の効果と反省点を十分に整理したうえで来年度は慎重に行うべきだと述べ、事業の選定段階から市民の参画を得る具体的な手続と手法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">産業の振興と東アジア</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">本市の経済環境が受けている深刻な影響を表す具体的な数値をこの場で示して市民と共通理解を図りたいとして、新たな取り組みとされる成長著しい東アジアに向けたマーケティングについて具体的な国名とその取り組みと手法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">看護系専門学校の誘致</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">西日本で看護系専門学校を経営する21法人への意向調査で2法人から関心ありとの回答を得て支援内容を検討中とされていた誘致について現在の進捗状況を尋ね、誘致の際に施す優遇措置として具体的にどのようなものを考えているのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">総合医療センターの体制</p><p class="qm"><span>代表質問</span><span>平成22年度第5回定例会</span></p><p class="qs">平成24年度から地方公営企業法全部適用とする総合医療センターについて病院事業管理者にどのような方をお願いしようと考えているのかと、市長と病院事業管理者の責任の範囲をどのように明確にしていくのかを尋ね、深刻な医師確保と看護師確保に向けての取り組みを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小学校の服装と卒業式</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">市内小学校の制服と自由服の実態と学校数、それぞれのメリットとデメリット、自由服を制服化する場合の手順と現在の動き、卒業式にふさわしい服装への指導の有無、市内小中学校の卒業式が対面式かどうかの実態と対面式が多い理由を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">看護学校の誘致と連携</p><p class="qm"><span>一般質問</span><span>平成22年度第2回定例会</span></p><p class="qs">医師や看護師の不足が深刻で県内の高校生が毎年100名以上県外の看護学校へ進学している現状を挙げて市内への看護学校誘致の流れを加速することを求め、四年制化が表明された島根県立大学短期大学部出雲キャンパスとの連携や誘致にあたっての助成について考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">外部監査制度の導入</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">議会選出を含め三人に拡充された監査委員による監査が行われている中であえて外部監査制度を導入しなければならない理由と現在の監査体制に問題があるのかを尋ね、新たに必要となる経費の額を問い、費用を伴う導入は是非を考えるべきだと質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">ゼロベース評価の反映</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">予算担当課の一次評価とゼロベース評価プロジェクト会議の二次評価を経て平成22年度当初予算に反映させた主な事業を尋ね、新年度に設置するゼロベース評価委員会にはどのような事業がかけられていくのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">専門学校等の誘致</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">若い人たちがふるさとを離れることなく学び働ける環境づくりとして取り組む看護系専門学校の誘致について、おおむね目指している学校の規模と生徒数および誘致する場所を尋ね、若い学生には交通の便のよい中心地がよいとして考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">トキ事業の広報と運営費</p><p class="qm"><span>代表質問</span><span>平成21年度第5回定例会</span></p><p class="qs">分散飼育地に選ばれた価値が市民に十分浸透していないとして学習センターや近似種観察ケージの整備を含む今後の広報を含めた戦略を尋ね、野鳥保護の全国規模の会合の誘致やまちづくりへの展開といったソフト事業の展望と、管理費や運営費への国と県の支援の見通しを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市長就任後の所感</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">就任から一か月余りを経た現在の所感、副市長を辞して市長となった経緯の中で混乱した市職員の反応をどう感じているか、大多数の市民が市長に最も大きく期待を寄せているものは何かを問うた。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">新エネ産業と学校誘致</p><p class="qm"><span>代表質問</span><span>平成21年度第2回定例会</span></p><p class="qs">新エネルギー関連産業の誘致にあたって企業の判断材料となる優遇制度をどのようなものと考えているか、若者が全国から集う専門学校や各種学校について具体的にどのような分野の学校の誘致を目指すのかを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第3期" hidden>
+<p class="qhead">2013年4月〜2017年4月・一般質問 0回・代表質問 2回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="農林水産業" aria-pressed="false">農林水産業</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">観光の受け地と道路整備</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">平成の大遷宮後も観光客数の水準を維持するため市内周遊やまちあるき環境など観光客を受け入れる環境づくりの取り組みの具体と期待される効果を尋ね、境港出雲道路の早期実現と圏域を引っ張る所見、都市計画道路の見直し後に10年間か20年間かの大まかな計画を示す考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">観光誘客の推進策</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">昨年度認定した「地域が誇る観光スポット」に対する地域の活動支援の詳細を尋ね、東京ディズニーリゾートのキャラクターによるパレードで多くの子どもたちに楽しんでもらう仕掛けづくりの有無や子ども・若者が楽しめるイベントの積極的な誘致、外国人観光客の誘客につながる助成制度の内容を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a></div></li><li><p class="qt">プロスポーツ支援</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">市内の施設を拠点とするプロスポーツを目指すチームへの支援について検討を進めると述べられたことを受け、どこの施設を拠点とした何のチームなのか、併せてその支援策を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">介護人材の確保と定着</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">介護離職ゼロを目指すには施設と住宅の介護サービス基盤の充実が必要だとして、施設があっても働き手がない状況を踏まえ、介護人材の確保・定着へいつまでにどのような対策を行うのか、市独自の政策を検討するのかを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">観光の受け地と道路整備</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">過疎地域支援とまちづくり</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">合併以降に若者減少が著しい過疎地域について、過疎地域支援専門員の配置や集落応援隊のやり方で十分かとこれまでの検討経過や具体的な施策を尋ね、日本版ＣＣＲＣで近隣からの転居の考えを取り入れることと、小さな拠点を結ぶネットワークの構築や全国の先進地事例を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-03">過疎地域と中山間地域</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_agriculture.html">農林水産業</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">雇用の中身と農林水産業</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">「出雲未来図」策定以降3年余りで創出した1,000人を超える雇用のうち正規と非正規の人数や若者が市内で正規の職員となった割合、人材確保に困る地元商業関係者への見解を尋ね、農業・林業３Ｆ事業や水産業のこれまでの成果と6次産業化の進み具合や見直しの有無、ＴＰＰ交渉の下での後継者確保への考えを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_agriculture.html#topic-05">水産業と漁業</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">財政再建後のかじ取り</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">2期7年の財政再建が一方で本市の経済活動や市民活動の低下に影響を与えたとして、官民連携に加え執行部と議会がこれまで以上に連携し、効果的な公共事業による経済活動の誘引と市民活動の活性化を図る必要があると提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">2期目の市政運営</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">1期4年間で積み残した課題について具体的にどのようなものであったか、2期目にこれらへどのように対応していくつもりかを尋ね、厳しい自治体経営を迎える中で市職員に求められる役割は何か、期待することは何かを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">縁結びプロジェクト</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">出雲市における未婚化、晩婚化の状況を尋ね、結婚支援でどのような民間団体と連携し具体的にどのような支援を行うのかを問い、「縁結びの地　出雲」のブランドを活用しメディアと連携してテレビ番組に取りあげてもらう取り組みを行ってはどうかと質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">観光の受け地と道路整備</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">平成の大遷宮後も観光客数の水準を維持するため市内周遊やまちあるき環境など観光客を受け入れる環境づくりの取り組みの具体と期待される効果を尋ね、境港出雲道路の早期実現と圏域を引っ張る所見、都市計画道路の見直し後に10年間か20年間かの大まかな計画を示す考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">観光誘客の推進策</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">昨年度認定した「地域が誇る観光スポット」に対する地域の活動支援の詳細を尋ね、東京ディズニーリゾートのキャラクターによるパレードで多くの子どもたちに楽しんでもらう仕掛けづくりの有無や子ども・若者が楽しめるイベントの積極的な誘致、外国人観光客の誘客につながる助成制度の内容を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a></div></li><li><p class="qt">プロスポーツ支援</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">市内の施設を拠点とするプロスポーツを目指すチームへの支援について検討を進めると述べられたことを受け、どこの施設を拠点とした何のチームなのか、併せてその支援策を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">介護人材の確保と定着</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">介護離職ゼロを目指すには施設と住宅の介護サービス基盤の充実が必要だとして、施設があっても働き手がない状況を踏まえ、介護人材の確保・定着へいつまでにどのような対策を行うのか、市独自の政策を検討するのかを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">観光の受け地と道路整備</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">平成の大遷宮後も観光客数の水準を維持するため市内周遊やまちあるき環境など観光客を受け入れる環境づくりの取り組みの具体と期待される効果を尋ね、境港出雲道路の早期実現と圏域を引っ張る所見、都市計画道路の見直し後に10年間か20年間かの大まかな計画を示す考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">過疎地域支援とまちづくり</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">合併以降に若者減少が著しい過疎地域について、過疎地域支援専門員の配置や集落応援隊のやり方で十分かとこれまでの検討経過や具体的な施策を尋ね、日本版ＣＣＲＣで近隣からの転居の考えを取り入れることと、小さな拠点を結ぶネットワークの構築や全国の先進地事例を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-03">過疎地域と中山間地域</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="農林水産業" hidden>
+<ul class="qlist"><li><p class="qt">雇用の中身と農林水産業</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">「出雲未来図」策定以降3年余りで創出した1,000人を超える雇用のうち正規と非正規の人数や若者が市内で正規の職員となった割合、人材確保に困る地元商業関係者への見解を尋ね、農業・林業３Ｆ事業や水産業のこれまでの成果と6次産業化の進み具合や見直しの有無、ＴＰＰ交渉の下での後継者確保への考えを質した。</p><div class="tg"><a class="tag" href="../topic_agriculture.html#topic-04">林業と森林の管理</a><a class="tag" href="../topic_agriculture.html#topic-05">水産業と漁業</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">財政再建後のかじ取り</p><p class="qm"><span>代表質問</span><span>平成27年度第5回定例会</span></p><p class="qs">2期7年の財政再建が一方で本市の経済活動や市民活動の低下に影響を与えたとして、官民連携に加え執行部と議会がこれまで以上に連携し、効果的な公共事業による経済活動の誘引と市民活動の活性化を図る必要があると提起した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">2期目の市政運営</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">1期4年間で積み残した課題について具体的にどのようなものであったか、2期目にこれらへどのように対応していくつもりかを尋ね、厳しい自治体経営を迎える中で市職員に求められる役割は何か、期待することは何かを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">縁結びプロジェクト</p><p class="qm"><span>代表質問</span><span>平成25年度第2回定例会</span></p><p class="qs">出雲市における未婚化、晩婚化の状況を尋ね、結婚支援でどのような民間団体と連携し具体的にどのような支援を行うのかを問い、「縁結びの地　出雲」のブランドを活用しメディアと連携してテレビ番組に取りあげてもらう取り組みを行ってはどうかと質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第4期" hidden>
+<p class="qhead">2017年4月〜2021年4月・一般質問 5回・代表質問 0回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">市長続投の決意と意欲</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">新型コロナウイルス感染症の収束が見えない中で感染防止対策や地域経済対策の実施が引き続き必要であり一定の道筋をつけて次世代のリーダーに引き継ぐには道半ばではないかとして、今後も引き続き市長として市政を担当する決意と意欲があるかを問うた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">高齢ドライバーの事故対策</p><p class="qm"><span>一般質問</span><span>令和元年度第2回定例会</span></p><p class="qs">高齢ドライバーの事故の状況と運転免許証の自主返納の状況、自主返納者に対する支援状況を尋ね、認知症と診断されて免許が取り消された事例が市内にあったかと、5,000円の支援券を1万円くらいまで引き上げる考えを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">がん撲滅対策と喫煙規制</p><p class="qm"><span>一般質問</span><span>平成29年度第3回定例会</span></p><p class="qs">出雲市がん撲滅対策推進条例の施行から10年が経過したとして、がん撲滅に向けたこれまでの取組みとがん検診受診率の推移及び出雲市としての目標値、がん検診事業の内容と予算額、条例が定めるがんの最大のリスク要因である喫煙に関する対策の具体的な内容を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">大災害に備えた防災対策</p><p class="qm"><span>一般質問</span><span>令和元年度第4回定例会</span></p><p class="qs">全戸配布された防災ハザードマップの内容を市民が理解しているかと住民周知の取組み、斐伊川放水路以外の河川の改修状況と今後の予定、一日の雨量が平均の1か月分となった場合の越水や決壊の心配、浸水想定区域や土砂災害警戒区域にある福祉施設の防災対策を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">出雲三刀屋線の整備</p><p class="qm"><span>一般質問</span><span>令和元年度第4回定例会</span></p><p class="qs">本市と三刀屋木次インターを結ぶ主要地方道出雲三刀屋線の整備の状況、未着手となっている放水路から斐伊川工区をいつまでにどのような形で整備するのか、一般県道斐川上島線の整備状況とあわせて見通しを問うた。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li><li><p class="qt">グリーンステップＣ谷の活用</p><p class="qm"><span>一般質問</span><span>平成29年度第3回定例会</span></p><p class="qs">斐伊川放水路事業の残土処理により生まれたグリーンステップＣ谷について、全体で約9.6ヘクタールとなる土地を島根県と協力して積極的に活用することが雇用の促進や若者の定住化に有効であるとして、その活用についての市長の考えを問うた。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">簸川南広域農道の県道昇格</p><p class="qm"><span>一般質問</span><span>令和元年度第2回定例会</span></p><p class="qs">平成29年9月議会で農道から市道へ移管するため諸課題の整理や関係部課での協議を進めるとの答弁があった簸川南広域農道の県道昇格について、現在の進捗状況を問うた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>平成30年度第2回定例会</span></p><p class="qs">策定から8年以上が経過した出雲市都市計画マスタープランについて、出雲市の都市づくりの現状認識と課題、この8年の成果、今後の取組を尋ね、用途地域と農振地域が接する市街地の周辺部の土地利用のあり方や南部と斐川地域のまちづくりに行政が知恵を出して取り組む考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li><li><p class="qt">簸川南広域農道の県道昇格</p><p class="qm"><span>一般質問</span><span>平成29年度第3回定例会</span></p><p class="qs">松江市と出雲市の南部を東西につなぐ簸川南広域農道が幹線道路として交通量を増やしている中、安全面からも沿線の活性化に向けても必要な県道への昇格を提起した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">出雲未来図の戦略の成果</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">出雲市総合振興計画「出雲未来図」に掲げる雇用創出2,500人、定住人口キープ17万人、交流人口1,200万人、住みやすさＮｏ．１の四つの戦略プロジェクトに沿って、その成果と所感を問うた。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li class="line"><p class="qt">市長続投の決意と意欲</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">出雲未来図の戦略の成果</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="also">産業・雇用にも当たる</p></li><li><p class="qt">上塩冶スポーツセンター</p><p class="qm"><span>一般質問</span><span>令和元年度第2回定例会</span></p><p class="qs">平成26年の開設以来の上塩冶スポーツセンターのこれまでの利用状況、2階部分に観覧スペースなどを設けてさらなる利活用につなげる考え、市の直営を継続するのかという今後の管理運営を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">行財政改革の成果と所感</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">長岡市政3期12年を振り返り、平成26年から3か年を集中改革期間として総人件費の抑制や事務事業・補助金・負担金・使用料・手数料・公共施設のあり方の見直しに取り組んだ出雲市行財政改革大綱に掲げる行財政改革の成果と所感を問うた。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">健康経営の推進策</p><p class="qm"><span>一般質問</span><span>平成30年度第2回定例会</span></p><p class="qs">健康経営優良法人認定やヘルス・マネジメント認定制度についての市の認識、健康経営を推進する企業への金利優遇や補助金の交付といったインセンティブ、指名競争入札における参加資格の優遇、健康経営アドバイザー制度の創設、出雲市健康まちづくり基本計画との連携を尋ね、他市の例を挙げて健康経営都市宣言や認証制度の創設を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">市長続投の決意と意欲</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">新型コロナウイルス感染症の収束が見えない中で感染防止対策や地域経済対策の実施が引き続き必要であり一定の道筋をつけて次世代のリーダーに引き継ぐには道半ばではないかとして、今後も引き続き市長として市政を担当する決意と意欲があるかを問うた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li><li><p class="qt">高齢ドライバーの事故対策</p><p class="qm"><span>一般質問</span><span>令和元年度第2回定例会</span></p><p class="qs">高齢ドライバーの事故の状況と運転免許証の自主返納の状況、自主返納者に対する支援状況を尋ね、認知症と診断されて免許が取り消された事例が市内にあったかと、5,000円の支援券を1万円くらいまで引き上げる考えを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">がん撲滅対策と喫煙規制</p><p class="qm"><span>一般質問</span><span>平成29年度第3回定例会</span></p><p class="qs">出雲市がん撲滅対策推進条例の施行から10年が経過したとして、がん撲滅に向けたこれまでの取組みとがん検診受診率の推移及び出雲市としての目標値、がん検診事業の内容と予算額、条例が定めるがんの最大のリスク要因である喫煙に関する対策の具体的な内容を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">大災害に備えた防災対策</p><p class="qm"><span>一般質問</span><span>令和元年度第4回定例会</span></p><p class="qs">全戸配布された防災ハザードマップの内容を市民が理解しているかと住民周知の取組み、斐伊川放水路以外の河川の改修状況と今後の予定、一日の雨量が平均の1か月分となった場合の越水や決壊の心配、浸水想定区域や土砂災害警戒区域にある福祉施設の防災対策を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-01">豪雨災害と土砂災害</a><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">出雲三刀屋線の整備</p><p class="qm"><span>一般質問</span><span>令和元年度第4回定例会</span></p><p class="qs">本市と三刀屋木次インターを結ぶ主要地方道出雲三刀屋線の整備の状況、未着手となっている放水路から斐伊川工区をいつまでにどのような形で整備するのか、一般県道斐川上島線の整備状況とあわせて見通しを問うた。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li><li><p class="qt">グリーンステップＣ谷の活用</p><p class="qm"><span>一般質問</span><span>平成29年度第3回定例会</span></p><p class="qs">斐伊川放水路事業の残土処理により生まれたグリーンステップＣ谷について、全体で約9.6ヘクタールとなる土地を島根県と協力して積極的に活用することが雇用の促進や若者の定住化に有効であるとして、その活用についての市長の考えを問うた。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-02">治水と河川改修</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">簸川南広域農道の県道昇格</p><p class="qm"><span>一般質問</span><span>令和元年度第2回定例会</span></p><p class="qs">平成29年9月議会で農道から市道へ移管するため諸課題の整理や関係部課での協議を進めるとの答弁があった簸川南広域農道の県道昇格について、現在の進捗状況を問うた。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li><li><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>平成30年度第2回定例会</span></p><p class="qs">策定から8年以上が経過した出雲市都市計画マスタープランについて、出雲市の都市づくりの現状認識と課題、この8年の成果、今後の取組を尋ね、用途地域と農振地域が接する市街地の周辺部の土地利用のあり方や南部と斐川地域のまちづくりに行政が知恵を出して取り組む考えを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li><li><p class="qt">簸川南広域農道の県道昇格</p><p class="qm"><span>一般質問</span><span>平成29年度第3回定例会</span></p><p class="qs">松江市と出雲市の南部を東西につなぐ簸川南広域農道が幹線道路として交通量を増やしている中、安全面からも沿線の活性化に向けても必要な県道への昇格を提起した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">出雲未来図の戦略の成果</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">出雲市総合振興計画「出雲未来図」に掲げる雇用創出2,500人、定住人口キープ17万人、交流人口1,200万人、住みやすさＮｏ．１の四つの戦略プロジェクトに沿って、その成果と所感を問うた。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">市長続投の決意と意欲</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">新型コロナウイルス感染症の収束が見えない中で感染防止対策や地域経済対策の実施が引き続き必要であり一定の道筋をつけて次世代のリーダーに引き継ぐには道半ばではないかとして、今後も引き続き市長として市政を担当する決意と意欲があるかを問うた。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_industry.html#topic-05">物価高騰と経済対策</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">出雲未来図の戦略の成果</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">出雲市総合振興計画「出雲未来図」に掲げる雇用創出2,500人、定住人口キープ17万人、交流人口1,200万人、住みやすさＮｏ．１の四つの戦略プロジェクトに沿って、その成果と所感を問うた。</p><div class="tg"><a class="tag" href="../topic_industry.html#topic-01">企業誘致と工業団地</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">上塩冶スポーツセンター</p><p class="qm"><span>一般質問</span><span>令和元年度第2回定例会</span></p><p class="qs">平成26年の開設以来の上塩冶スポーツセンターのこれまでの利用状況、2階部分に観覧スペースなどを設けてさらなる利活用につなげる考え、市の直営を継続するのかという今後の管理運営を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">行財政改革の成果と所感</p><p class="qm"><span>一般質問</span><span>令和2年度第6回定例会</span></p><p class="qs">長岡市政3期12年を振り返り、平成26年から3か年を集中改革期間として総人件費の抑制や事務事業・補助金・負担金・使用料・手数料・公共施設のあり方の見直しに取り組んだ出雲市行財政改革大綱に掲げる行財政改革の成果と所感を問うた。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-02">行財政改革と定員管理</a><a class="tag" href="../topic_administration.html#topic-04">公共施設マネジメント</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">健康経営の推進策</p><p class="qm"><span>一般質問</span><span>平成30年度第2回定例会</span></p><p class="qs">健康経営優良法人認定やヘルス・マネジメント認定制度についての市の認識、健康経営を推進する企業への金利優遇や補助金の交付といったインセンティブ、指名競争入札における参加資格の優遇、健康経営アドバイザー制度の創設、出雲市健康まちづくり基本計画との連携を尋ね、他市の例を挙げて健康経営都市宣言や認証制度の創設を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第5期" hidden>
+<p class="qhead">2021年4月〜2025年4月・一般質問 8回・代表質問 1回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="エネルギー・環境" aria-pressed="false">エネルギー・環境</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">自転車競技場の建設保留</p><p class="qm"><span>一般質問</span><span>令和6年度第3回定例会</span></p><p class="qs">島根県がグリーンステップＣ谷を国民スポーツ大会自転車競技トラックレースの会場として決定した後に競技場建設を一旦保留とした経過と理由、今になって財政負担の重さを持ち出した理由と市への説明、大会後の利活用が見込めないと判断するに至った検討内容と結果、市の考えと今後の県への対処、県の再検討の内容と結果の公表時期を問うた。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">新たな観光戦略の策定</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">本市の観光振興の方針を示す新たな観光戦略について、その概要と進捗状況、これまでの成果、そして戦略における須佐神社の位置づけを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">須佐神社の観光客数</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">須佐神社への観光客数について新型コロナ以前から現在に至るまでの推移を問うた。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">須佐神社遷宮への支援</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">おおよそ30年ぶりとなる須佐神社の正遷宮について工事等の内容、経費、財源、スケジュールと、県の重要文化財であることを踏まえた県・市の財政支援、今議会に上程されている一般会計当初予算案に計上された財政支援の詳細と意義を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">遷宮を契機の誘客策</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">須佐神社の遷宮を契機とした具体的な観光誘客策として周辺施設整備や立久恵峡付近の狭隘な道路の解消、案内補助施設などのハード整備、観光客の利便性向上のための交通手段の拡充、インバウンド対策、広報の充実、市内外の他の観光施設間の周遊や新たな観光ルートの造成、地元住民や関係団体との連携による地域を挙げての盛り上げの具体策を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a></div></li><li><p class="qt">持続可能な観光地域づくり</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">新たな観光戦略について、観光施設情報のＤＸの推進とバスツアーの充実のほかに検討している施策と大阪・関西万博を見据えたインバウンド対策、ＳＮＳ「ｉｚｕｍｏ３６５」の具体的な内容と仕組みや他の情報発信の手段・方法、関係機関との連携強化と観光戦略上の位置づけ、市民や議会や関係者の意見の反映、今後3年間の取組のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a></div></li><li><p class="qt">公共用地活用とデマンド交通</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">中心市街地における旧出雲市役所跡地や旧出雲市体育館跡地をはじめとした公共用地の有効活用を今後どのように検討するのか、出雲市地域公共交通計画の第一歩として行うデマンド交通の検討と実証実験の内容や他地域への広がりを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">国民スポーツ大会と新体育館</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">令和12年に島根県で開催される第84回国民スポーツ大会と第29回全国障害者スポーツ大会の現時点での準備状況と開催までのスケジュールや選手育成の方針と段取り、新体育館の開館に向けた準備状況と今後のスケジュールと開館後の利活用を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">ウィズコロナの観光戦略</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">観光客の入込数がコロナ禍前と比較してどの程度減少しその後どの程度回復したかと宿泊数の推移、ウィズコロナを見据えて立て実行してきた観光戦略と観光業界との連携・市の支援・成果、今後の新しい観光誘客の戦略を尋ね、塩冶神社や馬木不動尊、朝山神社、立久恵峡、須佐神社を結ぶ新しい観光ルートの造成を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">国民スポーツ大会の準備</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">令和12年に島根県で開催される第84回国民スポーツ大会・第29回全国障害者スポーツ大会について、本市での開催が決まっている競技種目と会場、今後誘致を検討している種目や会場、県全体と本市に見込まれる経済効果、本市として競技力向上を検討している種目や団体を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">空港利用促進とスマートＩＣ</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">コロナ禍で大きく落ち込んだ出雲縁結び空港の利用者をコロナ前かそれ以上にするためのさらなる利用促進の対策と、救急搬送の時間短縮や物流の利便性向上による経済効果も期待できるスマートインターチェンジの整備に向けた今後の取組の方向性を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li class="line"><p class="qt">国民スポーツ大会と新体育館</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li><li class="line"><p class="qt">ウィズコロナの観光戦略</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li><li class="line"><p class="qt">国民スポーツ大会の準備</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">地域包括ケアの構築</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">第8期の高齢者福祉計画・介護保険事業計画を踏まえ、本市の地域包括ケアシステムはどのようなイメージでどこが中心になって進めているのか、地域ケア会議で掌握した地域課題と解決に向けた取組や具体的な成果、今後の課題と取組、介護人材の確保に向けた中学生向け介護基礎講座の状況を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">スマートインター整備</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">山陰道の出雲・湖陵道路と湖陵・多伎道路の開通を控え、スマートインターチェンジの必要性についての市の見解と、策定中の都市計画マスタープランにおける位置づけ、場所や費用、財源確保、整備方法など関係機関を交えた検討の進捗状況、現時点で考えている今後のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li><li class="line"><p class="qt">空港利用促進とスマートＩＣ</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="also">医療・介護・福祉にも当たる</p></li><li class="line"><p class="qt">公共用地活用とデマンド交通</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li><li><p class="qt">簸川南広域農道の渋滞</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">市民や周辺地域との幹線道路として重要な役割を果たしている簸川南広域農道について、交通量調査を踏まえた道路の現状と、朝の通勤時間帯に起きている交通渋滞への対策を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">若年層の人口とふるさと教育</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="qs">今後の人口動態、特にゼロ歳から14歳の若年層の予想と分析、高校卒業後に県外へ進学や就職する人数と割合やＵターンして市内に就職する人数、小・中学校におけるふるさと教育の具体的な施策、市内高校でのふるさと教育の状況と県外流出防止策や今後の充実を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a></div></li><li><p class="qt">移住・定住支援策</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">ここ数年の出雲市の移住者の状況を尋ね、令和4年度の移住者への支援として新築に対する固定資産税等相当額の助成やリフォーム費用の助成に加えて考えている新規事業の内容と、住まいに関する支援以外に移住者を呼び込むために実施していることを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">指定管理者制度の見直し</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="qs">指定管理者制度の導入の経過とメリット、近年の複数応募と1者応募の状況および複数応募にならない原因の分析、従前と違う管理者が選定された件数、競争原理が働いているかの分析と経営努力や自主事業のマンネリ化などの課題や弊害を尋ね、同じ管理者を連続2期までとする上限設定や市外事業者の参入や複数施設の一括管理といった抜本的な見直しを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li class="line"><p class="qt">移住・定住支援策</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="also">人口減少と地域の維持にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">若年層の人口とふるさと教育</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="also">人口減少と地域の維持にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">持続可能な観光地域づくり</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">公共用地活用とデマンド交通</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="also">観光・文化・交流にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_environment.html">エネルギー・環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">脱炭素とトキのまちづくり</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">2030年のＣＯ2排出量削減46％というチャレンジ目標に向けたロードマップと取組内容や市長の意気込みと市民・事業者への啓発活動の展開、トキをシンボルとしてまちづくりを推進するための総合的な取組が展開できる体制とはどういうものかとその下での具体的な取組の方向性や広報・啓発活動の展開を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-03">脱炭素とカーボンニュートラル</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">医大前新町線の渋滞対策</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">昨年3月に全線開通した医大前新町線によってどのような効果が生まれたのかを尋ね、島根大学医学部正門前の交差点で朝夕に古志大橋方面へ右折する車の渋滞が発生している状況を市が掌握し出雲警察署と共有しているのか、右折レーンや時差式信号機の設置など対策の検討を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">Ｃ谷の残り部分の利活用</p><p class="qm"><span>一般質問</span><span>令和6年度第3回定例会</span></p><p class="qs">グリーンステップＣ谷の造成のスケジュールと造成後の利活用がこれまでどのように検討されてきたのかを尋ね、自転車競技場の予定地を除く残る部分の利活用について県の考えと市の見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">南部地域の活性化</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">須佐神社の遷宮は佐田地域など南部地域の活性化につなぐ絶好の機会であるとして、市としての認識を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市役所周辺の市有地活用</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">旧出雲市役所跡地である公用車駐車場の有効活用について、ここに至るまでの検討の状況と今後の利活用の現時点での方向性、民間への売却の考えを尋ね、市役所に来られる市民の駐車場の不足に対し、第2駐車場の立体駐車場化やだんだん広場の一部の転用など処する方法と時期を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">山陰道のスマートインター</p><p class="qm"><span>一般質問</span><span>令和4年度第2回定例会</span></p><p class="qs">市南部地域へのスマートインターチェンジについて、整備の必要性に対する市の考え、駅南や建設候補地周辺の状況と国・県の政策に関する市の認識と最新の情報、整備とセットで進める市南部の活性化の腹案を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">介護分野のデジタル活用</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">市内の介護事業者がどの程度のデジタル技術を活用しているのかを市として掌握しているかを尋ね、デジタルファースト推進計画が掲げる切れ目のない連携による介護負担の軽減と介護ロボットの導入推進の啓発それぞれへの考え、ＩＣＴや介護ロボットの導入支援制度の内容と活用状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">自転車競技場の建設保留</p><p class="qm"><span>一般質問</span><span>令和6年度第3回定例会</span></p><p class="qs">島根県がグリーンステップＣ谷を国民スポーツ大会自転車競技トラックレースの会場として決定した後に競技場建設を一旦保留とした経過と理由、今になって財政負担の重さを持ち出した理由と市への説明、大会後の利活用が見込めないと判断するに至った検討内容と結果、市の考えと今後の県への対処、県の再検討の内容と結果の公表時期を問うた。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">新たな観光戦略の策定</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">本市の観光振興の方針を示す新たな観光戦略について、その概要と進捗状況、これまでの成果、そして戦略における須佐神社の位置づけを質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">須佐神社の観光客数</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">須佐神社への観光客数について新型コロナ以前から現在に至るまでの推移を問うた。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">須佐神社遷宮への支援</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">おおよそ30年ぶりとなる須佐神社の正遷宮について工事等の内容、経費、財源、スケジュールと、県の重要文化財であることを踏まえた県・市の財政支援、今議会に上程されている一般会計当初予算案に計上された財政支援の詳細と意義を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">遷宮を契機の誘客策</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">須佐神社の遷宮を契機とした具体的な観光誘客策として周辺施設整備や立久恵峡付近の狭隘な道路の解消、案内補助施設などのハード整備、観光客の利便性向上のための交通手段の拡充、インバウンド対策、広報の充実、市内外の他の観光施設間の周遊や新たな観光ルートの造成、地元住民や関係団体との連携による地域を挙げての盛り上げの具体策を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a></div></li><li><p class="qt">持続可能な観光地域づくり</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">新たな観光戦略について、観光施設情報のＤＸの推進とバスツアーの充実のほかに検討している施策と大阪・関西万博を見据えたインバウンド対策、ＳＮＳ「ｉｚｕｍｏ３６５」の具体的な内容と仕組みや他の情報発信の手段・方法、関係機関との連携強化と観光戦略上の位置づけ、市民や議会や関係者の意見の反映、今後3年間の取組のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a></div></li><li><p class="qt">公共用地活用とデマンド交通</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">中心市街地における旧出雲市役所跡地や旧出雲市体育館跡地をはじめとした公共用地の有効活用を今後どのように検討するのか、出雲市地域公共交通計画の第一歩として行うデマンド交通の検討と実証実験の内容や他地域への広がりを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">国民スポーツ大会と新体育館</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">令和12年に島根県で開催される第84回国民スポーツ大会と第29回全国障害者スポーツ大会の現時点での準備状況と開催までのスケジュールや選手育成の方針と段取り、新体育館の開館に向けた準備状況と今後のスケジュールと開館後の利活用を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">ウィズコロナの観光戦略</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">観光客の入込数がコロナ禍前と比較してどの程度減少しその後どの程度回復したかと宿泊数の推移、ウィズコロナを見据えて立て実行してきた観光戦略と観光業界との連携・市の支援・成果、今後の新しい観光誘客の戦略を尋ね、塩冶神社や馬木不動尊、朝山神社、立久恵峡、須佐神社を結ぶ新しい観光ルートの造成を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">国民スポーツ大会の準備</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">令和12年に島根県で開催される第84回国民スポーツ大会・第29回全国障害者スポーツ大会について、本市での開催が決まっている競技種目と会場、今後誘致を検討している種目や会場、県全体と本市に見込まれる経済効果、本市として競技力向上を検討している種目や団体を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">空港利用促進とスマートＩＣ</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">コロナ禍で大きく落ち込んだ出雲縁結び空港の利用者をコロナ前かそれ以上にするためのさらなる利用促進の対策と、救急搬送の時間短縮や物流の利便性向上による経済効果も期待できるスマートインターチェンジの整備に向けた今後の取組の方向性を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">国民スポーツ大会と新体育館</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">令和12年に島根県で開催される第84回国民スポーツ大会と第29回全国障害者スポーツ大会の現時点での準備状況と開催までのスケジュールや選手育成の方針と段取り、新体育館の開館に向けた準備状況と今後のスケジュールと開館後の利活用を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">ウィズコロナの観光戦略</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">観光客の入込数がコロナ禍前と比較してどの程度減少しその後どの程度回復したかと宿泊数の推移、ウィズコロナを見据えて立て実行してきた観光戦略と観光業界との連携・市の支援・成果、今後の新しい観光誘客の戦略を尋ね、塩冶神社や馬木不動尊、朝山神社、立久恵峡、須佐神社を結ぶ新しい観光ルートの造成を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a></div></li><li><p class="qt">国民スポーツ大会の準備</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">令和12年に島根県で開催される第84回国民スポーツ大会・第29回全国障害者スポーツ大会について、本市での開催が決まっている競技種目と会場、今後誘致を検討している種目や会場、県全体と本市に見込まれる経済効果、本市として競技力向上を検討している種目や団体を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">地域包括ケアの構築</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">第8期の高齢者福祉計画・介護保険事業計画を踏まえ、本市の地域包括ケアシステムはどのようなイメージでどこが中心になって進めているのか、地域ケア会議で掌握した地域課題と解決に向けた取組や具体的な成果、今後の課題と取組、介護人材の確保に向けた中学生向け介護基礎講座の状況を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">スマートインター整備</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">山陰道の出雲・湖陵道路と湖陵・多伎道路の開通を控え、スマートインターチェンジの必要性についての市の見解と、策定中の都市計画マスタープランにおける位置づけ、場所や費用、財源確保、整備方法など関係機関を交えた検討の進捗状況、現時点で考えている今後のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a></div></li><li><p class="qt">空港利用促進とスマートＩＣ</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">コロナ禍で大きく落ち込んだ出雲縁結び空港の利用者をコロナ前かそれ以上にするためのさらなる利用促進の対策と、救急搬送の時間短縮や物流の利便性向上による経済効果も期待できるスマートインターチェンジの整備に向けた今後の取組の方向性を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_infrastructure.html#topic-07">空港と港湾</a></div></li><li><p class="qt">公共用地活用とデマンド交通</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">中心市街地における旧出雲市役所跡地や旧出雲市体育館跡地をはじめとした公共用地の有効活用を今後どのように検討するのか、出雲市地域公共交通計画の第一歩として行うデマンド交通の検討と実証実験の内容や他地域への広がりを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li><li><p class="qt">簸川南広域農道の渋滞</p><p class="qm"><span>一般質問</span><span>令和3年度第2回定例会</span></p><p class="qs">市民や周辺地域との幹線道路として重要な役割を果たしている簸川南広域農道について、交通量調査を踏まえた道路の現状と、朝の通勤時間帯に起きている交通渋滞への対策を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-02">道路整備と高速道路</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">若年層の人口とふるさと教育</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="qs">今後の人口動態、特にゼロ歳から14歳の若年層の予想と分析、高校卒業後に県外へ進学や就職する人数と割合やＵターンして市内に就職する人数、小・中学校におけるふるさと教育の具体的な施策、市内高校でのふるさと教育の状況と県外流出防止策や今後の充実を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a></div></li><li><p class="qt">移住・定住支援策</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">ここ数年の出雲市の移住者の状況を尋ね、令和4年度の移住者への支援として新築に対する固定資産税等相当額の助成やリフォーム費用の助成に加えて考えている新規事業の内容と、住まいに関する支援以外に移住者を呼び込むために実施していることを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">指定管理者制度の見直し</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="qs">指定管理者制度の導入の経過とメリット、近年の複数応募と1者応募の状況および複数応募にならない原因の分析、従前と違う管理者が選定された件数、競争原理が働いているかの分析と経営努力や自主事業のマンネリ化などの課題や弊害を尋ね、同じ管理者を連続2期までとする上限設定や市外事業者の参入や複数施設の一括管理といった抜本的な見直しを質した。</p><div class="tg"><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">移住・定住支援策</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">ここ数年の出雲市の移住者の状況を尋ね、令和4年度の移住者への支援として新築に対する固定資産税等相当額の助成やリフォーム費用の助成に加えて考えている新規事業の内容と、住まいに関する支援以外に移住者を呼び込むために実施していることを質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a><a class="tag" href="../topic_administration.html#topic-10">税と徴収</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">若年層の人口とふるさと教育</p><p class="qm"><span>一般質問</span><span>令和5年度第3回定例会</span></p><p class="qs">今後の人口動態、特にゼロ歳から14歳の若年層の予想と分析、高校卒業後に県外へ進学や就職する人数と割合やＵターンして市内に就職する人数、小・中学校におけるふるさと教育の具体的な施策、市内高校でのふるさと教育の状況と県外流出防止策や今後の充実を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">持続可能な観光地域づくり</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">新たな観光戦略について、観光施設情報のＤＸの推進とバスツアーの充実のほかに検討している施策と大阪・関西万博を見据えたインバウンド対策、ＳＮＳ「ｉｚｕｍｏ３６５」の具体的な内容と仕組みや他の情報発信の手段・方法、関係機関との連携強化と観光戦略上の位置づけ、市民や議会や関係者の意見の反映、今後3年間の取組のスケジュールを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-02">インバウンド</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">公共用地活用とデマンド交通</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">中心市街地における旧出雲市役所跡地や旧出雲市体育館跡地をはじめとした公共用地の有効活用を今後どのように検討するのか、出雲市地域公共交通計画の第一歩として行うデマンド交通の検討と実証実験の内容や他地域への広がりを質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_industry.html#topic-03">中心市街地と商店街</a><a class="tag" href="../topic_tourism.html#topic-04">スポーツ振興</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="エネルギー・環境" hidden>
+<ul class="qlist"><li><p class="qt">脱炭素とトキのまちづくり</p><p class="qm"><span>代表質問</span><span>令和4年度第6回定例会</span></p><p class="qs">2030年のＣＯ2排出量削減46％というチャレンジ目標に向けたロードマップと取組内容や市長の意気込みと市民・事業者への啓発活動の展開、トキをシンボルとしてまちづくりを推進するための総合的な取組が展開できる体制とはどういうものかとその下での具体的な取組の方向性や広報・啓発活動の展開を質した。</p><div class="tg"><a class="tag" href="../topic_environment.html#topic-03">脱炭素とカーボンニュートラル</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">医大前新町線の渋滞対策</p><p class="qm"><span>一般質問</span><span>令和6年度第6回定例会</span></p><p class="qs">昨年3月に全線開通した医大前新町線によってどのような効果が生まれたのかを尋ね、島根大学医学部正門前の交差点で朝夕に古志大橋方面へ右折する車の渋滞が発生している状況を市が掌握し出雲警察署と共有しているのか、右折レーンや時差式信号機の設置など対策の検討を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">Ｃ谷の残り部分の利活用</p><p class="qm"><span>一般質問</span><span>令和6年度第3回定例会</span></p><p class="qs">グリーンステップＣ谷の造成のスケジュールと造成後の利活用がこれまでどのように検討されてきたのかを尋ね、自転車競技場の予定地を除く残る部分の利活用について県の考えと市の見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">南部地域の活性化</p><p class="qm"><span>一般質問</span><span>令和5年度第5回定例会</span></p><p class="qs">須佐神社の遷宮は佐田地域など南部地域の活性化につなぐ絶好の機会であるとして、市としての認識を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">市役所周辺の市有地活用</p><p class="qm"><span>一般質問</span><span>令和4年度第5回定例会</span></p><p class="qs">旧出雲市役所跡地である公用車駐車場の有効活用について、ここに至るまでの検討の状況と今後の利活用の現時点での方向性、民間への売却の考えを尋ね、市役所に来られる市民の駐車場の不足に対し、第2駐車場の立体駐車場化やだんだん広場の一部の転用など処する方法と時期を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">山陰道のスマートインター</p><p class="qm"><span>一般質問</span><span>令和4年度第2回定例会</span></p><p class="qs">市南部地域へのスマートインターチェンジについて、整備の必要性に対する市の考え、駅南や建設候補地周辺の状況と国・県の政策に関する市の認識と最新の情報、整備とセットで進める市南部の活性化の腹案を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">介護分野のデジタル活用</p><p class="qm"><span>一般質問</span><span>令和3年度第7回定例会</span></p><p class="qs">市内の介護事業者がどの程度のデジタル技術を活用しているのかを市として掌握しているかを尋ね、デジタルファースト推進計画が掲げる切れ目のない連携による介護負担の軽減と介護ロボットの導入推進の啓発それぞれへの考え、ＩＣＴや介護ロボットの導入支援制度の内容と活用状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第6期">
+<p class="qhead">2025年4月〜2029年4月・一般質問 2回・代表質問 0回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">高校生へのふるさと教育</p><p class="qm"><span>一般質問</span><span>令和7年度第3回定例会</span></p><p class="qs">高校ネットワークコーディネーターの活動内容や誰を配置する予定かなど事業の詳細と期待する成果、どのような民間業者へどのような方法で委託先を決定するのかを尋ね、学生と学校、地域、行政のネットワークに島根大学や島根県立大学、市内の専門学校など高等教育機関を加えることを提案し、市長自ら八つの高校に出向くふるさと教育の調整状況と話す内容、期待される成果を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>令和7年度第5回定例会</span></p><p class="qs">昨年9月に改訂版が策定された都市計画マスタープランについて、現在の出雲市が抱えている都市づくりの課題の認識と分析、課題解決のための目標と戦略及び土地利用や都市施設、自然環境や景観、防災・防犯に関する基本的な方針、今市・大津・塩冶・四絡の出雲中央地域を例とした地域別構想の着眼点と地域の課題及び方針、市民や事業者との協働による実現に向けた具体的な取組と情報発信の展開、用途地域をどのような場合に見直すのかと今後の予定や現時点の見通しの方針を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>令和7年度第5回定例会</span></p><p class="also">防災と地域の安全にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>令和7年度第5回定例会</span></p><p class="also">防災と地域の安全にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">シティプロモーション戦略</p><p class="qm"><span>一般質問</span><span>令和7年度第3回定例会</span></p><p class="qs">出雲市シティプロモーション戦略の策定の目的や方針、盛り込むべき内容、推進体制、今後のスケジュールと、シティプロモーションアドバイザーの役割や期待する成果を尋ね、議員や職員が県外へ出張する際にＰＲ動画を流すなど何らかの形で出雲市の情報発信を行うことを戦略策定時に検討して盛り込むよう提案し見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">高校生へのふるさと教育</p><p class="qm"><span>一般質問</span><span>令和7年度第3回定例会</span></p><p class="qs">高校ネットワークコーディネーターの活動内容や誰を配置する予定かなど事業の詳細と期待する成果、どのような民間業者へどのような方法で委託先を決定するのかを尋ね、学生と学校、地域、行政のネットワークに島根大学や島根県立大学、市内の専門学校など高等教育機関を加えることを提案し、市長自ら八つの高校に出向くふるさと教育の調整状況と話す内容、期待される成果を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>令和7年度第5回定例会</span></p><p class="qs">昨年9月に改訂版が策定された都市計画マスタープランについて、現在の出雲市が抱えている都市づくりの課題の認識と分析、課題解決のための目標と戦略及び土地利用や都市施設、自然環境や景観、防災・防犯に関する基本的な方針、今市・大津・塩冶・四絡の出雲中央地域を例とした地域別構想の着眼点と地域の課題及び方針、市民や事業者との協働による実現に向けた具体的な取組と情報発信の展開、用途地域をどのような場合に見直すのかと今後の予定や現時点の見通しの方針を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>令和7年度第5回定例会</span></p><p class="qs">昨年9月に改訂版が策定された都市計画マスタープランについて、現在の出雲市が抱えている都市づくりの課題の認識と分析、課題解決のための目標と戦略及び土地利用や都市施設、自然環境や景観、防災・防犯に関する基本的な方針、今市・大津・塩冶・四絡の出雲中央地域を例とした地域別構想の着眼点と地域の課題及び方針、市民や事業者との協働による実現に向けた具体的な取組と情報発信の展開、用途地域をどのような場合に見直すのかと今後の予定や現時点の見通しの方針を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">都市計画マスタープラン</p><p class="qm"><span>一般質問</span><span>令和7年度第5回定例会</span></p><p class="qs">昨年9月に改訂版が策定された都市計画マスタープランについて、現在の出雲市が抱えている都市づくりの課題の認識と分析、課題解決のための目標と戦略及び土地利用や都市施設、自然環境や景観、防災・防犯に関する基本的な方針、今市・大津・塩冶・四絡の出雲中央地域を例とした地域別構想の着眼点と地域の課題及び方針、市民や事業者との協働による実現に向けた具体的な取組と情報発信の展開、用途地域をどのような場合に見直すのかと今後の予定や現時点の見通しの方針を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-06">交通安全と防犯</a><a class="tag" href="../topic_infrastructure.html#topic-05">都市計画と景観</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">シティプロモーション戦略</p><p class="qm"><span>一般質問</span><span>令和7年度第3回定例会</span></p><p class="qs">出雲市シティプロモーション戦略の策定の目的や方針、盛り込むべき内容、推進体制、今後のスケジュールと、シティプロモーションアドバイザーの役割や期待する成果を尋ね、議員や職員が県外へ出張する際にＰＲ動画を流すなど何らかの形で出雲市の情報発信を行うことを戦略策定時に検討して盛り込むよう提案し見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+
+<section class="sec count" id="s-count"><h2>このページの数え方</h2><dl><dt>質問の回数</dt><dd>その期に質問に立った定例会の回数を、会議録に記された質問の種別に従って「一般質問」と「代表質問」に分けて数えています（同じ定例会で両方に立った時は「代表質問」に1回と数えます）。数えているのは質問に立った定例会の回数で、論点の数ではありません。1回の質問で複数の論点を取り上げる事が有り、同じ定例会の質問が議員毎のページの一覧では複数の項目に分かれて見える事が有ります。名簿の同じ期の回数と同じ数です。</dd><dt>取り上げた区分</dt><dd>質問毎に、その質問の論点に割り当てた話題の区分を数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数え、どの区分にも当たらない質問は「当たる話題なし」に数えます。マスの濃さは、この議員の表の中で最も多いマスに対する多さを示します。</dd><dt>質問の題と要約</dt><dd>会議録の実際の発言から、生成AIで論点毎に題と要約を付けています。出雲市議会が公開する一般質問の通告ではない為、通告の項目とは区分や粒度が異なる事が有ります。区分の束は、その期に論点の多い区分から並べ、束の中は新しい会議から並べています。</dd><dt>区分と話題</dt><dd>題と要約に、話題毎に決めた語が含まれるかで話題を割り当て、話題を纏めた区分で数えています。どの話題にも当たらない論点は「当たる話題なし」として灰色の札で示します。</dd><dt>会派・役職・在任の途中の変化</dt><dd>会派は、会派の記録が有る期だけ示しています。議長・副議長は、その期の内に務めた事を示します。退任は期の途中で議員で無くなった事（その期の任期の中で最後に出席した会議を添えています）、加入は期の途中から議員になった事を示します。</dd><dt>期</dt><dd>期の範囲と定義は「<a href="../about.html#s-ki">このレポートについて › 期の定義</a>」に在ります。</dd></dl></section>
+
+</main>
+<footer class="foot">
+<p>v9.3.0</p>
+<p>出雲市議会レポート — 車座プロジェクト ／ <a href="../about.html">このレポートについて</a></p>
+<p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+<p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+</footer>
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var doc = document;
+  /* Maps keyed by attribute values have no prototype, so a key such as "constructor"
+     never resolves to an inherited member. */
+  function dict() { return Object.create(null); }
+  var MORE_FIRST = dict();
+  MORE_FIRST.summary = 5;
+  MORE_FIRST.line = 10;
+  var seq = 0;
+
+  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+  function newId(prefix) {
+    var id;
+    do { seq += 1; id = prefix + seq; } while (doc.getElementById(id));
+    return id;
+  }
+  function idOf(el, prefix) { if (!el.id) { el.id = newId(prefix); } return el.id; }
+  /* Operators and panes belong to the nearest enclosing scope only (nesting). */
+  function scopeOf(el) { return el.closest("[data-switch]"); }
+  function own(scope, selector) {
+    return Array.prototype.filter.call(scope.querySelectorAll(selector), function (el) {
+      return scopeOf(el) === scope;
+    });
+  }
+  function keyOf(el) { return el.getAttribute("data-switch-key"); }
+  function isTab(el) { return el.getAttribute("role") === "tab"; }
+  function setOn(op, on) {
+    if (op.hasAttribute("aria-selected")) { op.setAttribute("aria-selected", on ? "true" : "false"); }
+    if (op.hasAttribute("aria-pressed")) { op.setAttribute("aria-pressed", on ? "true" : "false"); }
+    if (isTab(op)) { op.tabIndex = on ? 0 : -1; }
+  }
+  function isOn(op) {
+    return op.getAttribute("aria-selected") === "true" || op.getAttribute("aria-pressed") === "true";
+  }
+  /* Scroll only the operator's own strip sideways, so loading never moves the page (3.9). */
+  function nudge(op) {
+    var strip = op.parentElement;
+    if (!strip || strip.scrollWidth <= strip.clientWidth) { return; }
+    var s = strip.getBoundingClientRect();
+    var r = op.getBoundingClientRect();
+    if (r.left < s.left) { strip.scrollLeft -= s.left - r.left; }
+    else if (r.right > s.right) { strip.scrollLeft += r.right - s.right; }
+  }
+
+  /* ---- switch: pick one operator, show its pane, in its scope (3.6, 3.9) ---- */
+  function pick(op, focus) {
+    var scope = scopeOf(op);
+    if (!scope) { return; }
+    var key = keyOf(op);
+    each(own(scope, "[data-switch-key]"), function (o) { setOn(o, keyOf(o) === key); });
+    each(own(scope, "[data-switch-pane]"), function (p) {
+      p.hidden = p.getAttribute("data-switch-pane") !== key;
+    });
+    if (focus) { op.focus(); }
+    op.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  each(doc.querySelectorAll("[data-switch]"), function (scope) {
+    var panes = dict();
+    each(own(scope, "[data-switch-pane]"), function (p) { panes[p.getAttribute("data-switch-pane")] = p; });
+    each(own(scope, "[data-switch-key]"), function (op) {
+      var pane = panes[keyOf(op)];
+      if (pane) { op.setAttribute("aria-controls", idOf(pane, "v9-pane-")); }
+      if (isTab(op)) {
+        op.tabIndex = isOn(op) ? 0 : -1;
+        if (pane) {
+          pane.setAttribute("role", "tabpanel");
+          pane.setAttribute("aria-labelledby", idOf(op, "v9-tab-"));
+        }
+      }
+      if (isOn(op)) { nudge(op); }
+    });
+  });
+
+  doc.addEventListener("click", function (ev) {
+    var target = ev.target;
+    if (!(target instanceof Element)) { return; }
+    var op = target.closest("[data-switch-key]");
+    if (op) { pick(op, false); return; }
+    var row = target.closest("[data-pick-row]");
+    if (row && !target.closest("a, button, input, select, textarea, summary, label")) {
+      var rowOp = row.querySelector("[data-switch-key]");
+      if (rowOp) { pick(rowOp, true); }
+    }
+  });
+
+  /* ---- tabs: left / right arrows (Home / End) move the choice and the focus (2.10) ---- */
+  doc.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) { return; }
+    var tab = ev.target instanceof Element ? ev.target.closest("[role=tab][data-switch-key]") : null;
+    if (!tab) { return; }
+    var list = tab.closest("[role=tablist]");
+    if (!list) { return; }
+    var tabs = Array.prototype.filter.call(list.querySelectorAll("[role=tab][data-switch-key]"), function (t) {
+      return t.closest("[role=tablist]") === list;
+    });
+    var at = tabs.indexOf(tab);
+    var to = -1;
+    if (ev.key === "ArrowRight") { to = (at + 1) % tabs.length; }
+    else if (ev.key === "ArrowLeft") { to = (at - 1 + tabs.length) % tabs.length; }
+    else if (ev.key === "Home") { to = 0; }
+    else if (ev.key === "End") { to = tabs.length - 1; }
+    if (to < 0) { return; }
+    ev.preventDefault();
+    pick(tabs[to], true);
+  });
+
+  /* ---- 「残り○件」: first 5 / 10 items, the button shows all and back (3.10) ---- */
+  each(doc.querySelectorAll("[data-more]"), function (list) {
+    var first = MORE_FIRST[list.getAttribute("data-more")];
+    var button = list.nextElementSibling;
+    if (!first || !button || !button.classList.contains("more")) { return; }
+    var items = Array.prototype.filter.call(list.children, function (el) { return el.tagName === "LI"; });
+    var rest = items.length - first;
+    if (rest <= 0) { return; }
+    var open = false;
+    function apply() {
+      each(items, function (li, i) { li.hidden = !open && i >= first; });
+      button.textContent = open ? "最初の" + first + "件だけにする" : "残り" + rest + "件を表示";
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    button.setAttribute("aria-controls", idOf(list, "v9-more-"));
+    button.addEventListener("click", function () { open = !open; apply(); });
+    apply();
+    button.hidden = false;
+  });
+
+  /* ---- phone menu: .menu toggles .side.open with aria-expanded (2.8). At phone width the
+     closed sidebar is only moved off screen, so it is made inert: out of the tab order and
+     away from assistive tech until opened (2.10). Without JS nothing is inert. ---- */
+  var side = doc.getElementById("side");
+  var menu = doc.querySelector(".crumb .menu");
+  var phone = window.matchMedia ? window.matchMedia("(max-width:640px)") : null;
+  function sync() {
+    if (!side) { return; }
+    side.inert = !!(phone && phone.matches) && !side.classList.contains("open");
+  }
+  /* A sidebar that is the URL's target is shown by CSS (.side:target, the no-JS way in).
+     Closing it drops the target without moving the page, so it never stays shown but inert. */
+  function untarget() {
+    if (!side.matches(":target")) { return; }
+    var x = window.scrollX, y = window.scrollY;
+    location.replace("#");
+    window.scrollTo(x, y);
+  }
+  function setMenu(opened) {
+    if (!side || !menu) { return; }
+    side.classList.toggle("open", opened);
+    menu.setAttribute("aria-expanded", opened ? "true" : "false");
+    if (!opened) { untarget(); }
+    sync();
+  }
+  if (side && menu) {
+    sync();
+    /* The script runs before the target is applied, so read the URL's fragment. */
+    if (location.hash === "#side") { setMenu(true); }
+    if (phone) {
+      if (phone.addEventListener) { phone.addEventListener("change", sync); }
+      else if (phone.addListener) { phone.addListener(sync); }
+    }
+    menu.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      var opening = !side.classList.contains("open");
+      setMenu(opening);
+      if (opening) {
+        var first = side.querySelector("a[href]");
+        if (first) { first.focus(); }
+      }
+    });
+    doc.addEventListener("click", function (ev) {
+      if (side.classList.contains("open") && !side.contains(ev.target)) { setMenu(false); }
+    });
+    doc.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && side.classList.contains("open")) { setMenu(false); menu.focus(); }
+    });
+    each(side.querySelectorAll("a[href]"), function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+  }
+
+  /* ---- section TOC: mark the section in view, as the legacy shell does ---- */
+  var tocLinks = side ? side.querySelectorAll('.toc a[href^="#"]') : [];
+  var linkById = dict();
+  var sections = [];
+  function mark(link) {
+    each(tocLinks, function (a) { a.removeAttribute("aria-current"); });
+    link.setAttribute("aria-current", "location");
+  }
+  each(tocLinks, function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    var section = doc.getElementById(id);
+    if (!section) { return; }
+    linkById[id] = a;
+    sections.push(section);
+    a.addEventListener("click", function () { mark(a); });
+  });
+  if ("IntersectionObserver" in window && sections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      each(entries, function (en) {
+        if (en.isIntersecting && linkById[en.target.id]) { mark(linkById[en.target.id]); }
+      });
+    }, { rootMargin: "0px 0px -68% 0px", threshold: 0 });
+    each(sections, function (s) { spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
