@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ja" data-shell="v9">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>村武まゆみ — 浜田市議会レポート</title>
+<style>
+/* spacing-exceptions: 0 1px 2px 3px 5px 6px 7px 9px 10px 26px 34px */
+/* reason: every value above is kept from the mock (docs/mocks/v9/v9.css) so the look does not change. */
+/* v9 style layer of the council report (canonical; the mock is now a record of decisions).
+   Fixed layout: b (tinted page + left-ruled headings, white boxes only for data), body text capped at 45em, white page.
+   Raw colors live only in the :root token definitions below; everything else uses var(--*).
+   A dark scheme would swap the :root values only; no dark color-scheme media block is kept here.
+   Component CSS (tables, switches, question lists, cards, ...) is appended by the component tasks. */
+:root{
+  /* colors */
+  --bg:#ffffff; --surface:#ffffff; --side:#f7f8fa;
+  --ink:#1c1e26; --ink-soft:#4d5263; --ink-faint:#656a7e; --zero:#8a8fa3; --rest:#c3c6cf; --rest-soft:#eceef1;
+  --line:#e2e4ea; --line-soft:#eef0f4;
+  --accent:#3a4a8c; --accent-ink:#2c3a70; --accent-soft:#eceff8;
+  --a2:#6b76b0; --a3:#a9b0d3; --a4:#d5d9ec; --a5:#eceef7;
+  --on-accent:#ffffff; /* text on an --accent fill */
+  /* shadows (the mock's raw rgba() values, moved into tokens) */
+  --shadow-card:0 1px 2px rgba(28,30,38,.04),0 8px 24px -18px rgba(28,30,38,.25);
+  --shadow-hover:0 6px 18px -12px rgba(58,74,140,.5);
+  --shadow-overlay:0 0 40px rgba(0,0,0,.2);
+  /* per-person colors: the --accent hue (228deg, saturation 41%) at HSL lightness 17/28/39/50/61/72%,
+     dark to light; --person-3 is --accent itself. CIE L* steps are about 9-13 apart. */
+  --person-1:#19203d; --person-2:#2a3564; --person-3:#3a4a8c; --person-4:#4a5fb4; --person-5:#7282c4; --person-6:#99a5d5;
+  /* spacing steps */
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:24px; --sp6:40px; --sp7:64px;
+  --radius:8px;
+  --cap:45em; /* body text cap (45 characters) */
+  --fs:15px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ background:var(--bg); color:var(--ink); font-size:var(--fs); line-height:1.75;
+  font-family:"Yu Gothic UI","Yu Gothic","游ゴシック","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;
+  font-feature-settings:"palt"; -webkit-text-size-adjust:100%; }
+a{ color:var(--accent); text-underline-offset:3px; }
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible,.scroll:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+.ic{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+/* ---- shell: sidebar ---- */
+.shell{ display:flex; min-height:100vh; }
+.side{ width:252px; flex:none; background:var(--side); border-right:1px solid var(--line); padding:var(--sp4) var(--sp3);
+  position:sticky; top:0; height:100vh; overflow-y:auto; font-size:14px; }
+.side .back{ display:flex; gap:var(--sp2); align-items:center; color:var(--ink-faint); text-decoration:none; font-size:12.5px; padding:var(--sp1) var(--sp2); }
+.side .rep{ margin:var(--sp2) 0 var(--sp4); padding:var(--sp2) var(--sp3); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); font-weight:700; display:flex; gap:var(--sp2); align-items:center; }
+.side .grp{ margin-top:var(--sp4); }
+.side .gh{ font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; padding:0 var(--sp2) var(--sp1); }
+.side a.it{ display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); border-radius:6px; color:var(--ink-soft); text-decoration:none; }
+.side a.it:hover{ background:var(--accent-soft); color:var(--accent-ink); }
+.side a.it[aria-current]{ background:var(--accent-soft); color:var(--accent-ink); font-weight:700; }
+.side details > summary{ list-style:none; cursor:pointer; display:flex; gap:var(--sp2); align-items:center; padding:6px var(--sp2); color:var(--ink-soft); border-radius:6px; }
+.side details > summary::-webkit-details-marker{ display:none; }
+.side details > summary::after{ content:""; margin-left:auto; border:4px solid transparent; border-left-color:var(--ink-faint); transform:translateX(2px); transition:transform .15s; }
+.side details[open] > summary::after{ transform:rotate(90deg) translateX(2px); }
+.side .sub{ padding-left:26px; }
+.side .sub a.it{ padding:var(--sp1) var(--sp2); font-size:13.5px; }
+.side .toc{ margin:2px 0 var(--sp2) 34px; border-left:1px solid var(--line); }
+.side .toc a{ display:block; padding:3px var(--sp3); font-size:12.5px; color:var(--ink-faint); text-decoration:none; }
+.side .toc a:hover{ color:var(--accent-ink); }
+/* the section in view, marked by the shell script (not in the mock) */
+.side .toc a[aria-current]{ color:var(--accent-ink); font-weight:700; box-shadow:inset 2px 0 0 var(--accent); }
+/* report switch: the legacy cross-nav block sits in .rep under the report name */
+.side .rep{ flex-wrap:wrap; }
+.side .rep a.rep-link{ display:flex; gap:var(--sp2); align-items:center; flex:1 1 auto; color:inherit; text-decoration:none; }
+.side .rep a.rep-link:hover,.side .rep a.rep-link[aria-current]{ color:var(--accent-ink); }
+.side .rep .cross-nav{ flex-basis:100%; font-weight:400; font-size:12.5px; }
+.side .cross-nav-inner{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp2); }
+.side .cross-nav a{ color:var(--accent); text-decoration:none; }
+.side .cross-nav-sep{ color:var(--line); }
+
+/* ---- shell: breadcrumb and page frame ---- */
+.main{ flex:1; min-width:0; }
+.crumb{ font-size:12.5px; color:var(--ink-faint); padding:var(--sp3) var(--sp6); border-bottom:1px solid var(--line-soft); background:var(--bg); }
+.crumb b{ color:var(--ink); font-weight:600; }
+.page{ max-width:1080px; padding:var(--sp6) var(--sp6) var(--sp7); }
+.menu{ display:none; }
+
+/* ---- page head: kicker, title, lead (the how-to box is a component) ---- */
+.kicker{ display:inline-block; font-size:12px; color:var(--accent-ink); background:var(--accent-soft); border-radius:999px; padding:1px 10px; margin-bottom:var(--sp2); }
+h1{ font-size:28px; line-height:1.35; margin:0 0 var(--sp3); letter-spacing:.02em; }
+.lead{ max-width:var(--cap); color:var(--ink-soft); margin:0 0 var(--sp5); }
+
+/* ---- sections: layout b (tinted page + left-ruled heading; white box only for data) ---- */
+/* --measure is the wrap width of body text in a section: the cap by default;
+   .sec.fit follows the section (= table) width and still stops at the cap. */
+.sec{ --measure:var(--cap); margin:0 0 var(--sp7); }
+.sec.fit{ --measure:min(var(--cap), 100%); }
+.sec > h2{ font-size:20px; line-height:1.4; margin:0 0 var(--sp3); border-left:4px solid var(--accent); padding-left:var(--sp3); }
+.sec h3{ font-size:17px; margin:var(--sp6) 0 var(--sp2); }
+.sec h4.sub{ font-size:14px; margin:var(--sp4) 0 var(--sp2); color:var(--ink-soft); }
+.prose{ max-width:var(--measure, var(--cap)); margin:0 0 var(--sp4); color:var(--ink-soft); }
+.meta{ max-width:var(--measure, var(--cap)); font-size:13px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.terms{ max-width:var(--measure, var(--cap)); font-size:12.5px; color:var(--ink-faint); margin:0 0 var(--sp3); }
+.data{ margin:0 0 var(--sp4); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:var(--sp4);
+  box-shadow:var(--shadow-card); }
+
+/* ---- footer (tinted) ---- */
+.foot{ border-top:1px solid var(--line); padding:var(--sp5) var(--sp6); font-size:12.5px; color:var(--ink-faint); background:var(--side); }
+.foot a{ color:var(--accent); }
+.foot p{ margin:0; }
+.foot p + p{ margin-top:var(--sp1); }
+/* the one <noscript> note of the shell (requirement 3.8) */
+.noscript{ margin:0; padding:var(--sp2) var(--sp6); font-size:12.5px; background:var(--accent-soft); color:var(--accent-ink); }
+
+/* ---- mobile: sidebar becomes an overlay menu, body is one column ---- */
+@media (max-width:640px){
+  .side{ position:fixed; left:0; top:0; z-index:40; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow-overlay); }
+  .side.open{ transform:none; }
+  .side:target{ transform:none; }
+  .menu{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; margin-right:var(--sp2); border:1px solid var(--line); border-radius:8px; background:var(--surface); vertical-align:middle; }
+  .crumb{ padding:var(--sp2) var(--sp4); position:sticky; top:0; z-index:30; }
+  .page{ padding:var(--sp5) var(--sp4) var(--sp6); }
+  h1{ font-size:23px; }
+  .data{ padding:var(--sp3); }
+  .foot{ padding:var(--sp4); }
+  .noscript{ padding:var(--sp2) var(--sp4); }
+}
+
+/* ---- components (4.1): how-to box, counting section, tag, link rows, stacked band, policy marks ---- */
+/* how-to box: the mock's list indent of 1.2em is put on the --sp4 step (16px at 14px text vs 16.8px). */
+.howto{ max-width:var(--cap); border-left:3px solid var(--a3); background:var(--accent-soft); padding:var(--sp3) var(--sp4); border-radius:0 var(--radius) var(--radius) 0; margin:0 0 var(--sp6); font-size:14px; }
+.howto h2{ all:unset; display:block; font-weight:700; font-size:13px; color:var(--accent-ink); margin-bottom:var(--sp1); }
+.howto ul{ margin:0; padding-left:var(--sp4); }
+.howto li{ margin:2px 0; }
+.count{ font-size:14px; }
+.count dl{ margin:0; max-width:var(--cap); }
+.count dt{ font-weight:700; margin-top:var(--sp3); }
+.count dd{ margin:var(--sp1) 0 0; color:var(--ink-soft); }
+/* small tag: one part, four variants (legacy tag / ab / sk / rtag) */
+.tag{ display:inline-block; font-size:12px; line-height:1.6; padding:0 9px; border-radius:999px; border:1px solid var(--a4); background:var(--accent-soft); color:var(--accent-ink); }
+.tag.rest{ border-color:var(--line); background:var(--line-soft); color:var(--ink-faint); }
+.tag.role{ background:var(--surface); }
+.tag.out{ border-color:var(--line); background:var(--line-soft); color:var(--ink-soft); }
+/* link rows: page name + one-line description + arrow, ruled rows (not cards) */
+.llist{ list-style:none; margin:var(--sp2) 0 0; padding:0; max-width:var(--cap); border-top:1px solid var(--line); }
+.llist li{ border-bottom:1px solid var(--line); }
+.lrow{ display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:var(--sp3); padding:var(--sp3) var(--sp2); text-decoration:none; color:var(--ink); }
+.lrow:hover{ background:var(--accent-soft); }
+.lrow .lt{ display:flex; gap:var(--sp2); align-items:center; font-weight:700; color:var(--accent-ink); }
+.lrow:hover .lt{ text-decoration:underline; text-underline-offset:3px; }
+.lrow .lt .ic{ color:var(--accent); }
+.lrow .ld{ grid-column:1; font-size:13px; color:var(--ink-soft); }
+.lrow .ar{ grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--accent); }
+/* stacked band: tones 1-5 run dark to light; a legend may reuse the same tone classes */
+.stack{ display:flex; height:16px; border-radius:2px; overflow:hidden; }
+.stack .seg{ width:var(--w); }
+.stack .t1, .stacklegend .t1{ background:var(--accent-ink); }
+.stack .t2, .stacklegend .t2{ background:var(--accent); }
+.stack .t3, .stacklegend .t3{ background:var(--a2); }
+.stack .t4, .stacklegend .t4{ background:var(--a3); }
+.stack .t5, .stacklegend .t5{ background:var(--a4); }
+.stacklegend{ display:flex; flex-wrap:wrap; gap:var(--sp1) var(--sp4); font-size:12.5px; color:var(--ink-soft); margin:var(--sp3) 0 0; }
+.stacklegend i{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+/* policy marks: fixed-width columns so the marks line up across items */
+.pmarks{ display:inline-grid; grid-template-columns:8.6em 8.2em; column-gap:var(--sp3); align-items:baseline; }
+.pmark{ font-size:11.5px; padding:0 var(--sp2); border-radius:999px; line-height:1.7; white-space:nowrap; text-align:center; }
+.pmark.council{ background:var(--accent); color:var(--on-accent); }
+.pmark.executive{ background:var(--a3); color:var(--ink); }
+.pmark.after{ border:1px solid var(--a2); color:var(--accent-ink); }
+.pmark.none{ border:1px dashed var(--a3); color:var(--ink-faint); }
+
+/* ---- components (4.2): table + scale bar, heat cells, number cells ---- */
+/* a table wider than the page scrolls inside this wrapper, never the page (2.8; the mock's .scroll) */
+.scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tbl{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+.tbl th,.tbl td{ padding:7px 10px; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:middle; }
+.tbl thead th{ font-size:12px; color:var(--ink-faint); font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap; }
+.tbl tbody th{ font-weight:600; }
+.tbl tbody tr:last-child > *{ border-bottom:0; }
+.tbl .num{ text-align:right; white-space:nowrap; }
+.tbl a{ text-decoration:none; }
+.tbl a:hover{ text-decoration:underline; }
+.tbl tr.total > *{ border-top:1px solid var(--line); font-weight:700; }
+/* the caption names the table for assistive tech only; the visible title is the heading above the box */
+.tbl > caption{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+/* unified columns: name, scale bar (takes the rest), numbers */
+.cols{ table-layout:fixed; }
+.cols .c-name{ width:15em; }
+.cols .c-num{ width:5.5em; }
+.barcell{ padding-right:var(--sp4)!important; }
+/* the bar element is left out for 0, so no width rule hides it */
+.hbar{ display:block; height:10px; width:var(--w); min-width:2px; background:var(--accent); border-radius:2px; }
+/* catch-all rows (その他・当たる話題なし) are grey */
+.hbar.rest{ background:var(--rest); }
+.tbl tr.rest th{ font-weight:400; color:var(--ink-soft); }
+/* minor row: a sub-item indented under its parent (scale_table row key "minor"). */
+.tbl tr.minor th{ padding-left:var(--sp5); font-weight:400; color:var(--ink-soft); }
+/* heat steps (light type), both families always on: table.heat fills the cell (td.l3-l0),
+   any table fills the number's pill (td.num .h3-.h1). Steps are chosen by the caller. */
+.heat td.l3, td.num .h3{ background:var(--a4); color:var(--accent-ink); font-weight:700; }
+.heat td.l2, td.num .h2{ background:var(--a5); color:var(--ink-soft); }
+.heat td.l1, td.num .h1{ background:none; color:var(--ink-faint); }
+td.num .hr{ background:var(--rest-soft); color:var(--ink-soft); }
+td.num .h3, td.num .h2, td.num .h1, td.num .hr{ display:inline-block; min-width:2.6em; padding:1px var(--sp1); border-radius:3px; text-align:center; }
+/* a table zero is a faint 0; 「—」 is only for "no data / not applicable" */
+.zero, .heat td.l0{ color:var(--zero); }
+
+/* ---- mobile: the scale bar goes under the numbers at full width ---- */
+@media (max-width:640px){
+  .tbl.cols, .tbl.cols thead, .tbl.cols tbody{ display:block; }
+  .tbl.cols colgroup, .tbl.cols thead th:nth-child(2){ display:none; }
+  /* --n (number columns) is set on the table by the scale_table macro */
+  .tbl.cols tr{ display:grid; grid-template-columns:minmax(0,1fr) repeat(var(--n),auto); column-gap:var(--sp3); align-items:baseline; border-bottom:1px solid var(--line-soft); }
+  .tbl.cols thead tr{ border-bottom-color:var(--line); }
+  .tbl.cols tr > *{ border-bottom:0!important; }
+  .tbl.cols td.barcell{ grid-column:1 / -1; grid-row:2; padding-top:0; padding-bottom:var(--sp2); }
+  /* as on the desktop, the last row has no rule of its own (the box edge or .panes draws it) */
+  .tbl.cols tbody tr:last-child{ border-bottom:0; }
+  /* the total row has no bar: drop its empty bar cell (it made a blank second line) and draw
+     the rule on the row, since per-cell rules break at the grid's column gaps */
+  .tbl.cols tr.total td.barcell{ display:none; }
+  .tbl.cols tr.total{ border-top:1px solid var(--line); }
+  .tbl.cols tr.total > *{ border-top:0; }
+}
+
+/* ---- components (4.3): switches, pick rows, 「残り○件」, question ---- */
+/* hidden always wins, also over a component's display (grid rows, flex lists) */
+[hidden]{ display:none!important; }
+/* period tabs, year buttons, chips: one row that scrolls sideways on a phone (3.9) */
+.tabs{ display:flex; gap:2px; border-bottom:1px solid var(--line); margin:0 0 var(--sp3); overflow-x:auto; }
+.tab{ font:inherit; font-size:14px; background:none; border:0; border-bottom:3px solid transparent; padding:var(--sp2) var(--sp4); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.tab[aria-selected="true"]{ color:var(--accent-ink); border-bottom-color:var(--accent); font-weight:700; }
+.ystrip{ display:flex; gap:var(--sp1); overflow-x:auto; padding-bottom:var(--sp2); margin:0 0 var(--sp4); border-bottom:1px solid var(--line); }
+.ybtn{ font:inherit; font-size:12.5px; font-weight:600; line-height:1.35; flex:1 0 40px; padding:5px 0 var(--sp1); border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+.ybtn:hover{ border-color:var(--a3); }
+.ybtn[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* year buttons, form "count" (council-v9-topics, mock 05): the year over its topic count, 「途中」 under a year in progress */
+.ystrip.count .ybtn{ display:flex; flex-direction:column; align-items:center; gap:0; }
+.ystrip.count .ybtn .yl{ font-size:12.5px; font-weight:600; white-space:nowrap; }
+.ystrip.count .ybtn b{ font-size:10.5px; font-weight:400; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+.ystrip.count .ybtn b::after{ content:"話題"; }
+.ystrip.count .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; font-weight:400; text-align:center; }
+.ystrip.count .ybtn[aria-pressed="true"] b{ color:var(--on-accent); opacity:.85; }
+/* year buttons, form "bars" (council-v9-topics, mock 06): a bar per year, faded when it cannot be pressed,
+   a dot at the bar's root for a year with policy items only, a faint ground when pressed */
+.ystrip.bars .ybtn{ display:flex; flex-direction:column; align-items:center; gap:2px; flex:1 0 34px; padding:var(--sp1) 0; border:0; background:none; font-weight:400; }
+.ystrip.bars .ybtn .yv{ display:block; width:12px; height:56px; background:linear-gradient(to top,var(--a3) var(--h),transparent var(--h)); border-radius:2px; }
+.ystrip.bars .ybtn .yl{ font-size:10.5px; color:var(--ink-faint); white-space:nowrap; }
+.ystrip.bars .ybtn.part .yl::after{ content:"途中"; display:block; font-size:9.5px; text-align:center; }
+.ystrip.bars .ybtn:hover:not([disabled]){ background:var(--line-soft); }
+.ystrip.bars .ybtn[disabled]{ cursor:default; opacity:.45; }
+.ystrip.bars .ybtn.pol .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--a3) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn.pol[aria-pressed="true"] .yv{ background:radial-gradient(circle at 50% calc(100% - 4px), var(--accent) 3px, transparent 3.5px); }
+.ystrip.bars .ybtn[aria-pressed="true"]{ background:var(--accent-soft); color:var(--accent-ink); }
+.ystrip.bars .ybtn[aria-pressed="true"] .yv{ background:linear-gradient(to top,var(--accent) var(--h),transparent var(--h)); }
+.chips{ display:flex; gap:var(--sp2); flex-wrap:nowrap; overflow-x:auto; margin:0 0 var(--sp3); padding-bottom:2px; }
+.chip{ font:inherit; font-size:13px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:3px var(--sp3); cursor:pointer; white-space:nowrap; }
+.chip[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+/* rows-pick table: the whole row is pressable; the chosen row is tinted with a left rule */
+.pickbtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:600; color:var(--ink); width:100%; }
+tr.pick{ cursor:pointer; }
+tr.pick:hover > *{ background:var(--line-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) > *{ background:var(--accent-soft); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) .pickbtn{ color:var(--accent-ink); }
+tr.pick:has(.pickbtn[aria-pressed="true"]) th{ box-shadow:inset 3px 0 0 var(--accent); }
+.panes{ margin-top:var(--sp4); padding-top:var(--sp2); border-top:1px solid var(--line); }
+.panes h4.sub{ margin-top:var(--sp2); }
+/* one question: title -> meta line (member, kind, meeting) -> summary -> tags; li.line is the one-line form */
+.qlist{ list-style:none; margin:0; padding:0; }
+.qlist li{ padding:var(--sp3) 0; border-top:1px dashed var(--line); }
+.qlist li:first-child{ border-top:0; }
+.qt{ margin:0; font-weight:700; }
+.qm{ margin:2px 0 var(--sp1); font-size:12.5px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:0 var(--sp3); }
+.qm a{ font-weight:600; }
+.qs{ margin:0; max-width:var(--cap); color:var(--ink-soft); font-size:14px; }
+.qlist .tg{ display:flex; flex-wrap:wrap; gap:var(--sp1); margin:var(--sp1) 0 0; }
+.qlist .tg a.tag{ text-decoration:none; }
+.qlist li.line{ padding:var(--sp1) 0; border-top:1px solid var(--line-soft); }
+.qlist li.line .qt{ font-weight:600; font-size:13.5px; }
+.qlist li.line .qm{ margin:0; }
+/* 「残り○件を表示」: drawn hidden; the behaviour script shows it and sets its text */
+.more{ font:inherit; font-size:13.5px; margin:var(--sp3) 0 0; padding:var(--sp2) var(--sp4); border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--accent); cursor:pointer; }
+.more:hover{ border-color:var(--a3); }
+/* member pages (council-v9-members): 「…にも当たる」 under a question; a lone key button in a table
+   cell (the period name, mock 08's plink); a period row with no term (「在任していない」) */
+.qlist .also{ margin:var(--sp1) 0 0; font-size:12px; color:var(--ink-faint); }
+.keybtn{ font:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-weight:700; color:var(--accent); }
+.keybtn:hover{ text-decoration:underline; }
+.keybtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.tbl tr.off > *{ color:var(--ink-faint); }
+.tbl tr.off th{ font-weight:400; }
+
+/* ---- mobile: a picked row of a unified-column table is tinted as one band ---- */
+@media (max-width:640px){
+  .tbl.cols tr.pick:has([aria-pressed="true"]){ background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
+  .tbl.cols tr.pick > *{ background:none!important; box-shadow:none!important; }
+}
+
+</style>
+<style>
+
+.prof{ display:grid; grid-template-columns:max-content 1fr; gap:var(--sp1) var(--sp4); margin:0 0 var(--sp5); font-size:14px; max-width:var(--cap); }
+.prof dt{ color:var(--ink-faint); }
+.prof dd{ margin:0; }
+.ptbl{ max-width:52em; }
+.ptbl .c-p{ width:5em; }
+.ptbl .c-span{ width:12.5em; }
+.ptbl .c-n{ width:5em; }
+.ptbl td.span{ color:var(--ink-soft); font-size:13px; white-space:nowrap; }
+.ptbl tr.off td.note{ font-size:12.5px; }
+.dtbl .c-d{ width:13em; }
+.dtbl .c-n{ width:4.2em; }
+.dtbl .c-bar{ min-width:5em; }
+.dtbl td.num{ text-align:center; }
+.dtbl td.num.tot{ text-align:right; font-weight:700; }
+.empty{ color:var(--ink-faint); font-size:14px; margin:var(--sp3) 0; }
+.qhead{ font-size:13.5px; color:var(--ink-soft); margin:0 0 var(--sp3); }
+.mtg{ margin:var(--sp5) 0 0; }
+.mtg:first-child{ margin-top:0; }
+.sec .mtg h3{ font-size:15px; margin:0 0 var(--sp1); }
+@media (max-width:640px){
+  .ptbl .c-span, .ptbl .span{ display:none; }
+  .prof{ grid-template-columns:1fr; gap:0; }
+  .prof dt{ margin-top:var(--sp2); font-size:12.5px; }
+  .dtbl{ font-size:12px; }
+  .dtbl .c-bar, .dtbl .bar, .dtbl td.barcell{ display:none; }
+  .dtbl th,.dtbl td{ padding:6px 3px; }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="ic-hall" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9.5 10v9M14.5 10v9M3 21h18"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11"/></symbol>
+  <symbol id="ic-topics" viewBox="0 0 24 24"><path d="M4 6h10v7H8l-4 3z"/><path d="M14 9h6v7l-3-2h-5v-1"/></symbol>
+  <symbol id="ic-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><path d="M6 21V4h12v17M3 21h18M9.5 8h1M13.5 8h1M9.5 12h1M13.5 12h1M10.5 21v-4h3v4"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="ic-about" viewBox="0 0 24 24"><path d="M5 5.5h10.5a1.5 1.5 0 0 1 1.5 1.5V19a1.3 1.3 0 0 0-1.3-1.3H5z"/><path d="M5 5.5A1.3 1.3 0 0 0 3.7 6.8v11.9A1.3 1.3 0 0 1 5 17.7"/></symbol>
+  <symbol id="ic-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><line x1="12" y1="12" x2="12" y2="4"/><line x1="12" y1="12" x2="18.9" y2="15.6"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4.5 7a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 7v6.5a1.5 1.5 0 0 1-1.5 1.5H10l-4 3.4V15H6a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="ic-topic" viewBox="0 0 24 24"><path d="M5 6.5h9.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H9.5L6.5 17v-2.5H5A1.5 1.5 0 0 1 3.5 13V8A1.5 1.5 0 0 1 5 6.5z"/><path d="M18 9.5h.5A1.5 1.5 0 0 1 20 11v4.5a1.5 1.5 0 0 1-1.5 1.5H18v2l-2.6-2h-2.9"/></symbol>
+</svg>
+<div class="shell">
+<nav class="side sidebar" id="side" aria-label="レポートの目次">
+<a class="back" href="../../../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-back"/></svg>浜田市／車座プロジェクト</a>
+<div class="rep"><a class="rep-link" href="../index.html"><svg class="ic" aria-hidden="true"><use href="#ic-hall"/></svg>議会レポート</a>
+    <nav class="cross-nav" aria-label="レポート間ナビゲーション">
+        <div class="cross-nav-inner">
+            <a href="../../../index.html" class="cross-nav-portal">ポータル</a>
+        </div>
+    </nav>
+</div>
+<a class="it" href="../about.html"><svg class="ic" aria-hidden="true"><use href="#ic-book"/></svg>このレポートについて</a>
+<div class="grp"><div class="gh">話題</div>
+<a class="it" href="../topics.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>議会で語られてきた話題</a>
+<details><summary><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>区分</summary><div class="sub">
+<a class="it" href="../topic_childcare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>子育てと少子化</a>
+<a class="it" href="../topic_education.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>学校教育</a>
+<a class="it" href="../topic_welfare.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>医療・介護・福祉</a>
+<a class="it" href="../topic_safety.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>防災と地域の安全</a>
+<a class="it" href="../topic_infrastructure.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>都市基盤と生活環境</a>
+<a class="it" href="../topic_community.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>市民自治と人権</a>
+<a class="it" href="../topic_population.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>人口減少と地域の維持</a>
+<a class="it" href="../topic_industry.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>産業・雇用</a>
+<a class="it" href="../topic_agriculture.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>農林水産業</a>
+<a class="it" href="../topic_tourism.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>観光・文化・交流</a>
+<a class="it" href="../topic_environment.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>エネルギー・環境</a>
+<a class="it" href="../topic_nuclear.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>原子力</a>
+<a class="it" href="../topic_administration.html"><svg class="ic" aria-hidden="true"><use href="#ic-topic"/></svg>行財政運営</a>
+</div></details>
+</div>
+<div class="grp"><div class="gh">議員の活動</div>
+<a class="it" href="../members.html" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#ic-person"/></svg>議員の名簿</a>
+<div class="toc"><a href="#s-periods">期ごとの質問の回数</a><a href="#s-divs">取り上げた区分</a><a href="#s-qs">質問の題と要約</a><a href="#s-count">このページの数え方</a></div>
+</div>
+<div class="grp"><div class="gh">首長と執行部</div>
+<a class="it" href="../policy_speech.html"><svg class="ic" aria-hidden="true"><use href="#ic-speech"/></svg>施政方針と議会の動き</a>
+<a class="it" href="../executives.html"><svg class="ic" aria-hidden="true"><use href="#ic-building"/></svg>首長と執行部の答弁</a>
+</div>
+<div class="grp"><div class="gh">議会の活動</div>
+<a class="it" href="../bill_breakdown.html"><svg class="ic" aria-hidden="true"><use href="#ic-pie"/></svg>議案</a>
+</div>
+</nav>
+<div class="main">
+<div class="crumb"><button class="menu" type="button" aria-controls="side" aria-expanded="false" aria-label="目次をひらく"><svg class="ic" aria-hidden="true"><use href="#ic-menu"/></svg></button>浜田市・議会レポート / <a href="../members.html">議員の名簿</a> / <b>村武まゆみ</b></div>
+<noscript><p class="noscript">期・年度などの切替には JavaScript を使います。JavaScript が無効の時は、それぞれ最初に選ばれている内容だけを表示しています。<a href="#side">目次をひらく</a></p></noscript>
+<main class="page">
+<span class="kicker">議員の活動</span>
+<h1 class="page-title">村武まゆみ</h1>
+
+<p class="lead">第4期から第5期まで在任した議員です。本会議で質問に立った回数の移り変わりと、質問の題と要約を並べています。</p>
+
+
+<aside class="howto"><h2>このページの読み方</h2><ul><li>本会議で質問に立った回数と、そこで取り上げた質問の題と要約を並べています。委員会での発言や議案への質疑、質問以外の活動は含みません。</li><li>回数や区分の多い少ないは、議員の活動の良し悪しを示す物ではありません。</li></ul></aside>
+
+
+<div class="switch" data-switch="期">
+<section class="sec" id="s-periods"><h2>期ごとの質問の回数</h2>
+<p class="prose">表示している全ての期を並べています。在任した期の質問の題と要約は、下の「質問の題と要約」に有ります。</p>
+<div class="data"><div class="scroll"><table class="tbl ptbl">
+<caption>村武まゆみの期ごとの質問の回数</caption>
+<colgroup><col class="c-p"><col class="c-span"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-bar"></colgroup>
+<thead><tr><th scope="col">期</th><th scope="col" class="span">期間</th><th scope="col" class="num">一般質問</th><th scope="col" class="num">代表質問</th><th scope="col" class="num">計</th><th scope="col">回数の計</th></tr></thead>
+<tbody>
+<tr class="off"><th scope="row">第1期</th><td class="span">2005年10月〜2009年10月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="off"><th scope="row">第2期</th><td class="span">2009年10月〜2013年10月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="off"><th scope="row">第3期</th><td class="span">2013年10月〜2017年10月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第4期" aria-pressed="false">第4期</button></th><td class="span">2017年10月〜2021年10月</td><td class="num">15</td><td class="num"><span class="zero">0</span></td><td class="num">15</td><td class="barcell"><span class="hbar" style="--w:93.8%"></span></td></tr>
+<tr><th scope="row"><button type="button" class="keybtn" data-switch-key="第5期" aria-pressed="true">第5期</button></th><td class="span">2021年10月〜2025年10月</td><td class="num">16</td><td class="num"><span class="zero">0</span></td><td class="num">16</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td></tr>
+<tr class="off"><th scope="row">第6期</th><td class="span">2025年10月〜2029年10月</td><td class="note" colspan="4">在任していない</td></tr>
+<tr class="total"><th scope="row">計</th><td class="span"></td><td class="num">31</td><td class="num"><span class="zero">0</span></td><td class="num">31</td><td class="barcell"></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-divs"><h2>取り上げた区分</h2>
+<p class="prose">本会議の質問を、取り上げた論点の話題の区分毎に、在任した期を追って数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数えます。どの区分にも当たらない質問は「当たる話題なし」に数えます。</p>
+<div class="data"><div class="scroll"><table class="tbl dtbl">
+<caption>村武まゆみが取り上げた区分（質問の数）</caption>
+<colgroup><col class="c-d"><col class="c-n"><col class="c-bar"><col class="c-n"><col class="c-n"></colgroup>
+<thead><tr><th scope="col">区分</th><th scope="col" class="num">計</th><th scope="col" class="bar">計の棒</th><th scope="col" class="num">第4期</th><th scope="col" class="num">第5期</th></tr></thead>
+<tbody>
+<tr><th scope="row"><a href="../topic_childcare.html">子育てと少子化</a></th><td class="num tot">18</td><td class="barcell"><span class="hbar" style="--w:100.0%"></span></td><td class="num l3"><span class="h3">8</span></td><td class="num l3"><span class="h3">10</span></td></tr>
+<tr><th scope="row"><a href="../topic_welfare.html">医療・介護・福祉</a></th><td class="num tot">15</td><td class="barcell"><span class="hbar" style="--w:83.3%"></span></td><td class="num l3"><span class="h3">8</span></td><td class="num l3"><span class="h3">7</span></td></tr>
+<tr><th scope="row"><a href="../topic_community.html">市民自治と人権</a></th><td class="num tot">13</td><td class="barcell"><span class="hbar" style="--w:72.2%"></span></td><td class="num l3"><span class="h3">10</span></td><td class="num l2"><span class="h2">3</span></td></tr>
+<tr><th scope="row"><a href="../topic_education.html">学校教育</a></th><td class="num tot">10</td><td class="barcell"><span class="hbar" style="--w:55.6%"></span></td><td class="num l2"><span class="h2">3</span></td><td class="num l3"><span class="h3">7</span></td></tr>
+<tr><th scope="row"><a href="../topic_safety.html">防災と地域の安全</a></th><td class="num tot">3</td><td class="barcell"><span class="hbar" style="--w:16.7%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_tourism.html">観光・文化・交流</a></th><td class="num tot">3</td><td class="barcell"><span class="hbar" style="--w:16.7%"></span></td><td class="num l2"><span class="h2">2</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_infrastructure.html">都市基盤と生活環境</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:11.1%"></span></td><td class="num l1"><span class="h1">1</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_population.html">人口減少と地域の維持</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:11.1%"></span></td><td class="num l1"><span class="h1">1</span></td><td class="num l1"><span class="h1">1</span></td></tr>
+<tr><th scope="row"><a href="../topic_administration.html">行財政運営</a></th><td class="num tot">2</td><td class="barcell"><span class="hbar" style="--w:11.1%"></span></td><td class="num l0"><span class="zero">0</span></td><td class="num l2"><span class="h2">2</span></td></tr>
+<tr><th scope="row"><a href="../topic_industry.html">産業・雇用</a></th><td class="num tot">1</td><td class="barcell"><span class="hbar" style="--w:5.6%"></span></td><td class="num l1"><span class="h1">1</span></td><td class="num l0"><span class="zero">0</span></td></tr>
+<tr class="rest"><th scope="row">当たる話題なし</th><td class="num tot">2</td><td class="barcell"></td><td class="num"><span class="hr">1</span></td><td class="num"><span class="hr">1</span></td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="sec" id="s-qs"><h2>質問の題と要約</h2>
+<p class="prose">期毎、区分毎に、質問の論点を並べています。1回の質問で複数の論点を取り上げる事が有る為、上の表の質問の数とは合わない事が有ります。2つ以上の区分に当たる論点は、その期に論点の多い方の区分で要約まで出し、他の区分の側には題の一行と「…にも当たる」の印だけを置いています。</p>
+<div class="tabs" role="tablist" aria-label="期"><button type="button" role="tab" class="tab" data-switch-key="第4期" aria-selected="false">第4期</button><button type="button" role="tab" class="tab" data-switch-key="第5期" aria-selected="true">第5期</button></div>
+<div class="pane" data-switch-pane="第4期" hidden>
+<p class="qhead">2017年10月〜2021年10月・一般質問 15回・代表質問 0回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="産業・雇用" aria-pressed="false">産業・雇用</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">協働のまちづくりの推進</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">まちづくりセンターとまちづくりコーディネーターの役割と業務、職員への説明の状況、現場の方向性の把握、活動団体の設立の捉え方、地域福祉と生活支援体制整備事業の整理を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>令和３年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">まちづくりセンター移行に向けた市の支援の具体策、コーディネーター5人の確保、社会教育主事講習を受講しなかった理由、市民や現場職員への周知、職員のスキル向上を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">女性が住みたいまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">各部署の女性が住みやすいまちづくりの目玉事業、起業家支援や不妊治療の成果、県立大学卒業後の定住、若い女性を増やす具体策、地域女性活躍推進交付金の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_community.html#topic-08">男女共同参画</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li><li><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">まちづくりセンターについて、公民館職員への説明の時期と周知の方法、公民館の集大成の場の設置、まちづくりコーディネーターの支援方策と統括する人材、市長が目指すまちづくりを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">市民活動と官民協働</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="qs">自治会等以外の市民団体やＮＰＯ法人の現状と福祉系への偏り、公民館の支援、市民協働活性化支援事業の協働の意味と活性化の実感、活動団体への支援、まちづくりフォーラムでの表彰の提案、今後の協働を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">観光客増加の取組</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="qs">石見神楽なにわ館の内容と浜田市との連携、浜田への呼び込み策、日英併記パンフレットの工夫、観光動画による情報発信の考えと、官民協働で質の高い動画をつくることを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">住民主体のまちづくり</p><p class="qm"><span>一般質問</span><span>令和元年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">公民館のコミュニティセンター化の理由と目的、浜田自治区のエリアの大きさと予算や人員、社会教育の推進と担保、管理団体への委託、職員体制や検討委員会を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">新たな住民主体のまちづくり</p><p class="qm"><span>一般質問</span><span>令和元年１２月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">協働のまちづくり条例の検討委員会の進め方や条例案で大切にすること、公民館のコミュニティセンター化に伴う社会教育の担い手、はまだっ子共育プロジェクトの所管移行、連携主事の人材、委託先の考えを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">公民館と社会教育</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">公民館の機能と役割、ビジョン、若者の参加やSNS発信の状況、社会教育の必要性と今後の方向性、公民館の将来像や職員体制を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">まちづくりと公民館の役割</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">まちづくりにおいて公民館ができること、まちづくりにつながった公民館事業、公民館とまちづくりの関係の現状、教育委員会の今後の構想を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">地域コミュニティの形成</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">浜田自治区でまちづくり推進委員会の設置が進まない要因と公民館の役割、今後の対策、交付金による成果、リーダー不足の地域への推進と地域を超えた人材育成を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">防災情報の周知</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">防災無線が聞き取りにくい中での自動電話応答サービスの利用状況と周知、公民館と連携した情報リテラシー向上教室による防災メール登録の推進を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-05">災害情報の伝達</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">ひとり親への支援</p><p class="qm"><span>一般質問</span><span>令和３年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">ひとり親の相談体制の現状、コロナ禍で経済的に困窮する方の相談状況、養育費の相談の周知、養育費保証サービスの登録料や初回保証料を補助する自治体が増えていることへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_welfare.html#topic-09">ひとり親家庭の支援</a></div></li><li class="line"><p class="qt">協働のまちづくりの推進</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="also">市民自治と人権にも当たる</p></li><li><p class="qt">包括的支援事業</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">周布地区で始まったチームSOSの活動内容、認知症サポーター養成講座の今年度の進め方、行政の活動支援と予算的な支援、民生委員へのサポートを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">コロナ禍の精神的な不安</p><p class="qm"><span>一般質問</span><span>令和３年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">コロナ禍での鬱や自死の状況、ゲートキーパーの取組、子育て世代と多胎児育児の精神的不安への支援、江津市の24時間健康相談の導入、相談体制の周知や窓口の設置を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">広報戦略と地域活動</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">市の広報戦略と担当職員の専門性、民間からの登用、コロナ禍での地域活動の停滞の影響、ＮＰＯなど地域団体への支援策と状況把握を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">がん検診と健康診査</p><p class="qm"><span>一般質問</span><span>令和元年９月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">がん検診の受診率への見解と向上策、肺がん検診と結核検診を同時に受けられない理由、子どものがん教育の現状を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li><li><p class="qt">認知症の施策</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">認知症患者数の推移と県内の状況、サポーター養成講座の開催状況やキャラバンメイト、認知症カフェ、地域推進員、初期集中支援チームの取組を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">介護人材の確保と育成</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">介護事業所の充足・定着状況、補助金事業の成果、産業経済部との連携、外国人の受入れ、島根あさひの研修生の活用、学校でのキャリア教育を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li><li><p class="qt">介護予防と通いの場</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">住民主体の通いの場とサロンの違いと推進の仕方、人材育成研修の内容と成果、専門的技術の提供、サロンに参加しない高齢者などの把握訪問の状況を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li><li><p class="qt">奨学金制度のあり方</p><p class="qm"><span>一般質問</span><span>平成３０年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">市の奨学金制度の現状と返済免除の規定、准看護師や保育士の修学資金貸付制度の成果、介護福祉士を対象とする修学資金への市の検討状況とふるさと基金の活用、奨学金制度の周知方法を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">子育て支援と母子手帳アプリ</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">子育て支援サイトを含む市ホームページの充実時期と進め方を尋ね、子育て支援母子手帳アプリの導入の検討状況と時期を質し、早期の導入を求めた。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">幼児教育の充実</p><p class="qm"><span>一般質問</span><span>令和３年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">幼稚園統合に向けた各園の特徴と検討の進め方、専門的な有識者の参画、自然を生かした保育への所感と市長の感想、浜田らしい魅力ある幼児教育と人口増加への見解を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li><li class="line"><p class="qt">女性が住みたいまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="also">市民自治と人権にも当たる</p></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>令和元年９月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">第1期子ども・子育て支援事業計画の検証と第2期の指針、保育の質を担保するガイドライン、子ども・子育て会議の単独設置、子育て支援センターの目的・場所・費用・木造化、地域の支援体制を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">放課後児童クラブ</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">クラブの方針、支援員の不足状況と主任支援員の役割や嘱託職員としての任用、委託クラブの運営状況と直営から委託化への方向性を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a></div></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">児童虐待の相談件数と防止体制・対応マニュアルの周知、子育て支援センター整備の進捗と行きやすい環境づくり、木育の取り入れについて質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">乳幼児期の子どもの信頼感や自己肯定感を育む推進策、ママパパ学級の参加者数、親の学びプログラム、園との子育てビジョンの共有、子ども・子育て会議の単独設置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>平成２９年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">市が目指す子ども・子育て支援の姿、放課後児童クラブの支援員の研修と不足への対策、高学年の施設環境、担当職員の専門性、はまだっ子共育プロジェクトによる放課後支援の成果と展開を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">高校魅力化コンソーシアム</p><p class="qm"><span>一般質問</span><span>令和２年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">高校魅力化コンソーシアムの今年度中の設立に向けた進捗状況、来年度以降の計画、マネジメントの担い手と委託先の確保について質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-13">高校の魅力化と存続</a></div></li><li><p class="qt">子どもの自尊感情</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="qs">小・中学校での自尊感情低下の把握、教職員との信頼関係づくりと負担軽減、研修の内容とニーズの把握、家庭教育への対応、性教育の重要性と中高での取組、ＷＹＳＨ教育の木原教授の招へい、イエナプラン教育の認識を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-04">教員の確保と人事権</a></div></li><li><p class="qt">ふるさと郷育</p><p class="qm"><span>一般質問</span><span>令和元年１２月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">ふるさと郷育の目的と具体的な取組、成果の捉え方、従来のふるさと教育との違い、歴史文化保存展示施設での位置付けと進め方、地元に帰る要因になるとする根拠を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">避難所に関する防災の取組</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">初動開所避難所への簡易的な調理器具の設置と、避難所運営ゲームの実施状況および普及について質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li class="line"><p class="qt">防災情報の周知</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="also">市民自治と人権にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">観光客増加の取組</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="also">市民自治と人権にも当たる</p></li><li><p class="qt">国際交流の現状と展望</p><p class="qm"><span>一般質問</span><span>令和元年９月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">浜田市の国際交流の考え、ブータン王国との交流、子どもの国際交流の現状と合併前の中国・韓国との交流活動を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-06">国際交流と姉妹都市</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">環境問題への取組</p><p class="qm"><span>一般質問</span><span>令和元年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">ペットボトルやプラスチック製容器包装のリサイクルと市民への周知、プラスチックごみの減量、海洋汚染への取組、陸から行けない海岸の漂着ごみ、燃やせるごみの減量を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-10">ごみの減量と資源循環</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">地域おこし協力隊の受け入れ</p><p class="qm"><span>一般質問</span><span>平成３０年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">地域おこし協力隊の現状と弥栄の隊員の受けとめ、これまでの受け入れ状況と期間終了後の状況、職員や受け入れ団体の体制と研修、今後の受け入れ方針と受け入れ先と合わない場合の対処を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-05">地域おこし協力隊</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_industry.html">産業・雇用</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">女性が住みたいまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="also">市民自治と人権にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">子どもの心と命を守る</p><p class="qm"><span>一般質問</span><span>令和３年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">児童虐待の相談件数の状況、学校での把握と気づき、ＳＯＳの出し方に関する教育の実施状況と全市の子どもに向けた取組の必要性、市民一日議会で出た子ども条例の制定に向けた見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">乳幼児の保育と教育</p><p class="qm"><span>一般質問</span><span>令和２年３月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">配慮の必要な子どもに対応する保育士の加配、保育士の研修、乳幼児健診と5歳児健診の実施、浜田市が目指す幼児教育と接続カリキュラム、体力低下への対策、外遊びと自然保育の推進を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">政策策定の過程</p><p class="qm"><span>一般質問</span><span>令和２年３月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">歴史文化保存展示施設の整備計画の策定過程と市民の理解、検討委員会の専門家と市民の意見の反映、総合振興計画への100人委員会の意見の反映と検証、審議会等への女性の参画と女性会議の設置を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">三浦龍司選手の応援</p><p class="qm"><span>一般質問</span><span>令和２年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">浜田市出身の陸上選手、三浦龍司選手へのこれまでの市の応援と、オリンピック出場が決定した場合の応援の考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">医療福祉従事者の奨学金</p><p class="qm"><span>一般質問</span><span>令和元年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">看護師や介護士を目指す人への奨学金制度を前回検討するとした後の検討結果を尋ね、浜田市独自の奨学金制度の必要性を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">審議会等の構成員</p><p class="qm"><span>一般質問</span><span>令和元年１２月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">審議会や協議会等の構成員の選任方法と公募の有無、男女比率と平均年齢、女性や若い世代など多様な意見を入れることについての考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小・中学校の課題への取組</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">保護者のＰＴＡ総会や学級懇談会への参加の少なさ、学校内での課題の共有と解決の取組、教育委員会を含め大人が課題に向き合う姿勢を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">障がい者差別解消の条例</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">条例策定後の取り組みとして、市職員へのあいサポート研修の実施状況と市長・議員の受講、障がいのある児童生徒とない児童生徒の交流及び共同学習の実施状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">海を活かした教育とまちづくり</p><p class="qm"><span>一般質問</span><span>平成３０年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">海洋教育の取組状況と成果、予算、今後の方針や高校との連携、ブルーツーリズムの現状と来年度のイベントでの活用、海を活かしたまちづくりの構想、海の駅の整備に対する所見を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">障がいの理解と啓発</p><p class="qm"><span>一般質問</span><span>平成２９年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">あいサポート研修の実施状況と対象、メッセンジャーの人数と活用、今後の推進、障がい者差別解消条例の進捗、12月に島根県で導入されたヘルプマークの周知方法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">協働のまちづくりの推進</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">まちづくりセンターとまちづくりコーディネーターの役割と業務、職員への説明の状況、現場の方向性の把握、活動団体の設立の捉え方、地域福祉と生活支援体制整備事業の整理を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>令和３年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">まちづくりセンター移行に向けた市の支援の具体策、コーディネーター5人の確保、社会教育主事講習を受講しなかった理由、市民や現場職員への周知、職員のスキル向上を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">女性が住みたいまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">各部署の女性が住みやすいまちづくりの目玉事業、起業家支援や不妊治療の成果、県立大学卒業後の定住、若い女性を増やす具体策、地域女性活躍推進交付金の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_community.html#topic-08">男女共同参画</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li><li><p class="qt">協働のまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">まちづくりセンターについて、公民館職員への説明の時期と周知の方法、公民館の集大成の場の設置、まちづくりコーディネーターの支援方策と統括する人材、市長が目指すまちづくりを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">市民活動と官民協働</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="qs">自治会等以外の市民団体やＮＰＯ法人の現状と福祉系への偏り、公民館の支援、市民協働活性化支援事業の協働の意味と活性化の実感、活動団体への支援、まちづくりフォーラムでの表彰の提案、今後の協働を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">観光客増加の取組</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="qs">石見神楽なにわ館の内容と浜田市との連携、浜田への呼び込み策、日英併記パンフレットの工夫、観光動画による情報発信の考えと、官民協働で質の高い動画をつくることを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">住民主体のまちづくり</p><p class="qm"><span>一般質問</span><span>令和元年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">公民館のコミュニティセンター化の理由と目的、浜田自治区のエリアの大きさと予算や人員、社会教育の推進と担保、管理団体への委託、職員体制や検討委員会を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">新たな住民主体のまちづくり</p><p class="qm"><span>一般質問</span><span>令和元年１２月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">協働のまちづくり条例の検討委員会の進め方や条例案で大切にすること、公民館のコミュニティセンター化に伴う社会教育の担い手、はまだっ子共育プロジェクトの所管移行、連携主事の人材、委託先の考えを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">公民館と社会教育</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">公民館の機能と役割、ビジョン、若者の参加やSNS発信の状況、社会教育の必要性と今後の方向性、公民館の将来像や職員体制を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">まちづくりと公民館の役割</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">まちづくりにおいて公民館ができること、まちづくりにつながった公民館事業、公民館とまちづくりの関係の現状、教育委員会の今後の構想を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">地域コミュニティの形成</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">浜田自治区でまちづくり推進委員会の設置が進まない要因と公民館の役割、今後の対策、交付金による成果、リーダー不足の地域への推進と地域を超えた人材育成を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">防災情報の周知</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">防災無線が聞き取りにくい中での自動電話応答サービスの利用状況と周知、公民館と連携した情報リテラシー向上教室による防災メール登録の推進を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-05">災害情報の伝達</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">ひとり親への支援</p><p class="qm"><span>一般質問</span><span>令和３年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">ひとり親の相談体制の現状、コロナ禍で経済的に困窮する方の相談状況、養育費の相談の周知、養育費保証サービスの登録料や初回保証料を補助する自治体が増えていることへの見解を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a><a class="tag" href="../topic_welfare.html#topic-09">ひとり親家庭の支援</a></div></li><li><p class="qt">協働のまちづくりの推進</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">まちづくりセンターとまちづくりコーディネーターの役割と業務、職員への説明の状況、現場の方向性の把握、活動団体の設立の捉え方、地域福祉と生活支援体制整備事業の整理を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">包括的支援事業</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">周布地区で始まったチームSOSの活動内容、認知症サポーター養成講座の今年度の進め方、行政の活動支援と予算的な支援、民生委員へのサポートを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">コロナ禍の精神的な不安</p><p class="qm"><span>一般質問</span><span>令和３年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">コロナ禍での鬱や自死の状況、ゲートキーパーの取組、子育て世代と多胎児育児の精神的不安への支援、江津市の24時間健康相談の導入、相談体制の周知や窓口の設置を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">広報戦略と地域活動</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">市の広報戦略と担当職員の専門性、民間からの登用、コロナ禍での地域活動の停滞の影響、ＮＰＯなど地域団体への支援策と状況把握を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-08">感染症対策</a></div></li><li><p class="qt">がん検診と健康診査</p><p class="qm"><span>一般質問</span><span>令和元年９月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">がん検診の受診率への見解と向上策、肺がん検診と結核検診を同時に受けられない理由、子どものがん教育の現状を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li><li><p class="qt">認知症の施策</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">認知症患者数の推移と県内の状況、サポーター養成講座の開催状況やキャラバンメイト、認知症カフェ、地域推進員、初期集中支援チームの取組を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">介護人材の確保と育成</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">介護事業所の充足・定着状況、補助金事業の成果、産業経済部との連携、外国人の受入れ、島根あさひの研修生の活用、学校でのキャリア教育を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li><li><p class="qt">介護予防と通いの場</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">住民主体の通いの場とサロンの違いと推進の仕方、人材育成研修の内容と成果、専門的技術の提供、サロンに参加しない高齢者などの把握訪問の状況を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li><li><p class="qt">奨学金制度のあり方</p><p class="qm"><span>一般質問</span><span>平成３０年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">市の奨学金制度の現状と返済免除の規定、准看護師や保育士の修学資金貸付制度の成果、介護福祉士を対象とする修学資金への市の検討状況とふるさと基金の活用、奨学金制度の周知方法を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">子育て支援と母子手帳アプリ</p><p class="qm"><span>一般質問</span><span>令和３年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">子育て支援サイトを含む市ホームページの充実時期と進め方を尋ね、子育て支援母子手帳アプリの導入の検討状況と時期を質し、早期の導入を求めた。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">幼児教育の充実</p><p class="qm"><span>一般質問</span><span>令和３年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">幼稚園統合に向けた各園の特徴と検討の進め方、専門的な有識者の参画、自然を生かした保育への所感と市長の感想、浜田らしい魅力ある幼児教育と人口増加への見解を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li><li><p class="qt">女性が住みたいまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">各部署の女性が住みやすいまちづくりの目玉事業、起業家支援や不妊治療の成果、県立大学卒業後の定住、若い女性を増やす具体策、地域女性活躍推進交付金の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_community.html#topic-08">男女共同参画</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>令和元年９月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">第1期子ども・子育て支援事業計画の検証と第2期の指針、保育の質を担保するガイドライン、子ども・子育て会議の単独設置、子育て支援センターの目的・場所・費用・木造化、地域の支援体制を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">放課後児童クラブ</p><p class="qm"><span>一般質問</span><span>平成３０年９月浜田市議会定例会会議録（第４号）</span></p><p class="qs">クラブの方針、支援員の不足状況と主任支援員の役割や嘱託職員としての任用、委託クラブの運営状況と直営から委託化への方向性を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a></div></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">児童虐待の相談件数と防止体制・対応マニュアルの周知、子育て支援センター整備の進捗と行きやすい環境づくり、木育の取り入れについて質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">乳幼児期の子どもの信頼感や自己肯定感を育む推進策、ママパパ学級の参加者数、親の学びプログラム、園との子育てビジョンの共有、子ども・子育て会議の単独設置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">子ども・子育て支援</p><p class="qm"><span>一般質問</span><span>平成２９年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">市が目指す子ども・子育て支援の姿、放課後児童クラブの支援員の研修と不足への対策、高学年の施設環境、担当職員の専門性、はまだっ子共育プロジェクトによる放課後支援の成果と展開を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">高校魅力化コンソーシアム</p><p class="qm"><span>一般質問</span><span>令和２年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">高校魅力化コンソーシアムの今年度中の設立に向けた進捗状況、来年度以降の計画、マネジメントの担い手と委託先の確保について質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-13">高校の魅力化と存続</a></div></li><li><p class="qt">子どもの自尊感情</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="qs">小・中学校での自尊感情低下の把握、教職員との信頼関係づくりと負担軽減、研修の内容とニーズの把握、家庭教育への対応、性教育の重要性と中高での取組、ＷＹＳＨ教育の木原教授の招へい、イエナプラン教育の認識を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-04">教員の確保と人事権</a></div></li><li><p class="qt">ふるさと郷育</p><p class="qm"><span>一般質問</span><span>令和元年１２月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">ふるさと郷育の目的と具体的な取組、成果の捉え方、従来のふるさと教育との違い、歴史文化保存展示施設での位置付けと進め方、地元に帰る要因になるとする根拠を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">避難所に関する防災の取組</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">初動開所避難所への簡易的な調理器具の設置と、避難所運営ゲームの実施状況および普及について質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-03">避難所と要支援者の避難</a></div></li><li><p class="qt">防災情報の周知</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">防災無線が聞き取りにくい中での自動電話応答サービスの利用状況と周知、公民館と連携した情報リテラシー向上教室による防災メール登録の推進を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-05">災害情報の伝達</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">観光客増加の取組</p><p class="qm"><span>一般質問</span><span>平成３１年３月浜田市議会定例会会議録（第６号）</span></p><p class="qs">石見神楽なにわ館の内容と浜田市との連携、浜田への呼び込み策、日英併記パンフレットの工夫、観光動画による情報発信の考えと、官民協働で質の高い動画をつくることを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a><a class="tag" href="../topic_tourism.html#topic-01">観光振興と交流人口</a><a class="tag" href="../topic_tourism.html#topic-03">文化財と日本遺産</a></div></li><li><p class="qt">国際交流の現状と展望</p><p class="qm"><span>一般質問</span><span>令和元年９月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">浜田市の国際交流の考え、ブータン王国との交流、子どもの国際交流の現状と合併前の中国・韓国との交流活動を質した。</p><div class="tg"><a class="tag" href="../topic_tourism.html#topic-06">国際交流と姉妹都市</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">環境問題への取組</p><p class="qm"><span>一般質問</span><span>令和元年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">ペットボトルやプラスチック製容器包装のリサイクルと市民への周知、プラスチックごみの減量、海洋汚染への取組、陸から行けない海岸の漂着ごみ、燃やせるごみの減量を質した。</p><div class="tg"><a class="tag" href="../topic_infrastructure.html#topic-10">ごみの減量と資源循環</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">地域おこし協力隊の受け入れ</p><p class="qm"><span>一般質問</span><span>平成３０年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">地域おこし協力隊の現状と弥栄の隊員の受けとめ、これまでの受け入れ状況と期間終了後の状況、職員や受け入れ団体の体制と研修、今後の受け入れ方針と受け入れ先と合わない場合の対処を質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-05">地域おこし協力隊</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="産業・雇用" hidden>
+<ul class="qlist"><li><p class="qt">女性が住みたいまちづくり</p><p class="qm"><span>一般質問</span><span>令和２年９月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">各部署の女性が住みやすいまちづくりの目玉事業、起業家支援や不妊治療の成果、県立大学卒業後の定住、若い女性を増やす具体策、地域女性活躍推進交付金の活用を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-03">少子化対策と出生率</a><a class="tag" href="../topic_community.html#topic-08">男女共同参画</a><a class="tag" href="../topic_industry.html#topic-02">中小企業と創業支援</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">子どもの心と命を守る</p><p class="qm"><span>一般質問</span><span>令和３年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">児童虐待の相談件数の状況、学校での把握と気づき、ＳＯＳの出し方に関する教育の実施状況と全市の子どもに向けた取組の必要性、市民一日議会で出た子ども条例の制定に向けた見解を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">乳幼児の保育と教育</p><p class="qm"><span>一般質問</span><span>令和２年３月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">配慮の必要な子どもに対応する保育士の加配、保育士の研修、乳幼児健診と5歳児健診の実施、浜田市が目指す幼児教育と接続カリキュラム、体力低下への対策、外遊びと自然保育の推進を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">政策策定の過程</p><p class="qm"><span>一般質問</span><span>令和２年３月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">歴史文化保存展示施設の整備計画の策定過程と市民の理解、検討委員会の専門家と市民の意見の反映、総合振興計画への100人委員会の意見の反映と検証、審議会等への女性の参画と女性会議の設置を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">三浦龍司選手の応援</p><p class="qm"><span>一般質問</span><span>令和２年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">浜田市出身の陸上選手、三浦龍司選手へのこれまでの市の応援と、オリンピック出場が決定した場合の応援の考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">医療福祉従事者の奨学金</p><p class="qm"><span>一般質問</span><span>令和元年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">看護師や介護士を目指す人への奨学金制度を前回検討するとした後の検討結果を尋ね、浜田市独自の奨学金制度の必要性を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">審議会等の構成員</p><p class="qm"><span>一般質問</span><span>令和元年１２月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">審議会や協議会等の構成員の選任方法と公募の有無、男女比率と平均年齢、女性や若い世代など多様な意見を入れることについての考えを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">小・中学校の課題への取組</p><p class="qm"><span>一般質問</span><span>平成３０年６月浜田市議会定例会会議録（第４号）</span></p><p class="qs">保護者のＰＴＡ総会や学級懇談会への参加の少なさ、学校内での課題の共有と解決の取組、教育委員会を含め大人が課題に向き合う姿勢を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">障がい者差別解消の条例</p><p class="qm"><span>一般質問</span><span>平成３０年３月浜田市議会定例会会議録（第５号）</span></p><p class="qs">条例策定後の取り組みとして、市職員へのあいサポート研修の実施状況と市長・議員の受講、障がいのある児童生徒とない児童生徒の交流及び共同学習の実施状況を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">海を活かした教育とまちづくり</p><p class="qm"><span>一般質問</span><span>平成３０年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">海洋教育の取組状況と成果、予算、今後の方針や高校との連携、ブルーツーリズムの現状と来年度のイベントでの活用、海を活かしたまちづくりの構想、海の駅の整備に対する所見を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">障がいの理解と啓発</p><p class="qm"><span>一般質問</span><span>平成２９年１２月浜田市議会定例会会議録（第３号）</span></p><p class="qs">あいサポート研修の実施状況と対象、メッセンジャーの人数と活用、今後の推進、障がい者差別解消条例の進捗、12月に島根県で導入されたヘルプマークの周知方法を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+<div class="pane" data-switch-pane="第5期">
+<p class="qhead">2021年10月〜2025年10月・一般質問 16回・代表質問 0回</p>
+<div class="switch" data-switch="区分">
+<div class="chips" role="group" aria-label="区分で絞る"><button type="button" class="chip" data-switch-key="all" aria-pressed="true">すべて</button><button type="button" class="chip" data-switch-key="子育てと少子化" aria-pressed="false">子育てと少子化</button><button type="button" class="chip" data-switch-key="医療・介護・福祉" aria-pressed="false">医療・介護・福祉</button><button type="button" class="chip" data-switch-key="学校教育" aria-pressed="false">学校教育</button><button type="button" class="chip" data-switch-key="市民自治と人権" aria-pressed="false">市民自治と人権</button><button type="button" class="chip" data-switch-key="行財政運営" aria-pressed="false">行財政運営</button><button type="button" class="chip" data-switch-key="防災と地域の安全" aria-pressed="false">防災と地域の安全</button><button type="button" class="chip" data-switch-key="都市基盤と生活環境" aria-pressed="false">都市基盤と生活環境</button><button type="button" class="chip" data-switch-key="人口減少と地域の維持" aria-pressed="false">人口減少と地域の維持</button><button type="button" class="chip" data-switch-key="観光・文化・交流" aria-pressed="false">観光・文化・交流</button><button type="button" class="chip" data-switch-key="当たる話題なし" aria-pressed="false">当たる話題なし</button></div>
+<div class="pane" data-switch-pane="all">
+<div class="mtg"><h3><a href="../topic_childcare.html">子育てと少子化</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">浜田市こども計画の進捗</p><p class="qm"><span>一般質問</span><span>令和７年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">こども計画に沿って、職員研修や普及啓発などこどもの権利の取組、子どもの権利条例の検討、子どもの意見聴取、子育て講座や幼児教育センターの取組、障がい児保育、放課後児童クラブの民間委託や居場所づくりコーディネーターの配置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">こどもまんなか社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">保育施設への巡回相談の充実と5歳児健診の実施に向けた進め方、医療的ケア児の支援、こども誰でも通園制度の進め方、校内フリースクールや放課後等デイサービスなど不登校児童の支援、子どもの権利の庁内研修を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">乳幼児期の保育と保育士確保</p><p class="qm"><span>一般質問</span><span>令和６年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">保育士配置基準の見直し後の保育士不足の認識と対策、住宅手当など市独自の手当、支援が必要な子どもの検査体制や5歳児健診、保育施設の存続とマネジメント研修を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li><li><p class="qt">周産期グリーフケア</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">死産届の情報を窓口課と子育て支援課で共有する体制、流産・死産を経験した人が受けられる母子保健サービスとその伝え方、相談体制、浜田医療センターの対応、職員研修や当事者団体の話を聞く機会を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a></div></li><li><p class="qt">幼児教育と子育て支援計画</p><p class="qm"><span>一般質問</span><span>令和６年３月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">幼児教育センターの今年度の取組と施設の反応、来年度の取組、小学校との接続、幼児教育アドバイザーの研修、第3期子ども・子育て支援計画の策定体制と子どもの意見の反映を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">子どもの育ちと計画</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">幼児教育センターと浜田幼稚園の取組、幼児通級教室の周知と利用、幼・保・小の連携と小1プロブレム、子ども・子育て支援事業計画の策定と子ども・子育て会議の設置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li><li><p class="qt">幼稚園と幼児教育センター</p><p class="qm"><span>一般質問</span><span>令和５年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">浜田幼稚園が抱える課題の捉え方、公私の連携、特別な配慮が必要な園児への対応、入園申込み状況と存続、幼児教育センターの質の高い保育の考え方や研修、幼児通級教室の内容を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li><li><p class="qt">図書館と子ども読書の推進</p><p class="qm"><span>一般質問</span><span>令和４年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">図書館の基本理念と目標、図書館司書の正規職員の配置、未就学児の家庭での読書活動や家読、幼稚園・保育所・認定こども園での読書活動の推進を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">有機農業の推進</p><p class="qm"><span>一般質問</span><span>令和４年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">有機農業の現状と栽培実証、オーガニックビレッジ宣言の時期・目的・内容・検討委員会の構成を尋ね、給食への有機米・野菜の導入、保育所での取組、全庁的な連携の方向性を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li><li><p class="qt">子育て支援の充実</p><p class="qm"><span>一般質問</span><span>令和３年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">産前産後の親の学びとＨＯＯＰ！の活用、子育て世代包括支援センターの進捗と従来との違い、産後ケア事業の利用状況と期間や回数の延長、子どもの休業時の賃金支援と助成金の周知を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_childcare.html#topic-05">子育て世代の相談支援</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_welfare.html">医療・介護・福祉</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">がん対策の推進</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">浜田医療センターのＰＥＴ－ＣＴ更新の方針、がん検診の受診数と診断数、県内他市との受診率比較、若い世代やウェブ予約を含む受診者増の取組、がんサロンへの支援を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li><li class="line"><p class="qt">こどもまんなか社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="also">子育てと少子化にも当たる</p></li><li><p class="qt">高齢者の介護予防</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">要支援・要介護認定率が上がっている要因の分析と新規申請者の増加の受け止め、通いの場・サロンの利用状況の把握、運営の担い手不足への支援人材やリーダー養成講座、活動への予算的支援、内容の充実を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li><li class="line"><p class="qt">周産期グリーフケア</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="also">子育てと少子化にも当たる</p></li><li><p class="qt">認知症施策の推進</p><p class="qm"><span>一般質問</span><span>令和５年１２月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">認知症サポーター養成講座の実績と理解の広がり、キャラバン・メイトの会議、子どもへの理解の普及、ヒアリングフレイル対策、認知症カフェの設置、地域支援推進員の体制を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">社協の介護事業廃止と介護</p><p class="qm"><span>一般質問</span><span>令和５年１２月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">社会福祉協議会の訪問介護・通所介護・訪問入浴の利用者推移と廃止の理由、民間事業所の状況、訪問入浴の継続策、総合福祉センター条例との関係、地域独自サービスの必要性を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">認知症支援施策の推進</p><p class="qm"><span>一般質問</span><span>令和４年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">認知症サポーター養成講座の目標値の算出と理解の進み方、キャラバン・メイトの現状、若年性認知症の把握と啓発、企業や市職員への講座、ＶＲ体験、ピア活動、認知症ケアパスの運用を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">生活支援サービスの充実</p><p class="qm"><span>一般質問</span><span>令和４年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">生活支援体制整備事業の計画、目的、目標と社会福祉協議会に委託した成果の評価、まちづくり委員会など各組織との連携や重複感の整理、地域ケア会議の目的と現状を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">健康で生き生きと暮らす推進</p><p class="qm"><span>一般質問</span><span>令和４年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">通いの場の現状と必要性、ふくっぴーサロンの運営主体をめぐる市と社協の認識の食い違いと今後の支援を尋ね、地域共生社会と重層的体制整備事業の検討時期を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">認知症の理解と支援</p><p class="qm"><span>一般質問</span><span>令和３年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">認知症サポーター養成講座の進み具合とキャラバン・メイト連絡会の目的、チームオレンジの活動状況と後方支援、一人歩きや徘徊時の警察や地域、医療と連携した体制づくりを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_education.html">学校教育</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">不登校児童の急増への対応</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">令和6年度の不登校数の過去最高への受け止めと背景、学年別の傾向、専門人材の体制、まちづくりセンターや民間の居場所への補助金活用、出雲市のような対策指針の策定、市全体での取組を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li class="line"><p class="qt">こどもまんなか社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="also">子育てと少子化にも当たる</p></li><li><p class="qt">不登校児童生徒への支援</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">今年度から始まった校内フリースクールの状況や想定人数・過ごし方、学校にも山びこ学級にも通えていない子どもの把握と日常の過ごし方、メタバース登校への支援の考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li><p class="qt">エアコン設置と登下校</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">小中学校の特別教室のエアコン設置の現状や検討状況、中期財政計画への盛り込みと、スクールバスや路線バスを利用する登下校の基準を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a></div></li><li class="line"><p class="qt">子どもの育ちと計画</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="also">子育てと少子化にも当たる</p></li><li><p class="qt">海を活用した活性化</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">国府海岸（千畳ビーチ）のサーフィンの経済効果への認識とアピール、サーフィン団体への支援、浜田市体育協会の活動支援、サーフィンを生かしたふるさと学習を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li class="line"><p class="qt">幼稚園と幼児教育センター</p><p class="qm"><span>一般質問</span><span>令和５年３月浜田市議会定例会議会議録（第５号）</span></p><p class="also">子育てと少子化にも当たる</p></li><li><p class="qt">食育の推進</p><p class="qm"><span>一般質問</span><span>令和４年６月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">元気な浜田は朝ごはんの啓発事業の内容と効果の把握、野菜摂取不足への取組、有機野菜・有機米の市内消費量と学校給食での使用状況、有機野菜が給食で使われにくい理由、オーガニック給食の実施に向けた検討を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_community.html">市民自治と人権</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">不登校児童の急増への対応</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="also">学校教育にも当たる</p></li><li><p class="qt">協働のまちづくりとセンター</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">協働のまちづくり推進計画の評価・検証の結果と課題、協働の質の変化の把握、まちづくりセンターで社会教育の機能が希薄になっていないか、派遣社会教育主事との関わりや職員研修の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">女性が生きやすい社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">女性向けの健康支援の取組、女性相談窓口の利用状況と周知、フェムテックの紹介、女性職員の活躍の推進に関する行動計画の進み具合、働く女性の活躍を男女共同参画の視点で支援する取組を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-08">男女共同参画</a></div></li><li><p class="qt">環境への取組</p><p class="qm"><span>一般質問</span><span>令和４年６月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">海洋プラスチックごみ対策、出前講座の成果、漁具ごみの回収と管理、海岸漂着ごみの協働回収、４Ｒの推進、プラごみゼロ宣言の提案、一斉清掃やアダプトプログラム、海のスマイルサポーター認定制度の提案を含め、環境の取組を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_administration.html">行財政運営</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">浜田市こども計画の進捗</p><p class="qm"><span>一般質問</span><span>令和７年９月浜田市議会定例会議会議録（第２号）</span></p><p class="also">子育てと少子化にも当たる</p></li><li class="line"><p class="qt">エアコン設置と登下校</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="also">学校教育にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_safety.html">防災と地域の安全</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">防災情報と災害避難の啓発</p><p class="qm"><span>一般質問</span><span>令和６年３月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">能登半島地震時の津波注意報での情報発信の手段・回数と市民への伝わり方、防災メールやヤフーとの協定による避難情報の入手方法、出前講座や防災士の育成など災害避難の理解啓発の計画を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-07">大規模地震と耐震化</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_infrastructure.html">都市基盤と生活環境</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">エアコン設置と登下校</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="also">学校教育にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_population.html">人口減少と地域の維持</a></h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">移住・定住の推進</p><p class="qm"><span>一般質問</span><span>令和６年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">過去3年の移住・定住の件数と有効だった事業、令和6年度に力を入れる事業、いわみ留学、宿泊支援、協力隊経験者によるサポート、保育留学の検討について質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3><a href="../topic_tourism.html">観光・文化・交流</a></h3>
+<ul class="qlist" data-more="summary"><li class="line"><p class="qt">図書館と子ども読書の推進</p><p class="qm"><span>一般質問</span><span>令和４年３月浜田市議会定例会議会議録（第５号）</span></p><p class="also">子育てと少子化にも当たる</p></li></ul><button type="button" class="more" hidden></button>
+</div>
+<div class="mtg"><h3>当たる話題なし</h3>
+<ul class="qlist" data-more="summary"><li><p class="qt">若い世代が住みたい浜田</p><p class="qm"><span>一般質問</span><span>令和６年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">若い世代が住みたいと思う環境や施設、三桜酒造跡地の整備、若者の意見聴取、市民のイベントへの資金的支援、ＤＸ推進を担う庁内職員チームの内容と提案を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">オーガニックビレッジの推進</p><p class="qm"><span>一般質問</span><span>令和６年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">宣言の目的と現時点の成果、有機農業の取組と機械導入への補助や収益性、オーガニック給食を進める目的と栄養士の意識、有機農産物の地産地消の進み具合、他部署との推進体制と市長の所見を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">こどもまんなか社会の実現</p><p class="qm"><span>一般質問</span><span>令和６年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">子どもの権利を推進する考えと市職員の研修、権利学習の進め方、子どもの権利に関する条例の策定、浜田市こども計画の推進状況と策定スケジュール、子ども・子育て会議の位置づけを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">子どもの心と命を守る取組</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">要保護児童について児童虐待を含む相談状況や通告の意識向上、地域の見守りと子ども食堂、ＳＯＳの出し方教育、性教育や赤ちゃんとのふれあい事業など命を守る教育の現状を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">学校の安全管理</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">学校の窓からの転落事故やガラスによる事故の発生状況、窓ガラスの強度と強化ガラスを使う学校数、窓ガラス以外の事故の内容、事故を防ぐための安全管理を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">女性のヘルスケア</p><p class="qm"><span>一般質問</span><span>令和５年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">市内の産婦人科医の確保状況、受診希望者の把握、健康相談の少なさへの認識、オンライン相談サービスの導入、学校での相談体制や性教育、女性の健康の啓発活動を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">幼児教育の充実と従事者</p><p class="qm"><span>一般質問</span><span>令和４年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">幼児教育が目指す姿の共有、県の幼児教育センターの支援と市の幼児教育センターの取組、保育士の退職状況や賃金・働き方改革など従事者への支援を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul><button type="button" class="more" hidden></button>
+</div>
+</div>
+<div class="pane" data-switch-pane="子育てと少子化" hidden>
+<ul class="qlist"><li><p class="qt">浜田市こども計画の進捗</p><p class="qm"><span>一般質問</span><span>令和７年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">こども計画に沿って、職員研修や普及啓発などこどもの権利の取組、子どもの権利条例の検討、子どもの意見聴取、子育て講座や幼児教育センターの取組、障がい児保育、放課後児童クラブの民間委託や居場所づくりコーディネーターの配置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">こどもまんなか社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">保育施設への巡回相談の充実と5歳児健診の実施に向けた進め方、医療的ケア児の支援、こども誰でも通園制度の進め方、校内フリースクールや放課後等デイサービスなど不登校児童の支援、子どもの権利の庁内研修を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">乳幼児期の保育と保育士確保</p><p class="qm"><span>一般質問</span><span>令和６年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">保育士配置基準の見直し後の保育士不足の認識と対策、住宅手当など市独自の手当、支援が必要な子どもの検査体制や5歳児健診、保育施設の存続とマネジメント研修を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li><li><p class="qt">周産期グリーフケア</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">死産届の情報を窓口課と子育て支援課で共有する体制、流産・死産を経験した人が受けられる母子保健サービスとその伝え方、相談体制、浜田医療センターの対応、職員研修や当事者団体の話を聞く機会を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a></div></li><li><p class="qt">幼児教育と子育て支援計画</p><p class="qm"><span>一般質問</span><span>令和６年３月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">幼児教育センターの今年度の取組と施設の反応、来年度の取組、小学校との接続、幼児教育アドバイザーの研修、第3期子ども・子育て支援計画の策定体制と子どもの意見の反映を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a></div></li><li><p class="qt">子どもの育ちと計画</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">幼児教育センターと浜田幼稚園の取組、幼児通級教室の周知と利用、幼・保・小の連携と小1プロブレム、子ども・子育て支援事業計画の策定と子ども・子育て会議の設置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li><li><p class="qt">幼稚園と幼児教育センター</p><p class="qm"><span>一般質問</span><span>令和５年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">浜田幼稚園が抱える課題の捉え方、公私の連携、特別な配慮が必要な園児への対応、入園申込み状況と存続、幼児教育センターの質の高い保育の考え方や研修、幼児通級教室の内容を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li><li><p class="qt">図書館と子ども読書の推進</p><p class="qm"><span>一般質問</span><span>令和４年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">図書館の基本理念と目標、図書館司書の正規職員の配置、未就学児の家庭での読書活動や家読、幼稚園・保育所・認定こども園での読書活動の推進を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li><li><p class="qt">有機農業の推進</p><p class="qm"><span>一般質問</span><span>令和４年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">有機農業の現状と栽培実証、オーガニックビレッジ宣言の時期・目的・内容・検討委員会の構成を尋ね、給食への有機米・野菜の導入、保育所での取組、全庁的な連携の方向性を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a></div></li><li><p class="qt">子育て支援の充実</p><p class="qm"><span>一般質問</span><span>令和３年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">産前産後の親の学びとＨＯＯＰ！の活用、子育て世代包括支援センターの進捗と従来との違い、産後ケア事業の利用状況と期間や回数の延長、子どもの休業時の賃金支援と助成金の周知を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_childcare.html#topic-05">子育て世代の相談支援</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="医療・介護・福祉" hidden>
+<ul class="qlist"><li><p class="qt">がん対策の推進</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">浜田医療センターのＰＥＴ－ＣＴ更新の方針、がん検診の受診数と診断数、県内他市との受診率比較、若い世代やウェブ予約を含む受診者増の取組、がんサロンへの支援を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a><a class="tag" href="../topic_welfare.html#topic-05">健康づくりと検診</a></div></li><li><p class="qt">こどもまんなか社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">保育施設への巡回相談の充実と5歳児健診の実施に向けた進め方、医療的ケア児の支援、こども誰でも通園制度の進め方、校内フリースクールや放課後等デイサービスなど不登校児童の支援、子どもの権利の庁内研修を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">高齢者の介護予防</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">要支援・要介護認定率が上がっている要因の分析と新規申請者の増加の受け止め、通いの場・サロンの利用状況の把握、運営の担い手不足への支援人材やリーダー養成講座、活動への予算的支援、内容の充実を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-03">介護保険と介護予防</a></div></li><li><p class="qt">周産期グリーフケア</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">死産届の情報を窓口課と子育て支援課で共有する体制、流産・死産を経験した人が受けられる母子保健サービスとその伝え方、相談体制、浜田医療センターの対応、職員研修や当事者団体の話を聞く機会を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_welfare.html#topic-01">公立病院の経営と地域医療</a></div></li><li><p class="qt">認知症施策の推進</p><p class="qm"><span>一般質問</span><span>令和５年１２月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">認知症サポーター養成講座の実績と理解の広がり、キャラバン・メイトの会議、子どもへの理解の普及、ヒアリングフレイル対策、認知症カフェの設置、地域支援推進員の体制を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">社協の介護事業廃止と介護</p><p class="qm"><span>一般質問</span><span>令和５年１２月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">社会福祉協議会の訪問介護・通所介護・訪問入浴の利用者推移と廃止の理由、民間事業所の状況、訪問入浴の継続策、総合福祉センター条例との関係、地域独自サービスの必要性を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">認知症支援施策の推進</p><p class="qm"><span>一般質問</span><span>令和４年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">認知症サポーター養成講座の目標値の算出と理解の進み方、キャラバン・メイトの現状、若年性認知症の把握と啓発、企業や市職員への講座、ＶＲ体験、ピア活動、認知症ケアパスの運用を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li><li><p class="qt">生活支援サービスの充実</p><p class="qm"><span>一般質問</span><span>令和４年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">生活支援体制整備事業の計画、目的、目標と社会福祉協議会に委託した成果の評価、まちづくり委員会など各組織との連携や重複感の整理、地域ケア会議の目的と現状を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">健康で生き生きと暮らす推進</p><p class="qm"><span>一般質問</span><span>令和４年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">通いの場の現状と必要性、ふくっぴーサロンの運営主体をめぐる市と社協の認識の食い違いと今後の支援を尋ね、地域共生社会と重層的体制整備事業の検討時期を質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-11">社会福祉協議会と地域福祉</a></div></li><li><p class="qt">認知症の理解と支援</p><p class="qm"><span>一般質問</span><span>令和３年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">認知症サポーター養成講座の進み具合とキャラバン・メイト連絡会の目的、チームオレンジの活動状況と後方支援、一人歩きや徘徊時の警察や地域、医療と連携した体制づくりを質した。</p><div class="tg"><a class="tag" href="../topic_welfare.html#topic-04">認知症と地域包括ケア</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="学校教育" hidden>
+<ul class="qlist"><li><p class="qt">不登校児童の急増への対応</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">令和6年度の不登校数の過去最高への受け止めと背景、学年別の傾向、専門人材の体制、まちづくりセンターや民間の居場所への補助金活用、出雲市のような対策指針の策定、市全体での取組を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">こどもまんなか社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">保育施設への巡回相談の充実と5歳児健診の実施に向けた進め方、医療的ケア児の支援、こども誰でも通園制度の進め方、校内フリースクールや放課後等デイサービスなど不登校児童の支援、子どもの権利の庁内研修を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_welfare.html#topic-06">障害者支援</a></div></li><li><p class="qt">不登校児童生徒への支援</p><p class="qm"><span>一般質問</span><span>令和６年６月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">今年度から始まった校内フリースクールの状況や想定人数・過ごし方、学校にも山びこ学級にも通えていない子どもの把握と日常の過ごし方、メタバース登校への支援の考えを質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a></div></li><li><p class="qt">エアコン設置と登下校</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">小中学校の特別教室のエアコン設置の現状や検討状況、中期財政計画への盛り込みと、スクールバスや路線バスを利用する登下校の基準を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a></div></li><li><p class="qt">子どもの育ちと計画</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">幼児教育センターと浜田幼稚園の取組、幼児通級教室の周知と利用、幼・保・小の連携と小1プロブレム、子ども・子育て支援事業計画の策定と子ども・子育て会議の設置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_childcare.html#topic-04">子育ての経済的支援</a><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li><li><p class="qt">海を活用した活性化</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">国府海岸（千畳ビーチ）のサーフィンの経済効果への認識とアピール、サーフィン団体への支援、浜田市体育協会の活動支援、サーフィンを生かしたふるさと学習を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-06">ふるさと教育</a></div></li><li><p class="qt">幼稚園と幼児教育センター</p><p class="qm"><span>一般質問</span><span>令和５年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">浜田幼稚園が抱える課題の捉え方、公私の連携、特別な配慮が必要な園児への対応、入園申込み状況と存続、幼児教育センターの質の高い保育の考え方や研修、幼児通級教室の内容を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_education.html#topic-10">特別支援教育</a></div></li><li><p class="qt">食育の推進</p><p class="qm"><span>一般質問</span><span>令和４年６月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">元気な浜田は朝ごはんの啓発事業の内容と効果の把握、野菜摂取不足への取組、有機野菜・有機米の市内消費量と学校給食での使用状況、有機野菜が給食で使われにくい理由、オーガニック給食の実施に向けた検討を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-05">学校給食</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="市民自治と人権" hidden>
+<ul class="qlist"><li><p class="qt">不登校児童の急増への対応</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">令和6年度の不登校数の過去最高への受け止めと背景、学年別の傾向、専門人材の体制、まちづくりセンターや民間の居場所への補助金活用、出雲市のような対策指針の策定、市全体での取組を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-03">いじめと不登校</a><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a></div></li><li><p class="qt">協働のまちづくりとセンター</p><p class="qm"><span>一般質問</span><span>令和７年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">協働のまちづくり推進計画の評価・検証の結果と課題、協働の質の変化の把握、まちづくりセンターで社会教育の機能が希薄になっていないか、派遣社会教育主事との関わりや職員研修の見直しを質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-05">地域の拠点施設</a><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li><li><p class="qt">女性が生きやすい社会</p><p class="qm"><span>一般質問</span><span>令和７年３月浜田市議会定例会議会議録（第４号）</span></p><p class="qs">女性向けの健康支援の取組、女性相談窓口の利用状況と周知、フェムテックの紹介、女性職員の活躍の推進に関する行動計画の進み具合、働く女性の活躍を男女共同参画の視点で支援する取組を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-08">男女共同参画</a></div></li><li><p class="qt">環境への取組</p><p class="qm"><span>一般質問</span><span>令和４年６月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">海洋プラスチックごみ対策、出前講座の成果、漁具ごみの回収と管理、海岸漂着ごみの協働回収、４Ｒの推進、プラごみゼロ宣言の提案、一斉清掃やアダプトプログラム、海のスマイルサポーター認定制度の提案を含め、環境の取組を質した。</p><div class="tg"><a class="tag" href="../topic_community.html#topic-06">自治会と地域自治組織</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="行財政運営" hidden>
+<ul class="qlist"><li><p class="qt">浜田市こども計画の進捗</p><p class="qm"><span>一般質問</span><span>令和７年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">こども計画に沿って、職員研修や普及啓発などこどもの権利の取組、子どもの権利条例の検討、子どもの意見聴取、子育て講座や幼児教育センターの取組、障がい児保育、放課後児童クラブの民間委託や居場所づくりコーディネーターの配置を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-02">放課後児童クラブ</a><a class="tag" href="../topic_administration.html#topic-06">指定管理者制度と民間委託</a></div></li><li><p class="qt">エアコン設置と登下校</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">小中学校の特別教室のエアコン設置の現状や検討状況、中期財政計画への盛り込みと、スクールバスや路線バスを利用する登下校の基準を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="防災と地域の安全" hidden>
+<ul class="qlist"><li><p class="qt">防災情報と災害避難の啓発</p><p class="qm"><span>一般質問</span><span>令和６年３月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">能登半島地震時の津波注意報での情報発信の手段・回数と市民への伝わり方、防災メールやヤフーとの協定による避難情報の入手方法、出前講座や防災士の育成など災害避難の理解啓発の計画を質した。</p><div class="tg"><a class="tag" href="../topic_safety.html#topic-07">大規模地震と耐震化</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="都市基盤と生活環境" hidden>
+<ul class="qlist"><li><p class="qt">エアコン設置と登下校</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">小中学校の特別教室のエアコン設置の現状や検討状況、中期財政計画への盛り込みと、スクールバスや路線バスを利用する登下校の基準を質した。</p><div class="tg"><a class="tag" href="../topic_education.html#topic-07">学校施設の整備</a><a class="tag" href="../topic_infrastructure.html#topic-01">地域公共交通の維持</a><a class="tag" href="../topic_administration.html#topic-01">財政健全化と基金</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="人口減少と地域の維持" hidden>
+<ul class="qlist"><li><p class="qt">移住・定住の推進</p><p class="qm"><span>一般質問</span><span>令和６年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">過去3年の移住・定住の件数と有効だった事業、令和6年度に力を入れる事業、いわみ留学、宿泊支援、協力隊経験者によるサポート、保育留学の検討について質した。</p><div class="tg"><a class="tag" href="../topic_population.html#topic-02">移住・定住とＵＩターン</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="観光・文化・交流" hidden>
+<ul class="qlist"><li><p class="qt">図書館と子ども読書の推進</p><p class="qm"><span>一般質問</span><span>令和４年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">図書館の基本理念と目標、図書館司書の正規職員の配置、未就学児の家庭での読書活動や家読、幼稚園・保育所・認定こども園での読書活動の推進を質した。</p><div class="tg"><a class="tag" href="../topic_childcare.html#topic-01">待機児童と保育所整備</a><a class="tag" href="../topic_tourism.html#topic-05">図書館と生涯学習</a></div></li></ul>
+</div>
+<div class="pane" data-switch-pane="当たる話題なし" hidden>
+<ul class="qlist"><li><p class="qt">若い世代が住みたい浜田</p><p class="qm"><span>一般質問</span><span>令和６年９月浜田市議会定例会議会議録（第２号）</span></p><p class="qs">若い世代が住みたいと思う環境や施設、三桜酒造跡地の整備、若者の意見聴取、市民のイベントへの資金的支援、ＤＸ推進を担う庁内職員チームの内容と提案を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">オーガニックビレッジの推進</p><p class="qm"><span>一般質問</span><span>令和６年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">宣言の目的と現時点の成果、有機農業の取組と機械導入への補助や収益性、オーガニック給食を進める目的と栄養士の意識、有機農産物の地産地消の進み具合、他部署との推進体制と市長の所見を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">こどもまんなか社会の実現</p><p class="qm"><span>一般質問</span><span>令和６年１２月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">子どもの権利を推進する考えと市職員の研修、権利学習の進め方、子どもの権利に関する条例の策定、浜田市こども計画の推進状況と策定スケジュール、子ども・子育て会議の位置づけを質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">子どもの心と命を守る取組</p><p class="qm"><span>一般質問</span><span>令和５年９月浜田市議会定例会議会議録（第３号）</span></p><p class="qs">要保護児童について児童虐待を含む相談状況や通告の意識向上、地域の見守りと子ども食堂、ＳＯＳの出し方教育、性教育や赤ちゃんとのふれあい事業など命を守る教育の現状を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">学校の安全管理</p><p class="qm"><span>一般質問</span><span>令和５年６月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">学校の窓からの転落事故やガラスによる事故の発生状況、窓ガラスの強度と強化ガラスを使う学校数、窓ガラス以外の事故の内容、事故を防ぐための安全管理を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">女性のヘルスケア</p><p class="qm"><span>一般質問</span><span>令和５年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">市内の産婦人科医の確保状況、受診希望者の把握、健康相談の少なさへの認識、オンライン相談サービスの導入、学校での相談体制や性教育、女性の健康の啓発活動を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li><li><p class="qt">幼児教育の充実と従事者</p><p class="qm"><span>一般質問</span><span>令和４年３月浜田市議会定例会議会議録（第５号）</span></p><p class="qs">幼児教育が目指す姿の共有、県の幼児教育センターの支援と市の幼児教育センターの取組、保育士の退職状況や賃金・働き方改革など従事者への支援を質した。</p><div class="tg"><span class="tag rest">当たる話題なし</span></div></li></ul>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+
+<section class="sec count" id="s-count"><h2>このページの数え方</h2><dl><dt>質問の回数</dt><dd>その期に質問に立った定例会の回数を、会議録に記された質問の種別に従って「一般質問」と「代表質問」に分けて数えています（同じ定例会で両方に立った時は「代表質問」に1回と数えます）。数えているのは質問に立った定例会の回数で、論点の数ではありません。1回の質問で複数の論点を取り上げる事が有り、同じ定例会の質問が議員毎のページの一覧では複数の項目に分かれて見える事が有ります。名簿の同じ期の回数と同じ数です。</dd><dt>取り上げた区分</dt><dd>質問毎に、その質問の論点に割り当てた話題の区分を数えています。1つの質問が2つ以上の区分に当たる時は、それぞれの区分に1つずつ数え、どの区分にも当たらない質問は「当たる話題なし」に数えます。マスの濃さは、この議員の表の中で最も多いマスに対する多さを示します。</dd><dt>質問の題と要約</dt><dd>会議録の実際の発言から、生成AIで論点毎に題と要約を付けています。浜田市議会が公開する一般質問の通告ではない為、通告の項目とは区分や粒度が異なる事が有ります。区分の束は、その期に論点の多い区分から並べ、束の中は新しい会議から並べています。</dd><dt>区分と話題</dt><dd>題と要約に、話題毎に決めた語が含まれるかで話題を割り当て、話題を纏めた区分で数えています。どの話題にも当たらない論点は「当たる話題なし」として灰色の札で示します。</dd><dt>役職・在任の途中の変化</dt><dd>議長・副議長は、その期の内に務めた事を示します。退任は期の途中で議員で無くなった事（その期の任期の中で最後に出席した会議を添えています）、加入は期の途中から議員になった事を示します。</dd><dt>期</dt><dd>期の範囲と定義は「<a href="../about.html#s-ki">このレポートについて › 期の定義</a>」に在ります。</dd></dl></section>
+
+</main>
+<footer class="foot">
+<p>v9.4.0</p>
+<p>浜田市議会レポート — 車座プロジェクト ／ <a href="../about.html">このレポートについて</a></p>
+<p>本レポートは議事録データの分類・集計結果です。分析的な判断は含まれていません。</p>
+<p><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+</footer>
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var doc = document;
+  /* Maps keyed by attribute values have no prototype, so a key such as "constructor"
+     never resolves to an inherited member. */
+  function dict() { return Object.create(null); }
+  var MORE_FIRST = dict();
+  MORE_FIRST.summary = 5;
+  MORE_FIRST.line = 10;
+  var seq = 0;
+
+  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+  function newId(prefix) {
+    var id;
+    do { seq += 1; id = prefix + seq; } while (doc.getElementById(id));
+    return id;
+  }
+  function idOf(el, prefix) { if (!el.id) { el.id = newId(prefix); } return el.id; }
+  /* Operators and panes belong to the nearest enclosing scope only (nesting). */
+  function scopeOf(el) { return el.closest("[data-switch]"); }
+  function own(scope, selector) {
+    return Array.prototype.filter.call(scope.querySelectorAll(selector), function (el) {
+      return scopeOf(el) === scope;
+    });
+  }
+  function keyOf(el) { return el.getAttribute("data-switch-key"); }
+  function isTab(el) { return el.getAttribute("role") === "tab"; }
+  function setOn(op, on) {
+    if (op.hasAttribute("aria-selected")) { op.setAttribute("aria-selected", on ? "true" : "false"); }
+    if (op.hasAttribute("aria-pressed")) { op.setAttribute("aria-pressed", on ? "true" : "false"); }
+    if (isTab(op)) { op.tabIndex = on ? 0 : -1; }
+  }
+  function isOn(op) {
+    return op.getAttribute("aria-selected") === "true" || op.getAttribute("aria-pressed") === "true";
+  }
+  /* Scroll only the operator's own strip sideways, so loading never moves the page (3.9). */
+  function nudge(op) {
+    var strip = op.parentElement;
+    if (!strip || strip.scrollWidth <= strip.clientWidth) { return; }
+    var s = strip.getBoundingClientRect();
+    var r = op.getBoundingClientRect();
+    if (r.left < s.left) { strip.scrollLeft -= s.left - r.left; }
+    else if (r.right > s.right) { strip.scrollLeft += r.right - s.right; }
+  }
+
+  /* ---- switch: pick one operator, show its pane, in its scope (3.6, 3.9) ---- */
+  function pick(op, focus) {
+    var scope = scopeOf(op);
+    if (!scope) { return; }
+    var key = keyOf(op);
+    each(own(scope, "[data-switch-key]"), function (o) { setOn(o, keyOf(o) === key); });
+    each(own(scope, "[data-switch-pane]"), function (p) {
+      p.hidden = p.getAttribute("data-switch-pane") !== key;
+    });
+    if (focus) { op.focus(); }
+    op.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  each(doc.querySelectorAll("[data-switch]"), function (scope) {
+    var panes = dict();
+    each(own(scope, "[data-switch-pane]"), function (p) { panes[p.getAttribute("data-switch-pane")] = p; });
+    each(own(scope, "[data-switch-key]"), function (op) {
+      var pane = panes[keyOf(op)];
+      if (pane) { op.setAttribute("aria-controls", idOf(pane, "v9-pane-")); }
+      if (isTab(op)) {
+        op.tabIndex = isOn(op) ? 0 : -1;
+        if (pane) {
+          pane.setAttribute("role", "tabpanel");
+          pane.setAttribute("aria-labelledby", idOf(op, "v9-tab-"));
+        }
+      }
+      if (isOn(op)) { nudge(op); }
+    });
+  });
+
+  doc.addEventListener("click", function (ev) {
+    var target = ev.target;
+    if (!(target instanceof Element)) { return; }
+    var op = target.closest("[data-switch-key]");
+    if (op) { pick(op, false); return; }
+    var row = target.closest("[data-pick-row]");
+    if (row && !target.closest("a, button, input, select, textarea, summary, label")) {
+      var rowOp = row.querySelector("[data-switch-key]");
+      if (rowOp) { pick(rowOp, true); }
+    }
+  });
+
+  /* ---- tabs: left / right arrows (Home / End) move the choice and the focus (2.10) ---- */
+  doc.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) { return; }
+    var tab = ev.target instanceof Element ? ev.target.closest("[role=tab][data-switch-key]") : null;
+    if (!tab) { return; }
+    var list = tab.closest("[role=tablist]");
+    if (!list) { return; }
+    var tabs = Array.prototype.filter.call(list.querySelectorAll("[role=tab][data-switch-key]"), function (t) {
+      return t.closest("[role=tablist]") === list;
+    });
+    var at = tabs.indexOf(tab);
+    var to = -1;
+    if (ev.key === "ArrowRight") { to = (at + 1) % tabs.length; }
+    else if (ev.key === "ArrowLeft") { to = (at - 1 + tabs.length) % tabs.length; }
+    else if (ev.key === "Home") { to = 0; }
+    else if (ev.key === "End") { to = tabs.length - 1; }
+    if (to < 0) { return; }
+    ev.preventDefault();
+    pick(tabs[to], true);
+  });
+
+  /* ---- 「残り○件」: first 5 / 10 items, the button shows all and back (3.10) ---- */
+  each(doc.querySelectorAll("[data-more]"), function (list) {
+    var first = MORE_FIRST[list.getAttribute("data-more")];
+    var button = list.nextElementSibling;
+    if (!first || !button || !button.classList.contains("more")) { return; }
+    var items = Array.prototype.filter.call(list.children, function (el) { return el.tagName === "LI"; });
+    var rest = items.length - first;
+    if (rest <= 0) { return; }
+    var open = false;
+    function apply() {
+      each(items, function (li, i) { li.hidden = !open && i >= first; });
+      button.textContent = open ? "最初の" + first + "件だけにする" : "残り" + rest + "件を表示";
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    button.setAttribute("aria-controls", idOf(list, "v9-more-"));
+    button.addEventListener("click", function () { open = !open; apply(); });
+    apply();
+    button.hidden = false;
+  });
+
+  /* ---- phone menu: .menu toggles .side.open with aria-expanded (2.8). At phone width the
+     closed sidebar is only moved off screen, so it is made inert: out of the tab order and
+     away from assistive tech until opened (2.10). Without JS nothing is inert. ---- */
+  var side = doc.getElementById("side");
+  var menu = doc.querySelector(".crumb .menu");
+  var phone = window.matchMedia ? window.matchMedia("(max-width:640px)") : null;
+  function sync() {
+    if (!side) { return; }
+    side.inert = !!(phone && phone.matches) && !side.classList.contains("open");
+  }
+  /* A sidebar that is the URL's target is shown by CSS (.side:target, the no-JS way in).
+     Closing it drops the target without moving the page, so it never stays shown but inert. */
+  function untarget() {
+    if (!side.matches(":target")) { return; }
+    var x = window.scrollX, y = window.scrollY;
+    location.replace("#");
+    window.scrollTo(x, y);
+  }
+  function setMenu(opened) {
+    if (!side || !menu) { return; }
+    side.classList.toggle("open", opened);
+    menu.setAttribute("aria-expanded", opened ? "true" : "false");
+    if (!opened) { untarget(); }
+    sync();
+  }
+  if (side && menu) {
+    sync();
+    /* The script runs before the target is applied, so read the URL's fragment. */
+    if (location.hash === "#side") { setMenu(true); }
+    if (phone) {
+      if (phone.addEventListener) { phone.addEventListener("change", sync); }
+      else if (phone.addListener) { phone.addListener(sync); }
+    }
+    menu.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      var opening = !side.classList.contains("open");
+      setMenu(opening);
+      if (opening) {
+        var first = side.querySelector("a[href]");
+        if (first) { first.focus(); }
+      }
+    });
+    doc.addEventListener("click", function (ev) {
+      if (side.classList.contains("open") && !side.contains(ev.target)) { setMenu(false); }
+    });
+    doc.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && side.classList.contains("open")) { setMenu(false); menu.focus(); }
+    });
+    each(side.querySelectorAll("a[href]"), function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+  }
+
+  /* ---- section TOC: mark the section in view, as the legacy shell does ---- */
+  var tocLinks = side ? side.querySelectorAll('.toc a[href^="#"]') : [];
+  var linkById = dict();
+  var sections = [];
+  function mark(link) {
+    each(tocLinks, function (a) { a.removeAttribute("aria-current"); });
+    link.setAttribute("aria-current", "location");
+  }
+  each(tocLinks, function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    var section = doc.getElementById(id);
+    if (!section) { return; }
+    linkById[id] = a;
+    sections.push(section);
+    a.addEventListener("click", function () { mark(a); });
+  });
+  if ("IntersectionObserver" in window && sections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      each(entries, function (en) {
+        if (en.isIntersecting && linkById[en.target.id]) { mark(linkById[en.target.id]); }
+      });
+    }, { rootMargin: "0px 0px -68% 0px", threshold: 0 });
+    each(sections, function (s) { spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
