@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地域おこし協力隊 — 当たった論点の全件 | 自治体くらべ</title>
+<style>
+/* 自治体くらべ（市に属さない独立ページ）専用スタイル。#675・M15。
+   design-convention.md §1.1 のポータル型（サイドバー外殻なし・専用 CSS を分離注入）に
+   ならい、報告ページの共有 styles.css とは独立に注入する。同名クラスがあっても
+   レポート本体と衝突しない。ライトのみ・no-JS・SVGライン単色・絵文字不使用。
+
+   配色トークン: 共有トークン（--bg 〜 --footer-ink）は templates/council/styles.css と
+   同値（design-convention §3「藍アクセントは共有トークン --accent（#3a4a8c）に一本化」）。
+   本ページ固有の色（市間共有の色付け・限界の枠）だけを additive に足す
+   （§3.2「ドメイン固有トークンは :root へ additive 切り出し」）。 */
+
+:root{
+  /* 共有トークン（council/styles.css と同値） */
+  --bg:#f4f3ef;
+  --surface:#ffffff;
+  --panel:#f6f5f1;
+  --ink:#1c1e26;
+  --ink-soft:#55596b;
+  --ink-faint:#8b8fa3;
+  --line:#e3e1d9;
+  --line-soft:#eeece5;
+  --accent:#3a4a8c;
+  --accent-soft:#e8ebf7;
+  --accent-ink:#2c3a70;
+  --shadow:0 1px 2px rgba(28,30,38,.05), 0 12px 30px -16px rgba(28,30,38,.20);
+  --footer-bg:#334155;
+  --footer-ink:#94a3b8;
+
+  /* 本ページ固有（additive） */
+  --share-part:#eef1f9;  /* shared by some of the municipalities that hold data */
+  --share-all:#d9e0f4;   /* shared by all of them (stronger than --share-part) */
+  --limit-line:#b8a24a;
+  --limit-bg:#fbf8ec;
+
+  /* 本文の折り返し幅（design-convention 2.1・#675 の改訂）。
+     幅は**2種類しかない**——表の見え幅を決めているのは `width:100%`（器いっぱい）か
+     `max-width:<値>` かの2つだけだからである。
+     - `--words-width` = 語×市の表（問い2・問い3）の幅。その節の本文はこれに揃える（規約1）
+     - `--measure-cap` = 本文の上限（規約2・3）。問い1 の表は器いっぱい（実効約1000px）で、
+       本文をそこへ完全に合わせると1行が約65字になり読めない。本文 15px で
+       **1行およそ45字**になる 680px を上限に置いた（日本語の目安40〜50字の中央）。
+       表の無い節（冒頭・限界・語リスト）はこの上限をそのまま折り返し幅に使う */
+  --words-width:620px;
+  --measure-cap:680px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  line-height:1.7; background:var(--bg); color:var(--ink);
+  font-size:15px; font-feature-settings:"palt"; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink)}
+a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ヘッダ */
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-mark{width:26px;height:26px;color:var(--accent);flex:none}
+.site-title{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.header-back{margin-left:auto;font-size:.85rem;color:var(--accent);font-weight:700;text-decoration:none}
+.header-back:hover{text-decoration:underline}
+
+/* 本体 */
+.content{max-width:1080px;margin:0 auto;padding:8px 16px 56px}
+.crumbs{font-size:.82rem;color:var(--ink-faint);margin-top:24px}
+.crumbs a{color:var(--ink-soft)}
+.page-title{
+  margin:32px 0 4px;font-size:1.7rem;font-weight:700;color:var(--accent-ink);
+  border-bottom:3px solid var(--accent);padding-bottom:8px;
+}
+
+/* 節ごとの本文幅（design-convention 2.1）。`--measure` は継承するので、節を包む
+   要素に置けば、その中の本文（リード・凡例・断り）がまとめて揃う。
+   - 既定（節を包まないところ＝表の無い節）は上限をそのまま使う（規約3）
+   - `.q-narrow` = その節の表が上限より狭い（語×市の表）→ 表と同じ幅（規約1）
+   - `.q-wide`   = その節の表が上限より広い（問い1）→ 上限で止める（規約2） */
+.content{--measure:var(--measure-cap)}
+.q-narrow{--measure:var(--words-width)}
+.q-wide{--measure:var(--measure-cap)}
+
+.page-subtitle{color:var(--ink-soft);margin:8px 0 28px;max-width:var(--measure)}
+h2{
+  font-size:1.25rem;color:var(--accent-ink);margin:48px 0 8px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+h3{font-size:1.05rem;margin:28px 0 6px;color:var(--accent-ink)}
+section.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:20px 24px;margin:16px 0;box-shadow:var(--shadow);
+}
+.q-lede{color:var(--ink-soft);margin:4px 0 16px;max-width:var(--measure)}
+.range{font-size:.85rem;color:var(--ink-faint);font-weight:400}
+
+.howto{
+  background:var(--accent-soft);border-radius:8px;padding:12px 16px;
+  font-size:.92rem;color:var(--accent-ink);margin:12px 0;max-width:var(--measure);
+}
+
+/* 幅の広い表は、その表の中だけで横スクロールさせる（Req 1.5・design-convention §5） */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 問い1: 年度×自治体（言及議員割合25%以上の束をすべて・セルごとに本数は可変） */
+table.years{border-collapse:collapse;width:100%;font-size:.86rem}
+table.years th, table.years td{
+  border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;
+}
+table.years th{background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+table.years td.yr{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+table.years ol{margin:0;padding-left:1.2em}
+table.years li{margin:0;white-space:nowrap}
+table.years .pct{color:var(--ink-faint);font-size:.85em;margin-left:3px}
+table.years li.sh-part{background:var(--share-part);border-radius:3px;padding:0 4px}
+table.years li.sh-all{background:var(--share-all);border-radius:3px;padding:0 4px;font-weight:600}
+/* How many municipalities a shared bucket appeared in, printed as text beside the
+   bucket. The two tints alone cannot say "all" without the reader knowing how many
+   municipalities held data that year, so the number is written out - the same move
+   as design-convention 3 "read it by length *and* number". */
+table.years .shn{color:var(--ink-faint);font-size:.85em;margin-left:4px}
+/* 線を1本も超えなかったセルの断り（`notices`）。束が在るセルでは空文字なので、
+   この span は中身を持たず何も描かない */
+table.years .cell-none{color:var(--ink-faint)}
+/* The three kinds of empty cell (Req 3.5). They must not look alike, and the
+   difference has to survive colour blindness and a greyscale print, so all three
+   keep one colour and differ by marker glyph and rule style instead:
+     none-zero        measured zero - no marker, no rule
+     none-source      the minutes are not in the source - U+203B + dashed rule
+     none-unpublished the term is left out of the reports - U+25C7 + dotted rule
+   The wording differs as well, but that comes from the data (`notices`); the marks
+   here are a second channel, not the only one. Glyphs, never emoji (file header).
+
+   These three are keyed on the class alone, not on `table.years`, so the legend can
+   show the reader what the two marks mean by carrying the very same classes on an
+   empty span - the glyph is written once, here, and cannot drift from the table. */
+.none-zero{border-bottom:0}
+.none-source{border-bottom:1px dashed currentColor}
+.none-source::before{content:"\203B";margin-right:3px}
+.none-unpublished{border-bottom:1px dotted currentColor}
+.none-unpublished::before{content:"\25C7";margin-right:3px}
+.legend{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0;max-width:var(--measure)}
+.legend .chip{display:inline-block;min-width:30px;text-align:center;border-radius:3px;margin:0 4px;padding:0 6px;font-size:.8rem}
+.legend .c-part{background:var(--share-part)}
+.legend .c-all{background:var(--share-all);font-weight:600}
+
+/* 問い2・問い3: 語×市の数表 */
+table.words{border-collapse:collapse;font-size:.9rem;margin:12px 0;width:100%;max-width:var(--words-width)}
+table.words th, table.words td{border:1px solid var(--line);padding:5px 10px;text-align:right;white-space:nowrap}
+table.words th{background:var(--accent-soft);color:var(--accent-ink)}
+table.words td.w, table.words th.w{text-align:left;white-space:normal}
+table.words td.na{color:var(--ink-faint)}
+table.words tr.denom td{color:var(--ink-faint);font-size:.85em;border-top:2px solid var(--line)}
+.note{font-size:.85rem;color:var(--ink-faint);margin:6px 0 0;max-width:var(--measure)}
+
+/* 実例サブページへの導線 */
+.ex-links{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ex-links li{font-size:.88rem}
+.ex-links a{color:var(--accent-ink);font-weight:600;text-decoration:none}
+.ex-links a:hover{text-decoration:underline}
+.ex-n{color:var(--ink-faint);font-size:.85em;margin-left:6px}
+
+/* 限界の開示 */
+.limits{
+  border-left:4px solid var(--limit-line);background:var(--limit-bg);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.9rem;margin:16px 0;
+  max-width:var(--measure);
+}
+.limits ul{margin:6px 0 0;padding-left:1.3em}
+.limits li{margin:4px 0;color:var(--ink-soft)}
+
+/* 語リスト全文 */
+.termlist{
+  list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px;
+  max-width:var(--measure);
+}
+.termlist li{
+  font-size:.82rem;color:var(--accent-ink);background:var(--accent-soft);
+  padding:2px 10px;border-radius:100px;
+}
+
+/* 実例サブページ: 市ごとの開閉 */
+.city-block{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+.city-block summary{
+  cursor:pointer;padding:10px 14px;font-weight:700;color:var(--accent-ink);
+  list-style:none;display:flex;align-items:center;gap:8px;
+}
+.city-block summary::-webkit-details-marker{display:none}
+.city-block summary::before{content:"\25B8";color:var(--accent);font-size:.9em}
+.city-block[open] summary::before{content:"\25BE"}
+.city-block[open] summary{border-bottom:1px solid var(--line-soft)}
+.qlist{list-style:none;margin:0;padding:6px 14px 12px}
+.qlist li.q{
+  border-left:3px solid var(--accent-soft);padding:4px 12px;margin:10px 0;font-size:.88rem;
+  overflow-wrap:anywhere;max-width:var(--measure);
+}
+.qlist .who{display:block;color:var(--ink-faint);font-size:.85em}
+.qlist .ttl{display:block;font-weight:600}
+.qlist .sum{display:block;color:var(--ink-soft)}
+.none{padding:6px 14px 12px;color:var(--ink-faint);font-size:.88rem}
+.back{margin:24px 0 0;font-size:.9rem}
+
+/* フッタ */
+.site-footer{background:var(--footer-bg);color:var(--footer-ink);margin-top:48px}
+.footer-inner{max-width:1080px;margin:0 auto;padding:24px;font-size:.8rem;line-height:1.6}
+.footer-inner .credit{color:#cbd5e1;font-weight:700;margin-bottom:8px}
+.footer-inner a{color:#cbd5e1;text-decoration:underline}
+
+/* モバイル（design-convention §5: ページ全体は横スクロールさせない） */
+@media (max-width:640px){
+  .content{padding:8px 12px 40px}
+  section.panel{padding:16px 12px}
+  .page-title{font-size:1.4rem}
+  table.years{font-size:.8rem}
+  .header-inner{padding:14px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
+      <path d="M12 3v3.8M12 17.2V21M3 12h3.8M17.2 12H21"/>
+    </svg>
+    <div class="site-title">車座プロジェクト</div>
+    <a class="header-back" href="../index.html">自治体くらべへ戻る</a>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav class="crumbs"><a href="../index.html">自治体くらべ</a> ／ 地域おこし協力隊</nav>
+
+  <h1 class="page-title">地域おこし協力隊 — 当たった論点</h1>
+  <p class="page-subtitle">
+    話題の束「地域おこし協力隊」に当たった論点の全件です（全157件）。
+    1つの質問は、題と要約の組（論点）に分けて読み取っているため、件数は質問の数ではなく論点の数です。
+    自治体ごとに開いて読めます。数えた語がどんな文脈で使われたかは、ここで題と要約を読んで確かめてください。
+    <span class="range">対象期間: 平成17年〜令和7年</span>
+  </p>
+
+  <section class="panel">
+    
+    
+    <details class="city-block">
+      <summary>松江市<span class="ex-n">17件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H25・貴谷麻以</span>
+          <span class="ttl">新産業の創出と起業支援</span>
+          <span class="sum">平成の開府元年まちづくり構想の実現に向け、創業・起業に挑戦しやすい地域とするためのオフィス支援やネットワーク支援と担当課、周辺地域の核となる地域にIターン・Uターン者が住宅をつくれる区域の指定や地域おこし協力隊の活用など、すぐにできることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・貴谷麻以</span>
+          <span class="ttl">農業と地産地消の推進</span>
+          <span class="sum">米価下落に対する市単独の所得補償の考え、地産地消の成果と今後の方針、前橋市を例にした学校給食の地産地消の拡大、Ｉ・Ｕターン者が農地つき空き家を取得できる仕組み、地域おこし協力隊の導入を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・山本勝太郎</span>
+          <span class="ttl">過疎対策と集落支援</span>
+          <span class="sum">改正過疎法を踏まえ、地域協議会が廃止される中での美保関町の新たな過疎計画の立て方、ソフト事業の考え、定住への効果、過疎地域自立活性化交付金の活用、集落支援員制度や地域おこし協力隊の積極的な活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・吉儀敬子</span>
+          <span class="ttl">合併10年の検証と住民自治</span>
+          <span class="sum">人口が10％以上減った島根町など4町の要因、地域協議会廃止後の住民自治組織の育成と職員配置、地域おこし協力隊等の活用、東出雲町の地域協議会と4公民館の扱い、民生児童委員の活動費、高齢者バス代半額の復活、非正規職員の任用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・野々内誠</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">採用された８名の地域おこし協力隊について、地域との協働型の産業人材育成の状況と、地域の担い手として地域力の維持強化や定住に結びつける今後の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・比良幸男</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">地域おこし協力隊による商品開発や販路開拓などの実績と今後の取り組み、平成29年度に10名体制とする中で全国的な任期３年後の隊員の状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・貴谷麻以</span>
+          <span class="ttl">広域の観光戦略と波及効果</span>
+          <span class="sum">弁慶伝承や神話など市町村域を越えたストーリーによる広域観光を例に、国内外の観光戦略の進め方、観光から食や農林水産業・雇用への波及戦略と年間計画、地域おこし協力隊や若者のアイデアを生かす仕組み、交通戦略の展望を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・吉儀敬子</span>
+          <span class="ttl">松江市の経済循環策</span>
+          <span class="sum">今年度から活動する地域おこし協力隊9人の手応えと3年後のビジョン、サービス業を含む小規模企業の調査と施策への反映、零細事業者の参画、産業振興条例の策定を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・野津直嗣</span>
+          <span class="ttl">地域おこし協力隊の支援</span>
+          <span class="sum">八束町のまちづくりや移住相談支援など松江の地域おこし協力隊の活動を挙げ、現在の評価と来年度の支援や方向性、来年度予算での制度の活用について市長の思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・南波巖</span>
+          <span class="ttl">地方創生の取り組み</span>
+          <span class="sum">市の最近５カ年の転入転出数の状況と全国での順位、国のわくわく地方生活実現政策に掲げるＵＩＪターンや地域おこし協力隊、外国人材の活用など６項目への取り組み状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・野津直嗣</span>
+          <span class="ttl">学生版地域おこし協力隊</span>
+          <span class="sum">学生の力を地域に生かすため、国屋町の自主的な取り組みをモデル事業として今年度調査し、全国初となる学生版地域おこし協力隊制度の実施を来年度に検討するよう提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中明子</span>
+          <span class="ttl">人口減少への対策</span>
+          <span class="sum">転入・転出の男女別・年代別の人数と転出理由、地域おこし協力隊の受け入れと定住率・実績と課題・応募状況、外国人労働者の雇用状況と問題への対応、若い女性が戻らない理由と対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">地域おこし協力隊の延長</span>
+          <span class="sum">コロナ禍で活動が影響を受ける中、総務省が地域おこし協力隊の期間を５年に延長する方向性の現況と市の考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・野津直嗣</span>
+          <span class="ttl">特定地域づくり事業協同組合</span>
+          <span class="sum">設立が過疎地域に限られるのかの見解、地域おこし協力隊の次の段階という制度の位置づけの認識、民間事業者の設立の動きと積極的に連携する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・柳原治</span>
+          <span class="ttl">地域おこし協力隊の取組</span>
+          <span class="sum">国が隊員数の増加目標を掲げ財政措置を強化するなか、地域おこし協力隊について松江市への影響、これまでの取組状況と顕著な事例、今後の方針を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・小澤一竜</span>
+          <span class="ttl">地域おこし協力隊の受入れ</span>
+          <span class="sum">地域おこし協力隊のこれまでの成果と協力隊・集落支援員の経費の財源を確認し、国が隊員数を令和８年までに１万人とする目標を掲げる中で、受入れ人数の拡大と受入れ体制の強化を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・小澤一竜</span>
+          <span class="ttl">特別交付税と人材確保</span>
+          <span class="sum">特別交付税の概要と近年の決算額の推移、配分の特徴と県の裁量、人材確保・マッチングに充当できる国の支援メニューと市の活用状況・課題を尋ね、地域おこし協力隊や集落支援員など課題解決人材の積極的な確保を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>安来市<span class="ex-n">19件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H24・梶谷厚</span>
+          <span class="ttl">中山間地域の現状と活性化</span>
+          <span class="sum">伯太・広瀬の人口減少や限界集落、商店閉店による買い物困難などの現状認識と今後の取り組みを尋ね、集落支援員や地域おこし協力隊を活用しない理由、郷づくりカルテの状況、過疎債の活用、空き家バンクや中山間地活性化の専門部署の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐々木厚子</span>
+          <span class="ttl">人口減少問題への対策</span>
+          <span class="sum">地域おこし協力隊と集落支援員を活用する考えと、就業、住環境、結婚、出産、子育て、教育、医療などの人口減少対策のうち成果が出ている施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐々木厚子</span>
+          <span class="ttl">地方創生戦略の推進</span>
+          <span class="sum">地域住民生活等緊急支援のための交付金によるプレミアム付商品券の内容と発行時期、地方創生先行型交付金の活用と一押しの施策、国家公務員などを首長の補佐役として派遣する制度の活用、クラウドファンディングの活用、地域おこし協力隊への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・上廻芳和</span>
+          <span class="ttl">農業振興の方向性</span>
+          <span class="sum">平たん地と中山間地域の農業の将来像、不作付地や耕作放棄地の増加への懸念、平成28年4月稼働の給食センターへの地元産野菜の供給方法とＪＡやすぎ・生産農家との協議状況、6次産業化に向けた企業誘致や会社を立ち上げる仕組み、広瀬町・伯太町の集落営農と法人化の現状と対策、農地中間管理機構の推進上の問題点、地域おこし協力隊への考え、中山間地域総合整備事業の状況と今後のスケジュール、全国和牛能力共進会への意気込みと取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・石倉刻夷</span>
+          <span class="ttl">空き家対策</span>
+          <span class="sum">地域おこし協力隊の住まい確保に苦労した例を挙げ、利活用できる空き家の把握状況、不在所有者の老朽家屋の適切な管理を定める条例制定の考え、専属スタッフや地域協力員を置いて所有者の意向を把握する体制の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・金山満輝</span>
+          <span class="ttl">総合戦略に基づく新年度施策</span>
+          <span class="sum">2060年の人口目標３万人の実現に向け、平成28年度の人口対策事業として、民間賃貸住宅建設助成と空き家対策、切れ目のない子育て支援の新規・拡充事業、工業団地の適地選定調査の結果と供用開始時期、商工業の事業承継と後継者育成、結婚活動支援の成功件数と今後の取り組み、総合戦略のＫＰＩに基づく検証体制とスケジュール、定住相談窓口の業務内容と相談実績、地域おこし協力隊の採用見込みと増員計画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・作野幸憲</span>
+          <span class="ttl">農林業と地方創生</span>
+          <span class="sum">安来版総合戦略における農林業の位置づけと新たな施策、木材ストックヤードの整備と林業の方針、地域おこし協力隊の応募状況と現状、安来独自の受け入れ要件、市内全域・多職種での受け入れ、退任後の定住対策、県の半農半Ｘの活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・丸山征司</span>
+          <span class="ttl">人口減少対策の諸施策</span>
+          <span class="sum">人口減少問題の解消をテーマに、グラフで見る統計やすぎの作成、転出者の把握、未婚者やひとり親の婚活支援、ダブルケアによる離職と両立支援、子育てお出かけマップの利便性、保育所の空き状況の表示、認定こども園への移行、プログラミング教育、新工業団地と企業誘致のビジョン、女性の起業支援、地域おこし協力隊の募集、中心市街地の集合住宅、刃物まつりの再協議、圏域連携の修学旅行誘致、スマホやＡＲの観光活用、ドローンの活用、訪日外国人への対応、中海マラソンのコース細分化、ホテル誘致、山陰新幹線、ＰＲ動画などの情報発信を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・丸山征司</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">29年度の地域おこし協力隊５名募集の概要と経緯・目的・目標を尋ね、任期後の定住・定着に向けたマッチングやフォローアップの考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・遠藤孝</span>
+          <span class="ttl">定住対策と子育て支援</span>
+          <span class="sum">子育て支援の財源と効果・実負担の軽減、給食費の無料化の決断、トレッキングルート整備や植樹祭の２市１町開催の働きかけなどのシティプロモーション、集落単位の総合的なビジョン策定、出先事務所への職員常駐、地域おこし協力隊の定住への評価を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・佐伯直行</span>
+          <span class="ttl">総合戦略の進捗と展望</span>
+          <span class="sum">まち・ひと・しごと創生総合戦略の平成28年度までの進捗と見直しについて、成婚数や子育て応援サイトママフレなど評価の低い事業の見直し、20歳代の社会移動の改善に向けた創業支援や企業誘致、定住関連３事業の統合やお試し住宅・空き家バンクの状況、自主防災組織やがん検診、地域おこし協力隊の状況、国や県の動きに合わせた市の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・飯橋由久</span>
+          <span class="ttl">中心市街地の空き家対策</span>
+          <span class="sum">安来市空家等対策計画について、実態調査の経緯・方法と空き家の実態・地域分布、空き家バンクの認知度の低さと66％が登録を希望しない理由、4つの基本方針の具体的施策と実施時期、地域おこし協力隊員など外部の知見を利活用に生かす考え、除却後の土地の固定資産税減免の可否を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・石倉刻夷</span>
+          <span class="ttl">地方創生の総合戦略</span>
+          <span class="sum">総合戦略の主な7施策として地域おこし協力隊、新規就農研修、みどりの担い手確保緊急対策、地域交流センターの活性化、生活交通ネットワーク再編、イエローバス運行、道路改良の各事業の現状と検証を踏まえた今後の考え方を尋ね、地域ビジョン作成事業を実施した交流センターの有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岡本早智雄</span>
+          <span class="ttl">外部人材を活用した地域活性化</span>
+          <span class="sum">総合戦略の基本目標４のうち地域の担い手確保・拠点づくりの数値目標の根拠と進捗・評価、最終年度に向けた取り組み、地域おこし協力隊の任期後の定住に向けたフォロー体制、外部アドバイザーの招聘、集落支援員16名の目標に対する配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・岩崎勉</span>
+          <span class="ttl">農林水産施策の進捗状況</span>
+          <span class="sum">平成30年度の農林水産施策について、地域おこし協力隊の進捗状況と任期を終えた隊員の定住状況、新規就農研修への誘導と新規就農者総合対策事業・農業次世代人材投資事業・就農定住パッケージ事業の進捗、新規就農者の施設整備支援やリース方式の園芸施設整備への補助事業の活用状況、中海のサルボウ貝の養殖調査委託事業と養殖施設整備事業の進捗を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原田貴与子</span>
+          <span class="ttl">持続可能な地域経済づくり</span>
+          <span class="sum">ローカル循環型の地域経済への見解、国の農業政策と市の農業の現状認識、地域おこし協力隊・新規就農支援・集落間連携、地産地消、種子法、小水力等の再生可能エネルギー、中小企業振興基本条例、新安来工業団地の企業誘致を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・岡本早智雄</span>
+          <span class="ttl">地方財政計画への対応</span>
+          <span class="sum">令和３年度地方財政計画の新規・拡充メニューのうち、緊急防災・減災事業費や緊急しゅんせつ推進事業の実績と実施予定、地域デジタル社会推進費、地域おこし協力隊や地域プロジェクトマネジャーによる地方回帰支援、経営・財務マネジメント強化事業への市の対応を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・岡本早智雄</span>
+          <span class="ttl">令和５年度地方財政計画</span>
+          <span class="sum">令和５年度地方財政計画について、地域デジタル社会推進費の増額対象か否かと事業内容、脱炭素化推進事業債の活用と公営企業の対応、リスキリングの定義と市の取組、地域おこし協力隊とローカルスタートアップ支援制度、緊急浚渫推進事業の実績と予定、県管理河川と拡充への働きかけを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・三島静夫</span>
+          <span class="ttl">若者の人材確保</span>
+          <span class="sum">地域おこし協力隊インターン制度の実施状況、医学部以外の学部で地元就職の地域枠を増やす県との連携、市外の高校や近隣大学へ通学する学生の通学定期券への支援を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>出雲市<span class="ex-n">12件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H29・錦織稔</span>
+          <span class="ttl">自治会加入と協力隊</span>
+          <span class="sum">加入しようにも組織がないところなど様々あるとして自治会の加入促進の課題と解決策を尋ね、高齢化が進む中で地域おこし協力隊は中山間地域だけでなく市全体で必要と考えられるとしてこうした取組みを広げる考えはないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・多々納剛人</span>
+          <span class="ttl">農村の魅力と定住対策</span>
+          <span class="sum">農業・農村が持つ魅力についての市長の所感、農村で居住することへの社会的評価を高める必要、条件不利地や混住化した地域での小規模農家の支援、非農用地を含めた総合的な土地利用計画の策定、市内へのＵターンや農村への移住・田園回帰の現状、地域おこし協力隊の実績と隊員の活動内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・寺本淳一</span>
+          <span class="ttl">中山間地農業のスマート化</span>
+          <span class="sum">中山間地域の農業従事者数と新就農者数の直近と５年前と１０年前の推移、中山間地域でのスマート農業の現状とメリット及び課題とその課題に対する支援策、持続可能な中山間地域農業の推進についての今後の具体的方針を尋ね、特定地域づくり事業協同組合制度の活用と専門的な知識を持つ地域おこし協力隊の派遣を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・川上幸博</span>
+          <span class="ttl">人口減少と子育て支援</span>
+          <span class="sum">令和２年度国勢調査で県内唯一人口が増加した要因の分析と市内間の人口移動、中山間地域振興室の新設と地域おこし協力隊の過去の実績に基づく具体策、若者のＵＩターン促進と切れ目のない子育て政策、子ども支援制度の充実施策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・福島孝雄</span>
+          <span class="ttl">人口減少対策と中山間地域</span>
+          <span class="sum">アグリビジネススクールの現状と成果、出雲農業未来の懸け橋事業の利用状況と予算増額への意向、新出雲チャレンジ事業による中山間地域でのスマート農業の利用拡大と予算増額、米に代わる高収益作物への転換の見通しと将来の転作目標、森林環境譲与税を活用した循環型林業の実現のプロセス、ミッション型の地域おこし協力隊によるサポート体制、地域農業の維持や課題解決の自発的な取組みの実例と課題、有害鳥獣対策の要点、未来につなぐ中山間地域道路環境整備事業のボランティア軽減策の実施要件を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・本田一勇</span>
+          <span class="ttl">協力隊員の受入れ人数</span>
+          <span class="sum">これまでの出雲市の地域おこし協力隊員の人数は何人かを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・本田一勇</span>
+          <span class="ttl">市が隊員に望むもの</span>
+          <span class="sum">出雲市は地域おこし協力隊員に何を望んでいるのかを問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・西村亮</span>
+          <span class="ttl">移住定住と観光戦略</span>
+          <span class="sum">移住・定住の推進、交流人口・関係人口の拡大と中山間地域振興として、東京圏等での若者を対象とした交流会など移住・定住の促進の課題、交流人口・関係人口の拡大の対策と所見、観光戦略の推進と観光基本計画の方針及び具体化に向けた取組、中山間地域振興で企業や団体と連携して配置する地域おこし協力隊員の現状と今後の配置の具体策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・長廻利行</span>
+          <span class="ttl">中山間地域の振興策</span>
+          <span class="sum">さらに増員する地域おこし協力隊のこれまでの実績と今後の活用の考えを尋ね、策定を支援する「まちづくりビジョン」はどのような内容のもので誰が策定するのかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・大谷良治</span>
+          <span class="ttl">中山間地域の支援体制</span>
+          <span class="sum">地域おこし協力隊の増員数と「元気・やる気・地域応援補助金」の拡充内容、「地域支援員等による伴走支援」及び「まちづくりビジョン」の作成に関わるサポート体制、遠隔診療の実証事業と介護予防や生活支援サービスを行う団体への支援強化の内容を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・糸賀太郎</span>
+          <span class="ttl">市の情報発信戦略</span>
+          <span class="sum">公式ホームページや広報誌、プレスリリースの効果測定の手法とデータの評価分析や次の施策への反映、紙媒体による広報の必要性を尋ね、運用するＳＮＳの種類やアカウント数、フォロワー数、投稿頻度、内容の方向性とＫＰＩの設定、いずも縁結びＰＡＹのユーザー獲得に向けた発信、動画コンテンツやインフルエンサーとの連携、市民や地域団体の発信を後押しする支援策と地域おこし協力隊や観光関連事業者と連携した発信体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・坂本祐麻</span>
+          <span class="ttl">市営住宅の維持と活用</span>
+          <span class="sum">市営住宅の供給戸数や老朽化の状況、島根県住宅供給公社への管理戸数や委託金額と業務内容を尋ね、住宅ストックの適正配置・統廃合の方針、退去後の修繕や改修工事の優先順位と需要の高い団地の判断基準、修繕・改修費用が膨大にかかる住宅への今後の対応方針、空き住戸の地域おこし協力隊の住居やお試し移住施設などへの利活用、用途廃止後の他部局や地域団体、民間事業者への賃貸・譲渡、長寿命化計画の進捗と民間賃貸住宅との連携の方針を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>奥出雲町<span class="ex-n">21件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H23・塔村俊介</span>
+          <span class="ttl">雇用関係補助金のあり方</span>
+          <span class="sum">緊急雇用創出事業やふるさと雇用事業、地域おこし協力隊など雇用関係補助金の成果と課題、町独自の雇用関係補助金の目的と目標、地域雇用創出推進基金事業の民間企業への募集を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田勇</span>
+          <span class="ttl">人口減少対策</span>
+          <span class="sum">日本創成会議の推計で若年女性が２０１０年の１，０３０人から６９．５％減の３１４人になるとされたことへの受け止めを尋ね、結婚支援センターや結婚祝い金制度による婚活支援、若い女性の町内就職の支援と子育て支援の倍増、地域おこし協力隊や集落支援員への若い女性・青年の配置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・藤原和範</span>
+          <span class="ttl">元気・安心・笑顔の町づくり</span>
+          <span class="sum">所信表明の３つの重点項目の具体的な事業として、Ｕ・Ｉターン者や新規学卒者等を新規雇用する町内企業への助成金の内容と考え方、地域おこし協力隊の活動計画、生活交通サポート事業の充実の考え方を尋ね、人口対策本部などの検討機関の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・若月忠男</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">募集１４名に対し応募１１名にとどまった地域おこし協力隊の再募集への考え、奥出雲町でしかできない支援の発揮と議会等への定期的な情報伝達を尋ね、地方創生に協力隊が寄与できることと、まち・ひと・しごと創生総合戦略審議会等への参画を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・村尾明利</span>
+          <span class="ttl">地域おこし協力隊の目標</span>
+          <span class="sum">地方創生関連事業の一つである地域おこし協力隊について、具体的なスケジュールと受け入れ人数の目標枠、３年後も定着してもらう取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・大垣照子</span>
+          <span class="ttl">施政方針と提案説明</span>
+          <span class="sum">施政方針及び提案説明について、上高尾・三沢・三所地区でのデマンドタクシー試行の町の財政負担と業者との協議、全町への拡大に向けた調査と昨年の横田地内での試行の検証、地域おこし協力隊や移住者への移住後のフォローと相談窓口、第三セクターの経営改善の補正予算と奥出雲椎茸の選果の遅れを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・内田勇</span>
+          <span class="ttl">施政方針の重点項目</span>
+          <span class="sum">施政方針の重点項目に関し、創業・起業支援の助成金制度と金融機関と連携した庁舎内の創業相談窓口、定住助成金の増額、地産地消で地域経済が元気になる仕組み、地域おこし協力隊の支援窓口と集落支援員への若者の配置、リハビリ専門職の採用と介護ボランティアのポイント制度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・塔村俊介</span>
+          <span class="ttl">若者の活用と定住策</span>
+          <span class="sum">新たに募集する地域おこし協力隊員に期待する役割、全て兼任となっている集落支援員への若者の活用、合併１０周年記念事業への若者のアイデアの活用、若者間の連携を深める若者連絡会議の創設を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・藤原和範</span>
+          <span class="ttl">観光文化協会の独立</span>
+          <span class="sum">観光文化協会を独立させるとした町長答弁のその後の検討状況と今後の考えを尋ね、プロパー職員による体制や民間活力の導入、独自の活動戦略を展開できる運営組織とすることと、地域おこし協力隊で確保するスタッフの業務を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・内田勇</span>
+          <span class="ttl">地域おこし協力隊の支援策</span>
+          <span class="sum">現在１３人、２９年度に新たに２人を迎える地域おこし協力隊について、３年の任期を終えた隊員の定住化に向けた支援策と、任期後の人件費や家賃補助など雇用の確保と住環境の整備への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・内田雅人</span>
+          <span class="ttl">地域おこし協力隊への配慮</span>
+          <span class="sum">１２人の地域おこし協力隊について、行政・住民との意思疎通と観光や定住に取り組む隊員のスキルアップの状況、隊員がやりたいことを提案できる職場環境と自己裁量予算、副業の容認と実施状況、任期満了後の起業や就職につながる配慮と定住支援、起業時の最大１００万円の特別交付税措置の有無を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・景山孝志</span>
+          <span class="ttl">地域活性化策の推進</span>
+          <span class="sum">町長を囲んで小集団で意見交換するタウンミーティングの実施、新しい仁多庁舎でのイベントや町内温泉めぐりなどの企画立案と四半期ごとの事前周知、２名増員する地域おこし協力隊に横田高校魅力化で期待することと隊員との報告・連絡・相談の政策への反映、まち・ひと・しごとセンターの空き家バンク事業と無料職業紹介所の内容と期待を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・藤原充博</span>
+          <span class="ttl">小さな拠点づくりの支援</span>
+          <span class="sum">公民館を中心とした小さな拠点づくりと地域運営自主組織の立ち上げについて、取り組みの時期と方法、行政の支援と役割分担、協働のまちづくり交付金の実績、人材確保への職員配置や地域おこし協力隊との連携、自治会長会との役割分担を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・内田雅人</span>
+          <span class="ttl">地域おこし協力隊の総括</span>
+          <span class="sum">任期満了を迎える地域おこし協力隊について、定住や就労を含めた3年間の総括と共有、統括アドバイザー退職後の体制、この経験を新たな隊員の受け入れに生かす具体策、空き家に入る隊員への家賃補助の適用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・景山利則</span>
+          <span class="ttl">婚活推進の体制</span>
+          <span class="sum">婚活支援に特化した課の設置は難しいとした9月議会の答弁について、どういう人口規模なら可能か、債権管理課は設けたのになぜ婚活推進課は合致しないのか、ワンストップ体制の検討から後退した経緯を尋ね、地域おこし協力隊員の任期後の体制や予算を含む本気の取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・川西明徳</span>
+          <span class="ttl">町長施策の事業効果と評価</span>
+          <span class="sum">児童生徒の医療費助成、子ども・子育て支援、保育料の減免、地域福祉計画評価委員会、総合教育会議の開催・公開・議事録、中小企業・小規模企業振興基本条例による施策の検証と公表、総合戦略評価委員会、人事評価制度、ストレスチェック、水道料金の値上げ計画と幹線の耐震化、生活困窮者学習支援、地方創生推進交付金や地域おこし協力隊関連の補助金など、条例・規則等に基づく施策の事業効果と評価を尋ね、効果の上がっていない施策への責任の果たし方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・土屋武雄</span>
+          <span class="ttl">人口急減地域の地域づくり</span>
+          <span class="sum">地域おこし協力隊の活動状況と今後、Uターン・Iターン希望者の数と定住に踏み切れない理由、生涯定住するための経済面を含む生活の安定、地域づくり事業の人件費や社会保障費の負担に対する人材供給システム、シルバーボランティアと移住者の人材需要のバランスと財政支援、国・県・町の支援を組み合わせた人口急減対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・内田勇</span>
+          <span class="ttl">地域おこし協力隊の活用</span>
+          <span class="sum">隊員1人につき最大400万円を国が負担する地域おこし協力隊制度を若者の定住に向けもっと活用し応募の仕方を工夫することと、2泊3日以上のおためし地域おこし協力隊の実施を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・糸原壽之</span>
+          <span class="ttl">岩屋寺仁王像の買戻し</span>
+          <span class="sum">岩屋寺山門の仁王像の買戻しに向け、地域おこし協力隊で専任の担当者を充て、国の国宝等買戻し事業の予算を活用し、生誕地の中村地内に展示して中心市街地の活性化を図ることを提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・糸原文昭</span>
+          <span class="ttl">地域おこし協力隊の増員</span>
+          <span class="sum">地域おこし協力隊員の奥出雲町への定住への考え、国の特別交付税措置を踏まえた隊員の増員、起業補助金の交付に加えた起業前後の相談・支援への関わりを尋ね、人口増加に向けた総合的な施策の検討を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・内田裕紀</span>
+          <span class="ttl">小さな拠点づくり</span>
+          <span class="sum">平成30年度から推進する公民館単位の小さな拠点づくりについて、各地区の取組状況と課題をどう把握しているかを尋ね、行政主導の方向性の提示と、推進に向けた地域おこし協力隊の配置の可否を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>雲南市<span class="ex-n">15件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H21・土江良治</span>
+          <span class="ttl">都市からの移住支援策</span>
+          <span class="sum">総務省の地域おこし協力隊と農水省の田舎で働き隊の移住支援策をどう理解し働きかけるのかと進行状況、農の雇用事業を市内で4法人しか活用していない実態への考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H22・福島光浩</span>
+          <span class="ttl">協働と人材育成</span>
+          <span class="sum">地域おこし協力隊の事業内容と効果、隊員・地域・行政の問題点、派遣２地区の求めるもの、広域・チームでの活動と受け入れ体制、自由に使える活動費、外部人材との協働への市長の見解、若者支援の実績と来年度施策、若者の活動支援や起業家の育成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H24・福島光浩</span>
+          <span class="ttl">雲南市の経営ビジョン</span>
+          <span class="sum">地域自主組織の成果と課題および組織間の差への対応、協働のまちづくりの具体例と推進体制、交流センター施設整備計画の担当部署と公の施設の見直し方針の進捗、地域要望制度の課題と市民の声を市政に反映させる新たな仕組み、地域おこし協力隊の実績と評価・今後の活用方針と中野地区での取組、スポーツによる健康推進の取組と障がい者スポーツ・市独自のスポーツ振興計画の策定、戦略的な職員採用策、市長が次の4年間に必ずやることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・山﨑正幸</span>
+          <span class="ttl">人口の社会増と地方創生</span>
+          <span class="sum">社会減が目標値より少なかった要因と取組強化、プロジェクトごとの目標数値、魅力の情報発信、新規拡充３０事業の効果検証と市民への説明、雇用創出の遅れと企業誘致専門員を選定できなかった理由、日本立地センターへの業務委託、既存のものづくり産業への支援と企業誘致の方針、地域おこし協力隊終了後の支援、地域自主組織との連携、子育て世代の増加と赤ちゃん向けプレミアム商品券、取組に対する市長の決意を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・山﨑正幸</span>
+          <span class="ttl">Ｕ・Ｉターンの現状と取組</span>
+          <span class="sum">Ｕ・Ｉターンが増加した要因と今後の支援体制、魅力の情報発信と問合せ状況、移住者との意見交換、地域おこし協力隊の任期後の定住と雇用、補助制度の活用で職員が積極的に関わる協働を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・原祐二</span>
+          <span class="ttl">農業の振興</span>
+          <span class="sum">中山間地域等直接支払・多面的機能支払・環境保全型農業直接支払の取組状況と地域別の増減の分析、協定の広域化と集落協定５期への取組姿勢、土地改良法に基づく農業農村整備事業の実績と今後の見込み・地元体制の課題、農業用ため池の届出制度の目的と手順を尋ね、地域おこし協力隊による協定組織の維持などを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・梶谷佳平</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">地域おこし協力隊の直近の募集テーマと募集人員、県内他市町村との比較と募集が少ない理由を尋ね、空き家を市が改装して隊員に安く提供することを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・多賀法華</span>
+          <span class="ttl">地域おこし協力隊の活用</span>
+          <span class="sum">各部署の受入れノウハウの共有と統括部署、部局横断での活用の検討、最新の制度内容を取り入れた活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・藤原信宏</span>
+          <span class="ttl">自伐型林業の育成</span>
+          <span class="sum">自伐型林業の評価と本市での適応性、推進の考え、人材育成や適地のあっせん、作業道開設や機械購入の補助などの育成支援策、地域おこし協力隊による推進、新規参入の仲介・調整と林業振興施策の柱とすることを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・周藤正志</span>
+          <span class="ttl">移住者の増加</span>
+          <span class="sum">移住支援の現状と課題、移住者と地域とのトラブルの有無、地方の求人と都会の求職者をつなぐ就職情報システムの機能、地域おこし協力隊への住まいの安価または無償での提供を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・梶谷佳平</span>
+          <span class="ttl">えすこな雲南市の目標</span>
+          <span class="sum">地域おこし協力隊の受入れ拡大、有害鳥獣対策の強化と緩衝地帯の整備、公約に二次・三次産業を挙げなかった意図と人手不足支援、関東圏域に限る島根就職支援事業費補助金、自衛隊援護協会や定住財団との連携、幼稚園・保育園の経営支援、女性採用力アップ支援と転入女性への賃金補助、学校給食費の値上げの可能性と地産地消コーディネーターの増員を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・安田栄太</span>
+          <span class="ttl">スポーツと産業人材の確保</span>
+          <span class="sum">Citrine SHIMANEの移住や宮崎県都農町の事例を挙げ、本市で盛んな野球をターゲットに地域おこし協力隊制度や特定地域づくり事業協同組合制度を活用して選手を集め、移住促進と地場産業の人材不足を一体で解決する総合モデルの検討を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・竹部貴博</span>
+          <span class="ttl">スポーツによる人材確保</span>
+          <span class="sum">スポーツ振興を通じた人材確保や移住定住の具体的な事例と成果、Citrine SHIMANEに続くまちおこしの推進、選手や指導者と市内企業のマッチングや雇用支援、地域おこし協力隊や特定地域づくり協同組合制度の活用の課題と宮崎県都農町の事例を踏まえた取組への見解、スポーツを通じたビジョンを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・原良太</span>
+          <span class="ttl">人口減少と人材確保</span>
+          <span class="sum">硬式野球のクラブチームを結成し選手を地域おこし協力隊として招聘して地場産業で就労してもらう事業を提起し、人材確保や定住につながる可能性について市長の見解を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・竹部貴博</span>
+          <span class="ttl">移住定住施策の実績と強化</span>
+          <span class="sum">直近５年間の移住定住施策の成果と課題、地域おこし協力隊の定住につながった施策の整理と受入れ人数の拡大、スポーツ振興を中心にした協力隊の活用と企業連携による雇用創出を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>隠岐の島町<span class="ex-n">11件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H29・菊地政文</span>
+          <span class="ttl">地域おこし協力隊の増員</span>
+          <span class="sum">集落の課題や定住対策に向けて地域おこし協力隊を増員し、福祉・医療・介護・教育・農業など特化した分野や支所単位より小さなエリアへ配置する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・西尾幸太郎</span>
+          <span class="ttl">ふるさと起業家支援等の活用</span>
+          <span class="sum">総務省が示したふるさと起業家支援プロジェクトとふるさと移住交流促進プロジェクトへの町の取り組みを尋ね、昨年10月の指針公表からの対応の遅さや、地域おこし協力隊の卒業後の支援への活用を挙げ、町のニーズに即した速やかな活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・西尾幸太郎</span>
+          <span class="ttl">一次産業の生産能力維持</span>
+          <span class="sum">生産年齢人口の減少と従事者の高齢化のなかで一次産業の生産能力を維持・向上する対策を問い、ICTなどの導入の加速や、地域おこし協力隊と特定地域づくり事業協同組合を連携させた若手従事者の確保策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R02・石田茂春</span>
+          <span class="ttl">人口の少ない地区の支援</span>
+          <span class="sum">人口の少ない地区の存続を危惧し、集落地域活性化事業補助金の継続、UIターン者と比べた地元出身者の帰郷への住宅支援や同居手当の必要性、地域おこし協力隊の地区との関わりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・牧野牧子</span>
+          <span class="ttl">ICT支援員の配置</span>
+          <span class="sum">ICT教育の専門的な知識を持つ人材を各小中学校に配置する考えと、文部科学省が示す4校に1人の支援員の配置を尋ね、町長に業務委託や地域おこし協力隊、UIターン者への支援などによるICT支援員の確保策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・齋藤則子</span>
+          <span class="ttl">旧町村地域の振興</span>
+          <span class="sum">総合振興計画の地域活性化計画で旧町村地域の特色ある振興計画が上げた実績を尋ね、五箇地区の花の里づくりの担い手不足を挙げて、地域おこし協力隊の大幅な増員や支所によるコーディネートを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・齋藤則子</span>
+          <span class="ttl">中地区の働く場所</span>
+          <span class="sum">若者の働く場として中地区への介護福祉施設の設置を尋ね、介護福祉事業所の処遇改善と魅力ある職場づくりの取り組み内容、ホテルの誘致や海産物加工・観光資源・歴史遺産を活かした産業おこしと地域おこし協力隊の活用、役場職員が地区に出向く積極的な姿勢を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・齋藤則子</span>
+          <span class="ttl">地域おこし協力隊の増員</span>
+          <span class="sum">海士町の大人の島留学や本町の社会増、任期終了後の定住率に触れ、定住人口増に向けた地域おこし協力隊・集落支援員の大幅増員への意気込みと、島を離れる子どもたちとつながりUターンを促す取り組みの内容、人口規模を理由とせず積極的に採用すべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・牧野牧子</span>
+          <span class="ttl">地域おこし協力隊の支援</span>
+          <span class="sum">町の方針と地域の課題を協力隊と共通認識できるサポートについて尋ね、ミスマッチや孤立の防止に向け地区と協力隊への事前の制度説明や、総務省のサポートプランなどOB・OGを活用した支援の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・齋藤則子</span>
+          <span class="ttl">人口減少対策</span>
+          <span class="sum">消滅可能性自治体に挙げられ2050年の生産年齢人口がほぼ半減するとの推計を受けた対策を尋ね、出生数の増加や地域おこし協力隊員の定住に必要な策を問い、若年層の経済問題や郡部の空洞化、Iターン者の受入れ体制、公民館活動の衰退にも触れて取り組みを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・西尾幸太郎</span>
+          <span class="ttl">協力隊の農業分野活用</span>
+          <span class="sum">地域おこし協力隊制度を活用した農業人材の定住と育成について邑南町の例を挙げて考えを尋ね、農事組合法人への派遣の開始時期、林業・漁業を含む1次産業への協力隊活用の展望を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>大田市<span class="ex-n">11件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H21・福田佳代子</span>
+          <span class="ttl">交通確保と若者の定住</span>
+          <span class="sum">石見交通の路線廃止を受けた生活バス路線と交通手段の確保、地域おこし協力隊など若者を地域の担い手とする施策を尋ね、自治会等輸送活動支援モデル事業の検討や地域公共交通の法定協議会の設置を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H25・福田佳代子</span>
+          <span class="ttl">定住対策の検証と見直し</span>
+          <span class="sum">定住対策の成果と教訓、平成２６年度の取組を尋ね、２０１３年に社会減が２４２人に増えたことからの見直し、美郷町の若者定住住宅の評価、山村留学生への定住の働きかけ、ふるさと大田創業支援事業と空き家バンク制度の要件緩和、地域おこし協力隊を導入してこなかった理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・森山幸太</span>
+          <span class="ttl">地域おこし協力隊の受け入れ</span>
+          <span class="sum">１０月から募集している地域おこし協力隊員の募集状況と、富山まちづくりセンターの事務所スペースを含む隊員の受け入れの処遇の見直しを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・清水勝</span>
+          <span class="ttl">買い物支援と集落支援員</span>
+          <span class="sum">買い物サポート事業の経過と成果、集落支援員の配置や地域おこし協力隊の受け入れの現状と展望を尋ね、小集落への買い物サポート事業の積極的な導入と北三瓶地区の集落支援員の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・小林太</span>
+          <span class="ttl">集落支援員と協力隊の配置</span>
+          <span class="sum">集落支援員と地域おこし協力隊の今後の配置計画と事業の進め方を尋ね、選考委員会の委員の構成と地域から希望できる選考条件、他市町村に比べ導入が後発であることへの市長の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・林茂樹</span>
+          <span class="ttl">まちづくりの戦略と財源</span>
+          <span class="sum">市が考えるまちづくりの戦略と将来ビジョン、行政と住民の役割分担や人材育成、地域おこし協力隊等の派遣を西予市の例を挙げて尋ね、支所によるみなし交付税の額と両支所への配分、裁量権の付与、合併振興基金を活用した手挙げ方式の交付金制度を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・小林太</span>
+          <span class="ttl">大田市版小さな拠点づくり</span>
+          <span class="sum">持続可能なまちづくりの想定エリアとまちの姿、地域間連携、大田市版の意味、通いの場づくりとの順序、温泉津の地域振興センターの先行事例化、コミュニティービジネスと新たな法人形態、地域おこし協力隊や公民館による人材育成、財政支援、スケジュールと市民への周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・福田佳代子</span>
+          <span class="ttl">住民自治のまちづくり</span>
+          <span class="sum">27まちづくりセンター・7ブロック公民館を基礎とした地域の現状把握と分析、まちづくりセンターごとの人口1％を取り戻す戦略、地域自立への財政支援と高校生までの医療費無料化・保育園児の主食無料化・定住支援策、高齢化率50％超の5地域の立て直し、地域おこし協力隊の配置、邑南町を例にした情報発信、赤ちゃん誕生の音声告知放送の実施、総合計画の取り組みへの市長の所感を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・和田浩司</span>
+          <span class="ttl">ふるさと納税の推進</span>
+          <span class="sum">全庁で進める実行体制、令和８年４億円の目標に向けた他市との差異化、返礼品事業者との関係、広報予算の内訳を尋ね、新聞・雑誌広告の効果、寄附者との関係維持、体験型返礼品の方向性、オフィシャルサイトや道の駅を使ったマーケティング、専門性の高い地域おこし協力隊の登用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・胡摩田弘孝</span>
+          <span class="ttl">住民主体のまちづくり</span>
+          <span class="sum">地域が主体となり地域課題の把握と解決を図る仕組みづくりの進め方を尋ね、組織化が進まない地域の地域運営組織の推進、農村ＲＭＯの活用、市民アンケートの実施、危機感の異なる地域への対応、集落支援員と地域おこし協力隊員の配置、若い人が地域づくりを支える仕組み、担い手育成の研修会、限られた予算でのまちづくりの進め方、雲南市の一括交付金制度の検討、まちづくり推進プロジェクトチームの設置、市長のまちづくりへの思いを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・松村信之</span>
+          <span class="ttl">移住・定住の促進</span>
+          <span class="sum">人口減少対策として、移住・定住を考える人が望む地域環境・生活環境の捉え方、地域おこし協力隊員や高校魅力化コーディネーター、農業・漁業新規就業者支援などの定着状況と定住につながった状況を尋ね、第一次産業就業者への支援拡充や移住・定住の成功事例のウェブサイトでの動画発信とぎんざんテレビでの紹介を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>江津市<span class="ex-n">7件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H26・森川佳英</span>
+          <span class="ttl">地域おこし協力隊の活用</span>
+          <span class="sum">総務省の事業の内容と全国・県内の受け入れ状況、増加の要因、効果、近隣市町村の例を尋ね、邑南町のアグサポ隊を挙げて江津市での制度活用を提起した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・田中直文</span>
+          <span class="ttl">地域コミュニティの推進</span>
+          <span class="sum">22連合自治会単位で進める地域コミュニティ組織について、12組織が結成された後の他地区の進捗状況と平成28年度末を目途とした今後の見通しを尋ね、職員の参画や地域おこし協力隊の桜江地区への配置を求めた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・土井正人</span>
+          <span class="ttl">地域コミュニティーと人材</span>
+          <span class="sum">地域コミュニティーへの理解が進まない中で、地域おこし協力隊のような外部人材を地域づくりに活用する考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・坪内涼二</span>
+          <span class="ttl">Ｉターン促進</span>
+          <span class="sum">津和野町の大学生インターン事業を挙げて地域おこし協力隊の活用を提起し、人口減少問題検討委員会のワーキンググループの人数や人選、進め方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・坪内涼二</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">地域おこし協力隊の現状の体制と活動状況を確かめ、増員の考え、求める人材像と情報発信、任期終了後の起業支援や住宅補助の猶予など定着に向けた支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・田中利徳</span>
+          <span class="ttl">コミュニティのまちづくり</span>
+          <span class="sum">桜江町の小さな拠点づくりモデル地区推進事業の取り組み、旧江津市内での同時展開、江津コミフェスを終えての所感、地域おこし協力隊の人数と活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・森元健二</span>
+          <span class="ttl">関係人口と協力隊</span>
+          <span class="sum">地域おこし協力隊と協力隊インターンの制度の目的・内容・待遇・財政負担、市のこれまでの活動実績と成果・課題を尋ね、協力隊の増員の可否と特定地域づくり事業協同組合の活用の可能性を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>浜田市<span class="ex-n">26件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H25・布施賢司</span>
+          <span class="ttl">高齢化を見据えたまちづくり</span>
+          <span class="sum">地区まちづくり推進委員会の設置団体と単独自治会との差、認定要綱の緩和と設置団体数、地域おこし協力隊の活動とリーダー探し、三階校区の運営組織・事務局・交付金、防災訓練や見守り活動の提案を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・佐々木豊治</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">取り組み状況、農業・漁業研修生制度との包括、隊員同士や周辺自治体・Ｉターンとの交流、生活上の相談支援、浜田の魅力の伝え方と邑南町の取り組みを踏まえた定住策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・芦谷英夫</span>
+          <span class="ttl">地域創生と元気づくり</span>
+          <span class="sum">自治区事業のうち産業振興や雇用、定住に結びついた成果、観光入り込み客の増加とお魚センターの再生、温泉と魚を組み合わせた女性向け観光商品の提案、ふるさと納税と連携した浜田市のＰＲ、地域おこし協力隊や職員地域担当制などの人的支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H26・芦谷英夫</span>
+          <span class="ttl">自治推進の積み残し課題</span>
+          <span class="sum">公民館の規模差と分割・小学校区での補完、自治組織の拠点と事務局の分散、町内会の規模差と再編、行政連絡員ら役員の配置、自治会の加入率と未結成地区、地域おこし協力隊などの支援、職員地域担当制、地域協議会に収れんする自治区制度と庁内の推進体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・布施賢司</span>
+          <span class="ttl">ＵＩターンの促進</span>
+          <span class="sum">宿泊費助成の利用者数と移住の実績、お試し移住の取り組み、移住のハードル、地域おこし協力隊の定住状況、半農半Ｘの取り組み、県の親元研修制度、移住者を集める自治体との差を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・牛尾昭</span>
+          <span class="ttl">三隅道路開通の影響対策</span>
+          <span class="sum">三隅道路開通後の地区への影響と将来予測、ゆうひパーク三隅の直近の数字と地域おこし協力隊の活用を含む対策、名物や看板、トイレ改修の遅れの認識、100円道の駅の提案、折居駅手前のドライブインなど沿線施設への支援を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・串崎利行</span>
+          <span class="ttl">広葉樹の活用</span>
+          <span class="sum">浜田管内の広葉樹の蓄積量と利用の現況、施政方針にある木材の付加価値への支援の具体的内容、広葉樹プロジェクトへの市の関わり方、地域おこし協力隊など人材支援の検討と時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・飛野弘二</span>
+          <span class="ttl">鳥獣被害防止特措法の改正</span>
+          <span class="sum">鳥獣被害対策実施隊の設置促進と体制強化の現状、ジビエ利用の推進、弥栄の獣肉加工処理場の稼働状況と地域おこし協力隊の配置、施政方針に鳥獣被害対策がなかった理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・笹田卓</span>
+          <span class="ttl">ポルセイド浜田への協力</span>
+          <span class="sum">地元フットサルチームへの市の協力の具体的内容、地域おこし協力隊や教育委員会による事務支援、市への貢献度の調査、ふるさと寄附を使った遠征費補助を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H29・沖田真治</span>
+          <span class="ttl">国府海水浴場と観光協会</span>
+          <span class="sum">浜田東地区の観光資源への所見、観光協会による国府海水浴場の運営、収益事業の拡充、海上アスレチックなど体験型施設への支援、トレッキングコースの整備、観光協会への職員派遣や地域おこし協力隊の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・村武まゆみ</span>
+          <span class="ttl">地域おこし協力隊の受け入れ</span>
+          <span class="sum">地域おこし協力隊の現状と弥栄の隊員の受けとめ、これまでの受け入れ状況と期間終了後の状況、職員や受け入れ団体の体制と研修、今後の受け入れ方針と受け入れ先と合わない場合の対処を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・串崎利行</span>
+          <span class="ttl">地域おこし協力隊の活用</span>
+          <span class="sum">地域おこし協力隊の浜田市での推移と現状、隊員が少ない理由、マイナスの材料、今後の考えと人数の目標、高齢者の生活を手伝う隊員についての考え方を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・西川真午</span>
+          <span class="ttl">自伐型林業の推進</span>
+          <span class="sum">自伐型林業を行う林家の把握、適切に管理されていない人工林の活用可能性、森林環境譲与税を活用した育成支援事業の内容、推進協会への入会、地域おこし協力隊を活用した定住対策を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・西田清久</span>
+          <span class="ttl">人材活用と産業振興</span>
+          <span class="sum">若い住民の潜在力や外部の優秀な人材を活用する施策、地域おこし協力隊の定着、江津市と浜田市のビジネスプランコンテストの違いについて所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・澁谷幹雄</span>
+          <span class="ttl">商工業と協力隊の活用</span>
+          <span class="sum">農林漁業の一部を除き進んでいない地域おこし協力隊の制度活用を強化し、商工業の振興につなげるべきではないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R01・芦谷英夫</span>
+          <span class="ttl">地方創生総合戦略の進捗</span>
+          <span class="sum">総合戦略の人口関連指標の推移と評価、県内での位置と島根創生計画を踏まえた戦略の見直し、ＵＩターン関連事業の成果、シングルペアレントや地域おこし協力隊の定住と移住者との意見交換を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・芦谷英夫</span>
+          <span class="ttl">具体的な人口定住政策</span>
+          <span class="sum">出生数増加やUIターンなど定住施策の成果と課題、シングルペアレントUIターン事業の受入れ世帯数と定住状況、地域おこし協力隊などの受入れ、市のリーダーシップを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・西田清久</span>
+          <span class="ttl">若者定住と人口減少対策</span>
+          <span class="sum">小規模農業への支援、空き家の住宅改修事業の拡充、広報紙を活用した全戸アンケート、地域おこし協力隊と県立農林大学校の連携など、若者の定住促進に関する市長の所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・佐々木豊治</span>
+          <span class="ttl">商店街の活性化</span>
+          <span class="sum">浜田の商店街の現状、活性化への支援策や補助金のメニューと利用実績、地域おこし協力隊を導入して人を呼び込む新たな取組ができないかを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・西田清久</span>
+          <span class="ttl">若者・子どもの支援</span>
+          <span class="sum">地域おこし協力隊の活用の流れと採用までの手順、石見神楽の観光客のおもてなしや滞在の仕組みづくりの実行主体、エキスパート指導者招聘事業の持続性、学校給食での有機野菜や有機米の提供頻度と給食費への影響を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・西田清久</span>
+          <span class="ttl">協力隊と民泊の定住促進</span>
+          <span class="sum">地域おこし協力隊の今後の増員や制限の考え方を尋ね、ツーリズム協議会の民泊45件の実績を踏まえた協力隊の再雇用と、地域資源を生かす取組への所見を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R05・串崎利行</span>
+          <span class="ttl">新規就農者の確保</span>
+          <span class="sum">新規就農者の市の状況、稼げる農業への転換、しまね就農相談会での浜田市の紹介状況、離農や事業承継を踏まえた後継者の育成、就農パッケージ、地域おこし協力隊の活用についての考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・芦谷英夫</span>
+          <span class="ttl">浜田市版地方創生</span>
+          <span class="sum">若者支援ファンドや地域おこし協力隊による人口増の成果、両事業の補正減、島根県の社会減への見方、東京一極集中を是正するために国を動かす必要性について市の考えを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・西田清久</span>
+          <span class="ttl">人口減少対策の振り返り</span>
+          <span class="sum">市長就任後の人口減少対策の振り返り、地域おこし協力隊を多く取り入れた考え、若い女性の流出要因をＡＩに尋ねた結果への見解、出生数半減の中での浜田の将来を問うた。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・戸津川美二</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">委嘱している業務内容、途中退任や定着の課題と担当職員の会議・交流会、国の動向や将来の見通し、インターン制度の活用状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R07・芦谷英夫</span>
+          <span class="ttl">定住施策の推進</span>
+          <span class="sum">10年間に誘致した事業所数や働く人の推移、新規採用雇用者数、地域おこし協力隊の任命数と定住者数、協力隊発の定住施策の推進について質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+    
+    <details class="city-block">
+      <summary>益田市<span class="ex-n">18件</span></summary>
+      
+      <ol class="qlist">
+        
+        <li class="q">
+          <span class="who">H26・三浦智</span>
+          <span class="ttl">地域自治組織の設立支援</span>
+          <span class="sum">地域自治組織の設立準備委員会の設置状況と職員体制、行政主導から地域主導への切り替えやステップ１への立ち戻り、ガイドブックに頼ることへの懸念と設立の必要性、地域おこし協力隊の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・永見おしえ</span>
+          <span class="ttl">人口拡大と益田市創生</span>
+          <span class="sum">ひとづくりの４つの視点の具体的な取り組み、しごとづくり、地域おこし協力隊の募集と今後、集落支援員の現状、認知症初期集中支援チームと認知症サポーターの養成を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・佐々木惠二</span>
+          <span class="ttl">人口拡大の施策</span>
+          <span class="sum">移住・交流のＰＲと地域おこし協力隊、市民の満足度、転入転出の実績、多子世帯の保育料無料化、医師確保、高齢者福祉と認知症対応、企業誘致、観光ＰＲを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・梅谷憲二</span>
+          <span class="ttl">地域おこし協力隊の支援</span>
+          <span class="sum">匹見で活動する地域おこし協力隊員の最近の状況、地元の受け入れ体制、隊員同士の連携、自伐林業や木の駅ひきみ森の宝山直市場での活動の現状を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・河野利文</span>
+          <span class="ttl">総合戦略のひとづくり・しごとづくり</span>
+          <span class="sum">総合戦略で取り組むひとづくり・しごとづくり、産業振興ビジョンとの関係、後継者育成と起業支援、学校と産業界の連携の仕組み、地域おこし協力隊を生かした地域課題解決型のしごとづくりを質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H27・梅谷憲二</span>
+          <span class="ttl">自伐型林業による林業再生</span>
+          <span class="sum">自伐型林業による林業再生の考えを問い、木の駅の登録者・出荷量と薪ボイラーの進捗、地域おこし協力隊の募集状況、技術研修の考え、簡易作業道の補助制度の時期を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H28・中島守</span>
+          <span class="ttl">匹見の森林資源活用事業</span>
+          <span class="sum">木の駅ひきみ森の宝山直市場の運営管理の状況と将来の管理運営形態を問い、木質バイオマス用チップ供給に係る事業者認定、直営班の成り立ちと就業状況、地域おこし協力隊員の確保と活動、木の駅への出荷登録状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・梅谷憲二</span>
+          <span class="ttl">匹見地域の振興策</span>
+          <span class="sum">匹見峡温泉の閉館など人口減少が進む匹見地域の振興策を問い、西中国山地国定公園の登山ルートや匹見峡の整備、遺跡や山城の活用、不伐の森条例の復活、総合支所長の復活、地域おこし協力隊員の確保を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">H30・河野利文</span>
+          <span class="ttl">林業振興と森林管理</span>
+          <span class="sum">森林資源活用事業と森の守り人づくり事業の成果と課題、供給先の拡大と薪ストーブ導入の補助制度、自伐林業の方針、地域おこし協力隊の定住状況とPR、森林環境譲与税への準備と林業担当課の体制を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・大久保五郎</span>
+          <span class="ttl">令和４年度の施政方針</span>
+          <span class="sum">市民の幸福度を高める市政運営に期待を述べたうえで、若者数の把握と合計特殊出生率の目標達成策、地域おこし協力隊員、アユ振興、海水面漁業の担い手、都市間交流とアイルランドとの交流への疑問、中世益田の企画展の発信、地域マネージャーや特定地域づくり事業協同組合、ふるさと納税、人材育成、マイナンバーカード普及を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・弥重節子</span>
+          <span class="ttl">地域運営組織の在り方</span>
+          <span class="sum">地域マネージャーと公民館職員が同居する執務室の考え方、二川小学校跡での執務室、組織の関係図の提示、地域自治組織の連絡協議会の立ち上げ、地域おこし協力隊員を配置する理由と役割を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・弥重節子</span>
+          <span class="ttl">外部人材の投入</span>
+          <span class="sum">地域おこし協力隊の活用状況とインターン制度の活用、総務省・内閣府の地方回帰支援策の検討状況、観光やデジタル化の課題解決への外部人材の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R03・弥重節子</span>
+          <span class="ttl">日本遺産推進の体制</span>
+          <span class="sum">観光協会の事務局長が欠けた中での地域ＤＭＯ認定に向けた対応、民間事業者を巻き込む実施体制とプレーヤーの把握、新規の地域おこし協力隊員への対応、専門家の活用、観光地域づくり応援隊員の実績と今後を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・弥重節子</span>
+          <span class="ttl">外部人材投入の在り方</span>
+          <span class="sum">地域おこし協力隊員の新分野の募集で期待するミッションを問い、隊員との連携と育成、全国ネットワークや研修への参加支援、インターン制度の活用、専門家など外部人材導入の検討状況を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R04・三浦智</span>
+          <span class="ttl">生涯活躍のまちのしごと</span>
+          <span class="sum">生涯活躍のまちの観点から市長の仕事観を問い、サテライトオフィスの誘致、趣味や体験型旅行による関係人口の創出、地域おこし協力隊の活用、副業、創業支援、児童・生徒への仕事の周知を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・河野利文</span>
+          <span class="ttl">中山間地域振興と体制</span>
+          <span class="sum">自助・共助・公助の最適バランスのイメージと支援策、地域振興課など各地区を支える体制、庁内ネットワーク会議の見直し、地域おこし協力隊を活用しない理由を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・齋藤勝廣</span>
+          <span class="ttl">地域おこし協力隊</span>
+          <span class="sum">制度の概要、採用状況と採用方法、活動内容と成果の評価、市の施策への反映、定着・定住率の評価と今後の活用を質した。</span>
+        </li>
+        
+        <li class="q">
+          <span class="who">R06・河本亮</span>
+          <span class="ttl">農業振興と有害鳥獣対策</span>
+          <span class="sum">中山間地域直接支払の第６期への参加促進、色彩選別機など独自の支援メニュー、農業サポーター制度、農産物価格への消費者の理解、豚熱・熊・イノシシ対策、地域おこし協力隊の担い手活用を質した。</span>
+        </li>
+        
+      </ol>
+      
+    </details>
+    
+  </section>
+
+  <p class="back"><a href="../index.html">▸ 自治体くらべへ戻る</a></p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="credit">車座プロジェクト</p>
+    <p>このページは公式の会議録をもとに、質問の内容を分類・集計して作成しています。良し悪しの判断は含まれていません。</p>
+    <p style="margin-top:6px"><a href="https://github.com/yakumo-factory/kurumaza-pages/issues" target="_blank" rel="noopener">ご意見・ご感想はこちら</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
